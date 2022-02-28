@@ -1,0 +1,8 @@
+# Node
+node_modules
+
+# Typescript
+dist
+
+# Env Variables
+.env
