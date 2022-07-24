@@ -7,7 +7,7 @@ import {
   UpdateVaultRequestSchema,
   VaultDto, VaultsQueryParamsSchema
 } from "@ben-ryder/athena-js-lib";
-import {DefaultVaultsListOptions} from "@ben-ryder/athena-js-lib/build/src/default-list-options";
+import {DefaultVaultsListOptions} from "@ben-ryder/athena-js-lib";
 import {DatabaseListOptions} from "../../common/database-list-options";
 
 

@@ -1,7 +1,10 @@
 // Tools
 export * from './encryption';
 export * from './api-client';
+
+// Default values/defaults
 export * from './errors';
+export * from './default-list-options'
 
 // Utils
 export * from './utils/is-uuid-array';

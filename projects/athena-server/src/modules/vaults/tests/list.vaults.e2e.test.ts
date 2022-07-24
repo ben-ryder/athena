@@ -38,4 +38,23 @@ describe('List Vaults - /v1/vaults [GET]',() => {
       }
     })
   })
+
+  describe("Pagination Tests", () => {
+    test("With no pagination options, all vaults (up to the default take limit) should be returned", async () => {})
+
+    test("With an explicit take option, that number of vaults should be returned", async () => {})
+
+    test("With an explicit skip option and no take, all vaults (up to the default take limit) should be returned but skipping the right amount", async () => {})
+
+    test("With explicit skip and take options, the correct vaults should be returned", async () => {})
+
+    test("With explicit skip and take options, the meta details should be correct", async () => {})
+  })
+
+  describe("Invalid Data", () => {
+
+    test("When passing an invalid skip value, the request should fail", async () => {})
+
+    test("When passing an invalid take value, the request should fail", async () => {})
+  })
 })
