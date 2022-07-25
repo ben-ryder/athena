@@ -23,7 +23,7 @@ export class AuthValidator implements MiddlewareFactory {
         const accessTokenPayload = await this.tokenService.validateAndDecodeAccessToken(accessToken);
 
         if (accessTokenPayload) {
-          // todo: better way to handle req spec and adding new attribute?
+          // todo: better way to handle req schemas and adding new attribute?
           // @ts-ignore
           req.context = {
             user: {

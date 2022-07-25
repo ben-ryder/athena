@@ -4,7 +4,7 @@ import {testUsers} from "../../../../tests/test-data";
 import {HTTPStatusCodes} from "@kangojs/core";
 import {sign} from "jsonwebtoken";
 import {expectUnauthorized} from "../../../../tests/e2e/common/expect-unauthorized";
-import {AthenaErrorIdentifiers} from "../../../common/error-identifiers";
+import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 import {ConfigService} from "../../../services/config/config";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
 

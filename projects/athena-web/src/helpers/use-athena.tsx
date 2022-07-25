@@ -4,9 +4,7 @@ import { AthenaAPIClient, UserDto } from "@ben-ryder/athena-js-lib";
 
 export interface IAthenaContext {
     apiClient: AthenaAPIClient,
-    loadCurrentUser: () => Promise<UserDto | null>,
-    setEncryptionKey: (encryptionKey: string) => Promise<void>,
-    loadEncryptionKey: () => Promise<string | null>,
+    getCurrentUser: () => Promise<UserDto | null>
 }
 
 class AthenaWrapper {
@@ -33,9 +31,7 @@ class AthenaWrapper {
     static async loadEncryptionKey(): Promise<string|null> {
         return localStorage.getItem(AthenaWrapper.ENCRYPTION_KEY_STORAGE_KEY);
     }
-    static async setEncryptionKey(encryptionKey: string) {
-        // todo: look at how encryption key is handled & saved
-        AthenaWrapper.apiClient.setEncryptionKey(encryptionKey);
+    static async saveEncryptionKey(encryptionKey: string) {
         localStorage.setItem(AthenaWrapper.ENCRYPTION_KEY_STORAGE_KEY, encryptionKey);
     }
     static async deleteEncryptionKey() {
@@ -50,7 +46,6 @@ class AthenaWrapper {
     static async deleteAccessToken() {
         return localStorage.removeItem(AthenaWrapper.ACCESS_TOKEN_STORAGE_KEY);
     }
-
     static async loadRefreshToken(): Promise<string|null> {
         return localStorage.getItem(AthenaWrapper.REFRESH_TOKEN_STORAGE_KEY);
     }
@@ -85,9 +80,7 @@ class AthenaWrapper {
 
 export const AthenaContext = createContext<IAthenaContext>({
     apiClient: AthenaWrapper.apiClient,
-    loadCurrentUser: AthenaWrapper.loadCurrentUser,
-    setEncryptionKey: AthenaWrapper.setEncryptionKey,
-    loadEncryptionKey: AthenaWrapper.loadEncryptionKey
+    getCurrentUser: AthenaWrapper.loadCurrentUser
 })
 
 export const useAthena = () => useContext(AthenaContext);

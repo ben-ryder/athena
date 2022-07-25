@@ -3,7 +3,7 @@ import {testData, testUsers} from "../../../../tests/test-data";
 import {HTTPStatusCodes} from "@kangojs/core";
 import {expectUnauthorized} from "../../../../tests/e2e/common/expect-unauthorized";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
-import {AthenaErrorIdentifiers} from "../../../common/error-identifiers";
+import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 import {testMissingField} from "../../../../tests/e2e/common/test-missing-field";
 import {testInvalidDataTypes} from "../../../../tests/e2e/common/test-invalid-data-types";
 import {testMalformedData} from "../../../../tests/e2e/common/test-malformed-data";

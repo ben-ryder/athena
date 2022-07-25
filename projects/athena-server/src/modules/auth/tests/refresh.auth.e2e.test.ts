@@ -4,7 +4,7 @@ import {testUsers} from "../../../../tests/test-data";
 import {testInvalidDataTypes} from "../../../../tests/e2e/common/test-invalid-data-types";
 import {sign} from "jsonwebtoken";
 import {ConfigService} from "../../../services/config/config";
-import {AthenaErrorIdentifiers} from "../../../common/error-identifiers";
+import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 import {expectUnauthorized} from "../../../../tests/e2e/common/expect-unauthorized";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
 

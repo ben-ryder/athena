@@ -2,7 +2,7 @@ import {Injectable, ResourceNotFoundError, ResourceRelationshipError, SystemErro
 import {DatabaseService} from "../../../services/database/database.service";
 import {PostgresError, Row, RowList, Sql} from "postgres";
 import {PG_UNIQUE_VIOLATION} from "../../../services/database/database-error-codes";
-import {AthenaErrorIdentifiers} from "../../../common/error-identifiers";
+import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 import {
   CreateVaultRequestSchema, MetaPaginationResponseSchema,
   UpdateVaultRequestSchema,

@@ -1,5 +1,4 @@
-import {KangoJS} from '@kangojs/core';
-import {ClassValidator} from '@kangojs/class-validation';
+import {KangoJS} from '@kangojs/core'
 import {AuthValidator} from './modules/auth/auth.validator';
 import { createServeSPAMiddleware } from "@kangojs/serve-spa";
 
@@ -7,6 +6,7 @@ import {AuthController} from "./modules/auth/auth.controller";
 import {BaseController} from "./modules/base/base.controller";
 import {UsersController} from "./modules/users/users.controller";
 import {VaultsController} from "./modules/vaults/vaults.controller";
+import {ZodValidator} from "../../../../kangojs/kangojs/packages/zod-validation";
 
 
 export async function createApp() {
@@ -26,8 +26,8 @@ export async function createApp() {
       serveSpaMiddleware
     ],
     authValidator: AuthValidator,
-    bodyValidator: ClassValidator,
-    queryValidator: ClassValidator,
-    paramsValidator: ClassValidator,
+    bodyValidator: ZodValidator,
+    queryValidator: ZodValidator,
+    paramsValidator: ZodValidator,
   });
 }

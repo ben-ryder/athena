@@ -1,6 +1,6 @@
 import {AthenaDecryptError} from "../errors";
 import {AthenaEncryption} from "../encryption";
-import {NoteContentDto} from "../spec/notes/dtos/note-content.dto-interface";
+import {NoteContentDto} from "../schemas/notes/dtos/note-content.dto";
 
 test('encrypt and decrypt a string', () => {
     const secret = "ibiova86g9q438ogr8wofw4";

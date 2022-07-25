@@ -1,5 +1,5 @@
-import {OrderByFields} from "./spec/common/order-by-fields";
-import {OrderDirections} from "./spec/common/order-directions";
+import {OrderByFields} from "./schemas/common/order-by-fields";
+import {OrderDirections} from "./schemas/common/order-directions";
 
 export const DefaultListOptions = {
   take: 24,

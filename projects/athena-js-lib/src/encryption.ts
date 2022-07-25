@@ -2,8 +2,8 @@ import aes from "crypto-js/aes";
 import utf8 from "crypto-js/enc-utf8";
 
 import { AthenaDecryptError, AthenaEncryptError } from "./errors";
-import { NoteDto } from "./spec/notes/dtos/note.dto-interface";
-import { NoteContentDto } from "./spec/notes/dtos/note-content.dto-interface";
+import { NoteDto } from "./schemas/notes/dtos/note.dto";
+import { NoteContentDto } from "./schemas/notes/dtos/note-content.dto";
 
 
 export class AthenaEncryption {

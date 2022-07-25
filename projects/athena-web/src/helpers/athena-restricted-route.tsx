@@ -13,16 +13,15 @@ enum LoginCheckStatus {
  * @constructor
  */
 export function AthenaRestrictedRoute() {
-    let { loadCurrentUser, loadEncryptionKey } = useAthena();
+    let { getCurrentUser } = useAthena();
     const location = useLocation();
     const [ loginCheckStatus, setLoginCheckStatus ] = useState(LoginCheckStatus.CHECKING);
 
     useEffect(() => {
         async function checkUserLogin() {
-            const currentUser = await loadCurrentUser();
-            const encryptionKey = await loadEncryptionKey();
+            const currentUser = await getCurrentUser();
 
-            if (currentUser && encryptionKey) {
+            if (currentUser) {
                 setLoginCheckStatus(LoginCheckStatus.LOGGED_IN)
             }
             else {
@@ -30,7 +29,7 @@ export function AthenaRestrictedRoute() {
             }
         }
         checkUserLogin();
-    }, [loadCurrentUser]);
+    }, [getCurrentUser]);
 
     if (loginCheckStatus === LoginCheckStatus.CHECKING) {
         return null;

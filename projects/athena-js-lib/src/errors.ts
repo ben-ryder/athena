@@ -26,11 +26,26 @@ export class AthenaDecryptError extends AthenaEncryptionError {}
 // API Client Errors
 export class AthenaAPIClientError extends AthenaError {}
 export class AthenaNoEncryptionKeyError extends AthenaAPIClientError {}
-export class AthenaRequestError extends AthenaAPIClientError {}
+
+export interface AthenaRequestErrorOptions {
+    message?: string;
+    originalError?: any;
+    response?: any
+}
+
+export class AthenaRequestError extends AthenaAPIClientError {
+    response: any;
+
+    constructor(options?: AthenaRequestErrorOptions) {
+        super(options);
+        this.response = options?.response;
+    }
+}
 
 export class AthenaNoRefreshTokenError extends AthenaAPIClientError {}
 export class AthenaNoAccessTokenError extends AthenaAPIClientError {}
 
+// Data save/load errors
 export class AthenaDataLoadError extends AthenaAPIClientError {}
 export class AthenaDataSaveError extends AthenaAPIClientError {}
 export class AthenaDataDeleteError extends AthenaAPIClientError {}

@@ -5,7 +5,7 @@ import {testInvalidDataTypes} from "../../../../tests/e2e/common/test-invalid-da
 import {testMissingField} from "../../../../tests/e2e/common/test-missing-field";
 import {HTTPStatusCodes} from "@kangojs/core";
 import {expectForbidden} from "../../../../tests/e2e/common/expect-forbidden";
-import {AthenaErrorIdentifiers} from "../../../common/error-identifiers";
+import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 
 
 describe('Login Auth',() => {

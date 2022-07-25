@@ -23,7 +23,7 @@ export function FormPage(props: FormPageProps) {
       <div className="bg-br-atom-700 min-h-[100vh] flex flex-col">
         <PageHeader />
         <div className="grow flex justify-center items-center">
-          <main className="max-w-md mx-auto mt-3">
+          <main className="max-w-md mx-auto mb-10 px-2">
             <div>
               <H1 className="text-br-teal-600">{props.title}</H1>
               {props.description && description}

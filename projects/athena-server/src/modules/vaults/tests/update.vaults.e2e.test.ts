@@ -4,7 +4,7 @@ import {testData, testUsers} from "../../../../tests/test-data";
 import {testInvalidDataTypes} from "../../../../tests/e2e/common/test-invalid-data-types";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
 import {HTTPStatusCodes} from "@kangojs/core";
-import {AthenaErrorIdentifiers} from "../../../common/error-identifiers";
+import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 import {expectUnauthorized} from "../../../../tests/e2e/common/expect-unauthorized";
 import {expectForbidden} from "../../../../tests/e2e/common/expect-forbidden";
 

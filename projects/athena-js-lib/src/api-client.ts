@@ -10,16 +10,15 @@ import {
     AthenaDataLoadError,
     AthenaDataSaveError, AthenaDecryptError
 } from './errors';
-import {UserDto} from "./spec/users/dtos/user.dto-interface";
-import {LoginResponse} from "./spec/auth/response/login.auth.response-interface";
-import {RefreshResponse} from "./spec/auth/response/refresh.auth.response-interface";
-import {GetNoteResponse} from "./spec/notes/response/get.note.response-interface";
-import {GetNotesResponse} from "./spec/notes/response/get.notes.response-interface";
-import {NoteDto} from "./spec/notes/dtos/note.dto-interface";
-import {CreateNoteResponse} from "./spec/notes/response/create.notes.response-interface";
-import {UpdateNoteResponse} from "./spec/notes/response/update.notes.response-interface";
-import {CreateNoteRequestSchema} from "./spec/notes/request/create.notes.request-schema";
-import {UpdateNoteRequestSchema} from "./spec/notes/request/update.notes.request-schema";
+import {UserDto} from "./schemas/users/dtos/user.dto";
+import {LoginResponse} from "./schemas/auth/response/login.auth.response";
+import {RefreshResponse} from "./schemas/auth/response/refresh.auth.response";
+import {GetNoteResponse} from "./schemas/notes/response/get.note.response";
+import {GetNotesResponse} from "./schemas/notes/response/get.notes.response";
+import {NoteDto} from "./schemas/notes/dtos/note.dto";
+import {CreateNoteResponse} from "./schemas/notes/response/create.notes.response";
+import {UpdateNoteResponse} from "./schemas/notes/response/update.notes.response";
+import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
 
 
 export interface QueryOptions {
@@ -64,16 +63,6 @@ export class AthenaAPIClient {
         this.options = options;
     }
 
-    setEncryptionKey(encryptionKey: string | null) {
-        if (encryptionKey === null) {
-            this.options.encryptionKey = null;
-            return;
-        }
-
-        // todo: add pbkdf2 or similar rather than using the raw phrase?
-        this.options.encryptionKey = encryptionKey;
-    }
-
     private async query<ResponseType>(options: QueryOptions, repeat = false): Promise<ResponseType> {
         if (!options.noAuthRequired && !this.accessToken) {
             const accessToken = await AthenaAPIClient.loadData(this.options.loadAccessToken);
@@ -106,15 +95,16 @@ export class AthenaAPIClient {
                 }
             });
         }
-        catch (e) {
-            if (response?.status === 401 && !repeat) {
+        catch (e: any) {
+            if (e.response?.status === 401 && !repeat) {
                 return this.refreshAuthAndRetry<ResponseType>(options);
             }
 
             throw new AthenaRequestError(
                 {
                     message: `There was an error with the request '${options.url} [${options.method}]'`,
-                    originalError: e
+                    originalError: e,
+                    response: e.response?.data
                 }
             );
         }
@@ -171,7 +161,7 @@ export class AthenaAPIClient {
     public async login(username: string, password: string) {
         const data = await this.query<LoginResponse>({
             method: 'POST',
-            url: `${this.options.apiEndpoint}/auth/v1/login`,
+            url: `${this.options.apiEndpoint}/v1/auth/login`,
             data: {
                 username,
                 password
@@ -199,7 +189,7 @@ export class AthenaAPIClient {
 
         await this.query({
             method: 'POST',
-            url: `${this.options.apiEndpoint}/auth/v1/revoke`,
+            url: `${this.options.apiEndpoint}/v1/auth/revoke`,
             noAuthRequired: true,
             data: tokens
         });
@@ -220,7 +210,7 @@ export class AthenaAPIClient {
 
         const tokens = await this.query<RefreshResponse>({
             method: 'POST',
-            url: `${this.options.apiEndpoint}/auth/v1/refresh`,
+            url: `${this.options.apiEndpoint}/v1/auth/refresh`,
             noAuthRequired: true
         });
 
@@ -255,7 +245,7 @@ export class AthenaAPIClient {
         };
     }
 
-    async createNote(newNote: CreateNoteRequestSchema) {
+    async createNote(newNote: CreateNoteRequest) {
         await this.checkEncryptionKey();
 
         const encryptedNote = AthenaEncryption.encryptNoteContent(<string> this.options.encryptionKey, newNote);
@@ -270,7 +260,7 @@ export class AthenaAPIClient {
     private async getEncryptedNote(noteId: string): Promise<GetNoteResponse> {
         return this.query<GetNoteResponse>({
             method: 'GET',
-            url: `${this.options.apiEndpoint}/notes/v1/${noteId}`
+            url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
         })
     }
 
@@ -287,7 +277,7 @@ export class AthenaAPIClient {
         const encryptedNoteUpdate = await AthenaEncryption.encryptNote(<string> this.options.encryptionKey, note);
         return this.query<UpdateNoteResponse>({
             method: 'PATCH',
-            url: `${this.options.apiEndpoint}/notes/v1/${noteId}`,
+            url: `${this.options.apiEndpoint}/v1/notes/${noteId}`,
             data: encryptedNoteUpdate
         })
     }
@@ -295,7 +285,7 @@ export class AthenaAPIClient {
     async deleteNote(noteId: string) {
         return this.query({
             method: 'DELETE',
-            url: `${this.options.apiEndpoint}/notes/v1/${noteId}`
+            url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
         })
     }
 }
