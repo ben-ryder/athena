@@ -1,11 +1,10 @@
 import {AccessForbiddenError, Injectable} from "@kangojs/core";
 import {VaultsDatabaseService} from "./database/vaults.database.service";
 import {
-  CreateVaultRequestSchema,
+  CreateVaultRequest,
   GetVaultResponse,
-  GetVaultsResponse,
-  UpdateVaultRequestSchema,
-  VaultDto, VaultsQueryParamsSchema
+  GetVaultsResponse, UpdateVaultRequest,
+  VaultDto, VaultsQueryParams
 } from "@ben-ryder/athena-js-lib";
 import {DefaultVaultsListOptions} from "@ben-ryder/athena-js-lib";
 import {DatabaseListOptions} from "../../common/database-list-options";
@@ -40,15 +39,15 @@ export class VaultsService {
     return this.get(vaultId);
   }
 
-  async add(ownerId: string, createVaultDto: CreateVaultRequestSchema): Promise<VaultDto> {
+  async add(ownerId: string, createVaultDto: CreateVaultRequest): Promise<VaultDto> {
     return await this.vaultsDatabaseService.create(ownerId, createVaultDto);
   }
 
-  async update(vaultId: string, vaultUpdate: UpdateVaultRequestSchema): Promise<VaultDto> {
+  async update(vaultId: string, vaultUpdate: UpdateVaultRequest): Promise<VaultDto> {
     return await this.vaultsDatabaseService.update(vaultId, vaultUpdate)
   }
 
-  async updateWithAccessCheck(requestUserId: string, vaultId: string, vaultUpdate: UpdateVaultRequestSchema): Promise<VaultDto> {
+  async updateWithAccessCheck(requestUserId: string, vaultId: string, vaultUpdate: UpdateVaultRequest): Promise<VaultDto> {
     await this.checkAccess(requestUserId, vaultId);
     return this.update(vaultId, vaultUpdate);
   }
@@ -62,7 +61,7 @@ export class VaultsService {
     return this.delete(vaultId);
   }
 
-  async list(ownerId: string, options: VaultsQueryParamsSchema): Promise<GetVaultsResponse> {
+  async list(ownerId: string, options: VaultsQueryParams): Promise<GetVaultsResponse> {
     const processedOptions: DatabaseListOptions = {
       skip: options.skip || DefaultVaultsListOptions.skip,
       take: options.take || DefaultVaultsListOptions.take,

@@ -7,6 +7,6 @@ export const CreateQueryRequestSchema = z.object({
   tags: z.array(z.array(z.string().uuid())),
   orderBy: z.nativeEnum(OrderByFields),
   orderDirection: z.nativeEnum(OrderDirections)
-})
+}).strict();
 
 export type CreateQueryRequest = z.infer<typeof CreateQueryRequestSchema>;

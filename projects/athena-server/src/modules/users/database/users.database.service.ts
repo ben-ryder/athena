@@ -1,9 +1,9 @@
 import {Injectable, ResourceNotFoundError, ResourceRelationshipError, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
-import {CreateDatabaseUserDto} from "../dtos/create.database-user.dto-interface";
-import {UpdateDatabaseUserDto} from "../dtos/update.database-user.dto-interface";
-import {DatabaseUserDto} from "../dtos/database-user.dto-interface";
-import {InternalDatabaseUserDto} from "../dtos/internal-database-user.dto-interface";
+import {CreateDatabaseUserDto} from "../dtos/create.database-user.dto";
+import {UpdateDatabaseUserDto} from "../dtos/update.database-user.dto";
+import {DatabaseUserDto} from "../dtos/database-user.dto";
+import {InternalDatabaseUserDto} from "../dtos/internal-database-user.dto";
 import {PostgresError, Row, RowList} from "postgres";
 import {PG_UNIQUE_VIOLATION} from "../../../services/database/database-error-codes";
 import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";

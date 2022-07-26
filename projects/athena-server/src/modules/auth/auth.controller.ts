@@ -2,7 +2,13 @@ import { Controller, Route, HTTPMethods } from '@kangojs/core';
 import { Request, Response, NextFunction } from 'express';
 
 import { AuthService } from './auth.service';
-import {LoginRequestSchema, RefreshRequestSchema, RevokeRequestSchema} from "@ben-ryder/athena-js-lib";
+import {
+    LoginRequest,
+    LoginRequestSchema, RefreshRequest,
+    RefreshRequestSchema,
+    RevokeRequest,
+    RevokeRequestSchema
+} from "@ben-ryder/athena-js-lib";
 
 
 @Controller('/v1/auth', {
@@ -20,7 +26,7 @@ export class AuthController {
         authRequired: false
     })
     async login(req: Request, res: Response, next: NextFunction) {
-        const loginDetails = <LoginRequestSchema> req.body;
+        const loginDetails = <LoginRequest> req.body;
 
         try {
             const loginResponse = await this.authService.login(loginDetails.username, loginDetails.password);
@@ -38,7 +44,7 @@ export class AuthController {
         authRequired: false
     })
     async revoke(req: Request, res: Response, next: NextFunction) {
-        const tokens = <RevokeRequestSchema> req.body;
+        const tokens = <RevokeRequest> req.body;
 
         try {
             await this.authService.revokeTokens(tokens);
@@ -56,7 +62,7 @@ export class AuthController {
         authRequired: false
     })
     async refresh(req: Request, res: Response, next: NextFunction) {
-        const bodyData = <RefreshRequestSchema> req.body;
+        const bodyData = <RefreshRequest> req.body;
 
         try {
             const tokens = await this.authService.refresh(bodyData.refreshToken);

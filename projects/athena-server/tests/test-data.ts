@@ -76,7 +76,7 @@ export const testData = {
         owner: testUsers[0].id
       },
       {
-        id: "",
+        id: "14df9d88-f572-4283-a288-5e2e8c3b154f",
         name: "user1 Vault 3",
         description: "This is a test vault",
         createdAt: "2022-07-11T18:20:32.482Z",
@@ -84,7 +84,7 @@ export const testData = {
         owner: testUsers[0].id
       },
       {
-        id: "",
+        id: "6fc96055-0acb-4e70-910e-d9b98b35c7b1",
         name: "user1 Vault 4",
         description: "This is a test vault",
         createdAt: "2022-07-11T18:20:32.482Z",
@@ -92,7 +92,7 @@ export const testData = {
         owner: testUsers[0].id
       },
       {
-        id: "",
+        id: "16ce7b81-a99e-4b43-b74f-9950a0ca8ee4",
         name: "user1 Vault 5",
         description: "This is a test vault",
         createdAt: "2022-07-11T18:20:32.482Z",
@@ -100,7 +100,7 @@ export const testData = {
         owner: testUsers[0].id
       },
       {
-        id: "",
+        id: "9220b28e-2104-4c2a-b343-b55a3d776ad0",
         name: "user1 Vault 6",
         description: "This is a test vault",
         createdAt: "2022-07-11T18:20:32.482Z",
@@ -108,7 +108,7 @@ export const testData = {
         owner: testUsers[0].id
       },
       {
-        id: "",
+        id: "fcb9bddd-7aaf-4989-b2cf-6d8462e647e5",
         name: "user1 Vault 7",
         description: "This is a test vault",
         createdAt: "2022-07-11T18:20:32.482Z",

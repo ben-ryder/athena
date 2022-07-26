@@ -2,16 +2,17 @@ import { Injectable } from "@kangojs/core";
 import { AccessForbiddenError } from "@kangojs/core";
 
 import {
+    CreateUserRequest,
     CreateUserRequestSchema,
-    GetUserResponse,
+    GetUserResponse, UpdateUserRequest,
     UpdateUserRequestSchema,
     UpdateUserResponse,
     UserDto
 } from "@ben-ryder/athena-js-lib";
 
 import { PasswordService } from "../../services/password/password.service";
-import {DatabaseUserDto} from "./dtos/database-user.dto-interface";
-import {UpdateDatabaseUserDto} from "./dtos/update.database-user.dto-interface";
+import {DatabaseUserDto} from "./dtos/database-user.dto";
+import {UpdateDatabaseUserDto} from "./dtos/update.database-user.dto";
 import {UsersDatabaseService} from "./database/users.database.service";
 
 
@@ -48,7 +49,7 @@ export class UsersService {
         return this.usersDatabaseService.getByUsername(username);
     }
 
-    async add(createUserDto: CreateUserRequestSchema): Promise<UserDto> {
+    async add(createUserDto: CreateUserRequest): Promise<UserDto> {
         const passwordHash = await PasswordService.hashPassword(createUserDto.password);
 
         const user = {
@@ -62,7 +63,7 @@ export class UsersService {
         return this.removePasswordFromUser(resultUser);
     }
 
-    async update(userId: string, updateUserDto: UpdateUserRequestSchema): Promise<UserDto> {
+    async update(userId: string, updateUserDto: UpdateUserRequest): Promise<UserDto> {
         let newPasswordHash: string|null = null;
         if (updateUserDto.password) {
             newPasswordHash = await PasswordService.hashPassword(updateUserDto.password);
@@ -80,7 +81,7 @@ export class UsersService {
         return this.removePasswordFromUser(user);
     }
 
-    async updateWithAccessCheck(requestUserId: string, userId: string, updateUserDto: UpdateUserRequestSchema): Promise<UpdateUserResponse> {
+    async updateWithAccessCheck(requestUserId: string, userId: string, updateUserDto: UpdateUserRequest): Promise<UpdateUserResponse> {
         this.checkAccess(requestUserId, userId);
         return this.update(userId, updateUserDto);
     }

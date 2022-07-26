@@ -6,7 +6,7 @@ import { UsersService } from './users.service';
 import {
     CreateUserRequestSchema,
     CreateUserResponse,
-    GetUserResponse, UpdateUserRequestSchema, UpdateUserResponse, UserDto,
+    GetUserResponse, UpdateUserRequestSchema, UpdateUserResponse,
     UsersURLParamsSchema
 } from "@ben-ryder/athena-js-lib";
 import {RequestWithUserContext} from "../../common/request-with-context";

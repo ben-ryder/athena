@@ -7,7 +7,7 @@ import {BaseController} from "../../src/modules/base/base.controller";
 import {AuthController} from "../../src/modules/auth/auth.controller";
 import {UsersController} from "../../src/modules/users/users.controller";
 import {AuthValidator} from "../../src/modules/auth/auth.validator";
-import {ClassValidator} from "@kangojs/class-validation";
+import {ZodValidator} from "@kangojs/zod-validation";
 import {TestConfigService} from "./test-config-service";
 import {KangoJS} from "@kangojs/core";
 import {SuperAgentTest, agent} from "supertest";
@@ -44,9 +44,9 @@ export class TestHelper {
         serveSpaMiddleware
       ],
       authValidator: AuthValidator,
-      bodyValidator: ClassValidator,
-      queryValidator: ClassValidator,
-      paramsValidator: ClassValidator
+      bodyValidator: ZodValidator,
+      queryValidator: ZodValidator,
+      paramsValidator: ZodValidator
     });
 
     const expressApp = this.application.getApp();

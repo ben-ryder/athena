@@ -7,6 +7,6 @@ import {OrderByFields} from "../../common/order-by-fields";
 export const TagsQueryParamsSchema = PaginationQueryParamsSchema.extend({
     orderBy: z.nativeEnum(OrderByFields).optional(),
     orderDirection: z.nativeEnum(OrderDirections).optional()
-})
+}).strict();
 
 export type TagsQueryParams = z.infer<typeof TagsQueryParamsSchema>;

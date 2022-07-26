@@ -6,6 +6,6 @@ export const CreateUserRequestSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   encryptionSecret: z.string()
-});
+}).strict();
 
-export type CreateUsersRequest = z.infer<typeof CreateUserRequestSchema>;
+export type CreateUserRequest = z.infer<typeof CreateUserRequestSchema>;

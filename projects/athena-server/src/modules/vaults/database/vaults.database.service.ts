@@ -2,9 +2,9 @@ import {Injectable, ResourceNotFoundError, ResourceRelationshipError, SystemErro
 import {DatabaseService} from "../../../services/database/database.service";
 import {PostgresError, Row, RowList, Sql} from "postgres";
 import {PG_UNIQUE_VIOLATION} from "../../../services/database/database-error-codes";
-import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
+import {AthenaErrorIdentifiers, CreateVaultRequest, UpdateVaultRequest} from "@ben-ryder/athena-js-lib";
 import {
-  CreateVaultRequestSchema, MetaPaginationResponseSchema,
+  CreateVaultRequestSchema, MetaPaginationData,
   UpdateVaultRequestSchema,
   VaultDto,
   VaultsQueryParamsSchema
@@ -112,7 +112,7 @@ export class VaultsDatabaseService {
     }
   }
 
-  async create(ownerId: string, vault: CreateVaultRequestSchema): Promise<VaultDto> {
+  async create(ownerId: string, vault: CreateVaultRequest): Promise<VaultDto> {
     const sql = await this.databaseService.getSQL();
 
     let result: InternalDatabaseVaultDto[] = [];
@@ -137,7 +137,7 @@ export class VaultsDatabaseService {
     }
   }
 
-  async update(vaultId: string, vaultUpdate: UpdateVaultRequestSchema): Promise<VaultDto> {
+  async update(vaultId: string, vaultUpdate: UpdateVaultRequest): Promise<VaultDto> {
     const sql = await this.databaseService.getSQL();
 
     // If there are no supplied fields to update, then just return the existing user.
@@ -148,7 +148,7 @@ export class VaultsDatabaseService {
     // Process all fields
     // todo: this offers no protection against updating fields like id which should never be updated
     let updateObject: any = {};
-    for (const fieldName of Object.keys(vaultUpdate) as Array<keyof UpdateVaultRequestSchema>) {
+    for (const fieldName of Object.keys(vaultUpdate) as Array<keyof UpdateVaultRequest>) {
       updateObject[VaultsDatabaseService.mapApplicationField(fieldName)] = vaultUpdate[fieldName];
     }
 
@@ -219,7 +219,7 @@ export class VaultsDatabaseService {
     return result.map(VaultsDatabaseService.mapDatabaseEntity);
   }
 
-  async getListMetadata(ownerId: string, options: DatabaseListOptions): Promise<MetaPaginationResponseSchema> {
+  async getListMetadata(ownerId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc

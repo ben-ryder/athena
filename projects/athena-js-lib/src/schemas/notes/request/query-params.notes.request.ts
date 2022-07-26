@@ -7,6 +7,6 @@ export const NotesQueryParamsSchema = PaginationQueryParamsSchema.extend({
     orderBy: z.nativeEnum(OrderByFields).optional(),
     orderDirection: z.nativeEnum(OrderDirections).optional(),
     tags: z.array(z.array(z.string().uuid())).optional()
-})
+}).strict();
 
 export type NotesQueryParams = z.infer<typeof NotesQueryParamsSchema>
