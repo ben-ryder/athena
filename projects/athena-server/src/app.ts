@@ -6,7 +6,7 @@ import {AuthController} from "./modules/auth/auth.controller";
 import {BaseController} from "./modules/base/base.controller";
 import {UsersController} from "./modules/users/users.controller";
 import {VaultsController} from "./modules/vaults/vaults.controller";
-import {ZodValidator} from "../../../../kangojs/kangojs/packages/zod-validation";
+import {ZodValidator} from "@kangojs/zod-validation";
 
 
 export async function createApp() {
