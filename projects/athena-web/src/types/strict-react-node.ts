@@ -4,23 +4,10 @@
  * Learn more here: https://changelog.com/posts/the-react-reactnode-type-is-a-black-hole.
  *
  * StrictReactNode is taken from that blog post and implements the expected functionality of React.ReactNode.
+ *
+ * UPDATE: This type started breaking on updating to React 18. I think the updated version fits my use case... I'll find out I guess.
  */
+import {ReactElement, ReactFragment} from "react";
 
-import { ReactChild, ReactPortal, ReactNodeArray } from 'react';
 
-export type StrictReactFragment =
-  | {
-  key?: string | number | null;
-  ref?: null;
-  props?: {
-    children?: StrictReactNode;
-  };
-}
-  | ReactNodeArray;
-export type StrictReactNode =
-  | ReactChild
-  | StrictReactFragment
-  | ReactPortal
-  | boolean
-  | null
-  | undefined;
+export type StrictReactNode = ReactElement | ReactFragment
