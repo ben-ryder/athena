@@ -2,9 +2,13 @@ import {z} from "zod";
 
 
 export const CreateUserRequestSchema = z.object({
-  username: z.string().min(1).max(20),
-  email: z.string().email(),
-  password: z.string().min(8),
+  username: z.string()
+    .min(1, "Your username must be at least 1 character")
+    .max(20, "Your username can't be more than 20 characters"),
+  email: z.string()
+    .email("Email address is not valid"),
+  password: z.string()
+    .min(8, "Your password must be at least 8 characters"),
   encryptionSecret: z.string()
 }).strict();
 

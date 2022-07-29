@@ -1,63 +1,38 @@
 {
   "name": "@ben-ryder/athena-web",
-  "version": "0.1.0",
-  "private": true,
   "description": "The React web frontend for Athena.",
-  "license": "AGPL-3.0-only",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "serve": "npm run build && http-server ./build"
+  },
   "dependencies": {
     "@ben-ryder/athena-js-lib": "file:../athena-js-lib",
     "@ben-ryder/jigsaw": "^0.4.1",
     "@hookform/resolvers": "^2.9.7",
-    "@testing-library/jest-dom": "^5.16.2",
-    "@testing-library/react": "^12.1.3",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.4.1",
-    "@types/node": "^16.11.26",
-    "@types/react": "^17.0.47",
-    "@types/react-dom": "^17.0.11",
     "classnames": "^2.3.1",
-    "lucide-react": "^0.72.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "lucide-react": "^0.83.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-helmet-async": "^1.3.0",
-    "react-hook-form": "^7.33.0",
-    "react-router-dom": "^6.2.1",
-    "react-scripts": "5.0.0",
-    "typescript": "^4.7.4",
+    "react-hook-form": "^7.34.0",
+    "react-router-dom": "^6.3.0",
     "zod": "^3.17.10"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "start:test": "react-scripts test",
-    "test": "npm run start:test -- --watchAll=false",
-    "eject": "react-scripts eject",
-    "serve": "npm run build && http-server ./build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
-    "@types/react-helmet": "^6.1.5",
-    "@types/yup": "^0.29.13",
-    "autoprefixer": "^10.4.2",
-    "http-server": "^14.1.0",
-    "postcss": "^8.4.7",
-    "tailwindcss": "^3.0.23"
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.0.0",
+    "autoprefixer": "^10.4.8",
+    "http-server": "^14.1.1",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.6",
+    "typescript": "^4.6.4",
+    "vite": "^3.0.0"
   }
 }

@@ -14,7 +14,7 @@ class AthenaWrapper {
     static CURRENT_USER_STORAGE_KEY = 'currentUser';
 
     static apiClient = new AthenaAPIClient({
-        apiEndpoint: process.env.REACT_APP_API_ENDPOINT as string,
+        apiEndpoint: import.meta.env.VITE_API_ENDPOINT,
         loadEncryptionKey: AthenaWrapper.loadEncryptionKey,
         deleteEncryptionKey: AthenaWrapper.deleteEncryptionKey,
         saveAccessToken: AthenaWrapper.saveAccessToken,

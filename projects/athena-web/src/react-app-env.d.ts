@@ -1,1 +1,0 @@
-// <reference schemas="react-scripts" />
