@@ -19,7 +19,7 @@ export const routes = {
     delete: "/vaults/:vaultId/delete"
   },
   external: {
-    github: "https://github.com/Ben-Ryder",
+    github: "https://github.com/Ben-Ryder/athena",
     creator: "https://www,benryder.me"
   }
 }

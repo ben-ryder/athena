@@ -3,9 +3,9 @@ import {useNavigate} from "react-router-dom";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
-import {useAthena} from "../../helpers/use-athena";
-import {FormPage} from "../../patterns/layout/form-page";
 import {z} from "zod";
+import {useAthena} from "../../../helpers/use-athena";
+import {FormPage} from "../../../patterns/layout/form-page";
 
 // todo: replace with API schema once written
 const ForgottenPasswordSchema = z.object({

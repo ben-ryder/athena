@@ -3,19 +3,16 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/tailwind.css';
 
 import { HomePage } from './pages/home';
-import { NewNotePage } from './pages/notes/new-note';
-import { EditNotePage } from './pages/notes/edit-note';
-import { NotesPage } from './pages/notes/notes';
 import {AthenaRestrictedRoute} from "./helpers/athena-restricted-route";
 import {PageNotFound} from "./pages/page-not-found";
 import {LogoutPage} from "./pages/user/logout";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import {LoginPage} from "./pages/user/login";
 import {MainPage} from "./pages/main/main";
-import {RegisterPage} from "./pages/user/register";
-import {ForgottenPasswordPage} from "./pages/user/forgotten-password";
+import {ForgottenPasswordPage} from "./pages/user/password/forgotten-password";
 import {routes} from "./routes";
-import {ResetPasswordPage} from "./pages/user/reset-password";
+import {ResetPasswordPage} from "./pages/user/password/reset-password";
+import {RegisterPage} from "./pages/user/register/register";
 
 
 export function App() {
@@ -42,9 +39,6 @@ export function App() {
 
           {/* Restricted Routes (requiring encryption and user login) */}
           <Route element={<AthenaRestrictedRoute />}>
-            <Route path="/notes/new" element={<NewNotePage />} />
-            <Route path="/notes" element={<NotesPage />} />
-            <Route path="/notes/:noteId" element={<EditNotePage />} />
           </Route>
 
           {/* 404 Route */}
