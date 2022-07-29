@@ -21,7 +21,6 @@ export function FormPage(props: FormPageProps) {
         <title>{`${props.title} | Athena`}</title>
       </Helmet>
       <div className="bg-br-atom-700 min-h-[100vh] flex flex-col">
-        <PageHeader />
         <div className="grow flex justify-center items-center">
           <main className="max-w-md mx-auto mb-10 px-2">
             <div>

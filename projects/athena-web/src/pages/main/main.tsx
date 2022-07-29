@@ -28,45 +28,45 @@ export function MainPage() {
       {/** Left Panel (Account Menu & Vault Panel) **/}
       <div id="left-panel" className="min-h-[100vh] flex">
 
-        {/** Account Menu **/}
-        <section id="account-menu" className="bg-br-atom-900 flex flex-col justify-between items-center px-2 pb-3 pt-2">
-          <a href="https://github.com/Ben-Ryder/athena" target="_blank" rel="noreferrer">
-            <LogoIcon size={iconSizes.medium} className="stroke-br-teal-600" />
-          </a>
-          <div className="flex flex-col items-center justify-center">
-            <IconButton
-              label="Help"
-              icon={
-                <div className={iconColorClassNames.secondary + " flex items-center"}>
-                  <HelpIcon size={24} />
-                </div>
-              }
-              onClick={() => {}}
-              className="mt-4"
-            />
-            <IconButton
-              label="Settings"
-              icon={
-                <div className={iconColorClassNames.secondary + " flex items-center"}>
-                  <SettingsIcon size={24} />
-                </div>
-              }
-              onClick={() => {}}
-              className="mt-4"
-            />
-            <IconButton
-              label="Account"
-              icon={
-                <div className={iconColorClassNames.secondary + " flex items-center border-2 border-br-whiteGrey-100 hover:border-br-whiteGrey-200 rounded-[50%]"}>
-                  <AccountIcon size={24} />
-                  {/*<p className="ml-1 text-sm">Account</p>*/}
-                </div>
-              }
-              onClick={() => {}}
-              className="mt-4"
-            />
-          </div>
-        </section>
+        {/*/!** Account Menu **!/*/}
+        {/*<section id="account-menu" className="bg-br-atom-900 flex flex-col justify-between items-center px-2 pb-3 pt-2">*/}
+        {/*  <a href="https://github.com/Ben-Ryder/athena" target="_blank" rel="noreferrer">*/}
+        {/*    <LogoIcon size={iconSizes.medium} className="stroke-br-teal-600" />*/}
+        {/*  </a>*/}
+        {/*  <div className="flex flex-col items-center justify-center">*/}
+        {/*    <IconButton*/}
+        {/*      label="Help"*/}
+        {/*      icon={*/}
+        {/*        <div className={iconColorClassNames.secondary + " flex items-center"}>*/}
+        {/*          <HelpIcon size={24} />*/}
+        {/*        </div>*/}
+        {/*      }*/}
+        {/*      onClick={() => {}}*/}
+        {/*      className="mt-4"*/}
+        {/*    />*/}
+        {/*    <IconButton*/}
+        {/*      label="Settings"*/}
+        {/*      icon={*/}
+        {/*        <div className={iconColorClassNames.secondary + " flex items-center"}>*/}
+        {/*          <SettingsIcon size={24} />*/}
+        {/*        </div>*/}
+        {/*      }*/}
+        {/*      onClick={() => {}}*/}
+        {/*      className="mt-4"*/}
+        {/*    />*/}
+        {/*    <IconButton*/}
+        {/*      label="Account"*/}
+        {/*      icon={*/}
+        {/*        <div className={iconColorClassNames.secondary + " flex items-center border-2 border-br-whiteGrey-100 hover:border-br-whiteGrey-200 rounded-[50%]"}>*/}
+        {/*          <AccountIcon size={24} />*/}
+        {/*          /!*<p className="ml-1 text-sm">Account</p>*!/*/}
+        {/*        </div>*/}
+        {/*      }*/}
+        {/*      onClick={() => {}}*/}
+        {/*      className="mt-4"*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*</section>*/}
 
         {/** Vault Panel **/}
         <section className="flex flex-col w-[500px] bg-br-atom-800">
@@ -80,6 +80,16 @@ export function MainPage() {
               className="absolute left-[0.5rem] py-2"
             />
             <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name Here</p>
+            <IconButton
+              label="Account Menu"
+              icon={
+                <div className={iconColorClassNames.secondary + " flex items-center border-2 border-br-whiteGrey-100 hover:border-br-whiteGrey-200 rounded-[50%]"}>
+                  <AccountIcon size={20} className={iconColorClassNames.secondary} />
+                </div>
+            }
+              onClick={() => {}}
+              className="absolute right-[0.5rem] py-2"
+            />
           </div>
 
           {/** Vault Panel Switcher **/}

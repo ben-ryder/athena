@@ -13,6 +13,10 @@ import {LogoutPage} from "./pages/user/logout";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import {LoginPage} from "./pages/user/login";
 import {MainPage} from "./pages/main/main";
+import {RegisterPage} from "./pages/user/register";
+import {ForgottenPasswordPage} from "./pages/user/forgotten-password";
+import {routes} from "./routes";
+import {ResetPasswordPage} from "./pages/user/reset-password";
 
 
 function App() {
@@ -25,15 +29,20 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Main Routes */}
+        <Route path={routes.home} element={<HomePage />} />
+
         <Route path="/main" element={<MainPage />}/>
 
         {/* User Routes */}
-        <Route path="/user/logout" element={<LogoutPage />}/>
-        <Route path="/user/login" element={<LoginPage />}/>
+        <Route path={routes.users.logout} element={<LogoutPage />} />
+        <Route path={routes.users.login} element={<LoginPage />} />
+        <Route path={routes.users.register} element={<RegisterPage />} />
+        <Route path={routes.users.password.forgotten} element={<ForgottenPasswordPage />} />
+        <Route path={routes.users.password.reset} element={<ResetPasswordPage />} />
+
 
         {/* Restricted Routes (requiring encryption and user login) */}
         <Route element={<AthenaRestrictedRoute />}>
-          <Route path="/" element={<HomePage />} />
           <Route path="/notes/new" element={<NewNotePage />} />
           <Route path="/notes" element={<NotesPage />} />
           <Route path="/notes/:noteId" element={<EditNotePage />} />

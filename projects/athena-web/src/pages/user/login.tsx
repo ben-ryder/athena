@@ -1,19 +1,13 @@
 import React, {useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
-
-import { AthenaErrorIdentifiers } from "@ben-ryder/athena-js-lib";
+import {AthenaErrorIdentifiers, LoginRequest, LoginRequestSchema} from "@ben-ryder/athena-js-lib";
 import {useAthena} from "../../helpers/use-athena";
-
 import {FormPage} from "../../patterns/layout/form-page";
-
-
-interface LoginFormData {
-  username: string;
-  password: string;
-}
+import {Link} from "../../patterns/element/link";
+import {routes} from "../../routes";
 
 
 export function LoginPage() {
@@ -21,10 +15,12 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginRequest>({
+    resolver: zodResolver(LoginRequestSchema)
+  });
 
 
-  const onSubmit: SubmitHandler<LoginFormData> = async function(values: LoginFormData) {
+  const onSubmit: SubmitHandler<LoginRequest> = async function(values: LoginRequest) {
     try {
       await apiClient.login(values.username, values.password);
 
@@ -44,7 +40,7 @@ export function LoginPage() {
   return (
     <FormPage
       title="Log In"
-      description={<p className="text-br-whiteGrey-200">Log in to your account. Don't have an account? <a href='/user/sign-up'>Sign Up</a></p>}
+      description={<p className="text-br-whiteGrey-200 mt-2">Log in to your account. Don't have an account? <Link href={routes.users.register}>Register</Link></p>}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-4">
@@ -72,8 +68,11 @@ export function LoginPage() {
               <p className="text-br-red-500">{errorMessage}</p>
           </div>
         }
-        <div className="mt-4 flex justify-end">
-          <Button type="submit">Log In</Button>
+        <div className="mt-6 flex justify-end">
+          <Button type="submit" status={isSubmitting ? "awaiting" : "normal"}>Log In</Button>
+        </div>
+        <div className="mt-6 flex justify-center items-center">
+          <p><Link href={routes.users.password.forgotten}>Forgotten your password?</Link></p>
         </div>
       </form>
     </FormPage>
