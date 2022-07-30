@@ -1,4 +1,4 @@
-import { Controller, Route, HTTPMethods } from '@kangojs/core';
+import {Controller, Route, HTTPMethods, HTTPStatusCodes} from '@kangojs/core';
 import { Request, Response, NextFunction } from 'express';
 
 import { AuthService } from './auth.service';
@@ -87,4 +87,65 @@ export class AuthController {
     async check(req: Request, res: Response, next: NextFunction) {
         return res.send({});
     }
+
+    /**
+     * An endpoint where users can request password reset emails.
+     * Will always succeed regardless of if the email address supplied was valid and/or an email was actually sent
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    @Route({
+        path: '/password-reset',
+        httpMethod: HTTPMethods.POST,
+        authRequired: false
+    })
+    async requestPasswordReset(req: Request, res: Response, next: NextFunction) {
+        return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
+            statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
+            message: "Password resets have not been implemented yet"
+        });
+    }
+
+    /**
+     * An endpoint to check if the given password reset token is valid.
+     * This is useful as it allows quick user feedback in case the token has expired etc.
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    @Route({
+        path: '/password-reset/check',
+        httpMethod: HTTPMethods.POST,
+        authRequired: false
+    })
+    async checkPasswordResetToken(req: Request, res: Response, next: NextFunction) {
+        return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
+            statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
+            message: "Password resets have not been implemented yet"
+        });
+    }
+
+    /**
+     * An endpoint where users can request password reset emails.
+     * Will always succeed regardless of if the email address supplied was valid and/or an email was actually sent
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    @Route({
+        path: '/password-reset/change',
+        httpMethod: HTTPMethods.POST,
+        authRequired: false
+    })
+    async requestPasswordChange(req: Request, res: Response, next: NextFunction) {
+        return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
+            statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
+            message: "Password resets have not been implemented yet"
+        });
+    }
+    // todo: add password reset functionality to API
 }
