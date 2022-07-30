@@ -21,6 +21,7 @@ import {UpdateNoteResponse} from "./schemas/notes/response/update.notes.response
 import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
 import {CreateUserRequest} from "./schemas/users/request/create.users.request";
 import {InfoDto} from "./schemas/info/dtos/info.dto";
+import {CreateUserResponse} from "./schemas/users/response/create.users.response";
 
 
 export interface QueryOptions {
@@ -192,12 +193,21 @@ export class AthenaAPIClient {
     }
 
     public async register(user: CreateUserRequest) {
-        return this.query<UserDto>({
+        const data = await this.query<CreateUserResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/users`,
             data: user,
             noAuthRequired: true
         });
+
+        await AthenaAPIClient.saveData(this.options.saveCurrentUser, data.user);
+
+        await AthenaAPIClient.saveData(this.options.saveRefreshToken, data.refreshToken);
+        this.refreshToken = data.refreshToken;
+        await AthenaAPIClient.saveData(this.options.saveAccessToken, data.accessToken);
+        this.accessToken = data.accessToken;
+
+        return data;
     }
 
     public async logout() {
@@ -231,16 +241,18 @@ export class AthenaAPIClient {
             throw new AthenaNoRefreshTokenError();
         }
 
-        const tokens = await this.query<RefreshResponse>({
+        const data = await this.query<RefreshResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/auth/refresh`,
             noAuthRequired: true
         });
 
-        await AthenaAPIClient.saveData(this.options.saveRefreshToken, tokens.refreshToken);
-        this.refreshToken = tokens.refreshToken;
-        await AthenaAPIClient.saveData(this.options.saveAccessToken, tokens.accessToken);
-        this.accessToken = tokens.accessToken;
+        await AthenaAPIClient.saveData(this.options.saveRefreshToken, data.refreshToken);
+        this.refreshToken = data.refreshToken;
+        await AthenaAPIClient.saveData(this.options.saveAccessToken, data.accessToken);
+        this.accessToken = data.accessToken;
+
+        return data;
     }
 
     // Note Listing Endpoints

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {useNavigate} from "react-router-dom";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
@@ -16,7 +15,6 @@ type ForgottenPasswordSchema = z.infer<typeof ForgottenPasswordSchema>;
 
 export function ForgottenPasswordPage() {
   const { apiClient } = useAthena();
-  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ForgottenPasswordSchema>({

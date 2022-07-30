@@ -36,7 +36,7 @@ export function RegisterEnabledPage() {
 
   const onSubmit: SubmitHandler<UserRegisterSchema> = async function(values: UserRegisterSchema) {
     try {
-      const user = await apiClient.register({
+      const data = await apiClient.register({
         username: values.username,
         email: values.email,
         password: values.password,
@@ -44,7 +44,7 @@ export function RegisterEnabledPage() {
       });
 
       // todo: also save new access & refresh tokens when they are returned by the API
-      setCurrentUser(user);
+      setCurrentUser(data.user);
       await navigate(routes.vaults.list);
     }
     catch (e: any) {

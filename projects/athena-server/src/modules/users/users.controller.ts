@@ -1,15 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 
-import {Controller, Route, HTTPMethods} from '@kangojs/core';
+import {Controller, Route, HTTPMethods, AccessForbiddenError} from '@kangojs/core';
 
 import { UsersService } from './users.service';
 import {
+    AthenaErrorIdentifiers,
     CreateUserRequestSchema,
-    CreateUserResponse,
-    GetUserResponse, UpdateUserRequestSchema, UpdateUserResponse,
+    GetUserResponse, UpdateUserRequestSchema, UpdateUserResponse, UserDto,
     UsersURLParamsSchema
 } from "@ben-ryder/athena-js-lib";
 import {RequestWithUserContext} from "../../common/request-with-context";
+import {ConfigService} from "../../services/config/config";
+import {TokenPair, TokenService} from "../../services/token/token.service";
 
 
 @Controller('/v1/users',{
@@ -17,7 +19,9 @@ import {RequestWithUserContext} from "../../common/request-with-context";
 })
 export class UsersController {
     constructor(
-      private usersService: UsersService
+      private configService: ConfigService,
+      private usersService: UsersService,
+      private tokenService: TokenService
     ) {}
 
     @Route({
@@ -26,16 +30,29 @@ export class UsersController {
         authRequired: false
     })
     async add(req: Request, res: Response, next: NextFunction) {
-        let newUser: CreateUserResponse;
+        let newUser: UserDto;
+        let tokens: TokenPair;
+
+        if (!this.configService.config.app.registrationEnabled) {
+            throw new AccessForbiddenError({
+                identifier: AthenaErrorIdentifiers.USER_REGISTRATION_DISABLED,
+                applicationMessage: "User registration is currently disabled."
+            })
+        }
 
         try {
             newUser = await this.usersService.add(req.body);
+            tokens = await this.tokenService.createTokenPair(newUser);
         }
         catch(e) {
             return next(e);
         }
 
-        return res.send(newUser);
+        return res.send({
+            user: newUser,
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken
+        });
     }
 
     @Route({

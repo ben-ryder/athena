@@ -31,15 +31,22 @@ describe('Add User - /v1/users [POST]',() => {
 
       expect(statusCode).toEqual(HTTPStatusCodes.OK);
       expect(body).toEqual(expect.objectContaining({
-        id: expect.any(String),
-        username: defaultTestUser.username,
-        email: defaultTestUser.email,
-        isVerified: false,
-        encryptionSecret: defaultTestUser.encryptionSecret,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String)
+        user: {
+          id: expect.any(String),
+          username: defaultTestUser.username,
+          email: defaultTestUser.email,
+          isVerified: false,
+          encryptionSecret: defaultTestUser.encryptionSecret,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String)
+        },
+        accessToken: expect.any(String),
+        refreshToken: expect.any(String)
       }))
     })
+
+    // todo: consider adding access & refresh token tests for /v1/users [POST]
+    test('When adding a valid new user, the returned access and refresh tokens should be valid', async () => {})
 
     test("When using a password that's 8 characters, the new user should be added & returned", async () => {
       const newUser = {
@@ -338,5 +345,12 @@ describe('Add User - /v1/users [POST]',() => {
         testCases: [1, 1.5, true, null, undefined, {test: 'yes'}, [1, 2]]
       })
     )
+  })
+
+  // todo: write registration enabled tests for /v1/users [POST]
+  describe('Registration Status', () => {
+    test("When registration is enabled, adding a new user should succeed", async () => {})
+
+    test("When registration is disabled, adding a new user should fail", async () => {})
   })
 })
