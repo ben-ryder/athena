@@ -10,4 +10,4 @@
 import {ReactElement, ReactFragment} from "react";
 
 
-export type StrictReactNode = ReactElement | ReactFragment
+export type StrictReactNode = ReactElement | ReactFragment | string

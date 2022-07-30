@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {RegisterEnabledPage} from "./register-enabled";
 import {RegisterDisabledPage} from "./register-disabled";
-import {LoadingPage} from "../../../patterns/layout/loading-page";
+import {LoadingPage} from "../../../patterns/pages/loading-page";
 
 
 export enum RegistrationStatus {

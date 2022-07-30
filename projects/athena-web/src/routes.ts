@@ -8,6 +8,7 @@ export const routes = {
       reset: "/user/reset-password"
     },
     logout: "/user/logout",
+    settings: "/user/settings"
   },
   app:  {
     home: "/app/:userId"

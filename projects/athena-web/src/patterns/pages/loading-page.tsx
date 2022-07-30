@@ -1,6 +1,4 @@
-import React, {useEffect} from 'react';
-import {useNavigate} from "react-router-dom";
-import {useAthena} from "../../helpers/use-athena";
+import React from 'react';
 import {P} from "@ben-ryder/jigsaw";
 import {LoadingIcon} from "../element/loading-icon";
 import {Page} from "./page";
@@ -10,17 +8,6 @@ export interface LoadingPageProps {
 }
 
 export function LoadingPage(props: LoadingPageProps) {
-    const navigate = useNavigate();
-    const { apiClient } = useAthena();
-
-    useEffect(() => {
-        async function logout() {
-            await apiClient.logout();
-            await navigate("/");
-        }
-        logout();
-    }, [apiClient, navigate]);
-
     return (
       <Page>
           <div className="grow flex flex-col justify-center items-center">

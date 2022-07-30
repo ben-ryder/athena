@@ -13,5 +13,8 @@ export default defineConfig({
     commonjsOptions: {
       include: [/athena-js-lib/, /node_modules/],
     }
+  },
+  server: {
+    port: 3000
   }
 });

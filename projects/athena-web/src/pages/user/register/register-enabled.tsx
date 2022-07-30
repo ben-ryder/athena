@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
 import {AthenaErrorIdentifiers, CreateUserRequestSchema} from "@ben-ryder/athena-js-lib";
 import {z} from "zod";
-import {useNavigate} from "react-router-dom";
 import {routes} from "../../../routes";
-import {FormPage} from "../../../patterns/layout/form-page";
+import {FormPage} from "../../../patterns/pages/form-page";
 import {Link} from "../../../patterns/element/link";
+import {useAthena} from "../../../helpers/use-athena";
 
 const UserRegisterSchema = z.object({
   username: CreateUserRequestSchema.shape.username,
@@ -23,7 +23,7 @@ const UserRegisterSchema = z.object({
 type UserRegisterSchema = z.infer<typeof UserRegisterSchema>;
 
 export function RegisterEnabledPage() {
-  const navigate = useNavigate();
+  const {apiClient} = useAthena();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<UserRegisterSchema>({
@@ -47,17 +47,6 @@ export function RegisterEnabledPage() {
       }
     }
   };
-
-  useEffect(() => {
-    async function checkEnabled() {
-      const registrationDisabled = true;
-
-      if (registrationDisabled) {
-        await navigate(routes.users.registerDisabled);
-      }
-    }
-    checkEnabled();
-  }, [])
 
   return (
     <FormPage

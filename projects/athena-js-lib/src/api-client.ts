@@ -158,6 +158,7 @@ export class AthenaAPIClient {
         }
     }
 
+    // User
     public async login(username: string, password: string) {
         const data = await this.query<LoginResponse>({
             method: 'POST',
@@ -220,7 +221,7 @@ export class AthenaAPIClient {
         this.accessToken = tokens.accessToken;
     }
 
-    // Notes
+    // Note Listing Endpoints
     private async getEncryptedNotes(): Promise<GetNotesResponse> {
         return this.query<GetNotesResponse>({
             method: 'GET',
@@ -245,6 +246,7 @@ export class AthenaAPIClient {
         };
     }
 
+    // Note Endpoints
     async createNote(newNote: CreateNoteRequest) {
         await this.checkEncryptionKey();
 

@@ -7,11 +7,11 @@ import {
   UpdateUserRequestSchema
 } from "@ben-ryder/athena-js-lib";
 import {z} from "zod";
-import {FormPage} from "../../../patterns/layout/form-page";
-import {LoadingPage} from "../../../patterns/layout/loading-page";
+import {FormPage} from "../../../patterns/pages/form-page";
+import {LoadingPage} from "../../../patterns/pages/loading-page";
 import {Link} from "../../../patterns/element/link";
 import {routes} from "../../../routes";
-import {Page} from "../../../patterns/layout/page";
+import {MessagePage} from "../../../patterns/pages/message-page";
 
 // todo: replace with API schema once written
 const ResetPasswordSchema = z.object({
@@ -73,17 +73,13 @@ export function ResetPasswordPage() {
   }
   else if (status === ResetTokenStatus.INVALID || status === ResetTokenStatus.MISSING) {
     return (
-      // todo: consider refactoring this into a <MessagePage /> component. This could also be used on the homepage, 404 etc
-      <Page>
-        <div className="grow flex flex-col justify-center items-center">
-          <H1 className="text-br-teal-600">Reset Link Invalid</H1>
-          <P className="text-br-whiteGrey-200 my-4 max-w-sm text-center max-w-xl text-center">
-            Your password reset link has expired or is invalid.
-            If you still want to reset your password you will have to request another password reset email.
-          </P>
+      <MessagePage
+        heading="Invalid Reset Link"
+        text="Your password reset link has expired or is invalid. If you still want to reset your password you will have to request another password reset email."
+        extraContent={
           <Link href={routes.users.password.forgotten}>Request new password reset email</Link>
-        </div>
-      </Page>
+        }
+      />
     )
   }
   else {

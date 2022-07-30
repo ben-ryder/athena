@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
 import {AthenaErrorIdentifiers, LoginRequest, LoginRequestSchema} from "@ben-ryder/athena-js-lib";
 import {useAthena} from "../../helpers/use-athena";
-import {FormPage} from "../../patterns/layout/form-page";
+import {FormPage} from "../../patterns/pages/form-page";
 import {Link} from "../../patterns/element/link";
 import {routes} from "../../routes";
 

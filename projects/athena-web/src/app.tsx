@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/tailwind.css';
 
@@ -13,38 +13,58 @@ import {ForgottenPasswordPage} from "./pages/user/password/forgotten-password";
 import {routes} from "./routes";
 import {ResetPasswordPage} from "./pages/user/password/reset-password";
 import {RegisterPage} from "./pages/user/register/register";
+import {AthenaContext, athenaStorageInstance, athenaAPIClientInstance, CurrentUserContext} from "./helpers/use-athena";
+import {AthenaSessionManager} from "./helpers/athena-session-manager";
+import {UserSettingsPage} from "./pages/user/settings";
+import {VaultsPage} from "./pages/vaults/vaults";
 
 
 export function App() {
+  const [currentUser, setCurrentUser] = useState<CurrentUserContext>(null);
+
   return (
-    <HelmetProvider>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>Athena</title>
-      </Helmet>
-      <BrowserRouter>
-        <Routes>
-          {/* Main Routes */}
-          <Route path={routes.home} element={<HomePage />} />
+    <AthenaContext.Provider value={{
+      apiClient: athenaAPIClientInstance,
+      storage: athenaStorageInstance,
+      currentUser,
+      setCurrentUser
+    }}>
+      <HelmetProvider>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Athena</title>
+        </Helmet>
 
-          <Route path="/main" element={<MainPage />}/>
+        <AthenaSessionManager>
+          <BrowserRouter>
+            <Routes>
+              {/* Main Routes */}
+              <Route path={routes.home} element={<HomePage />} />
 
-          {/* User Routes */}
-          <Route path={routes.users.logout} element={<LogoutPage />} />
-          <Route path={routes.users.login} element={<LoginPage />} />
-          <Route path={routes.users.register} element={<RegisterPage />} />
-          <Route path={routes.users.password.forgotten} element={<ForgottenPasswordPage />} />
-          <Route path={routes.users.password.reset} element={<ResetPasswordPage />} />
+              <Route path="/main" element={<MainPage />}/>
 
+              {/* User Routes */}
+              <Route path={routes.users.logout} element={<LogoutPage />} />
+              <Route path={routes.users.login} element={<LoginPage />} />
+              <Route path={routes.users.register} element={<RegisterPage />} />
+              <Route path={routes.users.password.forgotten} element={<ForgottenPasswordPage />} />
+              <Route path={routes.users.password.reset} element={<ResetPasswordPage />} />
+              <Route path={routes.users.settings} element={<UserSettingsPage />} />
 
-          {/* Restricted Routes (requiring encryption and user login) */}
-          <Route element={<AthenaRestrictedRoute />}>
-          </Route>
+              {/* Restricted Routes (requiring encryption and user login) */}
+              <Route element={<AthenaRestrictedRoute />} >
 
-          {/* 404 Route */}
-          <Route path="*" element={<PageNotFound />}/>
-        </Routes>
-      </BrowserRouter>
-    </HelmetProvider>
+                {/* Vaults Routes */}
+                <Route path={routes.vaults.list} element={<VaultsPage />} />
+
+              </Route>
+
+              {/* 404 Route */}
+              <Route path="*" element={<PageNotFound />}/>
+            </Routes>
+          </BrowserRouter>
+        </AthenaSessionManager>
+      </HelmetProvider>
+    </AthenaContext.Provider>
   );
 }
