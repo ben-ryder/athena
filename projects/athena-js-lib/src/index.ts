@@ -15,6 +15,8 @@ export * from './schemas/common/pagination-query-params-schema';
 export * from './schemas/common/order-by-fields';
 export * from './schemas/common/order-directions';
 
+export * from './schemas/info/dtos/info.dto';
+
 export * from './schemas/auth/request/login.auth.request';
 export * from './schemas/auth/request/refresh.auth.request';
 export * from './schemas/auth/request/revoke.auth.request';

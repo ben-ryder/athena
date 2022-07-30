@@ -20,6 +20,7 @@ import {CreateNoteResponse} from "./schemas/notes/response/create.notes.response
 import {UpdateNoteResponse} from "./schemas/notes/response/update.notes.response";
 import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
 import {CreateUserRequest} from "./schemas/users/request/create.users.request";
+import {InfoDto} from "./schemas/info/dtos/info.dto";
 
 
 export interface QueryOptions {
@@ -157,6 +158,15 @@ export class AthenaAPIClient {
         catch (e) {
             throw new AthenaDataDeleteError({originalError: e});
         }
+    }
+
+    // info
+    async getInfo() {
+        return this.query<InfoDto>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/info`,
+            noAuthRequired: true
+        });
     }
 
     // User

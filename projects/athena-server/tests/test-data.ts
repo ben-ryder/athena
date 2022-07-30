@@ -1,8 +1,11 @@
 export const testEnvironmentVars = {
   ACCESS_TOKEN_SECRET: "ivfbaklhfvuaiebgkjearbgoebrgkjebgiskbgnbgihsbdkgbodjbgbkgjfddfd",
-  REFRESH_TOKEN_SECRET: "jvbfhru9h9iuebukhreuirbghkebrgouaerkbjgbfousfashkbgrieaobferge",
   ACCESS_TOKEN_EXPIRY: "7h",
-  REFRESH_TOKEN_EXPIRY: "7 days"
+  REFRESH_TOKEN_SECRET: "jvbfhru9h9iuebukhreuirbghkebrgouaerkbjgbfousfashkbgrieaobferge",
+  REFRESH_TOKEN_EXPIRY: "7 days",
+  PASSWORD_RESET_SECRET: "kjbzdorgbdguidrbgigibiubxfvigzsebxfzkhkzfvbizdbvjkbdvibhbvfzd",
+  PASSWORD_RESET_EXPIRY: "10 mins",
+  APP_REGISTRATION_ENABLED: true
 }
 
 /**

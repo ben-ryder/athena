@@ -7,6 +7,7 @@ import {BaseController} from "./modules/base/base.controller";
 import {UsersController} from "./modules/users/users.controller";
 import {VaultsController} from "./modules/vaults/vaults.controller";
 import {ZodValidator} from "@kangojs/zod-validation";
+import {InfoController} from "./modules/info/info.controller";
 
 
 export async function createApp() {
@@ -18,6 +19,7 @@ export async function createApp() {
   return new KangoJS({
     controllers: [
       BaseController,
+      InfoController,
       AuthController,
       UsersController,
       VaultsController

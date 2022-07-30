@@ -25,7 +25,14 @@ export interface ConfigInterface {
         refreshToken: {
             secret: string,
             expiry: string
+        },
+        passwordReset: {
+            secret: string,
+            expiry: string
         }
+    },
+    app: {
+        registrationEnabled: boolean
     }
 }
 
@@ -54,7 +61,14 @@ export const config: ConfigInterface = Object.freeze({
         refreshToken: {
             secret: process.env.REFRESH_TOKEN_SECRET as string,
             expiry: process.env.REFRESH_TOKEN_EXPIRY as string
+        },
+        passwordReset: {
+            secret: process.env.PASSWORD_RESET_TOKEN_SECRET as string,
+            expiry: process.env.PASSWORD_RESET_TOKEN_EXPIRY as string
         }
+    },
+    app: {
+        registrationEnabled: process.env.APP_REGISTRATION_ENABLED === "true"
     }
 })
 

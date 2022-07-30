@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {RegisterEnabledPage} from "./register-enabled";
 import {RegisterDisabledPage} from "./register-disabled";
 import {LoadingPage} from "../../../patterns/pages/loading-page";
+import {useAthena} from "../../../helpers/use-athena";
 
 
 export enum RegistrationStatus {
@@ -11,14 +12,24 @@ export enum RegistrationStatus {
 }
 
 export function RegisterPage() {
+  const {apiClient} = useAthena();
   const [status, setStatus] = useState<RegistrationStatus>(RegistrationStatus.CHECK_IN_PROGRESS);
 
   useEffect(() => {
-    //todo: replace with real check
     async function checkEnabled() {
-      setTimeout(() => {
-        setStatus(RegistrationStatus.ENABLED);
-      }, 1000)
+      try {
+        const info = await apiClient.getInfo();
+
+        if (info.registration) {
+          setStatus(RegistrationStatus.ENABLED);
+        }
+        else {
+          setStatus(RegistrationStatus.DISABLED);
+        }
+      }
+      catch (e) {
+        console.log(e);
+      }
     }
     checkEnabled();
   }, [])

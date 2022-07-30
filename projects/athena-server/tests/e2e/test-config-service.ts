@@ -13,6 +13,10 @@ export class TestConfigService extends ConfigService {
       refreshToken: {
         secret: testEnvironmentVars.REFRESH_TOKEN_SECRET,
         expiry: testEnvironmentVars.REFRESH_TOKEN_EXPIRY
+      },
+      passwordReset: {
+        secret: testEnvironmentVars.PASSWORD_RESET_SECRET,
+        expiry: testEnvironmentVars.PASSWORD_RESET_EXPIRY
       }
     },
     database: {
@@ -21,5 +25,8 @@ export class TestConfigService extends ConfigService {
     cache: {
       redisUrl: process.env.TESTING_REDIS_URL as string
     },
+    app: {
+      registrationEnabled: testEnvironmentVars.APP_REGISTRATION_ENABLED
+    }
   }
 }

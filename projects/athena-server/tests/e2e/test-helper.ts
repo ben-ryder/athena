@@ -14,6 +14,7 @@ import {SuperAgentTest, agent} from "supertest";
 import {CacheService} from "../../src/services/cache/cache.service";
 import {UserDto} from "@ben-ryder/athena-js-lib";
 import {VaultsController} from "../../src/modules/vaults/vaults.controller";
+import {InfoController} from "../../src/modules/info/info.controller";
 
 /**
  * This class encapsulates all the test specific application functionality that is required.
@@ -36,6 +37,7 @@ export class TestHelper {
       ],
       controllers: [
         BaseController,
+        InfoController,
         AuthController,
         UsersController,
         VaultsController
