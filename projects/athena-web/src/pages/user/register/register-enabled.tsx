@@ -8,6 +8,7 @@ import {routes} from "../../../routes";
 import {FormPage} from "../../../patterns/pages/form-page";
 import {Link} from "../../../patterns/element/link";
 import {useAthena} from "../../../helpers/use-athena";
+import {useNavigate} from "react-router-dom";
 
 const UserRegisterSchema = z.object({
   username: CreateUserRequestSchema.shape.username,
@@ -22,8 +23,10 @@ const UserRegisterSchema = z.object({
 
 type UserRegisterSchema = z.infer<typeof UserRegisterSchema>;
 
+
 export function RegisterEnabledPage() {
-  const {apiClient} = useAthena();
+  const navigate = useNavigate();
+  const {apiClient, setCurrentUser, storage} = useAthena();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<UserRegisterSchema>({
@@ -33,7 +36,16 @@ export function RegisterEnabledPage() {
 
   const onSubmit: SubmitHandler<UserRegisterSchema> = async function(values: UserRegisterSchema) {
     try {
-      console.log(values);
+      const user = await apiClient.register({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        encryptionSecret: "erjgbielbgeilhbgehlirbg" // todo: actually create secret
+      });
+
+      // todo: also save new access & refresh tokens when they are returned by the API
+      setCurrentUser(user);
+      await navigate(routes.vaults.list);
     }
     catch (e: any) {
       if (e.response?.identifier === AthenaErrorIdentifiers.USER_EMAIL_EXISTS) {

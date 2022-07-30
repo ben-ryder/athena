@@ -13,21 +13,39 @@ import {ForgottenPasswordPage} from "./pages/user/password/forgotten-password";
 import {routes} from "./routes";
 import {ResetPasswordPage} from "./pages/user/password/reset-password";
 import {RegisterPage} from "./pages/user/register/register";
-import {AthenaContext, athenaStorageInstance, athenaAPIClientInstance, CurrentUserContext} from "./helpers/use-athena";
+import {
+  AthenaContext,
+  athenaStorageInstance,
+  athenaAPIClientInstance,
+  CurrentUserContext,
+  useAthena
+} from "./helpers/use-athena";
 import {AthenaSessionManager} from "./helpers/athena-session-manager";
 import {UserSettingsPage} from "./pages/user/settings";
 import {VaultsPage} from "./pages/vaults/vaults";
 
 
 export function App() {
+  const { storage } = useAthena();
   const [currentUser, setCurrentUser] = useState<CurrentUserContext>(null);
+
+  async function processSetCurrentUser(user: CurrentUserContext) {
+    if (user) {
+      await storage.saveCurrentUser(user);
+    }
+    else {
+      await storage.deleteCurrentUser();
+    }
+
+    setCurrentUser(user);
+  }
 
   return (
     <AthenaContext.Provider value={{
       apiClient: athenaAPIClientInstance,
       storage: athenaStorageInstance,
       currentUser,
-      setCurrentUser
+      setCurrentUser: processSetCurrentUser
     }}>
       <HelmetProvider>
         <Helmet>

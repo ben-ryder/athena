@@ -2,17 +2,18 @@ import React, {useEffect} from 'react';
 import {useNavigate} from "react-router-dom";
 import {useAthena} from "../../helpers/use-athena";
 import {LoadingPage} from "../../patterns/pages/loading-page";
+import {routes} from "../../routes";
 
 
 export function LogoutPage() {
     const navigate = useNavigate();
-    const { apiClient, storage } = useAthena();
+    const { apiClient, setCurrentUser } = useAthena();
 
     useEffect(() => {
         async function logout() {
-            await storage.clear();
             await apiClient.logout();
-            await navigate("/");
+            setCurrentUser(null);
+            await navigate(routes.home);
         }
         logout();
     }, [apiClient, navigate]);

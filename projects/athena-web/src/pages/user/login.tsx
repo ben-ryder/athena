@@ -11,7 +11,7 @@ import {routes} from "../../routes";
 
 
 export function LoginPage() {
-  const { apiClient } = useAthena();
+  const { apiClient, setCurrentUser } = useAthena();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
@@ -22,17 +22,17 @@ export function LoginPage() {
 
   const onSubmit: SubmitHandler<LoginRequest> = async function(values: LoginRequest) {
     try {
-      await apiClient.login(values.username, values.password);
+      const data = await apiClient.login(values.username, values.password);
 
-      // On successful login, redirect user to main homepage
-      await navigate('/');
+      setCurrentUser(data.user);
+      await navigate(routes.vaults.list);
     }
     catch (e: any) {
       if (e.response?.identifier === AthenaErrorIdentifiers.AUTH_CREDENTIALS_INVALID) {
-        setErrorMessage("The supplied username & password combination is incorrect.")
+        setErrorMessage("The supplied username & password combination is incorrect.");
       }
       else {
-        setErrorMessage("An unexpected error occurred while attempting to log you in. Please try again later.")
+        setErrorMessage("An unexpected error occurred while attempting to log you in. Please try again later.");
       }
     }
   };

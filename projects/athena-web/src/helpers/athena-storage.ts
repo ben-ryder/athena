@@ -6,6 +6,26 @@ export class AthenaStorage {
   REFRESH_TOKEN_STORAGE_KEY = 'refreshToken';
   CURRENT_USER_STORAGE_KEY = 'currentUser';
 
+  constructor() {
+    this.loadEncryptionKey = this.loadEncryptionKey.bind(this);
+    this.saveEncryptionKey = this.saveEncryptionKey.bind(this);
+    this.deleteEncryptionKey = this.deleteEncryptionKey.bind(this);
+
+    this.loadAccessToken = this.loadAccessToken.bind(this);
+    this.saveAccessToken = this.saveAccessToken.bind(this);
+    this.deleteAccessToken = this.deleteAccessToken.bind(this);
+
+    this.loadRefreshToken = this.loadRefreshToken.bind(this);
+    this.saveRefreshToken = this.saveRefreshToken.bind(this);
+    this.deleteRefreshToken = this.deleteRefreshToken.bind(this);
+
+    this.loadCurrentUser = this.loadCurrentUser.bind(this);
+    this.saveCurrentUser = this.saveCurrentUser.bind(this);
+    this.deleteCurrentUser = this.deleteCurrentUser.bind(this);
+
+    this.clear = this.clear.bind(this);
+  }
+
   async loadEncryptionKey(): Promise<string|null> {
     return localStorage.getItem(this.ENCRYPTION_KEY_STORAGE_KEY);
   }

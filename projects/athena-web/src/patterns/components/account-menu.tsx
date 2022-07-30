@@ -8,7 +8,23 @@ export interface AccountIndicatorProps {
   user: UserDto
 }
 
-export function AccountIndicator(props: AccountIndicatorProps) {
+
+export function AccountMenu(props: AccountIndicatorProps) {
+  const links = [
+    {
+      text: "Vaults",
+      href: routes.vaults.list,
+    },
+    {
+      text: "Settings",
+      href: routes.users.settings,
+    },
+    {
+      text: "Log Out",
+      href: routes.users.logout,
+    }
+  ];
+
   return (
     <Popover>
       <Popover.Button
@@ -25,8 +41,9 @@ export function AccountIndicator(props: AccountIndicatorProps) {
       >
         <nav className="text-br-whiteGrey-100 text-sm">
           <ul>
-            <li><a className="block w-full p-2 text-center bg-br-atom-600 hover:bg-br-atom-500" href={routes.users.settings}>Settings</a></li>
-            <li><a className="block w-full p-2 text-center bg-br-atom-600 hover:bg-br-atom-500" href={routes.users.logout}>Log Out</a></li>
+            {links.map(link =>
+              <li key={link.href}><a className="block w-full p-2 text-center bg-br-atom-600 hover:bg-br-atom-500" href={link.href}>{link.text}</a></li>
+            )}
           </ul>
         </nav>
       </Popover.Panel>

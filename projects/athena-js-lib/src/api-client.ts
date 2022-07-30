@@ -19,6 +19,7 @@ import {NoteDto} from "./schemas/notes/dtos/note.dto";
 import {CreateNoteResponse} from "./schemas/notes/response/create.notes.response";
 import {UpdateNoteResponse} from "./schemas/notes/response/update.notes.response";
 import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
+import {CreateUserRequest} from "./schemas/users/request/create.users.request";
 
 
 export interface QueryOptions {
@@ -176,6 +177,17 @@ export class AthenaAPIClient {
         this.refreshToken = data.refreshToken;
         await AthenaAPIClient.saveData(this.options.saveAccessToken, data.accessToken);
         this.accessToken = data.accessToken;
+
+        return data;
+    }
+
+    public async register(user: CreateUserRequest) {
+        return this.query<UserDto>({
+            method: 'POST',
+            url: `${this.options.apiEndpoint}/v1/users`,
+            data: user,
+            noAuthRequired: true
+        });
     }
 
     public async logout() {

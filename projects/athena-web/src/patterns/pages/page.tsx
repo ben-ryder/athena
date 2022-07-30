@@ -10,7 +10,7 @@ export interface PageProps {
 
 export function Page(props: PageProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-br-atom-700">
       <Header />
       <div className="grow relative flex flex-col">
         {props.children}
