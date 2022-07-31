@@ -20,7 +20,7 @@ export function FormPage(props: FormPageProps) {
         <title>{`${props.title} | Athena`}</title>
       </Helmet>
       <div className="grow flex flex-col justify-center items-center">
-        <main className="max-w-sm mx-auto mb-10 px-2">
+        <main className="w-96 mx-auto mb-10 px-2">
           <div>
             <H1 className="text-br-teal-600">{props.title}</H1>
             {props.description && description}

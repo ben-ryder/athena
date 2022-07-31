@@ -4,15 +4,15 @@ import {MessagePage} from "../../patterns/pages/message-page";
 import {Helmet} from "react-helmet-async";
 
 
-export function VaultsPage() {
+export function DeleteVaultPage() {
   return (
     <>
       <Helmet>
-        <title>Vaults | Athena</title>
+        <title>Delete Vault | Athena</title>
       </Helmet>
       <MessagePage
-        heading="Vaults List"
-        text="A list of vaults"
+        heading="Delete Vault"
+        text="Delete a new vault"
       />
     </>
   );

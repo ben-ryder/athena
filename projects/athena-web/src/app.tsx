@@ -22,9 +22,12 @@ import {
 } from "./helpers/use-athena";
 import {AthenaSessionManager} from "./helpers/athena-session-manager";
 import {UserSettingsPage} from "./pages/user/settings";
-import {VaultsPage} from "./pages/vaults/vaults";
 import {RequestVerificationPage} from "./pages/user/verify/request-verification";
 import {SubmitVerificationPage} from "./pages/user/verify/submit-verification";
+import {ListVaultsPage} from "./pages/vaults/list-vaults";
+import {CreateVaultPage} from "./pages/vaults/create-vault";
+import {EditVaultPage} from "./pages/vaults/edit-vault";
+import {DeleteVaultPage} from "./pages/vaults/delete-vault";
 
 
 export function App() {
@@ -78,7 +81,10 @@ export function App() {
                 <Route path={routes.users.settings} element={<UserSettingsPage />} />
 
                 {/* Vaults Routes */}
-                <Route path={routes.vaults.list} element={<VaultsPage />} />
+                <Route path={routes.vaults.list} element={<ListVaultsPage />} />
+                <Route path={routes.vaults.create} element={<CreateVaultPage />} />
+                <Route path={routes.vaults.edit} element={<EditVaultPage />} />
+                <Route path={routes.vaults.delete} element={<DeleteVaultPage />} />
 
                 <Route path={"/main"} element={<MainPage />} />
               </Route>

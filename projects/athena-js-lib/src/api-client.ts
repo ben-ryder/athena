@@ -23,6 +23,11 @@ import {CreateUserRequest} from "./schemas/users/request/create.users.request";
 import {InfoDto} from "./schemas/info/dtos/info.dto";
 import {CreateUserResponse} from "./schemas/users/response/create.users.response";
 import {NoKeysUserDto} from "./schemas/users/dtos/no-keys-user.dto";
+import {CreateVaultRequest} from "./schemas/vaults/request/create.vaults.request";
+import {VaultsQueryParams} from "./schemas/vaults/request/query-params.vaults.request";
+import {UpdateVaultRequest} from "./schemas/vaults/request/update.vaults.request";
+import {GetVaultsResponse} from "./schemas/vaults/response/get.vaults.response";
+import {GetVaultResponse} from "./schemas/vaults/response/get.vault.response";
 
 
 export interface QueryOptions {
@@ -163,7 +168,7 @@ export class AthenaAPIClient {
         }
     }
 
-    // info
+    // Info
     async getInfo() {
         return this.query<InfoDto>({
             method: 'GET',
@@ -271,7 +276,10 @@ export class AthenaAPIClient {
         const data = await this.query<RefreshResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/auth/refresh`,
-            noAuthRequired: true
+            noAuthRequired: true,
+            data: {
+                refreshToken: this.refreshToken
+            }
         });
 
         await AthenaAPIClient.saveData(this.options.saveRefreshToken, data.refreshToken);
@@ -282,11 +290,50 @@ export class AthenaAPIClient {
         return data;
     }
 
+    // Vaults
+    async createVault(vault: CreateVaultRequest) {
+        return this.query<CreateNoteResponse>({
+            method: 'POST',
+            url: `${this.options.apiEndpoint}/v1/vaults`,
+            data: vault
+        })
+    }
+
+    async getVaults(options?: VaultsQueryParams) {
+        return this.query<GetVaultsResponse>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/vaults`,
+            params: options || {}
+        })
+    }
+
+    async getVault(vaultId: string) {
+        return this.query<GetVaultResponse>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
+        })
+    }
+
+    async updateVault(vaultId: string, vaultUpdate: UpdateVaultRequest) {
+        return this.query<UpdateNoteResponse>({
+            method: 'PATCH',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`,
+            data: vaultUpdate
+        })
+    }
+
+    async deleteVault(vaultId: string) {
+        return this.query({
+            method: 'DELETE',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
+        })
+    }
+
     // Note Listing Endpoints
     private async getEncryptedNotes(): Promise<GetNotesResponse> {
         return this.query<GetNotesResponse>({
             method: 'GET',
-            url: `${this.options.apiEndpoint}/notes/v1`
+            url: `${this.options.apiEndpoint}/v1/notes`
         });
     }
 
@@ -315,7 +362,7 @@ export class AthenaAPIClient {
 
         return this.query<CreateNoteResponse>({
             method: 'POST',
-            url: `${this.options.apiEndpoint}/notes/v1`,
+            url: `${this.options.apiEndpoint}/v1/notes`,
             data: encryptedNote
         })
     }

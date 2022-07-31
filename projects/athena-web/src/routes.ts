@@ -15,12 +15,12 @@ export const routes = {
     settings: "/user/settings"
   },
   app:  {
-    home: "/app/:userId"
+    home: "/app"
   },
   vaults: {
     list: "/vaults",
-    view: "/vaults/:vaultId",
-    edit: "/vaults/:vaultId/edit",
+    create: "/vaults/create",
+    edit: "/vaults/:vaultId",
     delete: "/vaults/:vaultId/delete"
   },
   external: {
