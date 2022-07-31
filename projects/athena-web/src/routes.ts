@@ -7,6 +7,10 @@ export const routes = {
       forgotten: "/user/forgotten-password",
       reset: "/user/reset-password"
     },
+    verification: {
+      request: "/user/verify",
+      submit: "/user/verify/submit"
+    },
     logout: "/user/logout",
     settings: "/user/settings"
   },

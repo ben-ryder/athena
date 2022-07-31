@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 
-import {AccessUnauthorizedError, Middleware} from '@kangojs/core';
+import {AccessForbiddenError, AccessUnauthorizedError, Middleware} from '@kangojs/core';
 import { TokenService } from '../../services/token/token.service';
 import  {MiddlewareFactory } from "@kangojs/core";
+import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 
 
 @Middleware({
@@ -23,6 +24,15 @@ export class AuthValidator implements MiddlewareFactory {
         const accessTokenPayload = await this.tokenService.validateAndDecodeAccessToken(accessToken);
 
         if (accessTokenPayload) {
+          if (!accessTokenPayload.userIsVerified) {
+            return next(
+              new AccessForbiddenError({
+                identifier: AthenaErrorIdentifiers.AUTH_EMAIL_NOT_VERIFIED,
+                applicationMessage: 'You must verify your account email before you can use Athena.'
+              })
+            )
+          }
+
           // todo: better way to handle req schemas and adding new attribute?
           // @ts-ignore
           req.context = {

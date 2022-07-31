@@ -6,7 +6,7 @@ import {StrictReactNode} from "../types/strict-react-node";
 enum LoginCheckStatus {
     CHECKING = 'checking',
     LOGGED_IN = 'logged-in',
-    NOT_LOGGED_IN = 'not-logged-in',
+    NOT_LOGGED_IN = 'not-logged-in'
 }
 
 export interface AthenaSessionManagerProps {

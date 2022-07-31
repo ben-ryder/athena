@@ -23,6 +23,8 @@ import {
 import {AthenaSessionManager} from "./helpers/athena-session-manager";
 import {UserSettingsPage} from "./pages/user/settings";
 import {VaultsPage} from "./pages/vaults/vaults";
+import {RequestVerificationPage} from "./pages/user/verify/request-verification";
+import {SubmitVerificationPage} from "./pages/user/verify/submit-verification";
 
 
 export function App() {
@@ -52,33 +54,37 @@ export function App() {
           <meta charSet="utf-8" />
           <title>Athena</title>
         </Helmet>
-
         <AthenaSessionManager>
           <BrowserRouter>
             <Routes>
-              {/* Main Routes */}
+              {/* Home Route */}
               <Route path={routes.home} element={<HomePage />} />
 
-              <Route path="/main" element={<MainPage />}/>
-
-              {/* User Routes */}
-              <Route path={routes.users.logout} element={<LogoutPage />} />
+              {/* Public User Routes */}
               <Route path={routes.users.login} element={<LoginPage />} />
               <Route path={routes.users.register} element={<RegisterPage />} />
+              <Route path={routes.users.logout} element={<LogoutPage />} />
+
               <Route path={routes.users.password.forgotten} element={<ForgottenPasswordPage />} />
               <Route path={routes.users.password.reset} element={<ResetPasswordPage />} />
-              <Route path={routes.users.settings} element={<UserSettingsPage />} />
 
-              {/* Restricted Routes (requiring encryption and user login) */}
+              <Route path={routes.users.verification.request} element={<RequestVerificationPage />} />
+              <Route path={routes.users.verification.submit} element={<SubmitVerificationPage />} />
+
+              {/* Restricted Routes (requiring valid user login) */}
               <Route element={<AthenaRestrictedRoute />} >
+
+                {/* Private User Routes */}
+                <Route path={routes.users.settings} element={<UserSettingsPage />} />
 
                 {/* Vaults Routes */}
                 <Route path={routes.vaults.list} element={<VaultsPage />} />
 
+                <Route path={"/main"} element={<MainPage />} />
               </Route>
 
               {/* 404 Route */}
-              <Route path="*" element={<PageNotFound />}/>
+              <Route path="*" element={<PageNotFound />} />
             </Routes>
           </BrowserRouter>
         </AthenaSessionManager>

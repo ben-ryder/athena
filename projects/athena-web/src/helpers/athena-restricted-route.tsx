@@ -11,7 +11,10 @@ export function AthenaRestrictedRoute() {
     let { currentUser } = useAthena();
     const location = useLocation();
 
-    if (currentUser) {
+    if (currentUser && !currentUser.isVerified) {
+        return <Navigate to={routes.users.verification.request} />;
+    }
+    else if (currentUser) {
         return <Outlet/>
     }
     else {

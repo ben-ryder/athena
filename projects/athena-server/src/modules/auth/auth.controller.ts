@@ -101,6 +101,7 @@ export class AuthController {
         httpMethod: HTTPMethods.POST,
         authRequired: false
     })
+    // todo: implement /v1/auth/password-reset
     async requestPasswordReset(req: Request, res: Response, next: NextFunction) {
         return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
             statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
@@ -121,6 +122,7 @@ export class AuthController {
         httpMethod: HTTPMethods.POST,
         authRequired: false
     })
+    // todo: implement /v1/auth/password-reset/check
     async checkPasswordResetToken(req: Request, res: Response, next: NextFunction) {
         return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
             statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
@@ -141,11 +143,72 @@ export class AuthController {
         httpMethod: HTTPMethods.POST,
         authRequired: false
     })
+    // todo: implement /v1/auth/password-reset/change
     async requestPasswordChange(req: Request, res: Response, next: NextFunction) {
         return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
             statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
             message: "Password resets have not been implemented yet"
         });
     }
-    // todo: add password reset functionality to API
+
+    /**
+     * An endpoint where users can request email verification emails.
+     * Will always succeed regardless of if the email address supplied was valid and/or an email was actually sent
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    @Route({
+        path: '/verify',
+        httpMethod: HTTPMethods.POST,
+        authRequired: false
+    })
+    // todo: implement /v1/auth/verify
+    async requestVerificationEmail(req: Request, res: Response, next: NextFunction) {
+        return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
+            statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
+            message: "Account verification has not been implemented yet"
+        });
+    }
+
+    /**
+     * An endpoint where users can check if their verification token is valid.
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    @Route({
+        path: '/verify/check',
+        httpMethod: HTTPMethods.POST,
+        authRequired: false
+    })
+    // todo: implement /v1/auth/verify/check
+    async checkVerificationToken(req: Request, res: Response, next: NextFunction) {
+        return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
+            statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
+            message: "Account verification has not been implemented yet"
+        });
+    }
+
+    /**
+     * An endpoint where users can verify their account
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
+    @Route({
+        path: '/verify/submit',
+        httpMethod: HTTPMethods.POST,
+        authRequired: false
+    })
+    // todo: implement /v1/auth/verify/submit
+    async verifyAccountEmail(req: Request, res: Response, next: NextFunction) {
+        return res.status(HTTPStatusCodes.NOT_IMPLEMENTED).send({
+            statusCode: HTTPStatusCodes.NOT_IMPLEMENTED,
+            message: "Account verification has not been implemented yet"
+        });
+    }
 }
