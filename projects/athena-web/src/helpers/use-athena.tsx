@@ -15,6 +15,7 @@ export const athenaStorageInstance = new AthenaStorage();
 
 export const athenaAPIClientInstance = new AthenaAPIClient({
     apiEndpoint: import.meta.env.VITE_API_ENDPOINT,
+    saveEncryptionKey: athenaStorageInstance.saveEncryptionKey,
     loadEncryptionKey: athenaStorageInstance.loadEncryptionKey,
     deleteEncryptionKey: athenaStorageInstance.deleteEncryptionKey,
     saveAccessToken: athenaStorageInstance.saveAccessToken,

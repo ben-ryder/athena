@@ -8,7 +8,7 @@ import {
     AthenaRequestError,
     AthenaDataDeleteError,
     AthenaDataLoadError,
-    AthenaDataSaveError, AthenaDecryptError
+    AthenaDataSaveError
 } from './errors';
 import {UserDto} from "./schemas/users/dtos/user.dto";
 import {LoginResponse} from "./schemas/auth/response/login.auth.response";
@@ -22,6 +22,7 @@ import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
 import {CreateUserRequest} from "./schemas/users/request/create.users.request";
 import {InfoDto} from "./schemas/info/dtos/info.dto";
 import {CreateUserResponse} from "./schemas/users/response/create.users.response";
+import {NoKeysUserDto} from "./schemas/users/dtos/no-keys-user.dto";
 
 
 export interface QueryOptions {
@@ -40,7 +41,7 @@ export type DataDeleter<T> = () => Promise<void>;
 export interface AthenaAPIClientOptions {
     apiEndpoint: string;
 
-    encryptionKey?: string | null;
+    saveEncryptionKey: DataSaver<string>;
     loadEncryptionKey: DataLoader<string>;
     deleteEncryptionKey: DataDeleter<string>;
 
@@ -59,6 +60,7 @@ export interface AthenaAPIClientOptions {
 
 export class AthenaAPIClient {
     private readonly options: AthenaAPIClientOptions;
+    private encryptionKey?: string;
     private accessToken?: string;
     private refreshToken?: string;
 
@@ -121,11 +123,11 @@ export class AthenaAPIClient {
     }
 
     private async checkEncryptionKey() {
-        if (!this.options.encryptionKey) {
+        if (!this.encryptionKey) {
             const encryptionKey = await AthenaAPIClient.loadData(this.options.loadEncryptionKey);
 
             if (encryptionKey) {
-                this.options.encryptionKey = encryptionKey;
+                this.encryptionKey = encryptionKey;
                 return;
             }
 
@@ -172,27 +174,51 @@ export class AthenaAPIClient {
 
     // User
     public async login(username: string, password: string) {
+        // Convert plain text password into serverPassword and masterKey
+        const accountKeys = AthenaEncryption.getAccountKeys(username, password);
+        
         const data = await this.query<LoginResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/auth/login`,
             data: {
                 username,
-                password
+                password: accountKeys.serverPassword
             },
             noAuthRequired: true
         });
+        
+        // Decrypt users encryptionKey with their masterKey
+        // todo: don't trust data is encrypted correctly
+        const encryptionKey = AthenaEncryption.decryptText(accountKeys.masterKey, data.user.encryptionSecret);
+        await AthenaAPIClient.saveData(this.options.saveEncryptionKey, encryptionKey);
 
+        // Save user details and tokens
         await AthenaAPIClient.saveData(this.options.saveCurrentUser, data.user);
 
         await AthenaAPIClient.saveData(this.options.saveRefreshToken, data.refreshToken);
         this.refreshToken = data.refreshToken;
+        
         await AthenaAPIClient.saveData(this.options.saveAccessToken, data.accessToken);
         this.accessToken = data.accessToken;
 
         return data;
     }
 
-    public async register(user: CreateUserRequest) {
+    public async register(noKeysUser: NoKeysUserDto) {
+        // Get user account keys from plain text password and overwrite the user password.
+        const accountKeys = AthenaEncryption.getAccountKeys(noKeysUser.username, noKeysUser.password);
+
+        // Generate the user's encryptionSecret
+        const encryptionKey = AthenaEncryption.generateEncryptionKey();
+        const encryptionSecret = AthenaEncryption.encryptText(accountKeys.masterKey, encryptionKey);
+
+        const user: CreateUserRequest = {
+            username: noKeysUser.username,
+            email: noKeysUser.email,
+            password: accountKeys.serverPassword,
+            encryptionSecret
+        }
+
         const data = await this.query<CreateUserResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/users`,
@@ -200,6 +226,7 @@ export class AthenaAPIClient {
             noAuthRequired: true
         });
 
+        await AthenaAPIClient.saveData(this.options.saveEncryptionKey, encryptionKey);
         await AthenaAPIClient.saveData(this.options.saveCurrentUser, data.user);
 
         await AthenaAPIClient.saveData(this.options.saveRefreshToken, data.refreshToken);
@@ -270,7 +297,7 @@ export class AthenaAPIClient {
         let notes: NoteDto[] = [];
         for (let note of encryptedNotesResponse.notes) {
             notes.push(
-              AthenaEncryption.decryptNote(<string> this.options.encryptionKey, note)
+              AthenaEncryption.decryptNote(<string> this.encryptionKey, note)
             )
         }
 
@@ -284,7 +311,7 @@ export class AthenaAPIClient {
     async createNote(newNote: CreateNoteRequest) {
         await this.checkEncryptionKey();
 
-        const encryptedNote = AthenaEncryption.encryptNoteContent(<string> this.options.encryptionKey, newNote);
+        const encryptedNote = AthenaEncryption.encryptNoteContent(<string> this.encryptionKey, newNote);
 
         return this.query<CreateNoteResponse>({
             method: 'POST',
@@ -304,13 +331,13 @@ export class AthenaAPIClient {
         await this.checkEncryptionKey();
 
         const encryptedNote = await this.getEncryptedNote(noteId);
-        return AthenaEncryption.decryptNote(<string> this.options.encryptionKey, encryptedNote);
+        return AthenaEncryption.decryptNote(<string> this.encryptionKey, encryptedNote);
     }
 
     async updateNote(noteId: string, note: NoteDto) {
         await this.checkEncryptionKey();
 
-        const encryptedNoteUpdate = await AthenaEncryption.encryptNote(<string> this.options.encryptionKey, note);
+        const encryptedNoteUpdate = await AthenaEncryption.encryptNote(<string> this.encryptionKey, note);
         return this.query<UpdateNoteResponse>({
             method: 'PATCH',
             url: `${this.options.apiEndpoint}/v1/notes/${noteId}`,

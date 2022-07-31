@@ -39,11 +39,9 @@ export function RegisterEnabledPage() {
       const data = await apiClient.register({
         username: values.username,
         email: values.email,
-        password: values.password,
-        encryptionSecret: "erjgbielbgeilhbgehlirbg" // todo: actually create secret
+        password: values.password
       });
 
-      // todo: also save new access & refresh tokens when they are returned by the API
       setCurrentUser(data.user);
       await navigate(routes.vaults.list);
     }

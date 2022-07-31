@@ -28,6 +28,8 @@ export function LoginPage() {
       await navigate(routes.vaults.list);
     }
     catch (e: any) {
+      console.log(e);
+
       if (e.response?.identifier === AthenaErrorIdentifiers.AUTH_CREDENTIALS_INVALID) {
         setErrorMessage("The supplied username & password combination is incorrect.");
       }
