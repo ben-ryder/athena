@@ -86,7 +86,7 @@ export function App() {
                 <Route path={routes.vaults.edit} element={<EditVaultPage />} />
                 <Route path={routes.vaults.delete} element={<DeleteVaultPage />} />
 
-                <Route path={"/main"} element={<MainPage />} />
+                <Route path={routes.app.main} element={<MainPage />} />
               </Route>
 
               {/* 404 Route */}

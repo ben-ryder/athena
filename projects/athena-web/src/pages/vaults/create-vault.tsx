@@ -8,6 +8,7 @@ import {FormPage} from "../../patterns/pages/form-page";
 import {Button, Input, TextArea} from "@ben-ryder/jigsaw";
 import {AthenaErrorIdentifiers, CreateVaultRequest, CreateVaultRequestSchema} from "@ben-ryder/athena-js-lib";
 import {routes} from "../../routes";
+import {Link} from "../../patterns/element/link";
 
 
 export function CreateVaultPage() {
@@ -76,6 +77,7 @@ export function CreateVaultPage() {
           <Button type="submit" status={isSubmitting ? "awaiting" : "normal"}>Create</Button>
         </div>
       </form>
+      <Link href={routes.vaults.list}>All Vaults</Link>
     </FormPage>
   )
 }

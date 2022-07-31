@@ -15,7 +15,7 @@ export const routes = {
     settings: "/user/settings"
   },
   app:  {
-    home: "/app"
+    main: "/main/:vaultId"
   },
   vaults: {
     list: "/vaults",
@@ -27,4 +27,8 @@ export const routes = {
     github: "https://github.com/Ben-Ryder/athena",
     creator: "https://www,benryder.me"
   }
+}
+
+export function getAppLink(vaultId: string) {
+  return routes.app.main.replace(":vaultId", vaultId);
 }
