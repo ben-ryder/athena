@@ -1,12 +1,6 @@
 import React from 'react';
 import {AlertOctagon as ErrorIcon, X as EmptyIcon} from "lucide-react";
-
-export enum GeneralQueryStatus {
-  LOADING = "loading",
-  SUCCESS = 'success',
-  FAILED = "failed",
-  EMPTY = "empty"
-}
+import {GeneralQueryStatus} from "../../types/general-query-status";
 
 export interface ContentLoadingIndicatorProps {
   status: GeneralQueryStatus,

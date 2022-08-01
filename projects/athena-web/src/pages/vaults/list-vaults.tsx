@@ -4,9 +4,10 @@ import {LinkButton} from "@ben-ryder/jigsaw";
 import {getAppLink, routes} from "../../routes";
 import {Page} from "../../patterns/pages/page";
 import {AthenaErrorIdentifiers, VaultDto} from "@ben-ryder/athena-js-lib";
-import {ContentLoadingIndicator, GeneralQueryStatus} from "../../patterns/components/content-loading-indicator";
+import {ContentLoadingIndicator} from "../../patterns/components/content-loading-indicator";
 import {useAthena} from "../../helpers/use-athena";
 import {Link} from "../../patterns/element/link";
+import {GeneralQueryStatus} from "../../types/general-query-status";
 
 
 export function ListVaultsPage() {
@@ -55,6 +56,7 @@ export function ListVaultsPage() {
             {vaults.map(vault =>
               <li key={vault.id}>
                 <Link href={getAppLink(vault.id)}>{vault.name}</Link>
+                <Link href={routes.vaults.edit.replace(":vaultId", vault.id)}>edit vault</Link>
                 <p>{vault.description}</p>
               </li>
             )}

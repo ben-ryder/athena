@@ -4,11 +4,11 @@ import {useNavigate} from "react-router-dom";
 import {useAthena} from "../../helpers/use-athena";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod/dist/zod";
-import {FormPage} from "../../patterns/pages/form-page";
 import {Button, Input, TextArea} from "@ben-ryder/jigsaw";
 import {AthenaErrorIdentifiers, CreateVaultRequest, CreateVaultRequestSchema} from "@ben-ryder/athena-js-lib";
 import {routes} from "../../routes";
-import {Link} from "../../patterns/element/link";
+import {ContentPage} from "../../patterns/pages/content-page";
+import {ArrowLink} from "@ben-ryder/jigsaw/dist/patterns/03-elements/arrow-link/arrow-link";
 
 
 export function CreateVaultPage() {
@@ -46,41 +46,44 @@ export function CreateVaultPage() {
   };
 
   return (
-    <FormPage
-      title="Create Vault"
-      description={<p className="text-br-whiteGrey-200 mt-2">Create a new vault</p>}
-    >
-      <form onSubmit={handleSubmit(onSubmit)} noValidate={true}>
-        <div className="mt-4">
-          <Controller
-            name="name"
-            defaultValue=""
-            control={control}
-            render={({ field }) =>
-              <Input {...field} id="name" label="Name" type="text" error={errors.name?.message} />
-            }
-          />
-        </div>
-        <div className="mt-4">
-          <Controller
-            name="description"
-            defaultValue=""
-            control={control}
-            render={({ field }) =>
-              <TextArea {...field} rows={3} id="description" label="Description" error={errors.description?.message} />
-            }
-          />
-        </div>
-        {errorMessage &&
-            <div className="mt-4">
-                <p className="text-br-red-500">{errorMessage}</p>
-            </div>
-        }
-        <div className="mt-6 flex justify-end">
-          <Button type="submit" status={isSubmitting ? "awaiting" : "normal"}>Create</Button>
-        </div>
-      </form>
-      <Link href={routes.vaults.list}>All Vaults</Link>
-    </FormPage>
+    <ContentPage>
+      <ArrowLink direction="left" href={routes.vaults.list}>all vaults</ArrowLink>
+      <div className="mt-8">
+        <h1 className="font-bold text-4xl text-br-teal-600">Create Vault</h1>
+        <p className="text-br-whiteGrey-200 mt-2">Create a new vault which will contain its own set of notes, tags and queries.</p>
+      </div>
+      <div className="mt-8">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate={true}>
+          <div className="mt-4">
+            <Controller
+              name="name"
+              defaultValue=""
+              control={control}
+              render={({ field }) =>
+                <Input {...field} id="name" label="Name" type="text" error={errors.name?.message} />
+              }
+            />
+          </div>
+          <div className="mt-4">
+            <Controller
+              name="description"
+              defaultValue=""
+              control={control}
+              render={({ field }) =>
+                <TextArea {...field} rows={3} id="description" label="Description" error={errors.description?.message} />
+              }
+            />
+          </div>
+          {errorMessage &&
+              <div className="mt-4">
+                  <p className="text-br-red-500">{errorMessage}</p>
+              </div>
+          }
+          <div className="mt-6 flex justify-end">
+            <Button type="submit" status={isSubmitting ? "awaiting" : "normal"}>Create</Button>
+          </div>
+        </form>
+      </div>
+    </ContentPage>
   )
 }
