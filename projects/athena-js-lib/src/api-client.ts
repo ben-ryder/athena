@@ -28,6 +28,7 @@ import {VaultsQueryParams} from "./schemas/vaults/request/query-params.vaults.re
 import {UpdateVaultRequest} from "./schemas/vaults/request/update.vaults.request";
 import {GetVaultsResponse} from "./schemas/vaults/response/get.vaults.response";
 import {GetVaultResponse} from "./schemas/vaults/response/get.vault.response";
+import {AthenaErrorIdentifiers} from "./error-identifiers";
 
 
 export interface QueryOptions {
@@ -106,7 +107,7 @@ export class AthenaAPIClient {
             });
         }
         catch (e: any) {
-            if (e.response?.status === 401 && !repeat) {
+            if (e.response?.data?.identifier === AthenaErrorIdentifiers.ACCESS_UNAUTHORIZED && !repeat) {
                 return this.refreshAuthAndRetry<ResponseType>(options);
             }
 
