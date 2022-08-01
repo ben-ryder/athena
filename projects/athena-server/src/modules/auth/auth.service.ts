@@ -52,35 +52,45 @@ export class AuthService {
     }
 
     async revokeTokens(tokens: RevokeTokensDto) {
-      if (tokens.refreshToken) {
-        let validRefreshToken = await this.tokenService.isValidRefreshToken(tokens.refreshToken);
+      let blacklistedAccessToken: string | null = null;
+      let blacklistedRefreshToken: string | null = null;
 
-        if (!validRefreshToken) {
+      if (tokens.refreshToken) {
+        let isSignedToken = await this.tokenService.isSignedRefreshToken(tokens.refreshToken);
+        if (!isSignedToken) {
           throw new AccessUnauthorizedError({
             identifier: AthenaErrorIdentifiers.AUTH_TOKEN_INVALID,
             applicationMessage: "The supplied refresh token is invalid."
           })
         }
+
+        let isValidToken = await this.tokenService.isValidRefreshToken(tokens.refreshToken);
+        if (isValidToken) {
+          blacklistedRefreshToken = tokens.refreshToken;
+        }
       }
 
       if (tokens.accessToken) {
-        let validAccessToken = await this.tokenService.isValidAccessToken(tokens.accessToken);
+        let isSignedToken = await this.tokenService.isSignedAccessToken(tokens.accessToken);
 
-        if (!validAccessToken) {
+        if (!isSignedToken) {
           throw new AccessUnauthorizedError({
             identifier: AthenaErrorIdentifiers.AUTH_TOKEN_INVALID,
             applicationMessage: "The supplied access token is invalid."
           })
         }
+
+        let isValidToken = await this.tokenService.isValidAccessToken(tokens.accessToken);
+        if (isValidToken) {
+          blacklistedAccessToken = tokens.accessToken;
+        }
       }
 
-      // If both tokens are supplied, check they're both valid before adding them to the blacklist
-      // This ensures a predictable behaviour, preventing guesswork in the case that only one of the tokens was invalid.
-      if (tokens.refreshToken) {
-        await this.tokenService.addTokenToBlacklist(tokens.refreshToken);
+      if (blacklistedRefreshToken) {
+        await this.tokenService.addTokenToBlacklist(blacklistedRefreshToken);
       }
-      if (tokens.accessToken) {
-        await this.tokenService.addTokenToBlacklist(tokens.accessToken);
+      if (blacklistedAccessToken) {
+        await this.tokenService.addTokenToBlacklist(blacklistedAccessToken);
       }
     }
 

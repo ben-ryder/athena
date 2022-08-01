@@ -71,7 +71,7 @@ describe('Revoke Auth',() => {
   })
 
   describe("Invalid/Expired Tokens", () => {
-    test("When an expired refresh token is supplied, the request should fail", async () => {
+    test("When an expired refresh token is supplied, the request should still succeed", async () => {
       const configService = testHelper.application.dependencyContainer.useDependency(ConfigService);
 
       const refreshToken = sign(
@@ -86,10 +86,10 @@ describe('Revoke Auth',() => {
           refreshToken
         });
 
-      expectUnauthorized(body, statusCode, AthenaErrorIdentifiers.AUTH_TOKEN_INVALID);
+      expect(statusCode).toEqual(HTTPStatusCodes.OK);
     })
 
-    test("When an expired access token is supplied, the request should fail", async () => {
+    test("When an expired access token is supplied, the request should still succeed", async () => {
       const configService = testHelper.application.dependencyContainer.useDependency(ConfigService);
 
       const accessToken = sign(
@@ -104,7 +104,7 @@ describe('Revoke Auth',() => {
           accessToken
         });
 
-      expectUnauthorized(body, statusCode, AthenaErrorIdentifiers.AUTH_TOKEN_INVALID);
+      expect(statusCode).toEqual(HTTPStatusCodes.OK);
     })
 
     test("When an incorrectly signed refresh token is supplied, the request should fail", async () => {
@@ -201,7 +201,7 @@ describe('Revoke Auth',() => {
       expectUnauthorized(body, statusCode, AthenaErrorIdentifiers.AUTH_TOKEN_INVALID);
     })
 
-    test("When a valid access token but expired refresh token is supplied, the request should fail", async () => {
+    test("When a valid access token but expired refresh token is supplied, the request should still succeed", async () => {
       const configService = testHelper.application.dependencyContainer.useDependency(ConfigService);
       const { accessToken } = testHelper.getUserTokens(testUsers[0]);
 
@@ -211,17 +211,17 @@ describe('Revoke Auth',() => {
         {expiresIn: 0}
       );
 
-      const {body, statusCode} = await testHelper.client
+      const {statusCode} = await testHelper.client
         .post(`/v1/auth/revoke`)
         .send({
           refreshToken,
           accessToken
         });
 
-      expectUnauthorized(body, statusCode, AthenaErrorIdentifiers.AUTH_TOKEN_INVALID);
+      expect(statusCode).toEqual(HTTPStatusCodes.OK);
     })
 
-    test("When a valid refresh token but expired access token is supplied, the request should fail", async () => {
+    test("When a valid refresh token but expired access token is supplied, the request should still succeed", async () => {
       const configService = testHelper.application.dependencyContainer.useDependency(ConfigService);
       const { refreshToken } = testHelper.getUserTokens(testUsers[0]);
 
@@ -231,14 +231,14 @@ describe('Revoke Auth',() => {
         {expiresIn: 0}
       );
 
-      const {body, statusCode} = await testHelper.client
+      const {statusCode} = await testHelper.client
         .post(`/v1/auth/revoke`)
         .send({
           refreshToken,
           accessToken
         });
 
-      expectUnauthorized(body, statusCode, AthenaErrorIdentifiers.AUTH_TOKEN_INVALID);
+      expect(statusCode).toEqual(HTTPStatusCodes.OK);
     })
   })
 

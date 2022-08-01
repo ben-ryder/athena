@@ -122,6 +122,23 @@ export class TokenService {
     }
 
     /**
+     * Validate if the supplied token has been signed.
+     * THIS IGNORES THE TOKEN EXPIRY.
+     *
+     * @param token
+     * @param secret
+     */
+    private static async isSignedToken(token: string, secret: string) {
+        try {
+            verify(token, secret, {ignoreExpiration: true});
+        }
+        catch (e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Validate the supplied access token.
      *
      * @param token
@@ -137,6 +154,24 @@ export class TokenService {
      */
     async isValidRefreshToken(token: string) {
         return TokenService.isValidToken(token, this.configService.config.auth.refreshToken.secret);
+    }
+
+    /**
+     * Validate if the given access token was signed by the token service
+     *
+     * @param token
+     */
+    async isSignedAccessToken(token: string) {
+        return TokenService.isSignedToken(token, this.configService.config.auth.accessToken.secret);
+    }
+
+    /**
+     * Validate if the given refresh token was signed by the token service
+     *
+     * @param token
+     */
+    async isSignedRefreshToken(token: string) {
+        return TokenService.isSignedToken(token, this.configService.config.auth.refreshToken.secret);
     }
 
     async addTokenToBlacklist(token: string) {

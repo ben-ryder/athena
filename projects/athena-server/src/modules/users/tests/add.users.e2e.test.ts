@@ -60,13 +60,17 @@ describe('Add User - /v1/users [POST]',() => {
 
       expect(statusCode).toEqual(HTTPStatusCodes.OK);
       expect(body).toEqual(expect.objectContaining({
-        id: expect.any(String),
-        username: newUser.username,
-        email: newUser.email,
-        isVerified: false,
-        encryptionSecret: newUser.encryptionSecret,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String)
+        user: {
+          id: expect.any(String),
+          username: newUser.username,
+          email: newUser.email,
+          isVerified: false,
+          encryptionSecret: newUser.encryptionSecret,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String)
+        },
+        accessToken: expect.any(String),
+        refreshToken: expect.any(String)
       }))
     })
 
@@ -82,13 +86,17 @@ describe('Add User - /v1/users [POST]',() => {
 
       expect(statusCode).toEqual(HTTPStatusCodes.OK);
       expect(body).toEqual(expect.objectContaining({
-        id: expect.any(String),
-        username: newUser.username,
-        email: newUser.email,
-        isVerified: false,
-        encryptionSecret: newUser.encryptionSecret,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String)
+        user: {
+          id: expect.any(String),
+          username: newUser.username,
+          email: newUser.email,
+          isVerified: false,
+          encryptionSecret: newUser.encryptionSecret,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String)
+        },
+        accessToken: expect.any(String),
+        refreshToken: expect.any(String)
       }))
     })
 
@@ -104,13 +112,17 @@ describe('Add User - /v1/users [POST]',() => {
 
       expect(statusCode).toEqual(HTTPStatusCodes.OK);
       expect(body).toEqual(expect.objectContaining({
-        id: expect.any(String),
-        username: newUser.username,
-        email: newUser.email,
-        isVerified: false,
-        encryptionSecret: newUser.encryptionSecret,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String)
+        user: {
+          id: expect.any(String),
+          username: newUser.username,
+          email: newUser.email,
+          isVerified: false,
+          encryptionSecret: newUser.encryptionSecret,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String)
+        },
+        accessToken: expect.any(String),
+        refreshToken: expect.any(String)
       }))
     })
   })
