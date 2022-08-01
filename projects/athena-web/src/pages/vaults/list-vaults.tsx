@@ -3,14 +3,14 @@ import React, {useEffect, useState} from 'react';
 import {LinkButton} from "@ben-ryder/jigsaw";
 import {getAppLink, routes} from "../../routes";
 import {Page} from "../../patterns/pages/page";
-import {VaultDto} from "@ben-ryder/athena-js-lib";
+import {AthenaErrorIdentifiers, VaultDto} from "@ben-ryder/athena-js-lib";
 import {ContentLoadingIndicator, GeneralQueryStatus} from "../../patterns/components/content-loading-indicator";
 import {useAthena} from "../../helpers/use-athena";
 import {Link} from "../../patterns/element/link";
 
 
 export function ListVaultsPage() {
-  const {apiClient} = useAthena();
+  const {apiClient, setCurrentUser} = useAthena();
   const [status, setStatus] = useState<GeneralQueryStatus>(GeneralQueryStatus.LOADING);
   const [vaults, setVaults] = useState<VaultDto[]>([]);
 
@@ -21,7 +21,11 @@ export function ListVaultsPage() {
         setVaults(data.vaults);
         setStatus(GeneralQueryStatus.SUCCESS);
       }
-      catch (e) {
+      catch (e: any) {
+        if (e.response?.identifier === AthenaErrorIdentifiers.AUTH_CREDENTIALS_INVALID) {
+          setCurrentUser(null);
+        }
+
         console.log(e);
         setStatus(GeneralQueryStatus.FAILED);
       }

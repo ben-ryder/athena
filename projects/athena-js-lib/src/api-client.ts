@@ -259,12 +259,16 @@ export class AthenaAPIClient {
             data: tokens
         });
 
+        // Don't delete storage data until after the request.
+        // This ensures that in the event that the revoke request fails there is the option to try
+        // again rather than just loosing all the tokens.
         await AthenaAPIClient.deleteData(this.options.deleteCurrentUser);
         await AthenaAPIClient.deleteData(this.options.deleteEncryptionKey);
 
         await AthenaAPIClient.deleteData(this.options.deleteRefreshToken);
-        delete this.refreshToken;
         await AthenaAPIClient.deleteData(this.options.deleteAccessToken);
+
+        delete this.refreshToken;
         delete this.accessToken;
     }
 
@@ -273,14 +277,23 @@ export class AthenaAPIClient {
             throw new AthenaNoRefreshTokenError();
         }
 
-        const data = await this.query<RefreshResponse>({
-            method: 'POST',
-            url: `${this.options.apiEndpoint}/v1/auth/refresh`,
-            noAuthRequired: true,
-            data: {
-                refreshToken: this.refreshToken
-            }
-        });
+        let data: RefreshResponse;
+        try {
+            data = await this.query<RefreshResponse>({
+                method: 'POST',
+                url: `${this.options.apiEndpoint}/v1/auth/refresh`,
+                noAuthRequired: true,
+                data: {
+                    refreshToken: this.refreshToken
+                }
+            });
+        }
+        catch(e) {
+            // If the refresh request fails then fully log the user out to be safe
+            await this.logout();
+
+            throw e;
+        }
 
         await AthenaAPIClient.saveData(this.options.saveRefreshToken, data.refreshToken);
         this.refreshToken = data.refreshToken;

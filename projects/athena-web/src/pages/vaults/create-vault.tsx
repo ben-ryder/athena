@@ -13,7 +13,7 @@ import {Link} from "../../patterns/element/link";
 
 export function CreateVaultPage() {
   const navigate = useNavigate();
-  const {apiClient} = useAthena();
+  const {apiClient, setCurrentUser} = useAthena();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<CreateVaultRequest>({
@@ -35,6 +35,9 @@ export function CreateVaultPage() {
 
       if (e.response?.identifier === AthenaErrorIdentifiers.VAULT_NAME_EXISTS) {
         setError("name", {type: "custom", message: "You already have a vault with that name."})
+      }
+      else if (e.response?.identifier === AthenaErrorIdentifiers.AUTH_CREDENTIALS_INVALID) {
+        setCurrentUser(null);
       }
       else {
         setErrorMessage("An unexpected error occurred while attempting to add the vault. Please try again later.")
