@@ -29,6 +29,7 @@ import {UpdateVaultRequest} from "./schemas/vaults/request/update.vaults.request
 import {GetVaultsResponse} from "./schemas/vaults/response/get.vaults.response";
 import {GetVaultResponse} from "./schemas/vaults/response/get.vault.response";
 import {AthenaErrorIdentifiers} from "./error-identifiers";
+import {VaultDto} from "./schemas/vaults/dtos/vault.dto";
 
 
 export interface QueryOptions {
@@ -304,112 +305,131 @@ export class AthenaAPIClient {
         return data;
     }
 
-    // Vaults
+    // Vault Endpoints
     async createVault(vault: CreateVaultRequest) {
+        await this.checkEncryptionKey();
+        const encryptedVault = AthenaEncryption.encryptCreateVaultRequest(<string> this.encryptionKey, vault);
+
         return this.query<CreateNoteResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/vaults`,
-            data: vault
+            data: encryptedVault
         })
     }
 
     async getVaults(options?: VaultsQueryParams) {
-        return this.query<GetVaultsResponse>({
+        await this.checkEncryptionKey();
+
+        const getVaultsResponse = await this.query<GetVaultsResponse>({
             method: 'GET',
             url: `${this.options.apiEndpoint}/v1/vaults`,
             params: options || {}
         })
-    }
 
-    async getVault(vaultId: string) {
-        return this.query<GetVaultResponse>({
-            method: 'GET',
-            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
-        })
-    }
-
-    async updateVault(vaultId: string, vaultUpdate: UpdateVaultRequest) {
-        return this.query<UpdateNoteResponse>({
-            method: 'PATCH',
-            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`,
-            data: vaultUpdate
-        })
-    }
-
-    async deleteVault(vaultId: string) {
-        return this.query({
-            method: 'DELETE',
-            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
-        })
-    }
-
-    // Note Listing Endpoints
-    private async getEncryptedNotes(): Promise<GetNotesResponse> {
-        return this.query<GetNotesResponse>({
-            method: 'GET',
-            url: `${this.options.apiEndpoint}/v1/notes`
-        });
-    }
-
-    async getNotes(): Promise<GetNotesResponse> {
-        await this.checkEncryptionKey();
-
-        const encryptedNotesResponse = await this.getEncryptedNotes();
-        let notes: NoteDto[] = [];
-        for (let note of encryptedNotesResponse.notes) {
-            notes.push(
-              AthenaEncryption.decryptNote(<string> this.encryptionKey, note)
+        const decryptedVaults: VaultDto[] = [];
+        for (const vault of getVaultsResponse.vaults) {
+            decryptedVaults.push(
+              AthenaEncryption.decryptVault(<string> this.encryptionKey, vault)
             )
         }
 
         return {
-            notes,
-            meta: encryptedNotesResponse.meta
-        };
+            meta: getVaultsResponse.meta,
+            vaults: decryptedVaults
+        }
+    }
+
+    async getVault(vaultId: string) {
+        await this.checkEncryptionKey();
+
+        const vault = await this.query<GetVaultResponse>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
+        });
+
+        return AthenaEncryption.decryptVault(<string> this.encryptionKey, vault);
+    }
+
+    async updateVault(vaultId: string, updateVaultRequest: UpdateVaultRequest) {
+        await this.checkEncryptionKey();
+
+        const encryptedVaultUpdate = AthenaEncryption.encryptUpdateVaultRequest(<string> this.encryptionKey, updateVaultRequest);
+
+        return this.query<UpdateNoteResponse>({
+            method: 'PATCH',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`,
+            data: encryptedVaultUpdate
+        })
+    }
+
+    async deleteVault(vaultId: string) {
+        await this.checkEncryptionKey();
+
+        return this.query({
+            method: 'DELETE',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
+        })
     }
 
     // Note Endpoints
-    async createNote(newNote: CreateNoteRequest) {
-        await this.checkEncryptionKey();
-
-        const encryptedNote = AthenaEncryption.encryptNoteContent(<string> this.encryptionKey, newNote);
-
-        return this.query<CreateNoteResponse>({
-            method: 'POST',
-            url: `${this.options.apiEndpoint}/v1/notes`,
-            data: encryptedNote
-        })
-    }
-
-    private async getEncryptedNote(noteId: string): Promise<GetNoteResponse> {
-        return this.query<GetNoteResponse>({
-            method: 'GET',
-            url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
-        })
-    }
-
-    async getNote(noteId: string): Promise<GetNoteResponse> {
-        await this.checkEncryptionKey();
-
-        const encryptedNote = await this.getEncryptedNote(noteId);
-        return AthenaEncryption.decryptNote(<string> this.encryptionKey, encryptedNote);
-    }
-
-    async updateNote(noteId: string, note: NoteDto) {
-        await this.checkEncryptionKey();
-
-        const encryptedNoteUpdate = await AthenaEncryption.encryptNote(<string> this.encryptionKey, note);
-        return this.query<UpdateNoteResponse>({
-            method: 'PATCH',
-            url: `${this.options.apiEndpoint}/v1/notes/${noteId}`,
-            data: encryptedNoteUpdate
-        })
-    }
-
-    async deleteNote(noteId: string) {
-        return this.query({
-            method: 'DELETE',
-            url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
-        })
-    }
+    // async createNote(newNote: CreateNoteRequest) {
+    //     await this.checkEncryptionKey();
+    //     const encryptedNote = AthenaEncryption.encryptNoteContent(<string> this.encryptionKey, newNote);
+    //
+    //     return this.query<CreateNoteResponse>({
+    //         method: 'POST',
+    //         url: `${this.options.apiEndpoint}/v1/notes`,
+    //         data: encryptedNote
+    //     })
+    // }
+    //
+    // async getNote(noteId: string): Promise<GetNoteResponse> {
+    //     await this.checkEncryptionKey();
+    //
+    //     const encryptedNote = await this.query<GetNoteResponse>({
+    //         method: 'GET',
+    //         url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
+    //     })
+    //
+    //     return AthenaEncryption.decryptNote(<string> this.encryptionKey, encryptedNote);
+    // }
+    //
+    // async getNotes(): Promise<GetNotesResponse> {
+    //     await this.checkEncryptionKey();
+    //
+    //     const encryptedNotesResponse = await this.query<GetNotesResponse>({
+    //         method: 'GET',
+    //         url: `${this.options.apiEndpoint}/v1/notes`
+    //     });
+    //
+    //     let notes: NoteDto[] = [];
+    //     for (let note of encryptedNotesResponse.notes) {
+    //         notes.push(
+    //           AthenaEncryption.decryptNote(<string> this.encryptionKey, note)
+    //         )
+    //     }
+    //
+    //     return {
+    //         notes,
+    //         meta: encryptedNotesResponse.meta
+    //     };
+    // }
+    //
+    // async updateNote(noteId: string, note: NoteDto) {
+    //     await this.checkEncryptionKey();
+    //     const encryptedNoteUpdate = await AthenaEncryption.encryptNote(<string> this.encryptionKey, note);
+    //
+    //     return this.query<UpdateNoteResponse>({
+    //         method: 'PATCH',
+    //         url: `${this.options.apiEndpoint}/v1/notes/${noteId}`,
+    //         data: encryptedNoteUpdate
+    //     })
+    // }
+    //
+    // async deleteNote(noteId: string) {
+    //     return this.query({
+    //         method: 'DELETE',
+    //         url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
+    //     })
+    // }
 }

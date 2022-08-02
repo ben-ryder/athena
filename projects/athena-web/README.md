@@ -1,2 +1,2 @@
 # athena-web
-A React client application for Athena.
+A React web application for Athena, built using [Vite](https://vitejs.dev/).
