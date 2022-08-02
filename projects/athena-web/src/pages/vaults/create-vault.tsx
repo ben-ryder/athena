@@ -21,7 +21,6 @@ export function CreateVaultPage() {
     resolver: zodResolver(CreateVaultRequestSchema)
   });
 
-
   const onSubmit: SubmitHandler<CreateVaultRequest> = async function(values: CreateVaultRequest) {
     try {
       await apiClient.createVault({

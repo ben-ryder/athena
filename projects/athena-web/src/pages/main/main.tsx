@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
   User as AccountIcon,
@@ -8,9 +8,13 @@ import {
   ArrowLeft as BackIcon
 } from "lucide-react";
 import classNames from "classnames";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
+import {LoadingPage} from "../../patterns/pages/loading-page";
+import {useAthena} from "../../helpers/use-athena";
+import {GeneralQueryStatus} from "../../types/general-query-status";
+import {VaultDto} from "@ben-ryder/athena-js-lib";
 
 /**
  * This height is used to ensure that the logo, vault details, vault switcher and the note header all line up.
@@ -21,12 +25,65 @@ type VaultSections = "notes" | "queries" | "tags";
 
 export function MainPage() {
   const navigate = useNavigate();
+  const {vaultId} = useParams();
+
+  const {apiClient, setCurrentUser} = useAthena();
+  const [status, setStatus] = useState<GeneralQueryStatus>(GeneralQueryStatus.LOADING);
+  const [pageErrorMessage, setPageErrorMessage] = useState<string|null>(null);
+
+  const [vault, setVault] = useState<VaultDto|null>(null);
   const [currentVaultSection, setCurrentVaultSection] = useState<VaultSections>("notes");
+
+  useEffect(() => {
+    async function getVault() {
+      if (!vaultId) {
+        setStatus(GeneralQueryStatus.FAILED);
+        return;
+      }
+
+      try {
+        const vault = await apiClient.getVault(vaultId);
+        setStatus(GeneralQueryStatus.SUCCESS);
+        setVault(vault);
+      }
+      catch (e: any) {
+        setStatus(GeneralQueryStatus.FAILED);
+
+        if (e.response?.statusCode === 404) {
+          setPageErrorMessage("The vault you requested does not exist.")
+        }
+        else if (e.response?.statusCode === 400) {
+          setPageErrorMessage("You appear to be requesting a vault with an invalid ID.")
+        }
+        else {
+          setPageErrorMessage("An unexpected error occurred while fetching the vault, try again later.");
+        }
+      }
+    }
+    getVault();
+  }, [vaultId]);
+
+  if (!vault) {
+    return (
+      <>
+        <Helmet>
+          <title>Loading Vault... | Athena</title>
+        </Helmet>
+        <LoadingPage
+          hideHeader={true}
+          status={status}
+          loadingMessage="Loading vault..."
+          errorMessage={pageErrorMessage || "An unepxected error occured"}
+          emptyMessage="An unexpected error occurred"
+        />
+      </>
+    )
+  }
 
   return (
     <>
       <Helmet>
-        <title>{`Vault Name Here | Athena`}</title>
+        <title>{`${vault.name} | Athena`}</title>
       </Helmet>
       <div className="min-h-[100vh] bg-br-atom-700 flex">
 
@@ -46,7 +103,7 @@ export function MainPage() {
                 }}
                 className="absolute left-[0.5rem] py-2"
               />
-              <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name Here</p>
+              <p className="text-br-whiteGrey-100 font-bold py-2">{vault.name}</p>
               <IconButton
                 label="Account Menu"
                 icon={

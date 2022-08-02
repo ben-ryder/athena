@@ -4,8 +4,10 @@ import {LoadingIcon} from "../element/loading-icon";
 import {Page} from "./page";
 import {GeneralQueryStatus} from "../../types/general-query-status";
 import {AlertOctagon as ErrorIcon} from "lucide-react";
+import {Header} from "../regions/header";
 
 export interface LoadingPageProps {
+  hideHeader?: boolean,
   status: GeneralQueryStatus,
   loadingMessage: string,
   errorMessage: string,
@@ -31,6 +33,21 @@ export function LoadingPage(props: LoadingPageProps) {
     message = props.loadingMessage;
     icon = (
       <LoadingIcon />
+    )
+  }
+
+  if (props.hideHeader) {
+    return (
+      <div className="min-h-screen flex flex-col bg-br-atom-700">
+        <div className="grow relative flex flex-col">
+          <div className="grow flex flex-col justify-center items-center">
+            <div className="flex flex-col items-center justify-center">
+              {icon}
+              <P className="text-br-whiteGrey-200 mt-4">{message}</P>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 

@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {useAthena} from "../../helpers/use-athena";
 import {Button} from "@ben-ryder/jigsaw";
-import {VaultDto} from "@ben-ryder/athena-js-lib";
+import {AthenaErrorIdentifiers, VaultDto} from "@ben-ryder/athena-js-lib";
 import {routes} from "../../routes";
 import {ContentPage} from "../../patterns/pages/content-page";
 import {ArrowLink} from "@ben-ryder/jigsaw/dist/patterns/03-elements/arrow-link/arrow-link";
@@ -63,7 +63,11 @@ export function DeleteVaultPage() {
     try {
       await apiClient.deleteVault(vault.id);
     }
-    catch (e) {
+    catch (e: any) {
+      if (e.response?.identifier === AthenaErrorIdentifiers.AUTH_CREDENTIALS_INVALID) {
+        setCurrentUser(null);
+      }
+
       console.log(e);
       setVaultDeleteErrorMessage("There was an unexpected error deleting the vault, try again later");
       return;

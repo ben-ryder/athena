@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
 import {LinkButton} from "@ben-ryder/jigsaw";
-import {linkWithParam, routes} from "../../routes";
+import {routes} from "../../routes";
 import {Page} from "../../patterns/pages/page";
 import {AthenaErrorIdentifiers, VaultDto} from "@ben-ryder/athena-js-lib";
 import {ContentLoadingIndicator} from "../../patterns/components/content-loading-indicator";
 import {useAthena} from "../../helpers/use-athena";
-import {Link} from "../../patterns/element/link";
 import {GeneralQueryStatus} from "../../types/general-query-status";
 import {Helmet} from "react-helmet-async";
+import {VaultCard} from "../../patterns/components/vault-card";
 
 
 export function ListVaultsPage() {
@@ -46,38 +46,19 @@ export function ListVaultsPage() {
           <LinkButton href={routes.vaults.create}>New Vault</LinkButton>
         </div>
         {status !== GeneralQueryStatus.SUCCESS &&
-            <div className="mt-8 flex justify-center items-center">
-                <ContentLoadingIndicator
-                    status={status}
-                    loadingMessage="Loading vaults please wait..."
-                    errorMessage="Failed to load vaults, please try again later."
-                    emptyMessage="No vaults found."
-                />
-            </div>
+          <div className="mt-8 flex justify-center items-center">
+            <ContentLoadingIndicator
+              status={status}
+              loadingMessage="Loading vaults please wait..."
+              errorMessage="Failed to load vaults, please try again later."
+              emptyMessage="No vaults found."
+            />
+          </div>
         }
         {vaults.length > 0 &&
           <ul>
             {vaults.map(vault =>
-              <li key={vault.id} className="my-4 p-5 bg-br-atom-600 shadow-sm flex justify-between items-center">
-
-                <div>
-                  <h2 className="font-bold text-br-whiteGrey-100 text-xl">{vault.name}</h2>
-                  {vault.description &&
-                      <p className="text-br-whiteGrey-100">{vault.description}</p>
-                  }
-                </div>
-
-                <div className="flex items-center justify-center">
-                  <Link
-                    className="text-br-whiteGrey-100 underline hover:text-br-teal-600"
-                    href={linkWithParam(routes.vaults.edit, vault.id)}
-                  >Edit Vault</Link>
-                  <Link
-                    className="ml-4 font-bold text-br-whiteGrey-100 underline hover:text-br-teal-600"
-                    href={linkWithParam(routes.app.main, vault.id)}
-                  >Open Vault</Link>
-                </div>
-              </li>
+              <VaultCard key={vault.id} vault={vault} />
             )}
           </ul>
         }

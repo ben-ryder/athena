@@ -130,7 +130,7 @@ export function EditVaultPage() {
           <div className="mt-4">
             <Controller
               name="description"
-              defaultValue={vault.description}
+              defaultValue={vault.description || ""}
               control={control}
               render={({ field }) =>
                 <TextArea {...field} rows={3} id="description" label="Description" error={errors.description?.message} />
