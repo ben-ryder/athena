@@ -5,6 +5,7 @@ import {Input, Button} from "@ben-ryder/jigsaw";
 import {z} from "zod";
 import {useAthena} from "../../../helpers/use-athena";
 import {FormPage} from "../../../patterns/pages/form-page";
+import {Helmet} from "react-helmet-async";
 
 // todo: replace with API schema once written
 const ForgottenPasswordSchema = z.object({
@@ -35,6 +36,9 @@ export function ForgottenPasswordPage() {
       title="Reset Password"
       description={<p className="text-br-whiteGrey-200 mt-2">Enter your account email address below to request a password reset email.</p>}
     >
+      <Helmet>
+        <title>Reset Password | Athena</title>
+      </Helmet>
       <form onSubmit={handleSubmit(onSubmit)} noValidate={true}>
         <div className="mt-4">
           <Controller

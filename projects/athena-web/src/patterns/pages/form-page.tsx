@@ -16,9 +16,6 @@ export function FormPage(props: FormPageProps) {
 
   return (
     <Page>
-      <Helmet>
-        <title>{`${props.title} | Athena`}</title>
-      </Helmet>
       <div className="grow flex flex-col justify-center items-center">
         <main className="w-96 mx-auto mb-10 px-2">
           <div>

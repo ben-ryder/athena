@@ -20,7 +20,8 @@ export const routes = {
   vaults: {
     list: "/vaults",
     create: "/vaults/create",
-    edit: "/vaults/:vaultId",
+    view: "/vaults/:vaultId",
+    edit: "/vaults/:vaultId/edit",
     delete: "/vaults/:vaultId/delete"
   },
   external: {
@@ -29,6 +30,15 @@ export const routes = {
   }
 }
 
-export function getAppLink(vaultId: string) {
-  return routes.app.main.replace(":vaultId", vaultId);
+export function linkWithParam(route: string, param: string): string {
+  if (
+    route === routes.app.main ||
+    route === routes.vaults.view ||
+    route === routes.vaults.edit ||
+    route === routes.vaults.delete
+  ) {
+    return route.replace(":vaultId", param);
+  }
+
+  return route;
 }

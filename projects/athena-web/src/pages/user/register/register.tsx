@@ -3,6 +3,8 @@ import {RegisterEnabledPage} from "./register-enabled";
 import {RegisterDisabledPage} from "./register-disabled";
 import {LoadingPage} from "../../../patterns/pages/loading-page";
 import {useAthena} from "../../../helpers/use-athena";
+import {Helmet} from "react-helmet-async";
+import {GeneralQueryStatus} from "../../../types/general-query-status";
 
 
 export enum RegistrationStatus {
@@ -36,17 +38,32 @@ export function RegisterPage() {
 
   if (status === RegistrationStatus.ENABLED) {
     return (
-      <RegisterEnabledPage />
+      <>
+        <Helmet>
+          <title>Register | Athena</title>
+        </Helmet>
+        <RegisterEnabledPage />
+      </>
     )
   }
   else if (status === RegistrationStatus.DISABLED) {
     return (
-      <RegisterDisabledPage />
+      <>
+        <Helmet>
+          <title>Registration Disabled | Athena</title>
+        </Helmet>
+        <RegisterDisabledPage />
+      </>
     )
   }
   else {
     return (
-      <LoadingPage text="Checking if account registration is currently enabled..." />
+      <LoadingPage
+        status={GeneralQueryStatus.LOADING}
+        loadingMessage="Checking if account registration is currently enabled..."
+        errorMessage="An error occurred"
+        emptyMessage="An error occurred"
+      />
     )
   }
 }

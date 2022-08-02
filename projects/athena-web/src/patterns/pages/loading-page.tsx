@@ -12,6 +12,8 @@ export interface LoadingPageProps {
   emptyMessage: string
 }
 
+//todo: make error & empty messages optional
+
 export function LoadingPage(props: LoadingPageProps) {
   if (props.status === GeneralQueryStatus.SUCCESS || props.status === GeneralQueryStatus.EMPTY) {
     return null;

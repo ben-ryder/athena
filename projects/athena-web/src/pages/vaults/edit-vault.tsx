@@ -4,13 +4,14 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useAthena} from "../../helpers/use-athena";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod/dist/zod";
-import {Button, Input, TextArea} from "@ben-ryder/jigsaw";
+import {Button, Input, LinkButton, TextArea} from "@ben-ryder/jigsaw";
 import {AthenaErrorIdentifiers, CreateVaultRequest, CreateVaultRequestSchema, VaultDto} from "@ben-ryder/athena-js-lib";
 import {routes} from "../../routes";
 import {ContentPage} from "../../patterns/pages/content-page";
 import {ArrowLink} from "@ben-ryder/jigsaw/dist/patterns/03-elements/arrow-link/arrow-link";
 import {GeneralQueryStatus} from "../../types/general-query-status";
 import {LoadingPage} from "../../patterns/pages/loading-page";
+import {Helmet} from "react-helmet-async";
 
 
 export function EditVaultPage() {
@@ -91,17 +92,25 @@ export function EditVaultPage() {
 
   if (!vault) {
     return (
-      <LoadingPage
-        status={status}
-        loadingMessage="Loading vault..."
-        errorMessage={pageErrorMessage || "An unexpected error occurred"}
-        emptyMessage="An unexpected error occurred"
-      />
+      <>
+        <Helmet>
+          <title>Loading Vault... | Athena</title>
+        </Helmet>
+        <LoadingPage
+          status={status}
+          loadingMessage="Loading vault..."
+          errorMessage={pageErrorMessage || "An unexpected error occurred"}
+          emptyMessage="An unexpected error occurred"
+        />
+      </>
     )
   }
 
   return (
     <ContentPage>
+      <Helmet>
+        <title>{`${vault.name} - edit | Athena`}</title>
+      </Helmet>
       <ArrowLink direction="left" href={routes.vaults.list}>all vaults</ArrowLink>
       <div className="mt-8">
         <h1 className="font-bold text-4xl text-br-whiteGrey-100">Edit <span className="text-br-teal-600">{vault.name}</span></h1>
@@ -134,7 +143,8 @@ export function EditVaultPage() {
               </div>
           }
           <div className="mt-6 flex justify-end">
-            <Button type="submit" status={isSubmitting ? "awaiting" : "normal"}>Save</Button>
+            <LinkButton styling="destructive" href={routes.vaults.delete.replace(":vaultId", vault.id)}>Delete</LinkButton>
+            <Button className="ml-4" type="submit" status={isSubmitting ? "awaiting" : "normal"}>Save</Button>
           </div>
         </form>
       </div>

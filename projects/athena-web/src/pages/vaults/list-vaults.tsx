@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
 import {LinkButton} from "@ben-ryder/jigsaw";
-import {getAppLink, routes} from "../../routes";
+import {linkWithParam, routes} from "../../routes";
 import {Page} from "../../patterns/pages/page";
 import {AthenaErrorIdentifiers, VaultDto} from "@ben-ryder/athena-js-lib";
 import {ContentLoadingIndicator} from "../../patterns/components/content-loading-indicator";
 import {useAthena} from "../../helpers/use-athena";
 import {Link} from "../../patterns/element/link";
 import {GeneralQueryStatus} from "../../types/general-query-status";
+import {Helmet} from "react-helmet-async";
 
 
 export function ListVaultsPage() {
@@ -36,6 +37,9 @@ export function ListVaultsPage() {
 
   return (
     <Page>
+      <Helmet>
+        <title>Vaults | Athena</title>
+      </Helmet>
       <div className="w-full max-w-3xl mx-auto px-4 pt-12">
         <div className="py-2 flex justify-between items-end border-b border-br-blueGrey-600">
           <h1 className="font-bold text-br-whiteGrey-100 text-2xl">All Vaults</h1>
@@ -54,10 +58,25 @@ export function ListVaultsPage() {
         {vaults.length > 0 &&
           <ul>
             {vaults.map(vault =>
-              <li key={vault.id}>
-                <Link href={getAppLink(vault.id)}>{vault.name}</Link>
-                <Link href={routes.vaults.edit.replace(":vaultId", vault.id)}>edit vault</Link>
-                <p>{vault.description}</p>
+              <li key={vault.id} className="my-4 p-5 bg-br-atom-600 shadow-sm flex justify-between items-center">
+
+                <div>
+                  <h2 className="font-bold text-br-whiteGrey-100 text-xl">{vault.name}</h2>
+                  {vault.description &&
+                      <p className="text-br-whiteGrey-100">{vault.description}</p>
+                  }
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <Link
+                    className="text-br-whiteGrey-100 underline hover:text-br-teal-600"
+                    href={linkWithParam(routes.vaults.edit, vault.id)}
+                  >Edit Vault</Link>
+                  <Link
+                    className="ml-4 font-bold text-br-whiteGrey-100 underline hover:text-br-teal-600"
+                    href={linkWithParam(routes.app.main, vault.id)}
+                  >Open Vault</Link>
+                </div>
               </li>
             )}
           </ul>

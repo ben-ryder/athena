@@ -9,6 +9,7 @@ import {AthenaErrorIdentifiers, CreateVaultRequest, CreateVaultRequestSchema} fr
 import {routes} from "../../routes";
 import {ContentPage} from "../../patterns/pages/content-page";
 import {ArrowLink} from "@ben-ryder/jigsaw/dist/patterns/03-elements/arrow-link/arrow-link";
+import {Helmet} from "react-helmet-async";
 
 
 export function CreateVaultPage() {
@@ -47,6 +48,9 @@ export function CreateVaultPage() {
 
   return (
     <ContentPage>
+      <Helmet>
+        <title>Create Vault | Athena</title>
+      </Helmet>
       <ArrowLink direction="left" href={routes.vaults.list}>all vaults</ArrowLink>
       <div className="mt-8">
         <h1 className="font-bold text-4xl text-br-teal-600">Create Vault</h1>

@@ -8,6 +8,7 @@ import {useAthena} from "../../helpers/use-athena";
 import {FormPage} from "../../patterns/pages/form-page";
 import {Link} from "../../patterns/element/link";
 import {routes} from "../../routes";
+import {Helmet} from "react-helmet-async";
 
 
 export function LoginPage() {
@@ -44,6 +45,9 @@ export function LoginPage() {
       title="Log In"
       description={<p className="text-br-whiteGrey-200 mt-2">Log in to your account. Don't have an account? <Link href={routes.users.register}>Register</Link></p>}
     >
+      <Helmet>
+        <title>Log In | Athena</title>
+      </Helmet>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-4">
           <Controller

@@ -3,8 +3,10 @@ import {useNavigate} from "react-router-dom";
 import {useAthena} from "../../helpers/use-athena";
 import {LoadingPage} from "../../patterns/pages/loading-page";
 import {routes} from "../../routes";
+import {Helmet} from "react-helmet-async";
+import {GeneralQueryStatus} from "../../types/general-query-status";
 
-
+// todo: add error handling/display message
 export function LogoutPage() {
     const navigate = useNavigate();
     const { apiClient, setCurrentUser } = useAthena();
@@ -19,7 +21,17 @@ export function LogoutPage() {
     }, [apiClient, navigate]);
 
     return (
-      <LoadingPage text="You are being logged out and should be redirected shortly..." />
+      <>
+          <Helmet>
+              <title>Logging out... | Athena</title>
+          </Helmet>
+          <LoadingPage
+            status={GeneralQueryStatus.LOADING}
+            loadingMessage="You are being logged out and should be redirected shortly..."
+            errorMessage="An error occurred"
+            emptyMessage="An error occurred"
+          />
+      </>
     );
 }
 

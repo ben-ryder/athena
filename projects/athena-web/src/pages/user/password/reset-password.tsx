@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {useSearchParams} from "react-router-dom";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {Input, Button, P, H1} from "@ben-ryder/jigsaw";
-import {
-  UpdateUserRequestSchema
-} from "@ben-ryder/athena-js-lib";
+import {Controller, SubmitHandler, useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Button, Input} from "@ben-ryder/jigsaw";
+import {UpdateUserRequestSchema} from "@ben-ryder/athena-js-lib";
 import {z} from "zod";
 import {FormPage} from "../../../patterns/pages/form-page";
 import {LoadingPage} from "../../../patterns/pages/loading-page";
 import {Link} from "../../../patterns/element/link";
 import {routes} from "../../../routes";
 import {MessagePage} from "../../../patterns/pages/message-page";
+import {Helmet} from "react-helmet-async";
+import {GeneralQueryStatus} from "../../../types/general-query-status";
 
 // todo: replace with API schema once written
 const ResetPasswordSchema = z.object({
@@ -68,7 +68,17 @@ export function ResetPasswordPage() {
 
   if (status === ResetTokenStatus.CHECK_IN_PROGRESS) {
     return (
-      <LoadingPage text="Checking your password reset link..." />
+      <>
+        <Helmet>
+          <title>Reset Password | Athena</title>
+        </Helmet>
+        <LoadingPage
+          status={GeneralQueryStatus.LOADING}
+          loadingMessage="Checking your password reset link..."
+          errorMessage="An error occurred"
+          emptyMessage="An error occurred"
+        />
+      </>
     )
   }
   else if (status === ResetTokenStatus.INVALID || status === ResetTokenStatus.MISSING) {
@@ -88,6 +98,9 @@ export function ResetPasswordPage() {
         title="Reset Password"
         description={<p className="text-br-whiteGrey-200 mt-2">Enter your new password below.</p>}
       >
+        <Helmet>
+          <title>Reset Password | Athena</title>
+        </Helmet>
         <form onSubmit={handleSubmit(onSubmit)} noValidate={true}>
           <div className="mt-4">
             <Controller
