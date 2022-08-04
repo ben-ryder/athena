@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {IconButton, iconColorClassNames, iconSizes, MultiSelect} from "@ben-ryder/jigsaw";
+import React, {useEffect, useState, Fragment} from 'react';
+import {colourPalette, IconButton, iconColorClassNames, iconSizes, MultiSelect, Select} from "@ben-ryder/jigsaw";
 import {
   StickyNote as NotesIcon,
   Tag as TagsIcon,
@@ -7,7 +7,10 @@ import {
   ArrowLeft as BackIcon,
   Trash2 as DeleteIcon,
   Save as SaveIcon,
-  X as CloseIcon
+  X as CloseIcon,
+  LayoutTemplate as TemplateViewIcon,
+  FolderTree as FolderViewIcon,
+  LayoutList as NoteListViewIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {useNavigate, useParams} from "react-router-dom";
@@ -17,6 +20,7 @@ import {LoadingPage} from "../../patterns/pages/loading-page";
 import {useAthena} from "../../helpers/use-athena";
 import {GeneralQueryStatus} from "../../types/general-query-status";
 import {NoteContentDto, VaultDto} from "@ben-ryder/athena-js-lib";
+import ReactTooltip from "react-tooltip";
 
 const notes: NoteContentDto[] = [
   {
@@ -92,7 +96,7 @@ const selectedTags = [tags[0], tags[3], tags[4]]
 const topSectionHeight = "h-[40px]";
 const topSectionWidth = "w-[40px]";
 
-type VaultSections = "notes" | "tasks" | "queries" | "tags";
+type VaultSections = "folders" | "notes" | "queries" | "templates" | "tags";
 
 export function MainPage() {
   const navigate = useNavigate();
@@ -168,6 +172,7 @@ export function MainPage() {
             <div className={`flex justify-center items-center relative ${topSectionHeight}`}>
               <IconButton
                 label="Back to vaults"
+                data-tip="Back to vaults"
                 icon={<BackIcon size={20} className={iconColorClassNames.secondary} />}
                 onClick={() => {
                   navigate(routes.vaults.list)
@@ -180,11 +185,27 @@ export function MainPage() {
             {/** Vault Panel Switcher **/}
             <div className={`flex ${topSectionHeight}`}>
               <IconButton
-                label="Notes"
+                label="Folder View"
                 icon={
                   <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
-                    <NotesIcon size={20} />
-                    <p className="ml-2 text-sm font-bold">Notes</p>
+                    <FolderViewIcon size={20} />
+                  </div>
+                }
+                onClick={() => {setCurrentVaultSection("folders")}}
+                className={classNames(
+                  "grow py-2",
+                  {
+                    "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentVaultSection !== "folders",
+                    "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "folders"
+                  }
+                )}
+                data-tip="Folder View"
+              />
+              <IconButton
+                label="Note List"
+                icon={
+                  <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
+                    <NoteListViewIcon size={20} />
                   </div>
                 }
                 onClick={() => {setCurrentVaultSection("notes")}}
@@ -195,30 +216,48 @@ export function MainPage() {
                     "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "notes"
                   }
                 )}
+                data-tip="All Notes"
               />
+              {/*<IconButton*/}
+              {/*  label="Query List"*/}
+              {/*  icon={*/}
+              {/*    <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>*/}
+              {/*      <QueriesIcon size={20} />*/}
+              {/*      /!*<p className="ml-2 text-sm font-bold">Queries</p>*!/*/}
+              {/*    </div>*/}
+              {/*  }*/}
+              {/*  onClick={() => {setCurrentVaultSection("queries")}}*/}
+              {/*  className={classNames(*/}
+              {/*    "grow py-2",*/}
+              {/*    {*/}
+              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentVaultSection !== "queries",*/}
+              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "queries"*/}
+              {/*    }*/}
+              {/*  )}*/}
+              {/*/>*/}
               <IconButton
-                label="Queries"
+                label="Templates"
                 icon={
                   <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
-                    <QueriesIcon size={20} />
-                    <p className="ml-2 text-sm font-bold">Queries</p>
+                    <TemplateViewIcon size={20} />
                   </div>
                 }
-                onClick={() => {setCurrentVaultSection("queries")}}
+                onClick={() => {setCurrentVaultSection("templates")}}
                 className={classNames(
                   "grow py-2",
                   {
-                    "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentVaultSection !== "queries",
-                    "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "queries"
+                    "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentVaultSection !== "templates",
+                    "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "templates"
                   }
                 )}
+                data-tip="Templates"
               />
               <IconButton
                 label="Tags"
                 icon={
                   <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
                     <TagsIcon size={20} />
-                    <p className="ml-2 text-sm font-bold">Tags</p>
+                    {/*<p className="ml-2 text-sm font-bold">Tags</p>*/}
                   </div>
                 }
                 onClick={() => {setCurrentVaultSection("tags")}}
@@ -229,6 +268,14 @@ export function MainPage() {
                     "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "tags"
                   }
                 )}
+                data-tip="Tags"
+              />
+              <ReactTooltip
+                place="bottom"
+                effect="solid"
+                backgroundColor={colourPalette.atom["600"]}
+                textColor={colourPalette.whiteGrey["100"]}
+                className="shadow-md"
               />
             </div>
 
@@ -247,10 +294,22 @@ export function MainPage() {
           <section id="note-details" className="bg-br-atom-800">
             <div className={`${topSectionHeight} flex items-stretch`}>
               <input className="grow block bg-transparent py-2 px-4 outline-none text-br-whiteGrey-100 font-bold" placeholder="note title here..." />
-              <IconButton label="Delete Note" icon={<DeleteIcon />} className={`${iconColorClassNames.secondary} h-full ${topSectionWidth} flex justify-center items-center`} onClick={() => {}} />
-              <IconButton label="Save Note" icon={<SaveIcon />} className={`${iconColorClassNames.secondary} h-full ${topSectionWidth} flex justify-center items-center`} onClick={() => {}} />
+              <IconButton
+                label="Delete Note"
+                data-tip="Delete Note"
+                icon={<DeleteIcon />}
+                className={`${iconColorClassNames.secondary} h-full ${topSectionWidth} flex justify-center items-center`}
+                onClick={() => {}}
+              />
+              <IconButton
+                label="Save Note"
+                data-tip="Save Note"
+                icon={<SaveIcon />}
+                className={`${iconColorClassNames.secondary} h-full ${topSectionWidth} flex justify-center items-center`}
+                onClick={() => {}}
+              />
             </div>
-            <div className={`${topSectionHeight}`}>
+            <div className={`${topSectionHeight} flex`}>
               <MultiSelect
                 id="note-tags"
                 label="Note Tags"
@@ -260,6 +319,14 @@ export function MainPage() {
                 currentOptions={selectedTags}
                 onOptionsChange={() => {}}
                 className="border-none bg-transparent"
+              />
+              <Select
+                id="folder-select"
+                label="Folder"
+                hideLabel={true}
+                options={[{name: "select folder", value: ""}, {name: "Folder One", value: "one"}]}
+                currentOption={{name: "select folder", value: ""}}
+                onOptionChange={() => {}}
               />
             </div>
           </section>

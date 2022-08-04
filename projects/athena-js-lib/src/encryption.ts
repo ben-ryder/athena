@@ -108,7 +108,7 @@ export class AthenaEncryption {
             encryptedUpdate.name = AthenaEncryption.encryptText(key, updateVaultRequest.name)
         }
 
-        if (updateVaultRequest.description === undefined || updateVaultRequest.description === "") {
+        if (typeof updateVaultRequest.description !== 'string' || updateVaultRequest.description === "") {
             encryptedUpdate.description = updateVaultRequest.description
         }
         else {

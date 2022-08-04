@@ -6,6 +6,7 @@ export const CreateVaultRequestSchema = z.object({
     .max(100, "Your vault name can't be longer than 100 characters"),
   description: z.string()
     .max(255, "Your vault description can't be over 255 characters")
+    .nullable()
     .optional()
 }).strict();
 

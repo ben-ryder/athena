@@ -1,7 +1,8 @@
-import { useAthena } from "./use-athena";
-import { useEffect, useState } from 'react';
+import {useAthena} from "./use-athena";
+import {useEffect, useState} from 'react';
 import {LoadingPage} from "../patterns/pages/loading-page";
 import {StrictReactNode} from "../types/strict-react-node";
+import {GeneralQueryStatus} from "../types/general-query-status";
 
 enum LoginCheckStatus {
     CHECKING = 'checking',
@@ -40,7 +41,12 @@ export function AthenaSessionManager(props: AthenaSessionManagerProps) {
     }, [currentUser, storage]);
 
     if (loginCheckStatus === LoginCheckStatus.CHECKING) {
-        return <LoadingPage text="Loading application..." />
+        return <LoadingPage
+          status={GeneralQueryStatus.LOADING}
+          loadingMessage="Loading application..."
+          errorMessage="An error occurred"
+          emptyMessage="An error occurred"
+        />
     }
     else {
         return <>{props.children}</>

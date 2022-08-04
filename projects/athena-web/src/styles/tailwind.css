@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.__react_component_tooltip {
+    opacity: 1 !important;
+}

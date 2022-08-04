@@ -35,7 +35,7 @@ export class VaultsDatabaseService {
     return {
       id: vault.id,
       name: vault.name,
-      description: vault.description,
+      description: vault.description || null,
       createdAt: vault.created_at,
       updatedAt: vault.updated_at
     }

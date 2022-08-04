@@ -73,7 +73,17 @@ export function CreateVaultPage() {
               defaultValue=""
               control={control}
               render={({ field }) =>
-                <TextArea {...field} rows={3} id="description" label="Description" error={errors.description?.message} />
+                <TextArea
+                  name={field.name}
+                  value={field.value === null ? "" : field.value}
+                  ref={field.ref}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  rows={3}
+                  id="description"
+                   label="Description"
+                  error={errors.description?.message}
+                />
               }
             />
           </div>
