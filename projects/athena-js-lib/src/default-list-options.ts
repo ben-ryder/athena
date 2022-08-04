@@ -5,7 +5,7 @@ export const DefaultListOptions = {
   take: 24,
   skip: 0,
   orderBy: OrderByFields.UPDATED_AT,
-  orderDirection: OrderDirections.ASC
+  orderDirection: OrderDirections.DESC
 }
 
 export const DefaultVaultsListOptions = DefaultListOptions;
