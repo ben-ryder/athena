@@ -78,13 +78,13 @@ export class VaultsDatabaseService {
     }
     else {
       throw new ResourceNotFoundError({
-        identifier: AthenaErrorIdentifiers.USER_NOT_FOUND,
+        identifier: AthenaErrorIdentifiers.VAULT_NOT_FOUND,
         applicationMessage: "The requested vault could not be found."
       })
     }
   }
 
-  async getWithUser(vaultId: string): Promise<VaultWithOwnerDto> {
+  async getWithOwner(vaultId: string): Promise<VaultWithOwnerDto> {
     const sql = await this.databaseService.getSQL();
 
     let result: InternalDatabaseVaultDto[] = [];
@@ -106,7 +106,7 @@ export class VaultsDatabaseService {
     }
     else {
       throw new ResourceNotFoundError({
-        identifier: AthenaErrorIdentifiers.USER_NOT_FOUND,
+        identifier: AthenaErrorIdentifiers.VAULT_NOT_FOUND,
         applicationMessage: "The requested vault could not be found."
       })
     }

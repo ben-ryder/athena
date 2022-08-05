@@ -19,7 +19,7 @@ export class VaultsService {
   ) {}
 
   async checkAccess(requestUserId: string, vaultId: string): Promise<void> {
-    const vault = await this.vaultsDatabaseService.getWithUser(vaultId);
+    const vault = await this.vaultsDatabaseService.getWithOwner(vaultId);
 
     if (vault.owner === requestUserId) {
       return;

@@ -17,6 +17,10 @@ export enum AthenaErrorIdentifiers {
 
   // Vault Errors
   VAULT_NAME_EXISTS = "vault-name-exists",
+  VAULT_NOT_FOUND = "vault-not-found",
+
+  // Note Errors
+  NOTE_NOT_FOUND = "note-not-found",
 
   /**
    * Identifiers matching KangoJS identifiers below
