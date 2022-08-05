@@ -14,12 +14,14 @@ import {
   NoteDto,
   UpdateNoteRequest
 } from "@ben-ryder/athena-js-lib";
+import {NoteTagsDatabaseService} from "./note-tags.database.service";
 
 
 @Injectable()
 export class NotesDatabaseService {
   constructor(
-    private readonly databaseService: DatabaseService
+    private readonly databaseService: DatabaseService,
+    private readonly noteTagsDatabaseService: NoteTagsDatabaseService
   ) {}
 
   private static mapApplicationField(fieldName: string): string {
@@ -41,13 +43,13 @@ export class NotesDatabaseService {
       body: note.body,
       createdAt: note.created_at,
       updatedAt: note.updated_at,
-      tags: [] // todo: how?
+      tags: []
     }
   }
 
-  private static handleDatabaseError(e: any) {
-    throw new SystemError({
-      message: "Unexpected error while creating note",
+  private static getDatabaseError(e: any) {
+    return new SystemError({
+      message: "Unexpected error while executing notes query",
       originalError: e
     })
   }
@@ -60,14 +62,16 @@ export class NotesDatabaseService {
       result = await sql<DatabaseNoteDto[]>`SELECT * FROM notes WHERE id = ${noteId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching note",
-        originalError: e
-      })
+      throw NotesDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return NotesDatabaseService.mapDatabaseEntity(result[0]);
+      const tags = await this.noteTagsDatabaseService.getTags(noteId);
+
+      return {
+        ...NotesDatabaseService.mapDatabaseEntity(result[0]),
+        tags
+      }
     }
     else {
       throw new ResourceNotFoundError({
@@ -85,16 +89,16 @@ export class NotesDatabaseService {
       result = await sql<DatabaseNoteWithOwnerDto[]>`SELECT notes.*, vaults.owner FROM notes INNER JOIN vaults on notes.vault = vaults.id WHERE notes.id = ${noteId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching note",
-        originalError: e
-      })
+      throw NotesDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
+      const tags = await this.noteTagsDatabaseService.getTags(noteId);
+
       return {
         ...NotesDatabaseService.mapDatabaseEntity(result[0]),
-        owner: result[0].owner
+        owner: result[0].owner,
+        tags
       }
     }
     else {
@@ -117,11 +121,19 @@ export class NotesDatabaseService {
        `;
     }
     catch (e: any) {
-      NotesDatabaseService.handleDatabaseError(e);
+      throw NotesDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return NotesDatabaseService.mapDatabaseEntity(result[0]);
+      if (Array.isArray(note.tags)) {
+        await this.noteTagsDatabaseService.updateTags(result[0].id, note.tags);
+      }
+
+      const tags = await this.noteTagsDatabaseService.getTags(result[0].id);
+      return {
+        ...NotesDatabaseService.mapDatabaseEntity(result[0]),
+        tags
+      };
     }
     else {
       throw new SystemError({
@@ -155,11 +167,19 @@ export class NotesDatabaseService {
       `;
     }
     catch (e: any) {
-      NotesDatabaseService.handleDatabaseError(e);
+      throw NotesDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return NotesDatabaseService.mapDatabaseEntity(result[0]);
+      if (Array.isArray(noteUpdate.tags)) {
+        await this.noteTagsDatabaseService.updateTags(noteId, noteUpdate.tags);
+      }
+
+      const tags = await this.noteTagsDatabaseService.getTags(noteId);
+      return {
+        ...NotesDatabaseService.mapDatabaseEntity(result[0]),
+        tags
+      };
     }
     else {
       throw new SystemError({
@@ -209,7 +229,16 @@ export class NotesDatabaseService {
       })
     }
 
-    return result.map(NotesDatabaseService.mapDatabaseEntity);
+    const notes = [];
+    for (const resultNote of result) {
+      const tags = await this.noteTagsDatabaseService.getTags(resultNote.id);
+
+      notes.push({
+        ...NotesDatabaseService.mapDatabaseEntity(resultNote),
+        tags
+      });
+    }
+    return notes;
   }
 
   async getListMetadata(vaultId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {

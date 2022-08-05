@@ -21,7 +21,7 @@ export class TagsDatabaseService {
     private readonly databaseService: DatabaseService
   ) {}
 
-  private static mapApplicationField(fieldName: string): string {
+  static mapApplicationField(fieldName: string): string {
     switch (fieldName) {
       case 'created_at':
         return 'createdAt';
@@ -32,7 +32,7 @@ export class TagsDatabaseService {
     }
   }
 
-  private static mapDatabaseEntity(tag: DatabaseTagDto): TagDto {
+  static mapDatabaseEntity(tag: DatabaseTagDto): TagDto {
     return {
       id: tag.id,
       name: tag.name,
