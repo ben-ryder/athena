@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-export const CreateVaultRequestSchema = z.object({
+export const CreateVaultRequest = z.object({
   name: z.string()
     .min(1, "Your vault name must be at least 1 character")
     .max(100, "Your vault name can't be longer than 100 characters"),
@@ -10,5 +10,5 @@ export const CreateVaultRequestSchema = z.object({
     .optional()
 }).strict();
 
-export type CreateVaultRequest = z.infer<typeof CreateVaultRequestSchema>;
+export type CreateVaultRequest = z.infer<typeof CreateVaultRequest>;
 

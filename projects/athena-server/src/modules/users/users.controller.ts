@@ -5,9 +5,9 @@ import {Controller, Route, HTTPMethods, AccessForbiddenError} from '@kangojs/cor
 import { UsersService } from './users.service';
 import {
     AthenaErrorIdentifiers,
-    CreateUserRequestSchema,
-    GetUserResponse, UpdateUserRequestSchema, UpdateUserResponse, UserDto,
-    UsersURLParamsSchema
+    CreateUserRequest, UpdateUserRequest, UsersURLParams,
+    GetUserResponse,UpdateUserResponse,
+    UserDto
 } from "@ben-ryder/athena-js-lib";
 import {RequestWithUserContext} from "../../common/request-with-context";
 import {ConfigService} from "../../services/config/config";
@@ -26,7 +26,7 @@ export class UsersController {
 
     @Route({
         httpMethod: HTTPMethods.POST,
-        bodyShape: CreateUserRequestSchema,
+        bodyShape: CreateUserRequest,
         authRequired: false
     })
     async add(req: Request, res: Response, next: NextFunction) {
@@ -58,7 +58,7 @@ export class UsersController {
     @Route({
         path: '/:userId',
         httpMethod: HTTPMethods.GET,
-        paramsShape: UsersURLParamsSchema
+        paramsShape: UsersURLParams
     })
     async get(req: RequestWithUserContext, res: Response, next: NextFunction) {
         let user: GetUserResponse | null;
@@ -76,8 +76,8 @@ export class UsersController {
     @Route({
         path: '/:userId',
         httpMethod: HTTPMethods.PATCH,
-        bodyShape: UpdateUserRequestSchema,
-        paramsShape: UsersURLParamsSchema
+        bodyShape: UpdateUserRequest,
+        paramsShape: UsersURLParams
     })
     async update(req: RequestWithUserContext, res: Response, next: NextFunction) {
         let updatedUser: UpdateUserResponse;
@@ -95,7 +95,7 @@ export class UsersController {
     @Route({
         path: '/:userId',
         httpMethod: HTTPMethods.DELETE,
-        paramsShape: UsersURLParamsSchema
+        paramsShape: UsersURLParams
     })
     async delete(req: RequestWithUserContext, res: Response, next: NextFunction) {
         try {

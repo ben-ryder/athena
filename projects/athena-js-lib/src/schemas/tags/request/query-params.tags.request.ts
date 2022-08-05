@@ -1,12 +1,12 @@
 import {z} from "zod";
 
-import {PaginationQueryParamsSchema} from "../../common/pagination-query-params-schema";
+import {PaginationQueryParams} from "../../common/pagination-query-params";
 import {OrderDirections} from "../../common/order-directions";
 import {OrderByFields} from "../../common/order-by-fields";
 
-export const TagsQueryParamsSchema = PaginationQueryParamsSchema.extend({
+export const TagsQueryParams= PaginationQueryParams.extend({
     orderBy: z.nativeEnum(OrderByFields).optional(),
     orderDirection: z.nativeEnum(OrderDirections).optional()
 }).strict();
 
-export type TagsQueryParams = z.infer<typeof TagsQueryParamsSchema>;
+export type TagsQueryParams = z.infer<typeof TagsQueryParams>;

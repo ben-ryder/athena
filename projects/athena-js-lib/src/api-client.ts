@@ -13,12 +13,8 @@ import {
 import {UserDto} from "./schemas/users/dtos/user.dto";
 import {LoginResponse} from "./schemas/auth/response/login.auth.response";
 import {RefreshResponse} from "./schemas/auth/response/refresh.auth.response";
-import {GetNoteResponse} from "./schemas/notes/response/get.note.response";
-import {GetNotesResponse} from "./schemas/notes/response/get.notes.response";
-import {NoteDto} from "./schemas/notes/dtos/note.dto";
 import {CreateNoteResponse} from "./schemas/notes/response/create.notes.response";
 import {UpdateNoteResponse} from "./schemas/notes/response/update.notes.response";
-import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
 import {CreateUserRequest} from "./schemas/users/request/create.users.request";
 import {InfoDto} from "./schemas/info/dtos/info.dto";
 import {CreateUserResponse} from "./schemas/users/response/create.users.response";
@@ -370,66 +366,4 @@ export class AthenaAPIClient {
             url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
         })
     }
-
-    // Note Endpoints
-    // async createNote(newNote: CreateNoteRequest) {
-    //     await this.checkEncryptionKey();
-    //     const encryptedNote = AthenaEncryption.encryptNoteContent(<string> this.encryptionKey, newNote);
-    //
-    //     return this.query<CreateNoteResponse>({
-    //         method: 'POST',
-    //         url: `${this.options.apiEndpoint}/v1/notes`,
-    //         data: encryptedNote
-    //     })
-    // }
-    //
-    // async getNote(noteId: string): Promise<GetNoteResponse> {
-    //     await this.checkEncryptionKey();
-    //
-    //     const encryptedNote = await this.query<GetNoteResponse>({
-    //         method: 'GET',
-    //         url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
-    //     })
-    //
-    //     return AthenaEncryption.decryptNote(<string> this.encryptionKey, encryptedNote);
-    // }
-    //
-    // async getNotes(): Promise<GetNotesResponse> {
-    //     await this.checkEncryptionKey();
-    //
-    //     const encryptedNotesResponse = await this.query<GetNotesResponse>({
-    //         method: 'GET',
-    //         url: `${this.options.apiEndpoint}/v1/notes`
-    //     });
-    //
-    //     let notes: NoteDto[] = [];
-    //     for (let note of encryptedNotesResponse.notes) {
-    //         notes.push(
-    //           AthenaEncryption.decryptNote(<string> this.encryptionKey, note)
-    //         )
-    //     }
-    //
-    //     return {
-    //         notes,
-    //         meta: encryptedNotesResponse.meta
-    //     };
-    // }
-    //
-    // async updateNote(noteId: string, note: NoteDto) {
-    //     await this.checkEncryptionKey();
-    //     const encryptedNoteUpdate = await AthenaEncryption.encryptNote(<string> this.encryptionKey, note);
-    //
-    //     return this.query<UpdateNoteResponse>({
-    //         method: 'PATCH',
-    //         url: `${this.options.apiEndpoint}/v1/notes/${noteId}`,
-    //         data: encryptedNoteUpdate
-    //     })
-    // }
-    //
-    // async deleteNote(noteId: string) {
-    //     return this.query({
-    //         method: 'DELETE',
-    //         url: `${this.options.apiEndpoint}/v1/notes/${noteId}`
-    //     })
-    // }
 }

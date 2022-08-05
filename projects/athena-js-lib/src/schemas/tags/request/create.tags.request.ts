@@ -1,7 +1,7 @@
 import {z} from "zod";
 import isHexColor from "validator/lib/isHexColor";
 
-export const CreateTagRequestSchema = z.object({
+export const CreateTagRequest = z.object({
   name: z.string()
     .min(1, "Your tag name must be at least 1 character"),
   backgroundColour: z.string()
@@ -12,5 +12,5 @@ export const CreateTagRequestSchema = z.object({
     .optional()
 }).strict();
 
-export type CreateTagRequest = z.infer<typeof CreateTagRequestSchema>
+export type CreateTagRequest = z.infer<typeof CreateTagRequest>
 

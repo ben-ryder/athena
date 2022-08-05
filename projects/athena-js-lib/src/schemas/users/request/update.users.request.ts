@@ -1,6 +1,6 @@
 import {z} from "zod";
-import {CreateUserRequestSchema} from "./create.users.request";
+import {CreateUserRequest} from "./create.users.request";
 
-export const UpdateUserRequestSchema = CreateUserRequestSchema.partial().strict();;
+export const UpdateUserRequest = CreateUserRequest.partial().strict();;
 
-export type UpdateUserRequest = z.infer<typeof UpdateUserRequestSchema>;
+export type UpdateUserRequest = z.infer<typeof UpdateUserRequest>;

@@ -3,7 +3,7 @@ import {NotesDatabaseService} from "./database/notes.database.service";
 import {
   CreateNoteRequest,
   GetNoteResponse, GetNotesResponse,
-  NoteDto, NotesQueryParams, UpdateNoteRequest, UpdateVaultRequest
+  NoteDto, NotesQueryParams, UpdateNoteRequest
 } from "@ben-ryder/athena-js-lib";
 import {DefaultVaultsListOptions} from "@ben-ryder/athena-js-lib";
 import {DatabaseListOptions} from "../../common/database-list-options";

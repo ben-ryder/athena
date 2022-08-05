@@ -1,8 +1,8 @@
-import {CreateVaultRequestSchema} from "./create.vaults.request";
+import {CreateVaultRequest} from "./create.vaults.request";
 import {z} from "zod";
 
-export const UpdateVaultRequestSchema = CreateVaultRequestSchema.partial().strict();
+export const UpdateVaultRequest = CreateVaultRequest.partial().strict();
 
-export type UpdateVaultRequest = z.infer<typeof UpdateVaultRequestSchema>;
+export type UpdateVaultRequest = z.infer<typeof UpdateVaultRequest>;
 
-export const UpdateVaultRequestKeys = UpdateVaultRequestSchema.keyof();
+export const UpdateVaultRequestKeys = UpdateVaultRequest.keyof();

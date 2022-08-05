@@ -1,6 +1,8 @@
 /**
  * This interface can be used when creating users.
- * External applications don't need to know about the user encryptionKey.
+ *
+ * This typing is required as most applications don't need to know about the user encryptionKey,
+ * that implementation is encapsulated by the API client library,
  */
 export interface NoKeysUserDto {
   username: string;

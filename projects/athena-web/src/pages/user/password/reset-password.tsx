@@ -3,7 +3,7 @@ import {useSearchParams} from "react-router-dom";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button, Input} from "@ben-ryder/jigsaw";
-import {UpdateUserRequestSchema} from "@ben-ryder/athena-js-lib";
+import {UpdateUserRequest} from "@ben-ryder/athena-js-lib";
 import {z} from "zod";
 import {FormPage} from "../../../patterns/pages/form-page";
 import {LoadingPage} from "../../../patterns/pages/loading-page";
@@ -15,8 +15,8 @@ import {GeneralQueryStatus} from "../../../types/general-query-status";
 
 // todo: replace with API schema once written
 const ResetPasswordSchema = z.object({
-  password: UpdateUserRequestSchema.shape.password,
-  passwordConfirmation: UpdateUserRequestSchema.shape.password,
+  password: UpdateUserRequest.shape.password,
+  passwordConfirmation: UpdateUserRequest.shape.password,
 })
   .refine(
     (data) => {return data.password === data.passwordConfirmation},

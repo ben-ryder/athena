@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-export const CreateNoteRequestSchema = z.object({
+export const CreateNoteRequest = z.object({
   title: z.string()
     .min(1, "Your note title must be at least 1 character")
     .max(255, "Your note description can't be more than 255 characters"),
@@ -13,4 +13,4 @@ export const CreateNoteRequestSchema = z.object({
   folder: z.string().uuid("A note folder must reference a folder ID")
 }).strict();
 
-export type CreateNoteRequest = z.infer<typeof CreateNoteRequestSchema>
+export type CreateNoteRequest = z.infer<typeof CreateNoteRequest>

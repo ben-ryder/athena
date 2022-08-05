@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
-import {AthenaErrorIdentifiers, LoginRequest, LoginRequestSchema} from "@ben-ryder/athena-js-lib";
+import {AthenaErrorIdentifiers, LoginRequest} from "@ben-ryder/athena-js-lib";
 import {useAthena} from "../../helpers/use-athena";
 import {FormPage} from "../../patterns/pages/form-page";
 import {Link} from "../../patterns/element/link";
@@ -17,7 +17,7 @@ export function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginRequest>({
-    resolver: zodResolver(LoginRequestSchema)
+    resolver: zodResolver(LoginRequest)
   });
 
 

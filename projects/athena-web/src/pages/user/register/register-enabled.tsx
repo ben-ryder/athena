@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
-import {AthenaErrorIdentifiers, CreateUserRequestSchema} from "@ben-ryder/athena-js-lib";
+import {AthenaErrorIdentifiers, CreateUserRequest} from "@ben-ryder/athena-js-lib";
 import {z} from "zod";
 import {routes} from "../../../routes";
 import {FormPage} from "../../../patterns/pages/form-page";
@@ -10,18 +10,18 @@ import {Link} from "../../../patterns/element/link";
 import {useAthena} from "../../../helpers/use-athena";
 import {useNavigate} from "react-router-dom";
 
-const UserRegisterSchema = z.object({
-  username: CreateUserRequestSchema.shape.username,
-  email: CreateUserRequestSchema.shape.email,
-  password: CreateUserRequestSchema.shape.password,
-  passwordConfirmation: CreateUserRequestSchema.shape.password
+const UserRegister = z.object({
+  username: CreateUserRequest.shape.username,
+  email: CreateUserRequest.shape.email,
+  password: CreateUserRequest.shape.password,
+  passwordConfirmation: CreateUserRequest.shape.password
 })
   .refine(
     (data) => {return data.password === data.passwordConfirmation},
     {message: "Password confirmation doesn't match password", path: ["passwordConfirmation"]}
   )
 
-type UserRegisterSchema = z.infer<typeof UserRegisterSchema>;
+type UserRegister = z.infer<typeof UserRegister>;
 
 
 export function RegisterEnabledPage() {
@@ -29,12 +29,12 @@ export function RegisterEnabledPage() {
   const {apiClient, setCurrentUser, storage} = useAthena();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
-  const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<UserRegisterSchema>({
-    resolver: zodResolver(UserRegisterSchema)
+  const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<UserRegister>({
+    resolver: zodResolver(UserRegister)
   });
 
 
-  const onSubmit: SubmitHandler<UserRegisterSchema> = async function(values: UserRegisterSchema) {
+  const onSubmit: SubmitHandler<UserRegister> = async function(values: UserRegister) {
     try {
       const data = await apiClient.register({
         username: values.username,

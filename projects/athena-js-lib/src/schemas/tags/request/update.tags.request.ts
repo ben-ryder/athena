@@ -1,6 +1,6 @@
 import {z} from "zod";
-import {CreateTagRequestSchema} from "./create.tags.request";
+import {CreateTagRequest} from "./create.tags.request";
 
-export const UpdateTagRequestSchema = CreateTagRequestSchema.partial().strict();
+export const UpdateTagRequest = CreateTagRequest.partial().strict();
 
-export type UpdateTagRequest = z.infer<typeof UpdateTagRequestSchema>;
+export type UpdateTagRequest = z.infer<typeof UpdateTagRequest>;

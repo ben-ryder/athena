@@ -2,13 +2,7 @@ import {Controller, Route, HTTPMethods, HTTPStatusCodes} from '@kangojs/core';
 import { Request, Response, NextFunction } from 'express';
 
 import { AuthService } from './auth.service';
-import {
-    LoginRequest,
-    LoginRequestSchema, RefreshRequest,
-    RefreshRequestSchema,
-    RevokeRequest,
-    RevokeRequestSchema
-} from "@ben-ryder/athena-js-lib";
+import {LoginRequest, RefreshRequest, RevokeRequest} from "@ben-ryder/athena-js-lib";
 
 
 @Controller('/v1/auth', {
@@ -22,7 +16,7 @@ export class AuthController {
     @Route({
         path: '/login',
         httpMethod: HTTPMethods.POST,
-        bodyShape: LoginRequestSchema,
+        bodyShape: LoginRequest,
         authRequired: false
     })
     async login(req: Request, res: Response, next: NextFunction) {
@@ -40,7 +34,7 @@ export class AuthController {
     @Route({
         path: '/revoke',
         httpMethod: HTTPMethods.POST,
-        bodyShape: RevokeRequestSchema,
+        bodyShape: RevokeRequest,
         authRequired: false
     })
     async revoke(req: Request, res: Response, next: NextFunction) {
@@ -58,7 +52,7 @@ export class AuthController {
     @Route({
         path: '/refresh',
         httpMethod: HTTPMethods.POST,
-        bodyShape: RefreshRequestSchema,
+        bodyShape: RefreshRequest,
         authRequired: false
     })
     async refresh(req: Request, res: Response, next: NextFunction) {

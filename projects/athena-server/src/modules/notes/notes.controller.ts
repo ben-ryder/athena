@@ -3,11 +3,10 @@ import { Response, NextFunction } from 'express';
 import {Controller, Route, HTTPMethods} from '@kangojs/core';
 
 import {
-    CreateNoteRequestSchema, GetNoteResponse, NotesURLParamsSchema, UpdateNoteRequestSchema
+    CreateNoteRequest, GetNoteResponse, NotesURLParams, UpdateNoteRequest, CreateNoteResponse, NotesQueryParams, UpdateNoteResponse
 } from "@ben-ryder/athena-js-lib";
 import {NotesService} from "./notes.service";
 import {RequestWithContext} from "../../common/request-with-context";
-import {CreateNoteResponse, NotesQueryParamsSchema, UpdateNoteResponse} from "@ben-ryder/athena-js-lib/src";
 
 
 @Controller('/v1/notes',{
@@ -20,7 +19,7 @@ export class NotesController {
 
     @Route({
         httpMethod: HTTPMethods.POST,
-        bodyShape: CreateNoteRequestSchema
+        bodyShape: CreateNoteRequest
     })
     async add(req: RequestWithContext, res: Response, next: NextFunction) {
         let newNote: CreateNoteResponse;
@@ -38,7 +37,7 @@ export class NotesController {
     @Route({
         path: '/:noteId',
         httpMethod: HTTPMethods.GET,
-        paramsShape: NotesURLParamsSchema
+        paramsShape: NotesURLParams
     })
     async get(req: RequestWithContext, res: Response, next: NextFunction) {
         let note: GetNoteResponse | null;
@@ -56,8 +55,8 @@ export class NotesController {
     @Route({
         path: '/:noteId',
         httpMethod: HTTPMethods.PATCH,
-        bodyShape: UpdateNoteRequestSchema,
-        paramsShape: NotesURLParamsSchema
+        bodyShape: UpdateNoteRequest,
+        paramsShape: NotesURLParams
     })
     async update(req: RequestWithContext, res: Response, next: NextFunction) {
         let updatedNote: UpdateNoteResponse;
@@ -75,7 +74,7 @@ export class NotesController {
     @Route({
         path: '/:noteId',
         httpMethod: HTTPMethods.DELETE,
-        paramsShape: NotesURLParamsSchema
+        paramsShape: NotesURLParams
     })
     async delete(req: RequestWithContext, res: Response, next: NextFunction) {
         try {
@@ -89,7 +88,7 @@ export class NotesController {
 
     @Route({
         httpMethod: HTTPMethods.GET,
-        queryShape: NotesQueryParamsSchema
+        queryShape: NotesQueryParams
     })
     async list(req: RequestWithContext, res: Response, next: NextFunction) {
         try {

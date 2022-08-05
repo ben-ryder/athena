@@ -5,11 +5,8 @@ import {random} from "crypto-js/lib-typedarrays";
 import utf8 from "crypto-js/enc-utf8";
 
 import { AthenaDecryptError, AthenaEncryptError } from "./errors";
-import { NoteDto } from "./schemas/notes/dtos/note.dto";
-import { NoteContentDto } from "./schemas/notes/dtos/note-content.dto";
 import {VaultDto} from "./schemas/vaults/dtos/vault.dto";
 import {CreateVaultRequest} from "./schemas/vaults/request/create.vaults.request";
-import {VaultContentDto} from "./schemas/vaults/dtos/vault-content.dto";
 import {UpdateVaultRequest} from "./schemas/vaults/request/update.vaults.request";
 
 export interface AccountKeys {

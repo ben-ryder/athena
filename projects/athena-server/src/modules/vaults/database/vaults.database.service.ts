@@ -4,10 +4,8 @@ import {PostgresError, Row, RowList, Sql} from "postgres";
 import {PG_UNIQUE_VIOLATION} from "../../../services/database/database-error-codes";
 import {AthenaErrorIdentifiers, CreateVaultRequest, UpdateVaultRequest} from "@ben-ryder/athena-js-lib";
 import {
-  CreateVaultRequestSchema, MetaPaginationData,
-  UpdateVaultRequestSchema,
-  VaultDto,
-  VaultsQueryParamsSchema
+  MetaPaginationData,
+  VaultDto
 } from "@ben-ryder/athena-js-lib";
 import {InternalDatabaseVaultDto} from "../dto/internal-database-vault.dto-interface";
 import {VaultWithOwnerDto} from "../dto/vault-with-owner.dto-interface";

@@ -11,7 +11,7 @@ export * from './default-list-options'
 
 // Spec
 export * from './schemas/common/meta-pagination-data';
-export * from './schemas/common/pagination-query-params-schema';
+export * from './schemas/common/pagination-query-params';
 export * from './schemas/common/order-by-fields';
 export * from './schemas/common/order-directions';
 

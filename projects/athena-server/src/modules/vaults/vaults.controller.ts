@@ -3,10 +3,10 @@ import { Response, NextFunction } from 'express';
 import {Controller, Route, HTTPMethods} from '@kangojs/core';
 
 import {
-    CreateVaultRequestSchema, CreateVaultResponse,
+    CreateVaultRequest, CreateVaultResponse,
     GetVaultResponse,
-    UpdateVaultRequestSchema, UpdateVaultResponse, VaultsQueryParamsSchema,
-    VaultsURLParamsSchema
+    UpdateVaultRequest, UpdateVaultResponse, VaultsQueryParams,
+    VaultsURLParams
 } from "@ben-ryder/athena-js-lib";
 import {VaultsService} from "./vaults.service";
 import {RequestWithUserContext} from "../../common/request-with-context";
@@ -22,7 +22,7 @@ export class VaultsController {
 
     @Route({
         httpMethod: HTTPMethods.POST,
-        bodyShape: CreateVaultRequestSchema
+        bodyShape: CreateVaultRequest
     })
     async add(req: RequestWithUserContext, res: Response, next: NextFunction) {
         let newVault: CreateVaultResponse;
@@ -40,7 +40,7 @@ export class VaultsController {
     @Route({
         path: '/:vaultId',
         httpMethod: HTTPMethods.GET,
-        paramsShape: VaultsURLParamsSchema
+        paramsShape: VaultsURLParams
     })
     async get(req: RequestWithUserContext, res: Response, next: NextFunction) {
         let vault: GetVaultResponse | null;
@@ -58,8 +58,8 @@ export class VaultsController {
     @Route({
         path: '/:vaultId',
         httpMethod: HTTPMethods.PATCH,
-        bodyShape: UpdateVaultRequestSchema,
-        paramsShape: VaultsURLParamsSchema
+        bodyShape: UpdateVaultRequest,
+        paramsShape: VaultsURLParams
     })
     async update(req: RequestWithUserContext, res: Response, next: NextFunction) {
         let updatedVault: UpdateVaultResponse;
@@ -77,7 +77,7 @@ export class VaultsController {
     @Route({
         path: '/:vaultId',
         httpMethod: HTTPMethods.DELETE,
-        paramsShape: VaultsURLParamsSchema
+        paramsShape: VaultsURLParams
     })
     async delete(req: RequestWithUserContext, res: Response, next: NextFunction) {
         try {
@@ -91,7 +91,7 @@ export class VaultsController {
 
     @Route({
         httpMethod: HTTPMethods.GET,
-        queryShape: VaultsQueryParamsSchema
+        queryShape: VaultsQueryParams
     })
     async list(req: RequestWithUserContext, res: Response, next: NextFunction) {
         try {

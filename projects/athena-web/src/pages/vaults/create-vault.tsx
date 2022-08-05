@@ -5,7 +5,7 @@ import {useAthena} from "../../helpers/use-athena";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod/dist/zod";
 import {Button, Input, TextArea} from "@ben-ryder/jigsaw";
-import {AthenaErrorIdentifiers, CreateVaultRequest, CreateVaultRequestSchema} from "@ben-ryder/athena-js-lib";
+import {AthenaErrorIdentifiers, CreateVaultRequest} from "@ben-ryder/athena-js-lib";
 import {routes} from "../../routes";
 import {ContentPage} from "../../patterns/pages/content-page";
 import {ArrowLink} from "@ben-ryder/jigsaw/dist/patterns/03-elements/arrow-link/arrow-link";
@@ -18,7 +18,7 @@ export function CreateVaultPage() {
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<CreateVaultRequest>({
-    resolver: zodResolver(CreateVaultRequestSchema)
+    resolver: zodResolver(CreateVaultRequest)
   });
 
   const onSubmit: SubmitHandler<CreateVaultRequest> = async function(values: CreateVaultRequest) {

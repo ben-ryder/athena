@@ -1,7 +1,7 @@
 import {z} from "zod";
 
 
-export const CreateUserRequestSchema = z.object({
+export const CreateUserRequest = z.object({
   username: z.string()
     .min(1, "Your username must be at least 1 character")
     .max(20, "Your username can't be more than 20 characters"),
@@ -12,4 +12,4 @@ export const CreateUserRequestSchema = z.object({
   encryptionSecret: z.string()
 }).strict();
 
-export type CreateUserRequest = z.infer<typeof CreateUserRequestSchema>;
+export type CreateUserRequest = z.infer<typeof CreateUserRequest>;

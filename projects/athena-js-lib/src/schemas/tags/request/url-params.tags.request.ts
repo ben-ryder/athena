@@ -1,8 +1,8 @@
 import {z} from "zod";
 
-export const TagsURLParamsSchema = z.object({
+export const TagsURLParams = z.object({
     tagId: z.string().uuid(),
     vaultId: z.string().uuid()
 }).strict();
 
-export type TagsURLParams = z.infer<typeof TagsURLParamsSchema>
+export type TagsURLParams = z.infer<typeof TagsURLParams>

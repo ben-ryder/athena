@@ -3,9 +3,7 @@ import { AccessForbiddenError } from "@kangojs/core";
 
 import {
     CreateUserRequest,
-    CreateUserRequestSchema,
     GetUserResponse, UpdateUserRequest,
-    UpdateUserRequestSchema,
     UpdateUserResponse,
     UserDto
 } from "@ben-ryder/athena-js-lib";
