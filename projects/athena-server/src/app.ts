@@ -9,6 +9,7 @@ import {VaultsController} from "./modules/vaults/vaults.controller";
 import {ZodValidator} from "@kangojs/zod-validation";
 import {InfoController} from "./modules/info/info.controller";
 import {NotesController} from "./modules/notes/notes.controller";
+import {TemplatesController} from "./modules/templates/templates.controller";
 
 
 export async function createApp() {
@@ -24,7 +25,8 @@ export async function createApp() {
       AuthController,
       UsersController,
       VaultsController,
-      NotesController
+      NotesController,
+      TemplatesController
     ],
     middleware: [
       serveSpaMiddleware

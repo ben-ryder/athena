@@ -71,3 +71,14 @@ export * from './schemas/queries/response/create.queries.response-interface';
 export * from './schemas/queries/response/update.queries.response-interface';
 export * from './schemas/queries/response/get.query.response-interface';
 export * from './schemas/queries/response/get.queries.response-interface';
+
+export * from './schemas/templates/dtos/template-content.dto';
+export * from './schemas/templates/dtos/template.dto';
+export * from './schemas/templates/request/create.templates.request';
+export * from './schemas/templates/request/query-params.templates.request';
+export * from './schemas/templates/request/update.templates.request';
+export * from './schemas/templates/request/url-params.templates.request';
+export * from './schemas/templates/response/create.template.response';
+export * from './schemas/templates/response/update.template.response';
+export * from './schemas/templates/response/get.template.response';
+export * from './schemas/templates/response/get.templates.response';
