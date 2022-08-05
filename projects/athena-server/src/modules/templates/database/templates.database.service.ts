@@ -10,7 +10,7 @@ import {
   MetaPaginationData, TemplateDto, UpdateTemplateRequest
 } from "@ben-ryder/athena-js-lib";
 import {DatabaseTemplateDto} from "../dto/database-template.dto-interface";
-import {DatabaseNoteWithOwnerDto} from "../../notes/dto/database-note-with-owner.dto-interface";
+import {DatabaseTemplateWithOwnerDto} from "../dto/database-template-with-owner.dto-interface";
 
 
 @Injectable()
@@ -34,6 +34,7 @@ export class TemplatesDatabaseService {
     return {
       id: template.id,
       title: template.title,
+      description: template.description,
       body: template.body,
       createdAt: template.created_at,
       updatedAt: template.updated_at,
@@ -76,9 +77,9 @@ export class TemplatesDatabaseService {
   async getWithOwner(templateId: string): Promise<TemplateWithOwnerDto> {
     const sql = await this.databaseService.getSQL();
 
-    let result: DatabaseNoteWithOwnerDto[] = [];
+    let result: DatabaseTemplateWithOwnerDto[] = [];
     try {
-      result = await sql<DatabaseNoteWithOwnerDto[]>`SELECT templates.*, vaults.owner FROM templates INNER JOIN vaults on templates.vault = vaults.id WHERE templates.id = ${templateId}`;
+      result = await sql<DatabaseTemplateWithOwnerDto[]>`SELECT templates.*, vaults.owner FROM templates INNER JOIN vaults on templates.vault = vaults.id WHERE templates.id = ${templateId}`;
     }
     catch (e: any) {
       throw new SystemError({

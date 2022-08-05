@@ -5,7 +5,7 @@ import {Controller, Route, HTTPMethods} from '@kangojs/core';
 import {TemplatesService} from "./templates.service";
 import {RequestWithContext} from "../../common/request-with-context";
 import {
-    CreateTemplateRequest,
+    CreateTemplateRequest, CreateTemplateResponse,
     GetTemplateResponse, TemplatesQueryParams,
     TemplatesURLParams,
     UpdateTemplateRequest, UpdateTemplateResponse
@@ -25,7 +25,7 @@ export class TemplatesController {
         bodyShape: CreateTemplateRequest
     })
     async add(req: RequestWithContext, res: Response, next: NextFunction) {
-        let newTemplate: CreateTemplateRequest;
+        let newTemplate: CreateTemplateResponse;
 
         try {
             newTemplate = await this.templatesService.add(req.context.vaultId, req.body);

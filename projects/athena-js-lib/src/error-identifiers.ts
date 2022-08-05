@@ -22,6 +22,9 @@ export enum AthenaErrorIdentifiers {
   // Note Errors
   NOTE_NOT_FOUND = "note-not-found",
 
+  // Tags Error
+  TAG_NOT_FOUND = "tag-not-found",
+
   /**
    * Identifiers matching KangoJS identifiers below
    * @todo get from KangoJS instead?

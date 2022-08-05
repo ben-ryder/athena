@@ -37,6 +37,7 @@ export class NotesDatabaseService {
     return {
       id: note.id,
       title: note.title,
+      description: note.description,
       body: note.body,
       createdAt: note.created_at,
       updatedAt: note.updated_at,

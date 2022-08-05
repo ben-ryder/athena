@@ -2,6 +2,6 @@
 
 export interface NoteContentDto {
   title: string;
-  description?: string | null;
+  description: string | null;
   body: string;
 }

@@ -118,7 +118,7 @@ export class AthenaEncryption {
     static decryptVault(key: string, vault: VaultDto): VaultDto {
         const decryptedVaultContent = {
             name: AthenaEncryption.decryptText(key, vault.name),
-            description: vault.description ? AthenaEncryption.decryptText(key, vault.description) : undefined
+            description: vault.description ? AthenaEncryption.decryptText(key, vault.description) : null
         }
 
         // If the title is empty then the decryption key must be wrong.

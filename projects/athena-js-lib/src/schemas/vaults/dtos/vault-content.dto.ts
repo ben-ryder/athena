@@ -1,5 +1,5 @@
 
 export interface VaultContentDto {
   name: string;
-  description?: string | null;
+  description: string | null;
 }
