@@ -9,7 +9,7 @@ import {
     VaultsURLParams
 } from "@ben-ryder/athena-js-lib";
 import {VaultsService} from "./vaults.service";
-import {RequestWithUserContext} from "../../common/request-with-context";
+import {RequestWithContext} from "../../common/request-with-context";
 
 
 @Controller('/v1/vaults',{
@@ -24,7 +24,7 @@ export class VaultsController {
         httpMethod: HTTPMethods.POST,
         bodyShape: CreateVaultRequest
     })
-    async add(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async add(req: RequestWithContext, res: Response, next: NextFunction) {
         let newVault: CreateVaultResponse;
 
         try {
@@ -42,7 +42,7 @@ export class VaultsController {
         httpMethod: HTTPMethods.GET,
         paramsShape: VaultsURLParams
     })
-    async get(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async get(req: RequestWithContext, res: Response, next: NextFunction) {
         let vault: GetVaultResponse | null;
 
         try {
@@ -61,7 +61,7 @@ export class VaultsController {
         bodyShape: UpdateVaultRequest,
         paramsShape: VaultsURLParams
     })
-    async update(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async update(req: RequestWithContext, res: Response, next: NextFunction) {
         let updatedVault: UpdateVaultResponse;
 
         try {
@@ -79,7 +79,7 @@ export class VaultsController {
         httpMethod: HTTPMethods.DELETE,
         paramsShape: VaultsURLParams
     })
-    async delete(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async delete(req: RequestWithContext, res: Response, next: NextFunction) {
         try {
             await this.vaultsService.deleteWithAccessCheck(req.context.user.id, req.params.vaultId);
         }
@@ -93,7 +93,7 @@ export class VaultsController {
         httpMethod: HTTPMethods.GET,
         queryShape: VaultsQueryParams
     })
-    async list(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async list(req: RequestWithContext, res: Response, next: NextFunction) {
         try {
             const response =  await this.vaultsService.list(req.context.user.id, req.params);
             return res.send(response);

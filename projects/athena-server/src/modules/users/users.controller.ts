@@ -9,7 +9,7 @@ import {
     GetUserResponse,UpdateUserResponse,
     UserDto
 } from "@ben-ryder/athena-js-lib";
-import {RequestWithUserContext} from "../../common/request-with-context";
+import {RequestWithContext} from "../../common/request-with-context";
 import {ConfigService} from "../../services/config/config";
 import {TokenPair, TokenService} from "../../services/token/token.service";
 
@@ -60,7 +60,7 @@ export class UsersController {
         httpMethod: HTTPMethods.GET,
         paramsShape: UsersURLParams
     })
-    async get(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async get(req: RequestWithContext, res: Response, next: NextFunction) {
         let user: GetUserResponse | null;
 
         try {
@@ -79,7 +79,7 @@ export class UsersController {
         bodyShape: UpdateUserRequest,
         paramsShape: UsersURLParams
     })
-    async update(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async update(req: RequestWithContext, res: Response, next: NextFunction) {
         let updatedUser: UpdateUserResponse;
 
         try {
@@ -97,7 +97,7 @@ export class UsersController {
         httpMethod: HTTPMethods.DELETE,
         paramsShape: UsersURLParams
     })
-    async delete(req: RequestWithUserContext, res: Response, next: NextFunction) {
+    async delete(req: RequestWithContext, res: Response, next: NextFunction) {
         try {
             await this.usersService.deleteWithAccessCheck(req.context.user.id, req.params.userId);
         }

@@ -9,6 +9,7 @@ import {
   TagsQueryParams,
   UpdateTagRequest
 } from "@ben-ryder/athena-js-lib";
+import {VaultsService} from "../vaults/vaults.service";
 
 
 @Injectable({
@@ -16,7 +17,8 @@ import {
 })
 export class TagsService {
   constructor(
-    private tagsDatabaseService: TagsDatabaseService
+    private tagsDatabaseService: TagsDatabaseService,
+    private vaultsService: VaultsService
   ) {}
 
   async checkAccess(requestUserId: string, tagId: string): Promise<void> {
@@ -40,8 +42,9 @@ export class TagsService {
     return this.get(tagId);
   }
 
-  async add(ownerId: string, createTagDto: CreateTagRequest): Promise<TagDto> {
-    return await this.tagsDatabaseService.create(ownerId, createTagDto);
+  async add(userId: string, vaultId: string, createTagDto: CreateTagRequest): Promise<TagDto> {
+    await this.vaultsService.checkAccess(userId, vaultId);
+    return await this.tagsDatabaseService.create(vaultId, createTagDto);
   }
 
   async update(tagId: string, tagUpdate: UpdateTagRequest): Promise<TagDto> {

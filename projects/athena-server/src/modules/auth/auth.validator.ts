@@ -35,12 +35,23 @@ export class AuthValidator implements MiddlewareFactory {
 
           // todo: better way to handle req schemas and adding new attribute?
           // @ts-ignore
-          req.context = {
-            user: {
+          if (req.context) {
+            // @ts-ignore
+            req.context.user = {
               id: accessTokenPayload.userId,
               isVerified: accessTokenPayload.userIsVerified
             }
           }
+          else {
+            // @ts-ignore
+            req.context = {
+              user: {
+                id: accessTokenPayload.userId,
+                isVerified: accessTokenPayload.userIsVerified
+              }
+            }
+          }
+
           return next();
         }
       }

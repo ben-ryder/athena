@@ -13,7 +13,7 @@ import {
 } from "@ben-ryder/athena-js-lib";
 
 
-@Controller('/v1/tags',{
+@Controller('/v1/vaults/:vaultId/tags',{
     identifier: "tags-controller"
 })
 export class TagsController {
@@ -29,7 +29,7 @@ export class TagsController {
         let newTag: CreateTagResponse;
 
         try {
-            newTag = await this.tagsService.add(req.context.vaultId, req.body);
+            newTag = await this.tagsService.add(req.context.user.id, req.params.vaultId, req.body);
         }
         catch(e) {
             return next(e);
@@ -98,7 +98,7 @@ export class TagsController {
         try {
             const response =  await this.tagsService.listWithAccessCheck(
               req.context.user.id,
-              req.context.vaultId,
+              req.params.vaultId,
               req.params
             );
             return res.send(response);

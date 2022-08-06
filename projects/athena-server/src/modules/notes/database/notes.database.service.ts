@@ -35,7 +35,7 @@ export class NotesDatabaseService {
     }
   }
 
-  private static mapDatabaseEntity(note: DatabaseNoteDto): NoteDto {
+  private static convertDatabaseDtoToDto(note: DatabaseNoteDto): NoteDto {
     return {
       id: note.id,
       title: note.title,
@@ -69,9 +69,9 @@ export class NotesDatabaseService {
       const tags = await this.noteTagsDatabaseService.getTags(noteId);
 
       return {
-        ...NotesDatabaseService.mapDatabaseEntity(result[0]),
+        ...NotesDatabaseService.convertDatabaseDtoToDto(result[0]),
         tags
-      }
+      };
     }
     else {
       throw new ResourceNotFoundError({
@@ -96,7 +96,7 @@ export class NotesDatabaseService {
       const tags = await this.noteTagsDatabaseService.getTags(noteId);
 
       return {
-        ...NotesDatabaseService.mapDatabaseEntity(result[0]),
+        ...NotesDatabaseService.convertDatabaseDtoToDto(result[0]),
         owner: result[0].owner,
         tags
       }
@@ -131,7 +131,7 @@ export class NotesDatabaseService {
 
       const tags = await this.noteTagsDatabaseService.getTags(result[0].id);
       return {
-        ...NotesDatabaseService.mapDatabaseEntity(result[0]),
+        ...NotesDatabaseService.convertDatabaseDtoToDto(result[0]),
         tags
       };
     }
@@ -152,40 +152,31 @@ export class NotesDatabaseService {
 
     // Process all fields
     // todo: this offers no protection against updating fields like id which should never be updated
-    let updateObject: any = {};
+    let databaseUpdate: any = {};
     for (const fieldName of Object.keys(noteUpdate) as Array<keyof UpdateNoteRequest>) {
-      updateObject[NotesDatabaseService.mapApplicationField(fieldName)] = noteUpdate[fieldName];
-    }
-
-    let result: DatabaseNoteDto[] = [];
-    try {
-      result = await sql<DatabaseNoteDto[]>`
-        UPDATE notes
-        SET ${sql(updateObject, ...Object.keys(updateObject))}
-        WHERE id = ${noteId}
-        RETURNING *;
-      `;
-    }
-    catch (e: any) {
-      throw NotesDatabaseService.getDatabaseError(e);
-    }
-
-    if (result.length > 0) {
-      if (Array.isArray(noteUpdate.tags)) {
-        await this.noteTagsDatabaseService.updateTags(noteId, noteUpdate.tags);
+      if (fieldName !== "tags") {
+        databaseUpdate[NotesDatabaseService.mapApplicationField(fieldName)] = noteUpdate[fieldName];
       }
+    }
 
-      const tags = await this.noteTagsDatabaseService.getTags(noteId);
-      return {
-        ...NotesDatabaseService.mapDatabaseEntity(result[0]),
-        tags
-      };
+    if (Object.keys(databaseUpdate).length > 0) {
+      try {
+        await sql<DatabaseNoteDto[]>`
+          UPDATE notes
+          SET ${sql(databaseUpdate, ...Object.keys(databaseUpdate))}
+          WHERE id = ${noteId}
+        `;
+      }
+      catch (e: any) {
+        throw NotesDatabaseService.getDatabaseError(e);
+      }
     }
-    else {
-      throw new SystemError({
-        message: "Unexpected error returning note after creation",
-      })
+
+    if (Array.isArray(noteUpdate.tags)) {
+      await this.noteTagsDatabaseService.updateTags(noteId, noteUpdate.tags);
     }
+
+    return this.get(noteId);
   }
 
   async delete(noteId: string): Promise<void> {
@@ -196,10 +187,7 @@ export class NotesDatabaseService {
       result = await sql`DELETE FROM notes WHERE id = ${noteId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while deleting note",
-        originalError: e
-      })
+      throw NotesDatabaseService.getDatabaseError(e);
     }
 
     // If there's a count then rows were affected and the deletion was a success
@@ -218,9 +206,9 @@ export class NotesDatabaseService {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
-    let result: DatabaseNoteDto[] = [];
+    let results: DatabaseNoteDto[] = [];
     try {
-      result = await sql<DatabaseNoteDto[]>`SELECT * FROM notes WHERE vault = ${vaultId} ORDER BY ${sql(options.orderBy)} ${options.orderDirection === "ASC" ? sql`ASC` : sql`DESC` } LIMIT ${options.take} OFFSET ${options.skip}`;
+      results = await sql<DatabaseNoteDto[]>`SELECT * FROM notes WHERE vault = ${vaultId} ORDER BY ${sql(options.orderBy)} ${options.orderDirection === "ASC" ? sql`ASC` : sql`DESC` } LIMIT ${options.take} OFFSET ${options.skip}`;
     }
     catch (e: any) {
       throw new SystemError({
@@ -229,12 +217,12 @@ export class NotesDatabaseService {
       })
     }
 
-    const notes = [];
-    for (const resultNote of result) {
+    const notes: NoteDto[] = [];
+    for (const resultNote of results) {
       const tags = await this.noteTagsDatabaseService.getTags(resultNote.id);
 
       notes.push({
-        ...NotesDatabaseService.mapDatabaseEntity(resultNote),
+        ...NotesDatabaseService.convertDatabaseDtoToDto(resultNote),
         tags
       });
     }
@@ -247,7 +235,7 @@ export class NotesDatabaseService {
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
     try {
       // Offset and order don't matter for fetching the total count, so we can ignore these for the query.
-      const result = await sql`SELECT count(*) FROM notes WHERE id = ${vaultId}`;
+      const result = await sql`SELECT count(*) FROM notes WHERE vault = ${vaultId}`;
       return {
         total: parseInt(result[0].count),
         take: options.take,

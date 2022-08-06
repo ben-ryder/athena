@@ -10,7 +10,7 @@ export const CreateNoteRequest = z.object({
     .optional(),
   body: z.string(),
   tags: z.array(z.string().uuid("Note tags must be a list of tag IDs")).optional(),
-  folder: z.string().uuid("A note folder must reference a folder ID")
+  folder: z.string().uuid("A note folder must reference a folder ID").nullable().optional()
 }).strict();
 
 export type CreateNoteRequest = z.infer<typeof CreateNoteRequest>

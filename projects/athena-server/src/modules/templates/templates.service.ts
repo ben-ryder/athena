@@ -8,6 +8,7 @@ import {
   TemplatesQueryParams,
   UpdateTemplateRequest
 } from "@ben-ryder/athena-js-lib";
+import {VaultsService} from "../vaults/vaults.service";
 
 
 @Injectable({
@@ -15,7 +16,8 @@ import {
 })
 export class TemplatesService {
   constructor(
-    private templatesDatabaseService: TemplatesDatabaseService
+    private templatesDatabaseService: TemplatesDatabaseService,
+    private vaultsService: VaultsService
   ) {}
 
   async checkAccess(requestUserId: string, templateId: string): Promise<void> {
@@ -39,8 +41,9 @@ export class TemplatesService {
     return this.get(templateId);
   }
 
-  async add(ownerId: string, createTemplateDto: CreateTemplateRequest): Promise<TemplateDto> {
-    return await this.templatesDatabaseService.create(ownerId, createTemplateDto);
+  async add(userId: string, vaultId: string, createTemplateDto: CreateTemplateRequest): Promise<TemplateDto> {
+    await this.vaultsService.checkAccess(userId, vaultId);
+    return await this.templatesDatabaseService.create(vaultId, createTemplateDto);
   }
 
   async update(templateId: string, templateUpdate: UpdateTemplateRequest): Promise<TemplateDto> {

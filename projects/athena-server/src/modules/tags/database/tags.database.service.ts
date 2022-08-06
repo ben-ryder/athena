@@ -32,21 +32,20 @@ export class TagsDatabaseService {
     }
   }
 
-  static mapDatabaseEntity(tag: DatabaseTagDto): TagDto {
+  static convertDatabaseDtoToDto(tag: DatabaseTagDto): TagDto {
     return {
       id: tag.id,
       name: tag.name,
       backgroundColour: tag.background_colour || null,
       textColour: tag.text_colour,
       createdAt: tag.created_at,
-      updatedAt: tag.updated_at,
-      // tags: [] // todo: how?
+      updatedAt: tag.updated_at
     }
   }
 
-  private static handleDatabaseError(e: any) {
-    throw new SystemError({
-      message: "Unexpected error while creating tag",
+  private static getDatabaseError(e: any) {
+    return new SystemError({
+      message: "Unexpected error while executing tag query",
       originalError: e
     })
   }
@@ -59,14 +58,11 @@ export class TagsDatabaseService {
       result = await sql<DatabaseTagDto[]>`SELECT * FROM tags WHERE id = ${tagId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching tag",
-        originalError: e
-      })
+      throw TagsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return TagsDatabaseService.mapDatabaseEntity(result[0]);
+      return TagsDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new ResourceNotFoundError({
@@ -84,15 +80,12 @@ export class TagsDatabaseService {
       result = await sql<DatabaseTagWithOwnerDto[]>`SELECT tags.*, vaults.owner FROM tags INNER JOIN vaults on tags.vault = vaults.id WHERE tags.id = ${tagId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching tag",
-        originalError: e
-      })
+      throw TagsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
       return {
-        ...TagsDatabaseService.mapDatabaseEntity(result[0]),
+        ...TagsDatabaseService.convertDatabaseDtoToDto(result[0]),
         owner: result[0].owner
       }
     }
@@ -116,11 +109,11 @@ export class TagsDatabaseService {
        `;
     }
     catch (e: any) {
-      TagsDatabaseService.handleDatabaseError(e);
+      throw TagsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return TagsDatabaseService.mapDatabaseEntity(result[0]);
+      return TagsDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new SystemError({
@@ -154,11 +147,11 @@ export class TagsDatabaseService {
       `;
     }
     catch (e: any) {
-      TagsDatabaseService.handleDatabaseError(e);
+      throw TagsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return TagsDatabaseService.mapDatabaseEntity(result[0]);
+      return TagsDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new SystemError({
@@ -175,10 +168,7 @@ export class TagsDatabaseService {
       result = await sql`DELETE FROM tags WHERE id = ${tagId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while deleting tag",
-        originalError: e
-      })
+      throw TagsDatabaseService.getDatabaseError(e);
     }
 
     // If there's a count then rows were affected and the deletion was a success
@@ -202,13 +192,10 @@ export class TagsDatabaseService {
       result = await sql<DatabaseTagDto[]>`SELECT * FROM tags WHERE vault = ${vaultId} ORDER BY ${sql(options.orderBy)} ${options.orderDirection === "ASC" ? sql`ASC` : sql`DESC` } LIMIT ${options.take} OFFSET ${options.skip}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching tags",
-        originalError: e
-      })
+      throw TagsDatabaseService.getDatabaseError(e);
     }
 
-    return result.map(TagsDatabaseService.mapDatabaseEntity);
+    return result.map(TagsDatabaseService.convertDatabaseDtoToDto);
   }
 
   async getListMetadata(vaultId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
@@ -225,10 +212,7 @@ export class TagsDatabaseService {
       };
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching tag list metadata",
-        originalError: e
-      })
+      throw TagsDatabaseService.getDatabaseError(e);
     }
   }
 }

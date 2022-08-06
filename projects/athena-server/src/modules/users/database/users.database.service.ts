@@ -32,7 +32,7 @@ export class UsersDatabaseService {
     }
   }
 
-  private static mapDatabaseEntity(user: InternalDatabaseUserDto): DatabaseUserDto {
+  private static convertDatabaseDtoToDto(user: InternalDatabaseUserDto): DatabaseUserDto {
     return {
       id: user.id,
       username: user.username,
@@ -45,17 +45,17 @@ export class UsersDatabaseService {
     }
   }
 
-  private static handleDatabaseError(e: any) {
+  private static getDatabaseError(e: any) {
     if (e instanceof PostgresError) {
       if (e.code && e.code === PG_UNIQUE_VIOLATION) {
         if (e.constraint_name === 'users_username_key') {
-          throw new ResourceRelationshipError({
+          return new ResourceRelationshipError({
             identifier: AthenaErrorIdentifiers.USER_USERNAME_EXISTS,
             applicationMessage: "The supplied username is already taken by another user."
           })
         }
         else if (e.constraint_name == 'users_email_key') {
-          throw new ResourceRelationshipError({
+          return new ResourceRelationshipError({
             identifier: AthenaErrorIdentifiers.USER_EMAIL_EXISTS,
             applicationMessage: "The supplied email address is already taken by another user."
           })
@@ -63,7 +63,7 @@ export class UsersDatabaseService {
       }
     }
 
-    throw new SystemError({
+    return new SystemError({
       message: "Unexpected error while creating user",
       originalError: e
     })
@@ -77,14 +77,11 @@ export class UsersDatabaseService {
       result = await sql<InternalDatabaseUserDto[]>`SELECT * FROM users WHERE id = ${userId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching user",
-        originalError: e
-      })
+      throw UsersDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return UsersDatabaseService.mapDatabaseEntity(result[0]);
+      return UsersDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new ResourceNotFoundError({
@@ -102,14 +99,11 @@ export class UsersDatabaseService {
       result = await sql<InternalDatabaseUserDto[]>`SELECT * FROM users WHERE username = ${username}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching user",
-        originalError: e
-      })
+      throw UsersDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return UsersDatabaseService.mapDatabaseEntity(result[0]);
+      return UsersDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new ResourceNotFoundError({
@@ -131,11 +125,11 @@ export class UsersDatabaseService {
        `;
     }
     catch (e: any) {
-      UsersDatabaseService.handleDatabaseError(e);
+      throw UsersDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return UsersDatabaseService.mapDatabaseEntity(result[0]);
+      return UsersDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new SystemError({
@@ -169,11 +163,11 @@ export class UsersDatabaseService {
       `;
     }
     catch (e: any) {
-      UsersDatabaseService.handleDatabaseError(e);
+      throw UsersDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return UsersDatabaseService.mapDatabaseEntity(result[0]);
+      return UsersDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new SystemError({
@@ -190,10 +184,7 @@ export class UsersDatabaseService {
       result = await sql`DELETE FROM users WHERE id = ${userId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while deleting user",
-        originalError: e
-      })
+      throw UsersDatabaseService.getDatabaseError(e);
     }
 
     // If there's a count then rows were affected and the deletion was a success

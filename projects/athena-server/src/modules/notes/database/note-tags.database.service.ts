@@ -29,7 +29,7 @@ export class NoteTagsDatabaseService {
       throw NoteTagsDatabaseService.getDatabaseError(e);
     }
 
-    return results.map(TagsDatabaseService.mapDatabaseEntity);
+    return results.map(TagsDatabaseService.convertDatabaseDtoToDto);
   }
 
   async deleteTags(noteId: string) {
@@ -50,7 +50,7 @@ export class NoteTagsDatabaseService {
     await this.deleteTags(noteId);
 
     try {
-      for (const tag in tags) {
+      for (const tag of tags) {
         await sql<DatabaseNoteDto[]>`
             INSERT INTO notes_tags(id, note, tag) 
             VALUES (DEFAULT, ${noteId}, ${tag})

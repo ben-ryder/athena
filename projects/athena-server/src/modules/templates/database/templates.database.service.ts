@@ -11,12 +11,14 @@ import {
 } from "@ben-ryder/athena-js-lib";
 import {DatabaseTemplateDto} from "../dto/database-template.dto-interface";
 import {DatabaseTemplateWithOwnerDto} from "../dto/database-template-with-owner.dto-interface";
+import {TemplateTagsDatabaseService} from "./template-tags.database.service";
 
 
 @Injectable()
 export class TemplatesDatabaseService {
   constructor(
-    private readonly databaseService: DatabaseService
+    private readonly databaseService: DatabaseService,
+    private readonly templateTagsDatabaseService: TemplateTagsDatabaseService
   ) {}
 
   private static mapApplicationField(fieldName: string): string {
@@ -30,7 +32,7 @@ export class TemplatesDatabaseService {
     }
   }
 
-  private static mapDatabaseEntity(template: DatabaseTemplateDto): TemplateDto {
+  private static convertDatabaseDtoToDto(template: DatabaseTemplateDto): TemplateDto {
     return {
       id: template.id,
       title: template.title,
@@ -38,13 +40,13 @@ export class TemplatesDatabaseService {
       body: template.body,
       createdAt: template.created_at,
       updatedAt: template.updated_at,
-      tags: [] // todo: how?
+      tags: []
     }
   }
 
-  private static handleDatabaseError(e: any) {
+  private static getDatabaseError(e: any) {
     throw new SystemError({
-      message: "Unexpected error while creating template",
+      message: "Unexpected error while executing templates query",
       originalError: e
     })
   }
@@ -57,14 +59,16 @@ export class TemplatesDatabaseService {
       result = await sql<DatabaseTemplateDto[]>`SELECT * FROM templates WHERE id = ${templateId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching template",
-        originalError: e
-      })
+      throw TemplatesDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return TemplatesDatabaseService.mapDatabaseEntity(result[0]);
+      const tags = await this.templateTagsDatabaseService.getTags(templateId);
+
+      return {
+        ...TemplatesDatabaseService.convertDatabaseDtoToDto(result[0]),
+        tags
+      };
     }
     else {
       throw new ResourceNotFoundError({
@@ -82,16 +86,16 @@ export class TemplatesDatabaseService {
       result = await sql<DatabaseTemplateWithOwnerDto[]>`SELECT templates.*, vaults.owner FROM templates INNER JOIN vaults on templates.vault = vaults.id WHERE templates.id = ${templateId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching template",
-        originalError: e
-      })
+      throw TemplatesDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
+      const tags = await this.templateTagsDatabaseService.getTags(templateId);
+
       return {
-        ...TemplatesDatabaseService.mapDatabaseEntity(result[0]),
-        owner: result[0].owner
+        ...TemplatesDatabaseService.convertDatabaseDtoToDto(result[0]),
+        owner: result[0].owner,
+        tags
       }
     }
     else {
@@ -114,11 +118,19 @@ export class TemplatesDatabaseService {
        `;
     }
     catch (e: any) {
-      TemplatesDatabaseService.handleDatabaseError(e);
+      throw TemplatesDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return TemplatesDatabaseService.mapDatabaseEntity(result[0]);
+      if (Array.isArray(template.tags)) {
+        await this.templateTagsDatabaseService.updateTags(result[0].id, template.tags);
+      }
+
+      const tags = await this.templateTagsDatabaseService.getTags(result[0].id);
+      return {
+        ...TemplatesDatabaseService.convertDatabaseDtoToDto(result[0]),
+        tags
+      };
     }
     else {
       throw new SystemError({
@@ -137,32 +149,31 @@ export class TemplatesDatabaseService {
 
     // Process all fields
     // todo: this offers no protection against updating fields like id which should never be updated
-    let updateObject: any = {};
+    let databaseUpdate: any = {};
     for (const fieldName of Object.keys(templateUpdate) as Array<keyof UpdateTemplateRequest>) {
-      updateObject[TemplatesDatabaseService.mapApplicationField(fieldName)] = templateUpdate[fieldName];
+      if (fieldName !== "tags") {
+        databaseUpdate[TemplatesDatabaseService.mapApplicationField(fieldName)] = templateUpdate[fieldName];
+      }
     }
 
-    let result: DatabaseTemplateDto[] = [];
-    try {
-      result = await sql<DatabaseTemplateDto[]>`
-        UPDATE templates
-        SET ${sql(updateObject, ...Object.keys(updateObject))}
-        WHERE id = ${templateId}
-        RETURNING *;
+    if (Object.keys(databaseUpdate).length > 0) {
+      try {
+        await sql<DatabaseTemplateDto[]>`
+          UPDATE templates
+          SET ${sql(databaseUpdate, ...Object.keys(databaseUpdate))}
+          WHERE id = ${templateId}
       `;
-    }
-    catch (e: any) {
-      TemplatesDatabaseService.handleDatabaseError(e);
+      }
+      catch (e: any) {
+        throw TemplatesDatabaseService.getDatabaseError(e);
+      }
     }
 
-    if (result.length > 0) {
-      return TemplatesDatabaseService.mapDatabaseEntity(result[0]);
+    if (Array.isArray(templateUpdate.tags)) {
+      await this.templateTagsDatabaseService.updateTags(templateId, templateUpdate.tags);
     }
-    else {
-      throw new SystemError({
-        message: "Unexpected error returning template after creation",
-      })
-    }
+
+    return this.get(templateId);
   }
 
   async delete(templateId: string): Promise<void> {
@@ -173,10 +184,7 @@ export class TemplatesDatabaseService {
       result = await sql`DELETE FROM templates WHERE id = ${templateId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while deleting template",
-        originalError: e
-      })
+      throw TemplatesDatabaseService.getDatabaseError(e);
     }
 
     // If there's a count then rows were affected and the deletion was a success
@@ -195,9 +203,9 @@ export class TemplatesDatabaseService {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
-    let result: DatabaseTemplateDto[] = [];
+    let results: DatabaseTemplateDto[] = [];
     try {
-      result = await sql<DatabaseTemplateDto[]>`SELECT * FROM templates WHERE vault = ${vaultId} ORDER BY ${sql(options.orderBy)} ${options.orderDirection === "ASC" ? sql`ASC` : sql`DESC` } LIMIT ${options.take} OFFSET ${options.skip}`;
+      results = await sql<DatabaseTemplateDto[]>`SELECT * FROM templates WHERE vault = ${vaultId} ORDER BY ${sql(options.orderBy)} ${options.orderDirection === "ASC" ? sql`ASC` : sql`DESC` } LIMIT ${options.take} OFFSET ${options.skip}`;
     }
     catch (e: any) {
       throw new SystemError({
@@ -206,7 +214,16 @@ export class TemplatesDatabaseService {
       })
     }
 
-    return result.map(TemplatesDatabaseService.mapDatabaseEntity);
+    const templates: TemplateDto[] = [];
+    for (const resultTemplate of results) {
+      const tags = await this.templateTagsDatabaseService.getTags(resultTemplate.id);
+
+      templates.push({
+        ...TemplatesDatabaseService.convertDatabaseDtoToDto(resultTemplate),
+        tags
+      })
+    }
+    return templates;
   }
 
   async getListMetadata(vaultId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
@@ -215,7 +232,7 @@ export class TemplatesDatabaseService {
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
     try {
       // Offset and order don't matter for fetching the total count, so we can ignore these for the query.
-      const result = await sql`SELECT count(*) FROM templates WHERE id = ${vaultId}`;
+      const result = await sql`SELECT count(*) FROM templates WHERE vault = ${vaultId}`;
       return {
         total: parseInt(result[0].count),
         take: options.take,

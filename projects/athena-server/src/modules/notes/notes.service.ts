@@ -3,10 +3,11 @@ import {NotesDatabaseService} from "./database/notes.database.service";
 import {
   CreateNoteRequest,
   GetNoteResponse, GetNotesResponse,
-  NoteDto, NotesQueryParams, UpdateNoteRequest
+  NoteDto, NotesQueryParams, UpdateNoteRequest,
+  DefaultVaultsListOptions
 } from "@ben-ryder/athena-js-lib";
-import {DefaultVaultsListOptions} from "@ben-ryder/athena-js-lib";
 import {DatabaseListOptions} from "../../common/database-list-options";
+import {VaultsService} from "../vaults/vaults.service";
 
 
 @Injectable({
@@ -14,7 +15,8 @@ import {DatabaseListOptions} from "../../common/database-list-options";
 })
 export class NotesService {
   constructor(
-    private notesDatabaseService: NotesDatabaseService
+    private notesDatabaseService: NotesDatabaseService,
+    private vaultsService: VaultsService
   ) {}
 
   async checkAccess(requestUserId: string, noteId: string): Promise<void> {
@@ -38,8 +40,9 @@ export class NotesService {
     return this.get(noteId);
   }
 
-  async add(ownerId: string, createNoteDto: CreateNoteRequest): Promise<NoteDto> {
-    return await this.notesDatabaseService.create(ownerId, createNoteDto);
+  async add(userId: string, vaultId: string, createNoteDto: CreateNoteRequest): Promise<NoteDto> {
+    await this.vaultsService.checkAccess(userId, vaultId);
+    return await this.notesDatabaseService.create(vaultId, createNoteDto);
   }
 
   async update(noteId: string, noteUpdate: UpdateNoteRequest): Promise<NoteDto> {
@@ -60,7 +63,9 @@ export class NotesService {
     return this.delete(noteId);
   }
 
-  async listWithAccessCheck(ownerId: string, noteId: string, options: NotesQueryParams): Promise<GetNotesResponse> {
+  async listWithAccessCheck(userId: string, vaultId: string, options: NotesQueryParams): Promise<GetNotesResponse> {
+    await this.vaultsService.checkAccess(userId, vaultId);
+
     const processedOptions: DatabaseListOptions = {
       skip: options.skip || DefaultVaultsListOptions.skip,
       take: options.take || DefaultVaultsListOptions.take,
@@ -68,8 +73,8 @@ export class NotesService {
       orderDirection: options.orderDirection || DefaultVaultsListOptions.orderDirection
     };
 
-    const notes = await this.notesDatabaseService.list(ownerId, processedOptions);
-    const meta = await this.notesDatabaseService.getListMetadata(ownerId, processedOptions);
+    const notes = await this.notesDatabaseService.list(vaultId, processedOptions);
+    const meta = await this.notesDatabaseService.getListMetadata(vaultId, processedOptions);
 
     return {
       notes,

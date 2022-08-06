@@ -9,7 +9,7 @@ import {NotesService} from "./notes.service";
 import {RequestWithContext} from "../../common/request-with-context";
 
 
-@Controller('/v1/notes',{
+@Controller('/v1/vaults/:vaultId/notes',{
     identifier: "notes-controller"
 })
 export class NotesController {
@@ -25,7 +25,7 @@ export class NotesController {
         let newNote: CreateNoteResponse;
 
         try {
-            newNote = await this.notesService.add(req.context.vaultId, req.body);
+            newNote = await this.notesService.add(req.context.user.id, req.params.vaultId, req.body);
         }
         catch(e) {
             return next(e);
@@ -94,8 +94,8 @@ export class NotesController {
         try {
             const response =  await this.notesService.listWithAccessCheck(
               req.context.user.id,
-              req.context.vaultId,
-              req.params
+              req.params.vaultId,
+              req.query
             );
             return res.send(response);
         }

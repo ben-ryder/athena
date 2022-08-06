@@ -29,7 +29,7 @@ export class VaultsDatabaseService {
     }
   }
 
-  private static mapDatabaseEntity(vault: InternalDatabaseVaultDto): VaultDto {
+  private static convertDatabaseDtoToDto(vault: InternalDatabaseVaultDto): VaultDto {
     return {
       id: vault.id,
       name: vault.name,
@@ -39,11 +39,11 @@ export class VaultsDatabaseService {
     }
   }
 
-  private static handleDatabaseError(e: any) {
+  private static getDatabaseError(e: any) {
     if (e instanceof PostgresError) {
       if (e.code && e.code === PG_UNIQUE_VIOLATION) {
         if (e.constraint_name === 'unique_user_vault_name') {
-          throw new ResourceRelationshipError({
+          return new ResourceRelationshipError({
             identifier: AthenaErrorIdentifiers.VAULT_NAME_EXISTS,
             applicationMessage: "The supplied vault name already exists."
           })
@@ -51,8 +51,8 @@ export class VaultsDatabaseService {
       }
     }
 
-    throw new SystemError({
-      message: "Unexpected error while creating vault",
+    return new SystemError({
+      message: "Unexpected error while executing vaults query",
       originalError: e
     })
   }
@@ -65,14 +65,11 @@ export class VaultsDatabaseService {
       result = await sql<InternalDatabaseVaultDto[]>`SELECT * FROM vaults WHERE id = ${vaultId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching vault",
-        originalError: e
-      })
+      throw VaultsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return VaultsDatabaseService.mapDatabaseEntity(result[0]);
+      return VaultsDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new ResourceNotFoundError({
@@ -90,15 +87,12 @@ export class VaultsDatabaseService {
       result = await sql<InternalDatabaseVaultDto[]>`SELECT * FROM vaults WHERE id = ${vaultId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching vault",
-        originalError: e
-      })
+      throw VaultsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
       return {
-        ...VaultsDatabaseService.mapDatabaseEntity(result[0]),
+        ...VaultsDatabaseService.convertDatabaseDtoToDto(result[0]),
         owner: result[0].owner
       }
     }
@@ -122,11 +116,11 @@ export class VaultsDatabaseService {
        `;
     }
     catch (e: any) {
-      VaultsDatabaseService.handleDatabaseError(e);
+      throw VaultsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return VaultsDatabaseService.mapDatabaseEntity(result[0]);
+      return VaultsDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new SystemError({
@@ -160,11 +154,11 @@ export class VaultsDatabaseService {
       `;
     }
     catch (e: any) {
-      VaultsDatabaseService.handleDatabaseError(e);
+      throw VaultsDatabaseService.getDatabaseError(e);
     }
 
     if (result.length > 0) {
-      return VaultsDatabaseService.mapDatabaseEntity(result[0]);
+      return VaultsDatabaseService.convertDatabaseDtoToDto(result[0]);
     }
     else {
       throw new SystemError({
@@ -181,10 +175,7 @@ export class VaultsDatabaseService {
       result = await sql`DELETE FROM vaults WHERE id = ${vaultId}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while deleting vault",
-        originalError: e
-      })
+      throw VaultsDatabaseService.getDatabaseError(e);
     }
 
     // If there's a count then rows were affected and the deletion was a success
@@ -208,13 +199,10 @@ export class VaultsDatabaseService {
       result = await sql<InternalDatabaseVaultDto[]>`SELECT * FROM vaults WHERE owner = ${ownerId} ORDER BY ${sql(options.orderBy)} ${options.orderDirection === "ASC" ? sql`ASC` : sql`DESC` } LIMIT ${options.take} OFFSET ${options.skip}`;
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching vaults",
-        originalError: e
-      })
+      throw VaultsDatabaseService.getDatabaseError(e);
     }
 
-    return result.map(VaultsDatabaseService.mapDatabaseEntity);
+    return result.map(VaultsDatabaseService.convertDatabaseDtoToDto);
   }
 
   async getListMetadata(ownerId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
@@ -231,10 +219,7 @@ export class VaultsDatabaseService {
       };
     }
     catch (e: any) {
-      throw new SystemError({
-        message: "Unexpected error while fetching vault list metadata",
-        originalError: e
-      })
+      throw VaultsDatabaseService.getDatabaseError(e);
     }
   }
 }

@@ -9,10 +9,10 @@ import {
     GetTemplateResponse, TemplatesQueryParams,
     TemplatesURLParams,
     UpdateTemplateRequest, UpdateTemplateResponse
-} from "@ben-ryder/athena-js-lib/src";
+} from "@ben-ryder/athena-js-lib";
 
 
-@Controller('/v1/templates',{
+@Controller('/v1/vaults/:vaultId/templates',{
     identifier: "templates-controller"
 })
 export class TemplatesController {
@@ -28,7 +28,7 @@ export class TemplatesController {
         let newTemplate: CreateTemplateResponse;
 
         try {
-            newTemplate = await this.templatesService.add(req.context.vaultId, req.body);
+            newTemplate = await this.templatesService.add(req.context.user.id, req.params.vaultId, req.body);
         }
         catch(e) {
             return next(e);
@@ -97,8 +97,8 @@ export class TemplatesController {
         try {
             const response =  await this.templatesService.listWithAccessCheck(
               req.context.user.id,
-              req.context.vaultId,
-              req.params
+              req.params.vaultId,
+              req.query
             );
             return res.send(response);
         }
