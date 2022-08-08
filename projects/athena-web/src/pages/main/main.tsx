@@ -2,15 +2,20 @@ import React, {useEffect, useState, Fragment} from 'react';
 import {colourPalette, IconButton, iconColorClassNames, iconSizes, MultiSelect, Select} from "@ben-ryder/jigsaw";
 import {
   StickyNote as NotesIcon,
-  Tag as TagsIcon,
+  Tags as TagsIcon,
   Filter as QueriesIcon,
   ArrowLeft as BackIcon,
   Trash2 as DeleteIcon,
   Save as SaveIcon,
   X as CloseIcon,
+  Plus as AddNoteIcon,
   LayoutTemplate as TemplateViewIcon,
   FolderTree as FolderViewIcon,
-  LayoutList as NoteListViewIcon
+  LayoutList as NoteListViewIcon,
+  MoreVertical as NoteOptionsIcon,
+  File as NoteTypeIcon, MoreVertical as FileTabOptionsIcon,
+  ChevronFirst as OpenVaultSectionIcon,
+  ChevronLast as CloseVaultSectionIcon,
 } from "lucide-react";
 import classNames from "classnames";
 import {useNavigate, useParams} from "react-router-dom";
@@ -19,51 +24,13 @@ import {Helmet} from "react-helmet-async";
 import {LoadingPage} from "../../patterns/pages/loading-page";
 import {useAthena} from "../../helpers/use-athena";
 import {GeneralQueryStatus} from "../../types/general-query-status";
-import {NoteContentDto, VaultDto} from "@ben-ryder/athena-js-lib";
+import {NoteContentDto, NoteDto, TemplateDto, VaultDto} from "@ben-ryder/athena-js-lib";
 import ReactTooltip from "react-tooltip";
+import {FileTabList, FileTabSection} from "../../patterns/components/file-tab/file-tab-section";
+import {NoteFileTab, TemplateFileTab} from "../../patterns/components/file-tab/file-tab";
+import {Editor} from "../../patterns/components/editor/editor";
 
-const notes: NoteContentDto[] = [
-  {
-    title: "test note 1",
-    body: "test note 1"
-  },
-  {
-    title: "test note 2",
-    body: "test note 2"
-  },
-  {
-    title: "test note 3",
-    body: "test note 3"
-  },
-  {
-    title: "test note 4",
-    body: "test note 5"
-  },
-  {
-    title: "test note 5",
-    body: "test note 5"
-  },
-  {
-    title: "test note 6",
-    body: "test note 6"
-  },
-  {
-    title: "test note 7",
-    body: "test note 7"
-  },
-  {
-    title: "test note 8",
-    body: "test note 8"
-  },
-  {
-    title: "test note 9",
-    body: "test note 9"
-  },
-  {
-    title: "test note 10",
-    body: "test note 10"
-  },
-]
+const notes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
 const tags = [
   {
@@ -87,8 +54,27 @@ const tags = [
     value: "5"
   }
 ]
-
 const selectedTags = [tags[0], tags[3], tags[4]]
+
+const note: NoteDto = {
+  id: "id",
+  title: "note title",
+  body: "body",
+  description: null,
+  createdAt: "",
+  updatedAt: "",
+  tags: []
+}
+const template: TemplateDto = {
+  id: "id",
+  title: "note title",
+  body: "body",
+  description: null,
+  createdAt: "",
+  updatedAt: "",
+  tags: []
+}
+
 
 /**
  * This height is used to ensure that the logo, vault details, vault switcher and the note header all line up.
@@ -108,6 +94,9 @@ export function MainPage() {
 
   const [vault, setVault] = useState<VaultDto|null>(null);
   const [currentVaultSection, setCurrentVaultSection] = useState<VaultSections>("notes");
+
+  const [vaultSectionIsOpen, setVaultSectionIsOpen] = useState<boolean>(true);
+  const [noteContent, setNoteContent] = useState<string>("");
 
   useEffect(() => {
     async function getVault() {
@@ -160,16 +149,19 @@ export function MainPage() {
       <Helmet>
         <title>{`${vault.name} | Athena`}</title>
       </Helmet>
-      <div className="min-h-[100vh] bg-br-atom-700 flex">
+      <main className="h-[100vh] w-[100vw] bg-br-atom-700 flex">
 
-        {/** Left Panel (Account Menu & Vault Panel) **/}
-        <div id="left-panel" className="min-h-[100vh] flex">
-
-          {/** Vault Panel **/}
-          <section className="flex flex-col w-[400px] bg-br-atom-900">
-
+        {/** Vault Section **/}
+        <section id="vault-section" className={classNames(
+          "h-[100vh] flex flex-col bg-br-atom-900 z-10 transition-all",
+          "w-full absolute",
+          "md:w-[400px] md:relative",
+          {
+            'w-0 md:w-0 overflow-x-hidden opacity-0': !vaultSectionIsOpen
+          }
+        )}>
             {/** Vault Details **/}
-            <div className={`flex justify-center items-center relative ${topSectionHeight}`}>
+            <div className={`flex justify-center items-center relative h-[40px]`}>
               <IconButton
                 label="Back to vaults"
                 data-tip="Back to vaults"
@@ -177,13 +169,22 @@ export function MainPage() {
                 onClick={() => {
                   navigate(routes.vaults.list)
                 }}
-                className="absolute left-[0.5rem] py-2"
+                className="absolute left-[1rem] py-2"
               />
               <p className="text-br-whiteGrey-100 font-bold py-2">{vault.name}</p>
+              <IconButton
+                label="Create Note"
+                data-tip="Create Note"
+                icon={<AddNoteIcon size={20} className={iconColorClassNames.secondary} />}
+                onClick={() => {
+                  navigate(routes.vaults.list)
+                }}
+                className="absolute right-[1rem] py-2"
+              />
             </div>
 
-            {/** Vault Panel Switcher **/}
-            <div className={`flex ${topSectionHeight}`}>
+            {/** View Switcher **/}
+            <div className={`flex h-[40px] border-b border-br-blueGrey-700 shadow-sm`}>
               <IconButton
                 label="Folder View"
                 icon={
@@ -218,23 +219,6 @@ export function MainPage() {
                 )}
                 data-tip="All Notes"
               />
-              {/*<IconButton*/}
-              {/*  label="Query List"*/}
-              {/*  icon={*/}
-              {/*    <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>*/}
-              {/*      <QueriesIcon size={20} />*/}
-              {/*      /!*<p className="ml-2 text-sm font-bold">Queries</p>*!/*/}
-              {/*    </div>*/}
-              {/*  }*/}
-              {/*  onClick={() => {setCurrentVaultSection("queries")}}*/}
-              {/*  className={classNames(*/}
-              {/*    "grow py-2",*/}
-              {/*    {*/}
-              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentVaultSection !== "queries",*/}
-              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "queries"*/}
-              {/*    }*/}
-              {/*  )}*/}
-              {/*/>*/}
               <IconButton
                 label="Templates"
                 icon={
@@ -270,75 +254,91 @@ export function MainPage() {
                 )}
                 data-tip="Tags"
               />
-              <ReactTooltip
-                place="bottom"
-                effect="solid"
-                backgroundColor={colourPalette.atom["600"]}
-                textColor={colourPalette.whiteGrey["100"]}
-                className="shadow-md"
-              />
             </div>
 
-            {/** Vault Panel Content **/}
-            <div className="">
+            {/** View Content **/}
+            <div className="grow overflow-y-scroll">
               {notes.map(note => (
-                <div key={note.title}>
-                  <button className="p-4 w-full text-br-whiteGrey-200 hover:bg-br-atom-600 text-left">{note.title}</button>
+                <div key={note}>
+                  <button className="p-4 w-full text-br-whiteGrey-200 hover:bg-br-atom-600 text-left">{`test note ${note}`}</button>
                 </div>
               ))}
             </div>
-          </section>
-        </div>
 
-        <div id="main-panel" className="w-full min-h-[100vh] flex flex-col">
-          <section id="note-details" className="bg-br-atom-800">
-            <div className={`${topSectionHeight} flex items-stretch`}>
-              <input className="grow block bg-transparent py-2 px-4 outline-none text-br-whiteGrey-100 font-bold" placeholder="note title here..." />
+            {/** Vault Section Bottom Content **/}
+            <div className="bg-br-atom-900 h-[40px] min-h-[40px] flex justify-between items-center px-2 border-t border-br-blueGrey-600">
+              <p className="text-br-whiteGrey-700 text-center italic">Online</p>
               <IconButton
-                label="Delete Note"
-                data-tip="Delete Note"
-                icon={<DeleteIcon />}
-                className={`${iconColorClassNames.secondary} h-full ${topSectionWidth} flex justify-center items-center`}
-                onClick={() => {}}
-              />
-              <IconButton
-                label="Save Note"
-                data-tip="Save Note"
-                icon={<SaveIcon />}
-                className={`${iconColorClassNames.secondary} h-full ${topSectionWidth} flex justify-center items-center`}
-                onClick={() => {}}
+                label={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
+                data-tip={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
+                icon={vaultSectionIsOpen ? <OpenVaultSectionIcon /> : <CloseVaultSectionIcon />}
+                className={classNames(
+                  `${iconColorClassNames.secondary} h-full flex justify-center items-center`,
+                  {
+                    'md:hidden': !vaultSectionIsOpen
+                  }
+                )}
+                onClick={() => {setVaultSectionIsOpen(!vaultSectionIsOpen)}}
               />
             </div>
-            <div className={`${topSectionHeight} flex`}>
-              <MultiSelect
-                id="note-tags"
-                label="Note Tags"
-                hideLabel={true}
-                placeholder="add tags..."
-                options={tags}
-                currentOptions={selectedTags}
-                onOptionsChange={() => {}}
-                className="border-none bg-transparent"
-              />
-              <Select
-                id="folder-select"
-                label="Folder"
-                hideLabel={true}
-                options={[{name: "select folder", value: ""}, {name: "Folder One", value: "one"}]}
-                currentOption={{name: "select folder", value: ""}}
-                onOptionChange={() => {}}
-              />
+        </section>
+
+        {/** Note Section **/}
+        <section id="note-section" className={classNames(
+          "h-[100vh] flex flex-col transition-all",
+          "w-[100vw]",
+          "md:w-[calc(100vw-400px)]",
+          {
+            "md:w-full": !vaultSectionIsOpen
+          }
+        )}>
+          <FileTabSection>
+            <FileTabList>
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+              <NoteFileTab note={note} />
+            </FileTabList>
+          </FileTabSection>
+          <section id="note-content" className="h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]">
+            <Editor content={noteContent} onContentChange={setNoteContent} />
+          </section>
+          <div className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 px-4`}>
+            <p className="text-br-whiteGrey-100"># tags go here</p>
+          </div>
+          <section id="bottom-panel" className={`h-[40px] bg-br-atom-800 py-2 px-4 flex items-center`}>
+            <IconButton
+              label={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
+              data-tip={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
+              icon={vaultSectionIsOpen ? <OpenVaultSectionIcon /> : <CloseVaultSectionIcon />}
+              className={classNames(
+                `${iconColorClassNames.secondary} h-full flex justify-center items-center`,
+                {
+                  'md:hidden': vaultSectionIsOpen
+                }
+              )}
+              onClick={() => {setVaultSectionIsOpen(!vaultSectionIsOpen)}}
+            />
+            <div className="w-full flex justify-end items-center pl-2">
+              <p className="text-br-whiteGrey-700 text-center italic">42 words | 526 chars</p>
             </div>
           </section>
-          <section id="note-content" className="grow">
+        </section>
+      </main>
 
-          </section>
-          <section id="bottom-panel" className={`${topSectionHeight} bg-br-atom-800 flex justify-between items-center py-2 px-4`}>
-            <p className="text-br-whiteGrey-700 text-center italic">42 words | 526 chars</p>
-            <p className="text-br-whiteGrey-700 text-center italic">Online</p>
-          </section>
-        </div>
-      </div>
+      <ReactTooltip
+        place="bottom"
+        effect="solid"
+        backgroundColor={colourPalette.atom["600"]}
+        textColor={colourPalette.whiteGrey["100"]}
+        className="shadow-md"
+      />
     </>
   );
 }
