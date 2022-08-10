@@ -12,7 +12,7 @@ export interface EditorProps {
 
 export function Editor(props: EditorProps) {
   return (
-    <div className="h-[calc] max-h-full p-4 overflow-y-scroll">
+    <div className="max-h-full p-4 overflow-y-scroll">
       <CodeMirror
         value={props.content}
         onChange={props.onContentChange}
@@ -21,7 +21,7 @@ export function Editor(props: EditorProps) {
         basicSetup={{
           lineNumbers: false,
           foldGutter: false,
-          highlightActiveLine: false
+          highlightActiveLine: false,
         }}
         className="h-full overflow-y-scroll text-base"
       />

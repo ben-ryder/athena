@@ -6,7 +6,7 @@ export interface FileTabSectionProps {
 
 export function FileTabSection(props: FileTabSectionProps) {
   return (
-    <div className="h-[40px] flex bg-br-atom-800">
+    <div className="h-[40px] flex bg-br-atom-800 border-b border-br-blueGrey-700">
       {props.children}
     </div>
   )

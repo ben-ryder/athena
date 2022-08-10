@@ -8,6 +8,7 @@ import {
 
 import {NoteDto, TemplateDto} from "@ben-ryder/athena-js-lib";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
+import classNames from "classnames";
 
 
 export interface FileTabProps {
@@ -15,13 +16,21 @@ export interface FileTabProps {
 }
 
 export interface NoteFileTabProps extends FileTabProps {
-  note: NoteDto
+  note: NoteDto,
+  active?: boolean
 }
 
 
 export function NoteFileTab(props: NoteFileTabProps) {
   return (
-    <div className="flex items-center px-2 border-r border-br-blueGrey-600 hover:bg-br-atom-600">
+    <div className={classNames(
+      "flex items-center px-2 border-r border-br-blueGrey-600 bg-br-atom-700 hover:bg-br-atom-500",
+      "border-t-2 border-t-transparent",
+      {
+        "border-b-2 border-b-transparent": !props.active,
+        "border-b-2 border-b-br-teal-600": props.active
+      }
+    )}>
       <NoteTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall}/>
       <button
         data-tip={`Switch to ${props.note.title}`}

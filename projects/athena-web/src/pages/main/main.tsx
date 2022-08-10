@@ -1,21 +1,16 @@
 import React, {useEffect, useState, Fragment} from 'react';
 import {colourPalette, IconButton, iconColorClassNames, iconSizes, MultiSelect, Select} from "@ben-ryder/jigsaw";
 import {
-  StickyNote as NotesIcon,
   Tags as TagsIcon,
-  Filter as QueriesIcon,
-  ArrowLeft as BackIcon,
-  Trash2 as DeleteIcon,
-  Save as SaveIcon,
-  X as CloseIcon,
   Plus as AddNoteIcon,
   LayoutTemplate as TemplateViewIcon,
   FolderTree as FolderViewIcon,
   LayoutList as NoteListViewIcon,
-  MoreVertical as NoteOptionsIcon,
-  File as NoteTypeIcon, MoreVertical as FileTabOptionsIcon,
   ChevronFirst as OpenVaultSectionIcon,
   ChevronLast as CloseVaultSectionIcon,
+  Home as BackIcon,
+  Filter as QueryViewIcon,
+  ListOrdered as HeadingIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {useNavigate, useParams} from "react-router-dom";
@@ -29,6 +24,7 @@ import ReactTooltip from "react-tooltip";
 import {FileTabList, FileTabSection} from "../../patterns/components/file-tab/file-tab-section";
 import {NoteFileTab, TemplateFileTab} from "../../patterns/components/file-tab/file-tab";
 import {Editor} from "../../patterns/components/editor/editor";
+import {ConnectivityIndicator} from "../../patterns/components/connectivity-indicator/connectivity-indicator";
 
 const notes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
@@ -161,7 +157,7 @@ export function MainPage() {
           }
         )}>
             {/** Vault Details **/}
-            <div className={`flex justify-center items-center relative h-[40px]`}>
+            <div className={`flex justify-center items-center relative h-[40px] border-b border-br-blueGrey-700`}>
               <IconButton
                 label="Back to vaults"
                 data-tip="Back to vaults"
@@ -184,9 +180,10 @@ export function MainPage() {
             </div>
 
             {/** View Switcher **/}
-            <div className={`flex h-[40px] border-b border-br-blueGrey-700 shadow-sm`}>
+            <div className={`flex h-[40px] border-b border-br-blueGrey-700`}>
               <IconButton
                 label="Folder View"
+                data-tip="Folder View"
                 icon={
                   <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
                     <FolderViewIcon size={20} />
@@ -200,10 +197,10 @@ export function MainPage() {
                     "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "folders"
                   }
                 )}
-                data-tip="Folder View"
               />
               <IconButton
-                label="Note List"
+                label="List View"
+                data-tip="List View"
                 icon={
                   <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
                     <NoteListViewIcon size={20} />
@@ -217,10 +214,27 @@ export function MainPage() {
                     "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "notes"
                   }
                 )}
-                data-tip="All Notes"
               />
+              {/*<IconButton*/}
+              {/*  label="Query View"*/}
+              {/*  data-tip="Query View"*/}
+              {/*  icon={*/}
+              {/*    <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>*/}
+              {/*      <QueryViewIcon size={20} />*/}
+              {/*    </div>*/}
+              {/*  }*/}
+              {/*  onClick={() => {setCurrentVaultSection("queries")}}*/}
+              {/*  className={classNames(*/}
+              {/*    "grow py-2",*/}
+              {/*    {*/}
+              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentVaultSection !== "queries",*/}
+              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "queries"*/}
+              {/*    }*/}
+              {/*  )}*/}
+              {/*/>*/}
               <IconButton
                 label="Templates"
+                data-tip="Templates"
                 icon={
                   <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
                     <TemplateViewIcon size={20} />
@@ -234,10 +248,10 @@ export function MainPage() {
                     "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "templates"
                   }
                 )}
-                data-tip="Templates"
               />
               <IconButton
                 label="Tags"
+                data-tip="Tags"
                 icon={
                   <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
                     <TagsIcon size={20} />
@@ -252,7 +266,6 @@ export function MainPage() {
                     "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "tags"
                   }
                 )}
-                data-tip="Tags"
               />
             </div>
 
@@ -266,8 +279,8 @@ export function MainPage() {
             </div>
 
             {/** Vault Section Bottom Content **/}
-            <div className="bg-br-atom-900 h-[40px] min-h-[40px] flex justify-between items-center px-2 border-t border-br-blueGrey-600">
-              <p className="text-br-whiteGrey-700 text-center italic">Online</p>
+            <div className="bg-br-atom-900 h-[40px] min-h-[40px] flex justify-between items-center px-2 border-t border-br-blueGrey-700">
+              <ConnectivityIndicator status="online" />
               <IconButton
                 label={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
                 data-tip={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
@@ -296,7 +309,7 @@ export function MainPage() {
             <FileTabList>
               <NoteFileTab note={note} />
               <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
+              <NoteFileTab note={note} active={true}/>
               <NoteFileTab note={note} />
               <NoteFileTab note={note} />
               <NoteFileTab note={note} />
@@ -309,10 +322,11 @@ export function MainPage() {
           <section id="note-content" className="h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]">
             <Editor content={noteContent} onContentChange={setNoteContent} />
           </section>
-          <div className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 px-4`}>
+
+          <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 px-4`}>
             <p className="text-br-whiteGrey-100"># tags go here</p>
-          </div>
-          <section id="bottom-panel" className={`h-[40px] bg-br-atom-800 py-2 px-4 flex items-center`}>
+          </section>
+          <section id="bottom-panel" className={`h-[40px] bg-br-atom-800 p-2 flex items-center border-t border-br-blueGrey-700`}>
             <IconButton
               label={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
               data-tip={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
@@ -325,8 +339,14 @@ export function MainPage() {
               )}
               onClick={() => {setVaultSectionIsOpen(!vaultSectionIsOpen)}}
             />
-            <div className="w-full flex justify-end items-center pl-2">
+            <div className="w-full flex justify-between items-center pl-2">
               <p className="text-br-whiteGrey-700 text-center italic">42 words | 526 chars</p>
+              <IconButton
+                label="Back to vaults"
+                data-tip="Back to vaults"
+                icon={<HeadingIcon size={iconSizes.small} className={iconColorClassNames.secondary} />}
+                onClick={() => {}}
+              />
             </div>
           </section>
         </section>
