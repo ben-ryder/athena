@@ -1,6 +1,6 @@
 import {TestHelper} from "../../../../tests/e2e/test-helper";
 import {testInvalidDataTypes} from "../../../../tests/e2e/common/test-invalid-data-types";
-import {testUsers} from "../../../../tests/test-data";
+import {testUsers} from "@ben-ryder/athena-testing";
 import {HTTPStatusCodes} from "@kangojs/core";
 import {sign} from "jsonwebtoken";
 import {expectUnauthorized} from "../../../../tests/e2e/common/expect-unauthorized";
@@ -8,7 +8,7 @@ import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 import {ConfigService} from "../../../services/config/config";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
 
-// todo: add tests that revoked tokens actually are revoked and no longer work (when some are expired and some not)!!!!!
+// todo: add data that revoked tokens actually are revoked and no longer work (when some are expired and some not)!!!!!
 
 describe('Revoke Auth',() => {
   const testHelper = new TestHelper();

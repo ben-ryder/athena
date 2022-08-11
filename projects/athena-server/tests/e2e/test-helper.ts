@@ -1,6 +1,6 @@
 import {TokenPair, TokenService} from "../../src/services/token/token.service";
 import {DatabaseService} from "../../src/services/database/database.service";
-import {testData, testUsers} from "../test-data";
+import {testData, testUsers} from "@ben-ryder/athena-testing";
 import {createServeSPAMiddleware} from "@kangojs/serve-spa";
 import {ConfigService} from "../../src/services/config/config";
 import {BaseController} from "../../src/modules/base/base.controller";
@@ -75,7 +75,7 @@ export class TestHelper {
   }
 
   /**
-   * Reset the database to match the predefined test content
+   * Reset the internal to match the predefined test content
    */
   async resetDatabase() {
     const databaseService = this.application.dependencyContainer.useDependency(DatabaseService);
@@ -104,7 +104,7 @@ export class TestHelper {
   }
 
   async killApplication() {
-    // Clean up database and redis connections before exiting
+    // Clean up internal and redis connections before exiting
     const cacheService = this.application.dependencyContainer.useDependency(CacheService);
     await cacheService.onKill();
     const databaseService = this.application.dependencyContainer.useDependency(DatabaseService);

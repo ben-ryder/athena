@@ -7,9 +7,9 @@ import {
   MetaPaginationData,
   VaultDto
 } from "@ben-ryder/athena-js-lib";
-import {InternalDatabaseVaultDto} from "../dto/internal-database-vault.dto-interface";
+import {InternalDatabaseVaultDto} from "../dto/internal-internal-vault.dto-interface";
 import {VaultWithOwnerDto} from "../dto/vault-with-owner.dto-interface";
-import {DatabaseListOptions} from "../../../common/database-list-options";
+import {DatabaseListOptions} from "../../../common/internal-list-options";
 
 
 @Injectable()

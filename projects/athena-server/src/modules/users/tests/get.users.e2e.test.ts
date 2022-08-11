@@ -1,4 +1,4 @@
-import {testUsers} from "../../../../tests/test-data";
+import {testUsers} from "@ben-ryder/athena-testing";
 import {expectUnauthorized} from "../../../../tests/e2e/common/expect-unauthorized";
 import {ErrorIdentifiers, HTTPStatusCodes} from "@kangojs/core";
 import {expectForbidden} from "../../../../tests/e2e/common/expect-forbidden";

@@ -1,4 +1,5 @@
-import {TemplateDto} from "@ben-ryder/athena-js-lib";
+import {TemplateDto} from "../template.dto";
+
 
 export interface TemplateWithOwnerDto extends TemplateDto {
   owner: string;

@@ -7,7 +7,7 @@ import {
   VaultDto, VaultsQueryParams
 } from "@ben-ryder/athena-js-lib";
 import {DefaultVaultsListOptions} from "@ben-ryder/athena-js-lib";
-import {DatabaseListOptions} from "../../common/database-list-options";
+import {DatabaseListOptions} from "../../common/internal-list-options";
 
 
 @Injectable({

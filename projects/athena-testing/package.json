@@ -1,0 +1,28 @@
+{
+  "name": "@ben-ryder/athena-testing",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A collection of test data for use in Athena units & e2e testings.",
+  "author": "Ben-Ryder <dev@benryder.me> (https://www.benryder.me)",
+  "homepage": "https://github.com/Ben-Ryder/athena",
+  "bugs": "https://github.com/Ben-Ryder/athena/issues",
+  "license": "AGPL-3.0-only",
+  "main": "build/src/index.js",
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "prepublishOnly": "npm run build",
+    "test": "jest"
+  },
+  "files": [
+    "build/**/*"
+  ],
+  "keywords": [],
+  "devDependencies": {
+    "ts-node": "^10.8.1",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "@ben-ryder/athena-js-lib": "file:../athena-js-lib",
+    "rimraf": "^3.0.2"
+  }
+}

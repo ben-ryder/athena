@@ -1,13 +1,13 @@
 import {TestHelper} from "../../../../tests/e2e/test-helper";
 import {HTTPStatusCodes} from "@kangojs/core";
-import {testUsers} from "../../../../tests/test-data";
+import {testUsers} from "@ben-ryder/athena-testing";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
 import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 import {testMissingField} from "../../../../tests/e2e/common/test-missing-field";
 import {testMalformedData} from "../../../../tests/e2e/common/test-malformed-data";
 import {testInvalidDataTypes} from "../../../../tests/e2e/common/test-invalid-data-types";
 
-// A default user which can be reused in multiple tests to save a bit of copy-pasting.
+// A default user which can be reused in multiple data to save a bit of copy-pasting.
 // Uses Object.freeze to ensure no test can modify it
 const defaultTestUser = Object.freeze({
   username: "test-new-user",
@@ -45,7 +45,7 @@ describe('Add User - /v1/users [POST]',() => {
       }))
     })
 
-    // todo: consider adding access & refresh token tests for /v1/users [POST]
+    // todo: consider adding access & refresh token data for /v1/users [POST]
     test('When adding a valid new user, the returned access and refresh tokens should be valid', async () => {})
 
     test("When using a password that's 8 characters, the new user should be added & returned", async () => {
@@ -359,7 +359,7 @@ describe('Add User - /v1/users [POST]',() => {
     )
   })
 
-  // todo: write registration enabled tests for /v1/users [POST]
+  // todo: write registration enabled data for /v1/users [POST]
   describe('Registration Status', () => {
     test("When registration is enabled, adding a new user should succeed", async () => {})
 

@@ -1,5 +1,5 @@
 import {TestHelper} from "../../../../tests/e2e/test-helper";
-import {testData, testUsers} from "../../../../tests/test-data";
+import {testData, testUsers} from "@ben-ryder/athena-testing";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
 import {expectForbidden} from "../../../../tests/e2e/common/expect-forbidden";
 import {HTTPStatusCodes} from "@kangojs/core";

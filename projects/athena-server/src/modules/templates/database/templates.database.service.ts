@@ -3,14 +3,14 @@ import {DatabaseService} from "../../../services/database/database.service";
 import {Row, RowList} from "postgres";
 
 
-import {DatabaseListOptions} from "../../../common/database-list-options";
+import {DatabaseListOptions} from "../../../common/internal-list-options";
 import {TemplateWithOwnerDto} from "../dto/template-with-owner.dto";
 import {
   AthenaErrorIdentifiers, CreateTemplateRequest,
   MetaPaginationData, TemplateDto, UpdateTemplateRequest
 } from "@ben-ryder/athena-js-lib";
-import {DatabaseTemplateDto} from "../dto/database-template.dto-interface";
-import {DatabaseTemplateWithOwnerDto} from "../dto/database-template-with-owner.dto-interface";
+import {DatabaseTemplateDto} from "../dto/internal-template.dto-interface";
+import {DatabaseTemplateWithOwnerDto} from "../dto/internal-template-with-owner.dto-interface";
 import {TemplateTagsDatabaseService} from "./template-tags.database.service";
 
 

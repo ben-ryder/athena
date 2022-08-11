@@ -1,7 +1,7 @@
 import {Injectable, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
-import {DatabaseTemplateDto} from "../dto/database-template.dto-interface";
-import {DatabaseTagDto} from "../../tags/dto/database-tag.dto-interface";
+import {DatabaseTemplateDto} from "../dto/internal-template.dto-interface";
+import {DatabaseTagDto} from "../../tags/dto/internal-tag.dto-interface";
 import {TagsDatabaseService} from "../../tags/database/tags.database.service";
 
 

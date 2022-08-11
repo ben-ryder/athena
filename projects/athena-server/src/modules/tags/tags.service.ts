@@ -1,6 +1,6 @@
 import {AccessForbiddenError, Injectable} from "@kangojs/core";
 import {TagsDatabaseService} from "./database/tags.database.service";
-import {DatabaseListOptions} from "../../common/database-list-options";
+import {DatabaseListOptions} from "../../common/internal-list-options";
 import {
   CreateTagRequest,
   DefaultVaultsListOptions, GetTagResponse,

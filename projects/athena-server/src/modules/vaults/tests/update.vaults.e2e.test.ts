@@ -1,6 +1,6 @@
 import {TestHelper} from "../../../../tests/e2e/test-helper";
 import {testMalformedData} from "../../../../tests/e2e/common/test-malformed-data";
-import {testData, testUsers} from "../../../../tests/test-data";
+import {testData, testUsers} from "@ben-ryder/athena-testing";
 import {testInvalidDataTypes} from "../../../../tests/e2e/common/test-invalid-data-types";
 import {expectBadRequest} from "../../../../tests/e2e/common/expect-bad-request";
 import {HTTPStatusCodes} from "@kangojs/core";

@@ -42,6 +42,7 @@
     "zod": "^3.17.10"
   },
   "devDependencies": {
+    "@ben-ryder/athena-testing": "../athena-testing",
     "@types/bcrypt": "^5.0.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",

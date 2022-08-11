@@ -2,7 +2,7 @@ import {Injectable, ResourceNotFoundError, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
 import {Row, RowList} from "postgres";
 
-import {DatabaseListOptions} from "../../../common/database-list-options";
+import {DatabaseListOptions} from "../../../common/internal-list-options";
 import {TagWithOwnerDto} from "../dto/tag-with-owner.dto";
 import {
   AthenaErrorIdentifiers,
@@ -11,8 +11,8 @@ import {
   TagDto,
   UpdateTagRequest
 } from "@ben-ryder/athena-js-lib";
-import {DatabaseTagDto} from "../dto/database-tag.dto-interface";
-import {DatabaseTagWithOwnerDto} from "../dto/database-tag-with-owner.dto-interface";
+import {DatabaseTagDto} from "../dto/internal-tag.dto-interface";
+import {DatabaseTagWithOwnerDto} from "../dto/internal-tag-with-owner.dto-interface";
 
 
 @Injectable()

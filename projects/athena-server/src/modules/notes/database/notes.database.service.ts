@@ -1,11 +1,11 @@
 import {Injectable, ResourceNotFoundError, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
 import {Row, RowList} from "postgres";
-import {DatabaseNoteDto} from "../dto/database-note.dto-interface";
+import {DatabaseNoteDto} from "../dto/internal-note.dto-interface";
 import {
   DatabaseNoteWithOwnerDto,
-} from "../dto/database-note-with-owner.dto-interface";
-import {DatabaseListOptions} from "../../../common/database-list-options";
+} from "../dto/internal-note-with-owner.dto-interface";
+import {DatabaseListOptions} from "../../../common/internal-list-options";
 import {NoteWithOwnerDto} from "../dto/note-with-owner.dto";
 import {
   AthenaErrorIdentifiers,

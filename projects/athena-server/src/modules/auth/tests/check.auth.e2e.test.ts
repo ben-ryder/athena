@@ -1,6 +1,6 @@
 import {HTTPStatusCodes} from "@kangojs/core";
 import {TestHelper} from "../../../../tests/e2e/test-helper";
-import {testUsers} from "../../../../tests/test-data";
+import {testUsers} from "@ben-ryder/athena-testing";
 import {expectUnauthorized} from "../../../../tests/e2e/common/expect-unauthorized";
 import {sign} from "jsonwebtoken";
 import {ConfigService} from "../../../services/config/config";

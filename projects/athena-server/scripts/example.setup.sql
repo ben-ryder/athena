@@ -1,15 +1,15 @@
--- Cleaning up existing database if present
+-- Cleaning up existing internal if present
 DROP DATABASE IF EXISTS athena;
 
 -- Cleaning up existing user if present
 DROP USER IF EXISTS athena;
 
--- Create athena user and database
+-- Create athena user and internal
 CREATE USER athena WITH PASSWORD 'password' LOGIN;
 CREATE DATABASE athena;
 GRANT CONNECT ON DATABASE athena TO athena;
 
--- Switch to new database
+-- Switch to new internal
 \c athena
 
 -- Create UUID extension for uuid_generate_v4 support
@@ -24,7 +24,7 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
--- Enums used in the database
+-- Enums used in the internal
 CREATE TYPE order_by_fields AS ENUM ('created_at', 'updated_at');
 CREATE TYPE order_directions AS ENUM ('ASC', 'DESC');
 

@@ -6,7 +6,7 @@ import {
   NoteDto, NotesQueryParams, UpdateNoteRequest,
   DefaultVaultsListOptions
 } from "@ben-ryder/athena-js-lib";
-import {DatabaseListOptions} from "../../common/database-list-options";
+import {DatabaseListOptions} from "../../common/internal-list-options";
 import {VaultsService} from "../vaults/vaults.service";
 
 

@@ -1,5 +1,5 @@
-import React, {useEffect, useState, Fragment} from 'react';
-import {colourPalette, IconButton, iconColorClassNames, iconSizes, MultiSelect, Select} from "@ben-ryder/jigsaw";
+import React, {useEffect, useState} from 'react';
+import {colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
   Tags as TagsIcon,
   Plus as AddNoteIcon,
@@ -9,7 +9,6 @@ import {
   ChevronFirst as OpenVaultSectionIcon,
   ChevronLast as CloseVaultSectionIcon,
   Home as BackIcon,
-  Filter as QueryViewIcon,
   ListOrdered as HeadingIcon
 } from "lucide-react";
 import classNames from "classnames";
@@ -19,12 +18,13 @@ import {Helmet} from "react-helmet-async";
 import {LoadingPage} from "../../patterns/pages/loading-page";
 import {useAthena} from "../../helpers/use-athena";
 import {GeneralQueryStatus} from "../../types/general-query-status";
-import {NoteContentDto, NoteDto, TemplateDto, VaultDto} from "@ben-ryder/athena-js-lib";
+import {NoteDto, TemplateDto, VaultDto} from "@ben-ryder/athena-js-lib";
 import ReactTooltip from "react-tooltip";
 import {FileTabList, FileTabSection} from "../../patterns/components/file-tab/file-tab-section";
 import {NoteFileTab, TemplateFileTab} from "../../patterns/components/file-tab/file-tab";
 import {Editor} from "../../patterns/components/editor/editor";
 import {ConnectivityIndicator} from "../../patterns/components/connectivity-indicator/connectivity-indicator";
+import {ActiveContent} from "../../helpers/content-state";
 
 const notes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
@@ -49,8 +49,8 @@ const tags = [
     name: "tag 5",
     value: "5"
   }
-]
-const selectedTags = [tags[0], tags[3], tags[4]]
+];
+const selectedTags = [tags[0], tags[3], tags[4]];
 
 const note: NoteDto = {
   id: "id",
@@ -84,7 +84,7 @@ export function MainPage() {
   const navigate = useNavigate();
   const {vaultId} = useParams();
 
-  const {apiClient, setCurrentUser} = useAthena();
+  const {apiClient} = useAthena();
   const [status, setStatus] = useState<GeneralQueryStatus>(GeneralQueryStatus.LOADING);
   const [pageErrorMessage, setPageErrorMessage] = useState<string|null>(null);
 
@@ -92,7 +92,18 @@ export function MainPage() {
   const [currentVaultSection, setCurrentVaultSection] = useState<VaultSections>("notes");
 
   const [vaultSectionIsOpen, setVaultSectionIsOpen] = useState<boolean>(true);
-  const [noteContent, setNoteContent] = useState<string>("");
+  const [activeContent, setActiveContent] = useState<ActiveContent>({
+    type: "template",
+    content: {
+      id: "rrr",
+      title: "te",
+      description: null,
+      body: "erf werg ewf iwf i wafi fwei  fi",
+      createdAt: "",
+      updatedAt: "",
+      tags: []
+    }
+  });
 
   useEffect(() => {
     async function getVault() {
@@ -320,7 +331,15 @@ export function MainPage() {
             </FileTabList>
           </FileTabSection>
           <section id="note-content" className="h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]">
-            <Editor content={noteContent} onContentChange={setNoteContent} />
+            <Editor content={activeContent.content.body} onContentChange={(content) => {
+              setActiveContent({
+                type: activeContent.type,
+                content: {
+                  ...activeContent.content,
+                  body: content
+                }
+              })
+            }} />
           </section>
 
           <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 px-4`}>

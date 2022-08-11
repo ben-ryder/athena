@@ -1,6 +1,6 @@
 import {AccessForbiddenError, Injectable} from "@kangojs/core";
 import {TemplatesDatabaseService} from "./database/templates.database.service";
-import {DatabaseListOptions} from "../../common/database-list-options";
+import {DatabaseListOptions} from "../../common/internal-list-options";
 import {
   CreateTemplateRequest, DefaultVaultsListOptions,
   GetTemplateResponse, GetTemplatesResponse,

@@ -1,5 +1,5 @@
 import {ConfigService, config, ConfigInterface} from "../../src/services/config/config";
-import {testEnvironmentVars} from "../test-data";
+import {testEnvironmentVars} from "@ben-ryder/athena-testing";
 
 
 export class TestConfigService extends ConfigService {

@@ -1,5 +1,5 @@
 /**
- * Provides the base database functionality used by database repositories.
+ * Provides the base internal functionality used by internal repositories.
  */
 
 import { Injectable } from "@kangojs/core";

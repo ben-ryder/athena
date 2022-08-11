@@ -22,7 +22,7 @@ describe('Base Module',() => {
     })
 
     // When a request is made without authorization, Then the responses should still succeed
-    // This is naturally tested as part of the above tests.
+    // This is naturally tested as part of the above data.
   })
 
   /**
@@ -39,6 +39,6 @@ describe('Base Module',() => {
     })
 
     // When a request is made without authorization, Then the responses should still succeed
-    // This is naturally tested as part of the above tests.
+    // This is naturally tested as part of the above data.
   })
 })

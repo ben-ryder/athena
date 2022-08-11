@@ -1,4 +1,5 @@
-import {TagDto} from "@ben-ryder/athena-js-lib";
+import {TagDto} from "../tag.dto";
+
 
 export interface TagWithOwnerDto extends TagDto {
   owner: string;

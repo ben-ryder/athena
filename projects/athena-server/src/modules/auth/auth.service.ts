@@ -4,10 +4,9 @@ import { TokenService } from "../../services/token/token.service";
 import { PasswordService } from "../../services/password/password.service";
 
 import { UsersService } from "../users/users.service";
-import {LoginResponse, RefreshResponse} from "@ben-ryder/athena-js-lib";
-import {DatabaseUserDto} from "../users/dtos/database-user.dto";
+import {LoginResponse, RefreshResponse, RevokeRequest} from "@ben-ryder/athena-js-lib";
+import {DatabaseUserDto} from "../users/dtos/internal-user.dto";
 import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
-import {RevokeTokensDto} from "./dtos/revoke-tokens.dto";
 
 
 @Injectable({
@@ -51,7 +50,7 @@ export class AuthService {
        };
     }
 
-    async revokeTokens(tokens: RevokeTokensDto) {
+    async revokeTokens(tokens: RevokeRequest) {
       let blacklistedAccessToken: string | null = null;
       let blacklistedRefreshToken: string | null = null;
 

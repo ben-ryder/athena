@@ -9,8 +9,8 @@ import {
 } from "@ben-ryder/athena-js-lib";
 
 import { PasswordService } from "../../services/password/password.service";
-import {DatabaseUserDto} from "./dtos/database-user.dto";
-import {UpdateDatabaseUserDto} from "./dtos/update.database-user.dto";
+import {DatabaseUserDto} from "./dtos/internal-user.dto";
+import {UpdateDatabaseUserDto} from "./dtos/update.internal-user.dto";
 import {UsersDatabaseService} from "./database/users.database.service";
 
 
