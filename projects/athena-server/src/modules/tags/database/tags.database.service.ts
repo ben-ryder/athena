@@ -2,17 +2,14 @@ import {Injectable, ResourceNotFoundError, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
 import {Row, RowList} from "postgres";
 
-import {DatabaseListOptions} from "../../../common/internal-list-options";
-import {TagWithOwnerDto} from "../dto/tag-with-owner.dto";
+
 import {
   AthenaErrorIdentifiers,
-  CreateTagRequest,
+  CreateTagRequest, DatabaseTagDto, DatabaseTagWithOwnerDto, ListOptions,
   MetaPaginationData,
-  TagDto,
+  TagDto, TagWithOwnerDto,
   UpdateTagRequest
 } from "@ben-ryder/athena-js-lib";
-import {DatabaseTagDto} from "../dto/internal-tag.dto-interface";
-import {DatabaseTagWithOwnerDto} from "../dto/internal-tag-with-owner.dto-interface";
 
 
 @Injectable()
@@ -183,7 +180,7 @@ export class TagsDatabaseService {
     }
   }
 
-  async list(vaultId: string, options: DatabaseListOptions): Promise<TagDto[]> {
+  async list(vaultId: string, options: ListOptions): Promise<TagDto[]> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
@@ -198,7 +195,7 @@ export class TagsDatabaseService {
     return result.map(TagsDatabaseService.convertDatabaseDtoToDto);
   }
 
-  async getListMetadata(vaultId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
+  async getListMetadata(vaultId: string, options: ListOptions): Promise<MetaPaginationData> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc

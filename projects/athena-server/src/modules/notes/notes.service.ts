@@ -4,9 +4,8 @@ import {
   CreateNoteRequest,
   GetNoteResponse, GetNotesResponse,
   NoteDto, NotesQueryParams, UpdateNoteRequest,
-  DefaultVaultsListOptions
+  DefaultVaultsListOptions, ListOptions
 } from "@ben-ryder/athena-js-lib";
-import {DatabaseListOptions} from "../../common/internal-list-options";
 import {VaultsService} from "../vaults/vaults.service";
 
 
@@ -66,7 +65,7 @@ export class NotesService {
   async listWithAccessCheck(userId: string, vaultId: string, options: NotesQueryParams): Promise<GetNotesResponse> {
     await this.vaultsService.checkAccess(userId, vaultId);
 
-    const processedOptions: DatabaseListOptions = {
+    const processedOptions: ListOptions = {
       skip: options.skip || DefaultVaultsListOptions.skip,
       take: options.take || DefaultVaultsListOptions.take,
       orderBy: options.orderBy || DefaultVaultsListOptions.orderBy,

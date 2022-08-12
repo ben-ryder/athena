@@ -3,11 +3,10 @@ import {VaultsDatabaseService} from "./database/vaults.database.service";
 import {
   CreateVaultRequest,
   GetVaultResponse,
-  GetVaultsResponse, UpdateVaultRequest,
+  GetVaultsResponse, ListOptions, UpdateVaultRequest,
   VaultDto, VaultsQueryParams
 } from "@ben-ryder/athena-js-lib";
 import {DefaultVaultsListOptions} from "@ben-ryder/athena-js-lib";
-import {DatabaseListOptions} from "../../common/internal-list-options";
 
 
 @Injectable({
@@ -62,7 +61,7 @@ export class VaultsService {
   }
 
   async list(ownerId: string, options: VaultsQueryParams): Promise<GetVaultsResponse> {
-    const processedOptions: DatabaseListOptions = {
+    const processedOptions: ListOptions = {
       skip: options.skip || DefaultVaultsListOptions.skip,
       take: options.take || DefaultVaultsListOptions.take,
       orderBy: options.orderBy || DefaultVaultsListOptions.orderBy,

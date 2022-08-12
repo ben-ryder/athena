@@ -4,8 +4,7 @@ import { TokenService } from "../../services/token/token.service";
 import { PasswordService } from "../../services/password/password.service";
 
 import { UsersService } from "../users/users.service";
-import {LoginResponse, RefreshResponse, RevokeRequest} from "@ben-ryder/athena-js-lib";
-import {DatabaseUserDto} from "../users/dtos/internal-user.dto";
+import {DatabaseUserDto, LoginResponse, RefreshResponse, RevokeRequest} from "@ben-ryder/athena-js-lib";
 import {AthenaErrorIdentifiers} from "@ben-ryder/athena-js-lib";
 
 

@@ -1,17 +1,11 @@
 import {Injectable, ResourceNotFoundError, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
 import {Row, RowList} from "postgres";
-import {DatabaseNoteDto} from "../dto/internal-note.dto-interface";
-import {
-  DatabaseNoteWithOwnerDto,
-} from "../dto/internal-note-with-owner.dto-interface";
-import {DatabaseListOptions} from "../../../common/internal-list-options";
-import {NoteWithOwnerDto} from "../dto/note-with-owner.dto";
 import {
   AthenaErrorIdentifiers,
-  CreateNoteRequest,
+  CreateNoteRequest, DatabaseNoteDto, DatabaseNoteWithOwnerDto, ListOptions,
   MetaPaginationData,
-  NoteDto,
+  NoteDto, NoteWithOwnerDto,
   UpdateNoteRequest
 } from "@ben-ryder/athena-js-lib";
 import {NoteTagsDatabaseService} from "./note-tags.database.service";
@@ -202,7 +196,7 @@ export class NotesDatabaseService {
     }
   }
 
-  async list(vaultId: string, options: DatabaseListOptions): Promise<NoteDto[]> {
+  async list(vaultId: string, options: ListOptions): Promise<NoteDto[]> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
@@ -229,7 +223,7 @@ export class NotesDatabaseService {
     return notes;
   }
 
-  async getListMetadata(vaultId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
+  async getListMetadata(vaultId: string, options: ListOptions): Promise<MetaPaginationData> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc

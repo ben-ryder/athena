@@ -2,14 +2,16 @@ import {Injectable, ResourceNotFoundError, ResourceRelationshipError, SystemErro
 import {DatabaseService} from "../../../services/database/database.service";
 import {PostgresError, Row, RowList, Sql} from "postgres";
 import {PG_UNIQUE_VIOLATION} from "../../../services/database/database-error-codes";
-import {AthenaErrorIdentifiers, CreateVaultRequest, UpdateVaultRequest} from "@ben-ryder/athena-js-lib";
+import {
+  AthenaErrorIdentifiers,
+  CreateVaultRequest,
+  InternalDatabaseVaultDto, ListOptions,
+  UpdateVaultRequest, VaultWithOwnerDto
+} from "@ben-ryder/athena-js-lib";
 import {
   MetaPaginationData,
   VaultDto
 } from "@ben-ryder/athena-js-lib";
-import {InternalDatabaseVaultDto} from "../dto/internal-internal-vault.dto-interface";
-import {VaultWithOwnerDto} from "../dto/vault-with-owner.dto-interface";
-import {DatabaseListOptions} from "../../../common/internal-list-options";
 
 
 @Injectable()
@@ -190,7 +192,7 @@ export class VaultsDatabaseService {
     }
   }
 
-  async list(ownerId: string, options: DatabaseListOptions): Promise<VaultDto[]> {
+  async list(ownerId: string, options: ListOptions): Promise<VaultDto[]> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
@@ -205,7 +207,7 @@ export class VaultsDatabaseService {
     return result.map(VaultsDatabaseService.convertDatabaseDtoToDto);
   }
 
-  async getListMetadata(ownerId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
+  async getListMetadata(ownerId: string, options: ListOptions): Promise<MetaPaginationData> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc

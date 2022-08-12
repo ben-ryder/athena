@@ -1,10 +1,9 @@
 import {AccessForbiddenError, Injectable} from "@kangojs/core";
 import {TagsDatabaseService} from "./database/tags.database.service";
-import {DatabaseListOptions} from "../../common/internal-list-options";
 import {
   CreateTagRequest,
   DefaultVaultsListOptions, GetTagResponse,
-  GetTagsResponse,
+  GetTagsResponse, ListOptions,
   TagDto,
   TagsQueryParams,
   UpdateTagRequest
@@ -66,7 +65,7 @@ export class TagsService {
   }
 
   async listWithAccessCheck(ownerId: string, tagId: string, options: TagsQueryParams): Promise<GetTagsResponse> {
-    const processedOptions: DatabaseListOptions = {
+    const processedOptions: ListOptions = {
       skip: options.skip || DefaultVaultsListOptions.skip,
       take: options.take || DefaultVaultsListOptions.take,
       orderBy: options.orderBy || DefaultVaultsListOptions.orderBy,

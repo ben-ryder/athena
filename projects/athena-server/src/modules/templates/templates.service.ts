@@ -1,9 +1,8 @@
 import {AccessForbiddenError, Injectable} from "@kangojs/core";
 import {TemplatesDatabaseService} from "./database/templates.database.service";
-import {DatabaseListOptions} from "../../common/internal-list-options";
 import {
   CreateTemplateRequest, DefaultVaultsListOptions,
-  GetTemplateResponse, GetTemplatesResponse,
+  GetTemplateResponse, GetTemplatesResponse, ListOptions,
   TemplateDto,
   TemplatesQueryParams,
   UpdateTemplateRequest
@@ -65,7 +64,7 @@ export class TemplatesService {
   }
 
   async listWithAccessCheck(ownerId: string, templateId: string, options: TemplatesQueryParams): Promise<GetTemplatesResponse> {
-    const processedOptions: DatabaseListOptions = {
+    const processedOptions: ListOptions = {
       skip: options.skip || DefaultVaultsListOptions.skip,
       take: options.take || DefaultVaultsListOptions.take,
       orderBy: options.orderBy || DefaultVaultsListOptions.orderBy,

@@ -2,15 +2,10 @@ import {Injectable, ResourceNotFoundError, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
 import {Row, RowList} from "postgres";
 
-
-import {DatabaseListOptions} from "../../../common/internal-list-options";
-import {TemplateWithOwnerDto} from "../dto/template-with-owner.dto";
 import {
-  AthenaErrorIdentifiers, CreateTemplateRequest,
-  MetaPaginationData, TemplateDto, UpdateTemplateRequest
+  AthenaErrorIdentifiers, CreateTemplateRequest, DatabaseTemplateDto, DatabaseTemplateWithOwnerDto, ListOptions,
+  MetaPaginationData, TemplateDto, TemplateWithOwnerDto, UpdateTemplateRequest
 } from "@ben-ryder/athena-js-lib";
-import {DatabaseTemplateDto} from "../dto/internal-template.dto-interface";
-import {DatabaseTemplateWithOwnerDto} from "../dto/internal-template-with-owner.dto-interface";
 import {TemplateTagsDatabaseService} from "./template-tags.database.service";
 
 
@@ -199,7 +194,7 @@ export class TemplatesDatabaseService {
     }
   }
 
-  async list(vaultId: string, options: DatabaseListOptions): Promise<TemplateDto[]> {
+  async list(vaultId: string, options: ListOptions): Promise<TemplateDto[]> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc
@@ -226,7 +221,7 @@ export class TemplatesDatabaseService {
     return templates;
   }
 
-  async getListMetadata(vaultId: string, options: DatabaseListOptions): Promise<MetaPaginationData> {
+  async getListMetadata(vaultId: string, options: ListOptions): Promise<MetaPaginationData> {
     const sql = await this.databaseService.getSQL();
 
     // todo: this assumes that options.orderBy/options.orderDirection will always be validated etc

@@ -1,8 +1,7 @@
 import {Injectable, SystemError} from "@kangojs/core";
 import {DatabaseService} from "../../../services/database/database.service";
-import {DatabaseNoteDto} from "../dto/internal-note.dto-interface";
-import {DatabaseTagDto} from "../../tags/dto/internal-tag.dto-interface";
 import {TagsDatabaseService} from "../../tags/database/tags.database.service";
+import {DatabaseNoteDto, DatabaseTagDto} from "@ben-ryder/athena-js-lib";
 
 
 @Injectable()
