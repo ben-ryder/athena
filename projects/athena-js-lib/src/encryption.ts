@@ -8,6 +8,14 @@ import { AthenaDecryptError, AthenaEncryptError } from "./errors";
 import {VaultDto} from "./schemas/vaults/dtos/vault.dto";
 import {CreateVaultRequest} from "./schemas/vaults/request/create.vaults.request";
 import {UpdateVaultRequest} from "./schemas/vaults/request/update.vaults.request";
+import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
+import {UpdateNoteRequest} from "./schemas/notes/request/update.notes.request";
+import {NoteDto} from "./schemas/notes/dtos/note.dto";
+import {NoteContentDto} from "./schemas/notes/dtos/note-content.dto";
+import {TemplateDto} from "./schemas/templates/dtos/template.dto";
+import {TemplateContentDto} from "./schemas/templates/dtos/template-content.dto";
+import {UpdateTemplateRequest} from "./schemas/templates/request/update.templates.request";
+import {CreateTemplateRequest} from "./schemas/templates/request/create.templates.request";
 
 export interface AccountKeys {
     masterKey: string,
@@ -129,6 +137,98 @@ export class AthenaEncryption {
         return {
             ...vault,
             ...decryptedVaultContent
+        };
+    }
+
+    // Note Encryption
+    static encryptCreateNoteRequest(key: string, createNoteRequest: CreateNoteRequest): CreateNoteRequest {
+        return {
+            ...createNoteRequest,
+            title: AthenaEncryption.encryptText(key, createNoteRequest.title),
+            description: createNoteRequest.description ? AthenaEncryption.encryptText(key, createNoteRequest.description) : undefined,
+            body: AthenaEncryption.encryptText(key, createNoteRequest.body),
+        }
+    }
+
+    static encryptUpdateNoteRequest(key: string, updateNoteRequest: UpdateNoteRequest): UpdateNoteRequest {
+        if (updateNoteRequest.title) {
+            updateNoteRequest.title = AthenaEncryption.encryptText(key, updateNoteRequest.title)
+        }
+        if (typeof updateNoteRequest.description === 'string' && updateNoteRequest.description !== "") {
+            updateNoteRequest.description = AthenaEncryption.encryptText(key, updateNoteRequest.description);
+        }
+        if (updateNoteRequest.body) {
+            updateNoteRequest.body = AthenaEncryption.encryptText(key, updateNoteRequest.body)
+        }
+
+        return updateNoteRequest;
+    }
+
+    static decryptNote(key: string, note: NoteDto): NoteDto {
+        const decryptedContent: NoteContentDto = {
+            title: AthenaEncryption.decryptText(key, note.title),
+            description: note.description ? AthenaEncryption.decryptText(key, note.description) : null,
+            body: AthenaEncryption.decryptText(key, note.body)
+        }
+
+        // If the content is empty then the decryption key must be wrong.
+        if (
+          decryptedContent.title === "" ||
+          decryptedContent.description === "" ||
+          decryptedContent.body === ""
+        ) {
+            throw new AthenaDecryptError();
+        }
+
+        return {
+            ...note,
+            ...decryptedContent
+        };
+    }
+
+    // Template Encryption
+    static encryptCreateTemplateRequest(key: string, createTemplateRequest: CreateTemplateRequest): CreateTemplateRequest {
+        return {
+            ...createTemplateRequest,
+            title: AthenaEncryption.encryptText(key, createTemplateRequest.title),
+            description: createTemplateRequest.description ? AthenaEncryption.encryptText(key, createTemplateRequest.description) : undefined,
+            body: AthenaEncryption.encryptText(key, createTemplateRequest.body),
+        }
+    }
+
+    static encryptUpdateTemplateRequest(key: string, updateTemplateRequest: UpdateTemplateRequest): UpdateTemplateRequest {
+        if (updateTemplateRequest.title) {
+            updateTemplateRequest.title = AthenaEncryption.encryptText(key, updateTemplateRequest.title)
+        }
+        if (typeof updateTemplateRequest.description === 'string' && updateTemplateRequest.description !== "") {
+            updateTemplateRequest.description = AthenaEncryption.encryptText(key, updateTemplateRequest.description);
+        }
+        if (updateTemplateRequest.body) {
+            updateTemplateRequest.body = AthenaEncryption.encryptText(key, updateTemplateRequest.body)
+        }
+
+        return updateTemplateRequest;
+    }
+
+    static decryptTemplate(key: string, template: TemplateDto): TemplateDto {
+        const decryptedContent: TemplateContentDto = {
+            title: AthenaEncryption.decryptText(key, template.title),
+            description: template.description ? AthenaEncryption.decryptText(key, template.description) : null,
+            body: AthenaEncryption.decryptText(key, template.body)
+        }
+
+        // If the content is empty then the decryption key must be wrong.
+        if (
+          decryptedContent.title === "" ||
+          decryptedContent.description === "" ||
+          decryptedContent.body === ""
+        ) {
+            throw new AthenaDecryptError();
+        }
+
+        return {
+            ...template,
+            ...decryptedContent
         };
     }
 }

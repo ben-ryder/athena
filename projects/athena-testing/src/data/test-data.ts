@@ -76,7 +76,7 @@ export interface TestData {
   }
 }
 
-const user1tags: TagWithOwnerDto[] = [
+const user1tags: readonly TagWithOwnerDto[] = Object.freeze([
   {
     id: "3fed9d5d-28a0-40a7-bcc6-880b9ea7a0e3",
     name: "test tag 1",
@@ -113,7 +113,7 @@ const user1tags: TagWithOwnerDto[] = [
     updatedAt: "2022-07-11T18:20:32.482Z",
     owner: testUsers[0].id
   }
-];
+]);
 
 export const testData: TestData = {
   [testUsers[0].id]: {
@@ -195,10 +195,40 @@ export const testData: TestData = {
         updatedAt: "2022-07-11T18:20:32.482Z",
         tags: [user1tags[0], user1tags[1]],
         owner: testUsers[0].id
+      },
+      {
+        id: "7258816f-f992-47ff-943f-4b1eaf605c74",
+        title: "test note 3",
+        description: null,
+        body: "this is a test 3 note",
+        createdAt: "2022-07-11T18:20:32.482Z",
+        updatedAt: "2022-07-11T18:20:32.482Z",
+        tags: [user1tags[0], user1tags[3]],
+        owner: testUsers[0].id
+      },
+      {
+        id: "21955bea-03a5-47a6-9804-fe9588cf67a2",
+        title: "test note 4",
+        description: null,
+        body: "this is a test 4 note",
+        createdAt: "2022-07-11T18:20:32.482Z",
+        updatedAt: "2022-07-11T18:20:32.482Z",
+        tags: [user1tags[1], user1tags[2]],
+        owner: testUsers[0].id
+      },
+      {
+        id: "56f48fb0-1fa2-4e95-bdf1-dfa7dd9da221",
+        title: "test note 5",
+        description: null,
+        body: "this is a test 5 note",
+        createdAt: "2022-07-11T18:20:32.482Z",
+        updatedAt: "2022-07-11T18:20:32.482Z",
+        tags: [user1tags[3]],
+        owner: testUsers[0].id
       }
     ],
     templates: [],
-    tags: user1tags,
+    tags: [...user1tags],
     queries: [],
     notesTags: [],
     queriesTags: [],

@@ -18,67 +18,31 @@ import {Helmet} from "react-helmet-async";
 import {LoadingPage} from "../../patterns/pages/loading-page";
 import {useAthena} from "../../helpers/use-athena";
 import {GeneralQueryStatus} from "../../types/general-query-status";
-import {NoteDto, TemplateDto, VaultDto} from "@ben-ryder/athena-js-lib";
+import {VaultDto} from "@ben-ryder/athena-js-lib";
 import ReactTooltip from "react-tooltip";
 import {FileTabList, FileTabSection} from "../../patterns/components/file-tab/file-tab-section";
-import {NoteFileTab, TemplateFileTab} from "../../patterns/components/file-tab/file-tab";
+import {ContentFileTab} from "../../patterns/components/file-tab/file-tab";
 import {Editor} from "../../patterns/components/editor/editor";
 import {ConnectivityIndicator} from "../../patterns/components/connectivity-indicator/connectivity-indicator";
-import {ActiveContent} from "../../helpers/content-state";
+import {Content, ContentList} from "../../helpers/content-state";
+import {NotesList} from "./notes-list";
+import {ContentDetails} from "../../patterns/components/content-details/content-details";
 
-const notes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-
-const tags = [
-  {
-    name: "tag 1",
-    value: "1"
-  },
-  {
-    name: "tag 2",
-    value: "2"
-  },
-  {
-    name: "tag 3",
-    value: "3"
-  },
-  {
-    name: "tag 4",
-    value: "4"
-  },
-  {
-    name: "tag 5",
-    value: "5"
-  }
-];
-const selectedTags = [tags[0], tags[3], tags[4]];
-
-const note: NoteDto = {
-  id: "id",
-  title: "note title",
-  body: "body",
-  description: null,
-  createdAt: "",
-  updatedAt: "",
-  tags: []
-}
-const template: TemplateDto = {
-  id: "id",
-  title: "note title",
-  body: "body",
-  description: null,
-  createdAt: "",
-  updatedAt: "",
-  tags: []
-}
-
-
-/**
- * This height is used to ensure that the logo, vault details, vault switcher and the note header all line up.
- */
-const topSectionHeight = "h-[40px]";
-const topSectionWidth = "w-[40px]";
 
 type VaultSections = "folders" | "notes" | "queries" | "templates" | "tags";
+
+
+function isActiveContent(content: Content, activeContent: Content|null) {
+  if (content.type === "note-new" || content.type === "template-new") {
+    return false;
+  }
+  if (!activeContent || activeContent.type === "note-new" || activeContent.type === "template-new") {
+    return false;
+  }
+
+  return content.content.id === activeContent.content.id;
+}
+
 
 export function MainPage() {
   const navigate = useNavigate();
@@ -91,20 +55,81 @@ export function MainPage() {
   const [vault, setVault] = useState<VaultDto|null>(null);
   const [currentVaultSection, setCurrentVaultSection] = useState<VaultSections>("notes");
 
+  const [changesAreSaved, setChangesAreSaved] = useState<boolean>(true);
   const [vaultSectionIsOpen, setVaultSectionIsOpen] = useState<boolean>(true);
-  const [activeContent, setActiveContent] = useState<ActiveContent>({
-    type: "template",
-    content: {
-      id: "rrr",
-      title: "te",
-      description: null,
-      body: "erf werg ewf iwf i wafi fwei  fi",
-      createdAt: "",
-      updatedAt: "",
-      tags: []
-    }
-  });
+  const [contentList, setContentList] = useState<ContentList>([]);
+  const [activeContent, setActiveContent] = useState<Content|null>(null);
 
+  async function saveActiveContent() {
+    if (activeContent?.type === "note-new") {
+      await apiClient.createNote(vaultId, {
+        title: activeContent.content.title,
+        description: activeContent.content.description,
+        body: activeContent.content.body,
+        tags: activeContent.content.tags.map(tag => tag.id)
+      });
+    }
+    else if (activeContent?.type === "note-edit") {
+      await apiClient.updateNote(vaultId, activeContent.content.id, {
+        title: activeContent.content.title,
+        description: activeContent.content.description,
+        body: activeContent.content.body,
+        tags: activeContent.content.tags.map(tag => tag.id)
+      });
+    }
+    else if (activeContent?.type === "template-new") {
+      await apiClient.createTemplate(vaultId, {
+        title: activeContent.content.title,
+        description: activeContent.content.description,
+        body: activeContent.content.body,
+        tags: activeContent.content.tags.map(tag => tag.id)
+      });
+    }
+    else if (activeContent?.type === "template-edit") {
+      await apiClient.updateTemplate(vaultId, activeContent.content.id, {
+        title: activeContent.content.title,
+        description: activeContent.content.description,
+        body: activeContent.content.body,
+        tags: activeContent.content.tags.map(tag => tag.id)
+      });
+    }
+
+    setChangesAreSaved(true);
+  }
+
+  async function openAndSwitchContent(content: Content) {
+    await saveActiveContent();
+
+    let contentIsOpen = false;
+    for (const c of contentList) {
+      if (JSON.stringify(c) === JSON.stringify(content)) {
+        contentIsOpen = true;
+        break;
+      }
+    }
+
+    if (!contentIsOpen) {
+      setContentList([
+        ...contentList,
+        content
+      ])
+    }
+
+    setActiveContent(content);
+  }
+
+  async function closeContent(content: Content) {
+    await saveActiveContent();
+
+    if (JSON.stringify(content) === JSON.stringify(activeContent)) {
+      setActiveContent(null);
+    }
+
+    const newContentList = contentList.filter(c => JSON.stringify(c) !== JSON.stringify(content));
+    setContentList(newContentList);
+  }
+
+  // Vault fetching
   useEffect(() => {
     async function getVault() {
       if (!vaultId) {
@@ -144,11 +169,19 @@ export function MainPage() {
           hideHeader={true}
           status={status}
           loadingMessage="Loading vault..."
-          errorMessage={pageErrorMessage || "An unepxected error occured"}
+          errorMessage={pageErrorMessage || "An unexpected error occured"}
           emptyMessage="An unexpected error occurred"
         />
       </>
     )
+  }
+
+  let viewContent;
+  if (currentVaultSection === "notes") {
+    viewContent = <NotesList activeContent={activeContent} openAndSwitchContent={openAndSwitchContent} />
+  }
+  else {
+    viewContent = <></>
   }
 
   return (
@@ -226,23 +259,6 @@ export function MainPage() {
                   }
                 )}
               />
-              {/*<IconButton*/}
-              {/*  label="Query View"*/}
-              {/*  data-tip="Query View"*/}
-              {/*  icon={*/}
-              {/*    <div className={iconColorClassNames.secondary + " flex justify-center items-center"}>*/}
-              {/*      <QueryViewIcon size={20} />*/}
-              {/*    </div>*/}
-              {/*  }*/}
-              {/*  onClick={() => {setCurrentVaultSection("queries")}}*/}
-              {/*  className={classNames(*/}
-              {/*    "grow py-2",*/}
-              {/*    {*/}
-              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentVaultSection !== "queries",*/}
-              {/*      "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentVaultSection === "queries"*/}
-              {/*    }*/}
-              {/*  )}*/}
-              {/*/>*/}
               <IconButton
                 label="Templates"
                 data-tip="Templates"
@@ -282,28 +298,26 @@ export function MainPage() {
 
             {/** View Content **/}
             <div className="grow overflow-y-scroll">
-              {notes.map(note => (
-                <div key={note}>
-                  <button className="p-4 w-full text-br-whiteGrey-200 hover:bg-br-atom-600 text-left">{`test note ${note}`}</button>
-                </div>
-              ))}
+              {viewContent}
             </div>
 
             {/** Vault Section Bottom Content **/}
             <div className="bg-br-atom-900 h-[40px] min-h-[40px] flex justify-between items-center px-2 border-t border-br-blueGrey-700">
-              <ConnectivityIndicator status="online" />
-              <IconButton
-                label={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
-                data-tip={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
-                icon={vaultSectionIsOpen ? <OpenVaultSectionIcon /> : <CloseVaultSectionIcon />}
-                className={classNames(
-                  `${iconColorClassNames.secondary} h-full flex justify-center items-center`,
-                  {
-                    'md:hidden': !vaultSectionIsOpen
-                  }
-                )}
-                onClick={() => {setVaultSectionIsOpen(!vaultSectionIsOpen)}}
-              />
+              <>
+                <ConnectivityIndicator status={changesAreSaved ? "online" : "offline"} />
+                <IconButton
+                  label={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
+                  data-tip={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
+                  icon={vaultSectionIsOpen ? <OpenVaultSectionIcon /> : <CloseVaultSectionIcon />}
+                  className={classNames(
+                    `${iconColorClassNames.secondary} h-full flex justify-center items-center`,
+                    {
+                      'md:hidden': !vaultSectionIsOpen
+                    }
+                  )}
+                  onClick={() => {setVaultSectionIsOpen(!vaultSectionIsOpen)}}
+                />
+              </>
             </div>
         </section>
 
@@ -318,32 +332,42 @@ export function MainPage() {
         )}>
           <FileTabSection>
             <FileTabList>
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} active={true}/>
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
-              <NoteFileTab note={note} />
+              {contentList.map(content =>
+                <ContentFileTab
+                  key={content.content.title}
+                  content={content}
+                  active={isActiveContent(content, activeContent)}
+                  openAndSwitchContent={openAndSwitchContent}
+                  closeContent={closeContent}
+                />
+              )}
             </FileTabList>
           </FileTabSection>
           <section id="note-content" className="h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]">
-            <Editor content={activeContent.content.body} onContentChange={(content) => {
-              setActiveContent({
-                type: activeContent.type,
-                content: {
-                  ...activeContent.content,
-                  body: content
-                }
-              })
-            }} />
+            {activeContent &&
+              <Editor
+                  content={activeContent.content.body}
+                  onContentChange={(content) => {
+                    setChangesAreSaved(false);
+                    setActiveContent({
+                      // @ts-ignore
+                      type: activeContent.type,
+                      // @ts-ignore
+                      content: {
+                        ...activeContent.content,
+                        body: content
+                      }
+                    })
+                  }}
+              />
+            }
+
           </section>
 
           <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 px-4`}>
-            <p className="text-br-whiteGrey-100"># tags go here</p>
+            {activeContent &&
+                <p className="text-br-whiteGrey-100"># tags go here</p>
+            }
           </section>
           <section id="bottom-panel" className={`h-[40px] bg-br-atom-800 p-2 flex items-center border-t border-br-blueGrey-700`}>
             <IconButton
@@ -359,13 +383,17 @@ export function MainPage() {
               onClick={() => {setVaultSectionIsOpen(!vaultSectionIsOpen)}}
             />
             <div className="w-full flex justify-between items-center pl-2">
-              <p className="text-br-whiteGrey-700 text-center italic">42 words | 526 chars</p>
-              <IconButton
-                label="Back to vaults"
-                data-tip="Back to vaults"
-                icon={<HeadingIcon size={iconSizes.small} className={iconColorClassNames.secondary} />}
-                onClick={() => {}}
-              />
+              {activeContent &&
+                <>
+                    <ContentDetails text={activeContent.content.body}/>
+                    <IconButton
+                        label="Back to vaults"
+                        data-tip="Back to vaults"
+                        icon={<HeadingIcon size={iconSizes.small} className={iconColorClassNames.secondary} />}
+                        onClick={() => {}}
+                    />
+                </>
+              }
             </div>
           </section>
         </section>

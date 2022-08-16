@@ -26,6 +26,18 @@ import {GetVaultsResponse} from "./schemas/vaults/response/get.vaults.response";
 import {GetVaultResponse} from "./schemas/vaults/response/get.vault.response";
 import {AthenaErrorIdentifiers} from "./error-identifiers";
 import {VaultDto} from "./schemas/vaults/dtos/vault.dto";
+import {CreateNoteRequest} from "./schemas/notes/request/create.notes.request";
+import {NotesQueryParams} from "./schemas/notes/request/query-params.notes.request";
+import {GetNotesResponse} from "./schemas/notes/response/get.notes.response";
+import {NoteDto} from "./schemas/notes/dtos/note.dto";
+import {GetNoteResponse} from "./schemas/notes/response/get.note.response";
+import {UpdateNoteRequest} from "./schemas/notes/request/update.notes.request";
+import {GetTemplateResponse} from "./schemas/templates/response/get.template.response";
+import {UpdateTemplateRequest} from "./schemas/templates/request/update.templates.request";
+import {TemplatesQueryParams} from "./schemas/templates/request/query-params.templates.request";
+import {TemplateDto} from "./schemas/templates/dtos/template.dto";
+import {GetTemplatesResponse} from "./schemas/templates/response/get.templates.response";
+import {CreateTemplateRequest} from "./schemas/templates/request/create.templates.request";
 
 
 export interface QueryOptions {
@@ -179,7 +191,7 @@ export class AthenaAPIClient {
     public async login(username: string, password: string) {
         // Convert plain text password into serverPassword and masterKey
         const accountKeys = AthenaEncryption.getAccountKeys(username, password);
-        
+
         const data = await this.query<LoginResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/auth/login`,
@@ -189,7 +201,7 @@ export class AthenaAPIClient {
             },
             noAuthRequired: true
         });
-        
+
         // Decrypt users encryptionKey with their masterKey
         // todo: don't trust data is encrypted correctly
         const encryptionKey = AthenaEncryption.decryptText(accountKeys.masterKey, data.user.encryptionSecret);
@@ -200,7 +212,7 @@ export class AthenaAPIClient {
 
         await AthenaAPIClient.saveData(this.options.saveRefreshToken, data.refreshToken);
         this.refreshToken = data.refreshToken;
-        
+
         await AthenaAPIClient.saveData(this.options.saveAccessToken, data.accessToken);
         this.accessToken = data.accessToken;
 
@@ -364,6 +376,138 @@ export class AthenaAPIClient {
         return this.query({
             method: 'DELETE',
             url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}`
+        })
+    }
+
+    // Note Endpoints
+    async createNote(vaultId: string, note: CreateNoteRequest) {
+        await this.checkEncryptionKey();
+        const encryptedNote = AthenaEncryption.encryptCreateNoteRequest(<string> this.encryptionKey, note);
+
+        return this.query<CreateNoteResponse>({
+            method: 'POST',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/notes`,
+            data: encryptedNote
+        })
+    }
+
+    async getNotes(vaultId: string, options?: NotesQueryParams) {
+        await this.checkEncryptionKey();
+
+        const response = await this.query<GetNotesResponse>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/${vaultId}/notes`,
+            params: options || {}
+        })
+
+        const decryptedNotes: NoteDto[] = [];
+        for (const note of response.notes) {
+            decryptedNotes.push(
+              AthenaEncryption.decryptNote(<string> this.encryptionKey, note)
+            )
+        }
+
+        return {
+            meta: response.meta,
+            vaults: decryptedNotes
+        }
+    }
+
+    async getNote(vaultId: string, noteId: string) {
+        await this.checkEncryptionKey();
+
+        const response = await this.query<GetNoteResponse>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/notes/${noteId}`
+        });
+
+        return AthenaEncryption.decryptNote(<string> this.encryptionKey, response);
+    }
+
+    async updateNote(vaultId: string, noteId: string, updateNoteRequest: UpdateNoteRequest) {
+        await this.checkEncryptionKey();
+
+        const updateNoteRequestUpdate = AthenaEncryption.encryptUpdateNoteRequest(<string> this.encryptionKey, updateNoteRequest);
+
+        return this.query<UpdateNoteResponse>({
+            method: 'PATCH',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/notes/${noteId}`,
+            data: updateNoteRequestUpdate
+        })
+    }
+
+    async deleteNote(vaultId: string, noteId: string) {
+        await this.checkEncryptionKey();
+
+        return this.query({
+            method: 'DELETE',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/notes/${noteId}`
+        })
+    }
+
+    // Template Endpoints
+    async createTemplate(vaultId: string, template: CreateTemplateRequest) {
+        await this.checkEncryptionKey();
+        const encryptedTemplate = AthenaEncryption.encryptCreateNoteRequest(<string> this.encryptionKey, template);
+
+        return this.query<CreateNoteResponse>({
+            method: 'POST',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates`,
+            data: encryptedTemplate
+        })
+    }
+
+    async getTemplates(vaultId: string, options?: TemplatesQueryParams) {
+        await this.checkEncryptionKey();
+
+        const response = await this.query<GetTemplatesResponse>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates`,
+            params: options || {}
+        })
+
+        const decryptedTemplates: TemplateDto[] = [];
+        for (const template of response.templates) {
+            decryptedTemplates.push(
+              AthenaEncryption.decryptNote(<string> this.encryptionKey, template)
+            )
+        }
+
+        return {
+            meta: response.meta,
+            vaults: decryptedTemplates
+        }
+    }
+
+    async getTemplate(vaultId: string, templateId: string) {
+        await this.checkEncryptionKey();
+
+        const response = await this.query<GetTemplateResponse>({
+            method: 'GET',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates/${templateId}`
+        });
+
+        return AthenaEncryption.decryptNote(<string> this.encryptionKey, response);
+    }
+
+    async updateTemplate(vaultId: string, templateId: string, updateTemplateRequest: UpdateTemplateRequest) {
+        await this.checkEncryptionKey();
+
+        const updateTemplateRequestUpdate = AthenaEncryption.encryptUpdateNoteRequest(<string> this.encryptionKey, updateTemplateRequest);
+
+        return this.query<UpdateNoteResponse>({
+            method: 'PATCH',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates/${templateId}`,
+            data: updateTemplateRequestUpdate
+        })
+    }
+
+    async deleteTemplate(vaultId: string, templateId: string) {
+        await this.checkEncryptionKey();
+
+        return this.query({
+            method: 'DELETE',
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates/${templateId}`
         })
     }
 }

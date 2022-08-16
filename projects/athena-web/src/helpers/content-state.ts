@@ -1,15 +1,29 @@
-import {NoteDto, TemplateDto} from "@ben-ryder/athena-js-lib";
+import {NoteDto, TagDto, TemplateDto} from "@ben-ryder/athena-js-lib";
 
+export interface NewContent {
+  title: string,
+  description: string | null,
+  body: string,
+  tags: TagDto[]
+}
 
-export interface NoteContent {
-  type: "note",
+export interface NewNoteContent {
+  type: "note-new",
+  content: NewContent
+}
+export interface NewTemplateContent {
+  type: "template-new",
+  content: NewContent
+}
+export interface EditNoteContent {
+  type: "note-edit",
   content: NoteDto
 }
-export interface TemplateContent {
-  type: "template",
+export interface EditTemplateContent {
+  type: "template-edit",
   content: TemplateDto
 }
 
-export type OpenContent = NoteContent|TemplateContent[];
+export type ContentList = Content[];
 
-export type ActiveContent = NoteContent|TemplateContent;
+export type Content = NewNoteContent|NewTemplateContent|EditNoteContent|EditTemplateContent;
