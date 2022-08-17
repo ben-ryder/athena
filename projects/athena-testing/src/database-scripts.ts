@@ -2,7 +2,7 @@ import {testData, testUsers} from "./data/test-data";
 import {Sql} from "postgres";
 
 export interface ScriptOptions {
-  logging: true
+  logging: boolean
 }
 
 /**
@@ -13,8 +13,8 @@ export async function resetDatabase(sql: Sql<any>, options?: ScriptOptions) {
     console.log("Running database reset")
   }
 
-  await clearDatabase(sql, {logging: true});
-  await seedDatabase(sql, {logging: true});
+  await clearDatabase(sql, options);
+  await seedDatabase(sql, options);
 }
 
 /**

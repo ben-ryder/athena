@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@ben-ryder/athena-js-lib": "../athena-js-lib",
+    "@ben-ryder/athena-testing": "../athena-testing",
     "@kangojs/core": "2.0.0-alpha.14",
     "@kangojs/serve-spa": "2.0.0-alpha.1",
     "@kangojs/zod-validation": "^0.0.1",
