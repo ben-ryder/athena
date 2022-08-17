@@ -18,11 +18,13 @@
   ],
   "keywords": [],
   "devDependencies": {
+    "dotenv": "^16.0.1",
+    "postgres": "^3.2.4",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.8.1",
     "typescript": "^4.5.2"
   },
   "dependencies": {
-    "@ben-ryder/athena-js-lib": "file:../athena-js-lib",
-    "rimraf": "^3.0.2"
+    "@ben-ryder/athena-js-lib": "file:../athena-js-lib"
   }
 }

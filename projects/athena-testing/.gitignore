@@ -9,3 +9,7 @@ build
 
 # Custom
 /notes
+
+# Gitignore
+*.env
+!.env.example
