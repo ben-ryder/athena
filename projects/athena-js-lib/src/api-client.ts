@@ -396,7 +396,7 @@ export class AthenaAPIClient {
 
         const response = await this.query<GetNotesResponse>({
             method: 'GET',
-            url: `${this.options.apiEndpoint}/v1/${vaultId}/notes`,
+            url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/notes`,
             params: options || {}
         })
 
@@ -409,7 +409,7 @@ export class AthenaAPIClient {
 
         return {
             meta: response.meta,
-            vaults: decryptedNotes
+            notes: decryptedNotes
         }
     }
 
@@ -475,7 +475,7 @@ export class AthenaAPIClient {
 
         return {
             meta: response.meta,
-            vaults: decryptedTemplates
+            templates: decryptedTemplates
         }
     }
 

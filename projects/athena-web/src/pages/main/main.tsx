@@ -178,7 +178,10 @@ export function MainPage() {
 
   let viewContent;
   if (currentVaultSection === "notes") {
-    viewContent = <NotesList activeContent={activeContent} openAndSwitchContent={openAndSwitchContent} />
+    viewContent = <NotesList
+      activeContent={activeContent}
+      openAndSwitchContent={openAndSwitchContent}
+    />
   }
   else {
     viewContent = <></>

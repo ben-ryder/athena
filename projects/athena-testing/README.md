@@ -22,4 +22,4 @@ This means you can quickly set up your local environment without having to impor
 To use this script you can do the following:
 - Set up the `DATABASE_URL` environment variable:
   - `cp .env.example .env` and edit
-- Run the typescript file with `ts-node ./cli.ts`
+- Run the CLI script file with ` npm run reset-db` (which just does `ts-node ./cli.ts`)

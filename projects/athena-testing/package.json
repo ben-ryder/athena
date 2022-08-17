@@ -11,7 +11,8 @@
   "scripts": {
     "build": "rimraf ./build && tsc",
     "prepublishOnly": "npm run build",
-    "test": "jest"
+    "test": "jest",
+    "reset-db": "ts-node ./src/cli.ts"
   },
   "files": [
     "build/**/*"

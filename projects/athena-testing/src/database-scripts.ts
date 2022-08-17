@@ -56,6 +56,14 @@ export async function seedDatabase(sql: Sql<any>, options?: ScriptOptions) {
         VALUES (${vault.id}, ${vault.name}, ${vault.description}, ${vault.createdAt}, ${vault.updatedAt}, ${vault.owner})
        `;
     }
+
+    // Add users notes
+    for (const note of testData[user.id].notes) {
+      await sql`
+        INSERT INTO notes(id, title, description, body, created_at, updated_at, vault, folder)
+        VALUES (${note.id}, ${note.title}, ${note.description}, ${note.body}, ${note.createdAt}, ${note.updatedAt}, ${note.vault}, null)
+       `;
+    }
   }
 
   if (options?.logging) {
