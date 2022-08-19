@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import postgres from "postgres";
-import {resetDatabase} from "./database-scripts";
+import {resetTestData} from "./database-scripts";
 
 
 async function run() {
@@ -16,7 +16,7 @@ async function run() {
     }
   });
 
-  await resetDatabase(sql, {logging: true});
+  await resetTestData(sql, {logging: true});
 
   process.exit(0);
 }

@@ -8,38 +8,55 @@ export interface ScriptOptions {
 /**
  * Reset the database to match the predefined test content
  */
-export async function resetDatabase(sql: Sql<any>, options?: ScriptOptions) {
+export async function resetTestData(sql: Sql<any>, options?: ScriptOptions) {
   if (options?.logging) {
-    console.log("Running database reset")
+    console.log("Running database reset");
   }
 
-  await clearDatabase(sql, options);
-  await seedDatabase(sql, options);
+  await clearTestData(sql, options);
+  await seedTestData(sql, options);
 }
 
 /**
- * Clear the given database of all content
+ * Clear the given database of all test data
  */
-export async function clearDatabase(sql: Sql<any>, options?: ScriptOptions) {
+export async function clearTestData(sql: Sql<any>, options?: ScriptOptions) {
   if (options?.logging) {
-    console.log("Running database clear")
+    console.log("Running database clear");
   }
 
   // Because "on delete cascade" is present on all relationships
-  // deleting users will automatically delete all content too.
+  // deleting users will automatically delete all their content too.
+  for (const user of testUsers) {
+    await sql`DELETE FROM users where id = ${user.id}`;
+  }
+
+  if (options?.logging) {
+    console.log("Database clear completed");
+  }
+}
+
+/**
+ * Fully reset all content in the database
+ */
+export async function clearDatabase(sql: Sql<any>, options?: ScriptOptions) {
+  if (options?.logging) {
+    console.log("Running database clear");
+  }
+
   await sql`DELETE FROM users`;
 
   if (options?.logging) {
-    console.log("Database clear completed")
+    console.log("Completed database clear");
   }
 }
 
 /**
  * Seed the given database with the predefined test content
  */
-export async function seedDatabase(sql: Sql<any>, options?: ScriptOptions) {
+export async function seedTestData(sql: Sql<any>, options?: ScriptOptions) {
   if (options?.logging) {
-    console.log("Running database seed")
+    console.log("Running database seed");
   }
 
   for (const user of testUsers) {
@@ -67,6 +84,6 @@ export async function seedDatabase(sql: Sql<any>, options?: ScriptOptions) {
   }
 
   if (options?.logging) {
-    console.log("Database seed completed")
+    console.log("Database seed completed");
   }
 }

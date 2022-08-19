@@ -33,6 +33,10 @@ export interface ConfigInterface {
     },
     app: {
         registrationEnabled: boolean
+    },
+    testing: {
+        endpointEnabled: boolean,
+        key: string
     }
 }
 
@@ -48,29 +52,33 @@ export const config: ConfigInterface = Object.freeze({
         environment: process.env.NODE_ENV || 'production'
     },
     database: {
-        url: process.env.DATABASE_URL as string
+        url: process.env.DATABASE_URL
     },
     cache: {
-        redisUrl: process.env.REDIS_URL as string
+        redisUrl: process.env.REDIS_URL
     },
     auth: {
         accessToken: {
-            secret: process.env.ACCESS_TOKEN_SECRET as string,
-            expiry: process.env.ACCESS_TOKEN_EXPIRY as string
+            secret: process.env.ACCESS_TOKEN_SECRET,
+            expiry: process.env.ACCESS_TOKEN_EXPIRY
         },
         refreshToken: {
-            secret: process.env.REFRESH_TOKEN_SECRET as string,
-            expiry: process.env.REFRESH_TOKEN_EXPIRY as string
+            secret: process.env.REFRESH_TOKEN_SECRET,
+            expiry: process.env.REFRESH_TOKEN_EXPIRY
         },
         passwordReset: {
-            secret: process.env.PASSWORD_RESET_TOKEN_SECRET as string,
-            expiry: process.env.PASSWORD_RESET_TOKEN_EXPIRY as string
+            secret: process.env.PASSWORD_RESET_TOKEN_SECRET,
+            expiry: process.env.PASSWORD_RESET_TOKEN_EXPIRY
         }
     },
     app: {
         registrationEnabled: process.env.APP_REGISTRATION_ENABLED === "true"
+    },
+    testing: {
+        endpointEnabled: process.env.TESTTING_ENDPOINT_ENABLED === "true",
+        key: process.env.TESTING_ENDPOINT_KEY
     }
-})
+} as ConfigInterface)
 
 
 /**

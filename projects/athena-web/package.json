@@ -14,7 +14,8 @@
     "test:sb": "start-storybook -p 6006",
     "test:sb-build": "build-storybook",
     "test:cy": "cypress open -b firefox",
-    "test:cy-unit": "cypress open --component -b firefox"
+    "test:cy-unit": "cypress open --component -b firefox",
+    "test:cy-e2e": "cypress open --e2e -b firefox"
   },
   "dependencies": {
     "@ben-ryder/athena-js-lib": "file:../athena-js-lib",

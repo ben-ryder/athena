@@ -1,6 +1,6 @@
 import {TokenPair, TokenService} from "../../src/services/token/token.service";
 import {DatabaseService} from "../../src/services/database/database.service";
-import {resetDatabase} from "@ben-ryder/athena-testing";
+import {resetTestData} from "@ben-ryder/athena-testing";
 import {createServeSPAMiddleware} from "@kangojs/serve-spa";
 import {ConfigService} from "../../src/services/config/config";
 import {BaseController} from "../../src/modules/base/base.controller";
@@ -80,7 +80,7 @@ export class TestHelper {
   async resetDatabase() {
     const databaseService = this.application.dependencyContainer.useDependency(DatabaseService);
     const sql = await databaseService.getSQL();
-    await resetDatabase(sql);
+    await resetTestData(sql);
   }
 
   async killApplication() {
