@@ -12,7 +12,7 @@
     "build": "rimraf ./build && tsc",
     "prepublishOnly": "npm run build",
     "test": "jest",
-    "reset-db": "ts-node ./src/cli.ts"
+    "seed-db": "ts-node ./src/cli.ts"
   },
   "files": [
     "build/**/*"

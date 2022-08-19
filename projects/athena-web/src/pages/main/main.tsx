@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
-  Tags as TagsIcon,
-  Plus as AddNoteIcon,
-  LayoutTemplate as TemplateViewIcon,
-  FolderTree as FolderViewIcon,
-  LayoutList as NoteListViewIcon,
   ChevronFirst as OpenVaultSectionIcon,
   ChevronLast as CloseVaultSectionIcon,
+  FolderTree as FolderViewIcon,
   Home as BackIcon,
-  ListOrdered as HeadingIcon
+  LayoutList as NoteListViewIcon,
+  LayoutTemplate as TemplateViewIcon,
+  ListOrdered as HeadingIcon,
+  Plus as AddNoteIcon,
+  Tags as TagsIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {useNavigate, useParams} from "react-router-dom";
@@ -23,7 +23,10 @@ import ReactTooltip from "react-tooltip";
 import {FileTabList, FileTabSection} from "../../patterns/components/file-tab/file-tab-section";
 import {ContentFileTab} from "../../patterns/components/file-tab/file-tab";
 import {Editor} from "../../patterns/components/editor/editor";
-import {ConnectivityIndicator} from "../../patterns/components/connectivity-indicator/connectivity-indicator";
+import {
+  SavedStatus,
+  SavedStatusIndicator
+} from "../../patterns/components/saved-status-indicator/saved-status-indicator";
 import {Content, ContentList} from "../../helpers/content-state";
 import {NotesList} from "./notes-list";
 import {ContentDetails} from "../../patterns/components/content-details/content-details";
@@ -55,7 +58,7 @@ export function MainPage() {
   const [vault, setVault] = useState<VaultDto|null>(null);
   const [currentVaultSection, setCurrentVaultSection] = useState<VaultSections>("notes");
 
-  const [changesAreSaved, setChangesAreSaved] = useState<boolean>(true);
+  const [savedStatus, setSavedStatus] = useState<SavedStatus>(SavedStatus.SAVED);
   const [vaultSectionIsOpen, setVaultSectionIsOpen] = useState<boolean>(true);
   const [contentList, setContentList] = useState<ContentList>([]);
   const [activeContent, setActiveContent] = useState<Content|null>(null);
@@ -94,7 +97,7 @@ export function MainPage() {
       });
     }
 
-    setChangesAreSaved(true);
+    setSavedStatus(SavedStatus.SAVED);
   }
 
   async function openAndSwitchContent(content: Content) {
@@ -307,7 +310,7 @@ export function MainPage() {
             {/** Vault Section Bottom Content **/}
             <div className="bg-br-atom-900 h-[40px] min-h-[40px] flex justify-between items-center px-2 border-t border-br-blueGrey-700">
               <>
-                <ConnectivityIndicator status={changesAreSaved ? "online" : "offline"} />
+                <SavedStatusIndicator status={savedStatus}  />
                 <IconButton
                   label={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
                   data-tip={vaultSectionIsOpen ? "Close Vault Section" : "Open Vault Section"}
@@ -351,7 +354,7 @@ export function MainPage() {
               <Editor
                   content={activeContent.content.body}
                   onContentChange={(content) => {
-                    setChangesAreSaved(false);
+                    setSavedStatus(SavedStatus.UNSAVED);
                     setActiveContent({
                       // @ts-ignore
                       type: activeContent.type,

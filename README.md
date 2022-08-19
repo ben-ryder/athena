@@ -18,8 +18,9 @@ I have many possible directions and extra features I want to explore after initi
 ## Project Structure
 This is a monorepo containing all projects related to Athena:
 - `athena-server` - The backend Node server and API responsible for managing and storing content.
-- `athena-web` - A React web app for users.
+- `athena-web` - A React web application for users.
 - `athena-js-lib` - A general JavaScript SDK library containing an API client and encryption library.
+- `athena-testing` - Contains hardcoded test data which can be used across packages for testing
 
 ## Contributions
 This project is currently open source, not open contribution.  
