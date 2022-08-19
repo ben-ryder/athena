@@ -4,7 +4,7 @@ import * as stories from "./saved-status-indicator.stories";
 
 const { Default } = composeStories(stories);
 
-const selector = "[data-cy-root] p"
+const selector = "[data-cy-root] p";
 
 describe('Prop Testing', () => {
   it('saved should display as expected', () => {
