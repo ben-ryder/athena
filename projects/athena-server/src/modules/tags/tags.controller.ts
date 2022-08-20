@@ -13,7 +13,8 @@ import {
 } from "@ben-ryder/athena-js-lib";
 
 
-@Controller('/v1/vaults/:vaultId/tags',{
+@Controller({
+    path: '/v1/vaults/:vaultId/tags',
     identifier: "tags-controller"
 })
 export class TagsController {

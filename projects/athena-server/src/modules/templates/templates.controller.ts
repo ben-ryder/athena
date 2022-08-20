@@ -12,7 +12,8 @@ import {
 } from "@ben-ryder/athena-js-lib";
 
 
-@Controller('/v1/vaults/:vaultId/templates',{
+@Controller({
+    path: '/v1/vaults/:vaultId/templates',
     identifier: "templates-controller"
 })
 export class TemplatesController {

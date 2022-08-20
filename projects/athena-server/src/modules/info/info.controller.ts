@@ -4,7 +4,8 @@ import {ConfigService} from "../../services/config/config";
 import {InfoDto} from "@ben-ryder/athena-js-lib";
 
 
-@Controller('/v1/info', {
+@Controller({
+    path: '/v1/info',
     identifier: "info-controller",
 })
 export class InfoController {

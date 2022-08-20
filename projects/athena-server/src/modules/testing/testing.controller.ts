@@ -5,9 +5,10 @@ import {resetTestData} from "@ben-ryder/athena-testing";
 import {DatabaseService} from "../../services/database/database.service";
 
 
-@Controller('/v1/testing', {
+@Controller( {
+    path: '/v1/testing',
     identifier: "testing-controller",
-    // middleware: [TestingEnabledMiddleware]
+    middleware: [TestingEnabledMiddleware]
 })
 export class TestingController {
     constructor(

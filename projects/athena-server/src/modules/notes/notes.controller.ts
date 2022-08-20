@@ -9,7 +9,8 @@ import {NotesService} from "./notes.service";
 import {RequestWithContext} from "../../common/request-with-context";
 
 
-@Controller('/v1/vaults/:vaultId/notes',{
+@Controller({
+    path: '/v1/vaults/:vaultId/notes',
     identifier: "notes-controller"
 })
 export class NotesController {

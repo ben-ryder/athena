@@ -28,9 +28,11 @@ export async function createApp() {
       NotesController,
       TemplatesController
     ],
-    middleware: [
-      serveSpaMiddleware
-    ],
+    middleware: {
+      beforeControllers: [
+        serveSpaMiddleware
+      ]
+    },
     authValidator: AuthValidator,
     bodyValidator: ZodValidator,
     queryValidator: ZodValidator,

@@ -14,7 +14,8 @@ import {ConfigService} from "../../services/config/config";
 import {TokenPair, TokenService} from "../../services/token/token.service";
 
 
-@Controller('/v1/users',{
+@Controller({
+    path: '/v1/users',
     identifier: "users-controller"
 })
 export class UsersController {

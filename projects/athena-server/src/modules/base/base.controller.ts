@@ -1,7 +1,8 @@
 import { Controller, Route, HTTPMethods } from '@kangojs/core';
 import { Request, Response, NextFunction } from 'express';
 
-@Controller('/', {
+@Controller({
+    path: "/",
     identifier: "base-controller",
 })
 export class BaseController {

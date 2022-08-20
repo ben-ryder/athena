@@ -12,7 +12,8 @@ import {VaultsService} from "./vaults.service";
 import {RequestWithContext} from "../../common/request-with-context";
 
 
-@Controller('/v1/vaults',{
+@Controller({
+    path: "/v1/vaults",
     identifier: "vaults-controller"
 })
 export class VaultsController {
