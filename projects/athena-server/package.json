@@ -29,7 +29,6 @@
     "@ben-ryder/athena-js-lib": "../athena-js-lib",
     "@ben-ryder/athena-testing": "../athena-testing",
     "@kangojs/core": "2.0.0-alpha.16",
-    "@kangojs/serve-spa": "2.0.0-alpha.2",
     "@kangojs/zod-validation": "^0.0.1",
     "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",

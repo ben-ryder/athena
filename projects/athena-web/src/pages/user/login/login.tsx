@@ -4,11 +4,11 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
 import {AthenaErrorIdentifiers, LoginRequest} from "@ben-ryder/athena-js-lib";
-import {useAthena} from "../../helpers/use-athena";
-import {FormPage} from "../../patterns/pages/form-page";
-import {Link} from "../../patterns/element/link";
-import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
+import {useAthena} from "../../../helpers/use-athena";
+import {routes} from "../../../routes";
+import {FormPage} from "../../../patterns/pages/form-page";
+import {Link} from "../../../patterns/element/link";
 
 
 export function LoginPage() {

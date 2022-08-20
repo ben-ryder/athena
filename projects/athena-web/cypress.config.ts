@@ -1,5 +1,7 @@
 import { defineConfig } from "cypress";
 
+// todo: look at moving config to env files
+
 export default defineConfig({
   component: {
     specPattern: "src/**/*.unit.test.tsx",
@@ -11,11 +13,12 @@ export default defineConfig({
       },
     },
   },
-
   e2e: {
     specPattern: "src/**/*.e2e.test.tsx",
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
+    baseUrl: "http://localhost:3000",
   },
+  env: {
+    apiBaseUrl: "http://localhost:3001/v1",
+    apiTestingKey: "test"
+  }
 });

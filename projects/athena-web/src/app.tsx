@@ -7,7 +7,7 @@ import {AthenaRestrictedRoute} from "./helpers/athena-restricted-route";
 import {PageNotFound} from "./pages/page-not-found";
 import {LogoutPage} from "./pages/user/logout";
 import {Helmet, HelmetProvider} from "react-helmet-async";
-import {LoginPage} from "./pages/user/login";
+import {LoginPage} from "./pages/user/login/login";
 import {MainPage} from "./pages/main/main";
 import {ForgottenPasswordPage} from "./pages/user/password/forgotten-password";
 import {routes} from "./routes";
