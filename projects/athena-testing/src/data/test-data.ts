@@ -31,15 +31,15 @@ export const testEnvironmentVars = {
 export const testUsers: readonly TestUserDto[] = Object.freeze([
   {
     id: "90938b63-3b14-4b18-8185-b3cfa5de2d6a",
-    username: "test",
-    email: "test@example.com",
+    username: "test1",
+    email: "test1@example.com",
     password: "password",
-    passwordHash: "$2a$12$IMM/i75H3bgKAdBdcheDDO2pncrUJMDoDxg5GGr7KQJJwfOPU4dve",
-    passwordKey: "d16bce222d22327064caabde8db1d2f12a937207d95544b5d659303c0edda6a4f056fac40eea249daa2432c3b14bf4e8825f30f6f1f5a1b17f929d0afdfe91ed99ca23720dacd45484b3305283ab99bb4ab5854c51fcb809a1e2cd42c04a3c080df9dbe48dbaa4ee9b4bb57efb0a887df8a3c7621a70f2af08aa0d5a8f12abc8",
-    serverPassword: "99ca23720dacd45484b3305283ab99bb4ab5854c51fcb809a1e2cd42c04a3c080df9dbe48dbaa4ee9b4bb57efb0a887df8a3c7621a70f2af08aa0d5a8f12abc",
-    masterKey: "d16bce222d22327064caabde8db1d2f12a937207d95544b5d659303c0edda6a4f056fac40eea249daa2432c3b14bf4e8825f30f6f1f5a1b17f929d0afdfe91ed",
+    passwordHash: "$2a$12$BjTFHAACFkJrcA0I2ylIDeBGl1hiQDB6zlqHoLWzivzy7MTvAVWbu",
+    passwordKey: "50124b67ac13958730ccb696b4ca50fa531dc903a29bf83a56bb22ea2bc1114941dc3d81bbda0ca7959101044908e9acab0be69184e981d3c9e6cfcdbfa8fc718375219b5264274e46ee35e4bed1a826ec8733892b3d0cbcf27af56140d30f0c4ce2b5b87d1b8bccd460373f6b07e561819c1060d87e0a6ed8086b5cda1b3e15",
+    serverPassword: "8375219b5264274e46ee35e4bed1a826ec8733892b3d0cbcf27af56140d30f0c4ce2b5b87d1b8bccd460373f6b07e561819c1060d87e0a6ed8086b5cda1b3e1",
+    masterKey: "50124b67ac13958730ccb696b4ca50fa531dc903a29bf83a56bb22ea2bc1114941dc3d81bbda0ca7959101044908e9acab0be69184e981d3c9e6cfcdbfa8fc71",
     encryptionKey: "5ffbb0d81831e8cae5bb2b1e66aadf19626ab75b8858d6f1ddbc377533cd33c5b22ca7b23bcfb8012a27e7133df3a83676ac6208142fff92c3eace80ce79eca1",
-    encryptionSecret: "U2FsdGVkX1+V0cWdScRHXRjD2Tl88M8/ssiQ2Yt1YcfyBbRnWKw8DmI3NE3GiXfE8188lIKGujMn1XLGzQ9G248PYlh2Oy+s0Dnd8vsNiw/rTh2vVhD0h6/lXX3wbTZ2BGZmdfPrgJFCTvnVaFtOlQeVEJPEUtt+mo4D++ckQvKpa2EGi94HaXk/Z3BF4fT9vbKZt9pnQjuUzBI4ftQ4CA==",
+    encryptionSecret: "U2FsdGVkX18JFA9xwYGFCVQ98o4/m+vw4iK9g/8Vz4GuT6W8ULf86MBi+0LzgYfD6GY0FzZKANqTu7Zt9aVc5zeR3hTR9N2OyRWHPEFBLl/kGoZ+4NY3M4lgv00woKL/Eh6vMDxUsl2hLpCC8hsEd1wwpa73dckgnzp0E2sKJr/zAJwQhMDPqLo/ViQWODcQBU5Yrhji/5hfSGQrEVIH7w==",
     isVerified: true,
     createdAt: "2022-07-11T18:17:43.784Z",
     updatedAt: "2022-07-11T18:20:32.482Z"

@@ -17,7 +17,8 @@ export class TestingController {
 
     @Route({
         path: "/reset",
-        httpMethod: HTTPMethods.POST
+        httpMethod: HTTPMethods.POST,
+        authRequired: false
     })
     async resetTestData(req: Request, res: Response, next: NextFunction) {
         const sql = await this.databaseService.getSQL();
