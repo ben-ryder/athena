@@ -1,5 +1,12 @@
 import {NoteDto, TagDto, TemplateDto} from "@ben-ryder/athena-js-lib";
 
+export enum ContentType {
+  NOTE_NEW,
+  NOTE_EDIT,
+  TEMPLATE_NEW,
+  TEMPLATE_EDIT
+}
+
 export interface NewContent {
   title: string,
   description: string | null,
@@ -8,19 +15,19 @@ export interface NewContent {
 }
 
 export interface NewNoteContent {
-  type: "note-new",
+  type: ContentType.NOTE_NEW,
   content: NewContent
 }
 export interface NewTemplateContent {
-  type: "template-new",
+  type: ContentType.TEMPLATE_NEW,
   content: NewContent
 }
 export interface EditNoteContent {
-  type: "note-edit",
+  type: ContentType.NOTE_EDIT,
   content: NoteDto
 }
 export interface EditTemplateContent {
-  type: "template-edit",
+  type: ContentType.TEMPLATE_EDIT,
   content: TemplateDto
 }
 

@@ -2,24 +2,25 @@ import {useAthena} from "../../helpers/use-athena";
 import React, {useEffect, useState} from "react";
 import {NoteDto} from "@ben-ryder/athena-js-lib";
 import {ContentCard} from "../../patterns/components/content-card/content-card";
-import {Content} from "../../helpers/content-state";
+import {Content, ContentType} from "../../helpers/content-state";
 import {useParams} from "react-router-dom";
 
 export interface NotesListProps {
+  notes: NoteDto[]|null,
+  setNotes: (notes: NoteDto[]|null) => void,
   activeContent: Content | null;
-  openAndSwitchContent: (content: Content) => void
+  openContent: (content: Content) => void
 }
 
 export function NotesList(props: NotesListProps) {
   const {vaultId} = useParams();
 
   const {apiClient} = useAthena();
-  const [notes, setNotes] = useState<NoteDto[]|null>(null);
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   function isNoteActive(note: NoteDto, activeContent: Content | null) {
     let active = false;
-    if (activeContent && (activeContent.type === "note-edit" || activeContent.type === "template-edit")) {
+    if (activeContent && (activeContent.type === ContentType.NOTE_EDIT || activeContent.type === ContentType.TEMPLATE_EDIT)) {
       active = activeContent.content.id === note.id
     }
     return active;
@@ -28,8 +29,8 @@ export function NotesList(props: NotesListProps) {
   useEffect(() => {
     async function loadNotes() {
       try {
-        const response = await apiClient.getNotes(vaultId);
-        setNotes(response.notes);
+        const response = await apiClient.getNotes(vaultId!);
+        props.setNotes(response.notes);
       }
       catch (e) {
         console.log(e);
@@ -41,17 +42,17 @@ export function NotesList(props: NotesListProps) {
 
   return (
     <>
-      {notes &&
+      {props.notes &&
         <>
-          {notes.map(note =>
+          {props.notes.map(note =>
             <ContentCard
               key={note.id}
-              content={{type: "note-edit", content: note}}
+              content={{type: ContentType.NOTE_EDIT, content: note}}
               active={isNoteActive(note, props.activeContent)}
-              openAndSwitchContent={props.openAndSwitchContent}
+              openContent={props.openContent}
             />
           )}
-          {notes.length === 0 &&
+          {props.notes.length === 0 &&
               <div className="m-4">
                   <p className="text-center text-br-whiteGrey-100">0 Notes Found</p>
               </div>

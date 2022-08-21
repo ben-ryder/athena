@@ -38,6 +38,7 @@ import {TemplatesQueryParams} from "./schemas/templates/request/query-params.tem
 import {TemplateDto} from "./schemas/templates/dtos/template.dto";
 import {GetTemplatesResponse} from "./schemas/templates/response/get.templates.response";
 import {CreateTemplateRequest} from "./schemas/templates/request/create.templates.request";
+import {CreateTemplateResponse} from "./schemas/templates/response/create.template.response";
 
 
 export interface QueryOptions {
@@ -384,11 +385,13 @@ export class AthenaAPIClient {
         await this.checkEncryptionKey();
         const encryptedNote = AthenaEncryption.encryptCreateNoteRequest(<string> this.encryptionKey, note);
 
-        return this.query<CreateNoteResponse>({
+        const result = await this.query<CreateNoteResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/notes`,
             data: encryptedNote
         })
+
+        return AthenaEncryption.decryptNote(<string> this.encryptionKey, result);
     }
 
     async getNotes(vaultId: string, options?: NotesQueryParams) {
@@ -429,11 +432,13 @@ export class AthenaAPIClient {
 
         const updateNoteRequestUpdate = AthenaEncryption.encryptUpdateNoteRequest(<string> this.encryptionKey, updateNoteRequest);
 
-        return this.query<UpdateNoteResponse>({
+        const result = await this.query<UpdateNoteResponse>({
             method: 'PATCH',
             url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/notes/${noteId}`,
             data: updateNoteRequestUpdate
         })
+
+        return AthenaEncryption.decryptNote(<string> this.encryptionKey, result);
     }
 
     async deleteNote(vaultId: string, noteId: string) {
@@ -448,13 +453,15 @@ export class AthenaAPIClient {
     // Template Endpoints
     async createTemplate(vaultId: string, template: CreateTemplateRequest) {
         await this.checkEncryptionKey();
-        const encryptedTemplate = AthenaEncryption.encryptCreateNoteRequest(<string> this.encryptionKey, template);
+        const encryptedTemplate = AthenaEncryption.encryptCreateTemplateRequest(<string> this.encryptionKey, template);
 
-        return this.query<CreateNoteResponse>({
+        const result = await this.query<CreateTemplateResponse>({
             method: 'POST',
             url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates`,
             data: encryptedTemplate
         })
+
+        return AthenaEncryption.decryptTemplate(<string> this.encryptionKey, result);
     }
 
     async getTemplates(vaultId: string, options?: TemplatesQueryParams) {
@@ -469,7 +476,7 @@ export class AthenaAPIClient {
         const decryptedTemplates: TemplateDto[] = [];
         for (const template of response.templates) {
             decryptedTemplates.push(
-              AthenaEncryption.decryptNote(<string> this.encryptionKey, template)
+              AthenaEncryption.decryptTemplate(<string> this.encryptionKey, template)
             )
         }
 
@@ -487,19 +494,21 @@ export class AthenaAPIClient {
             url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates/${templateId}`
         });
 
-        return AthenaEncryption.decryptNote(<string> this.encryptionKey, response);
+        return AthenaEncryption.decryptTemplate(<string> this.encryptionKey, response);
     }
 
     async updateTemplate(vaultId: string, templateId: string, updateTemplateRequest: UpdateTemplateRequest) {
         await this.checkEncryptionKey();
 
-        const updateTemplateRequestUpdate = AthenaEncryption.encryptUpdateNoteRequest(<string> this.encryptionKey, updateTemplateRequest);
+        const updateTemplateRequestUpdate = AthenaEncryption.encryptUpdateTemplateRequest(<string> this.encryptionKey, updateTemplateRequest);
 
-        return this.query<UpdateNoteResponse>({
+        const result = await this.query<UpdateNoteResponse>({
             method: 'PATCH',
             url: `${this.options.apiEndpoint}/v1/vaults/${vaultId}/templates/${templateId}`,
             data: updateTemplateRequestUpdate
         })
+
+        return AthenaEncryption.decryptTemplate(<string> this.encryptionKey, result);
     }
 
     async deleteTemplate(vaultId: string, templateId: string) {

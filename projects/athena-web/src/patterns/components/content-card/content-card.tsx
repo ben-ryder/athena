@@ -3,12 +3,12 @@ import {IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw
 import {formatTimestampSting} from "../../../helpers/date-helper";
 import classNames from "classnames";
 import {MoreVertical as FileTabOptionsIcon} from "lucide-react";
-import {Content} from "../../../helpers/content-state";
+import {Content, ContentType} from "../../../helpers/content-state";
 
 export interface ContentCardProps {
   content: Content,
   active?: boolean,
-  openAndSwitchContent: (content: Content) => void
+  openContent: (content: Content) => void
 }
 
 export function ContentCard(props: ContentCardProps) {
@@ -46,7 +46,7 @@ export function ContentCard(props: ContentCardProps) {
       </div>
 
       <div className="mt-3 flex justify-end">
-        {props.content.type === "note-edit" || props.content.type === "template-edit" &&
+        {props.content.type === ContentType.NOTE_EDIT || props.content.type === ContentType.TEMPLATE_EDIT &&
             <p className="text-br-blueGrey-500 italic">{
               formatTimestampSting(props.content.content.createdAt, props.content.content.updatedAt)
             }</p>
@@ -58,7 +58,7 @@ export function ContentCard(props: ContentCardProps) {
         data-place="right"
         aria-label={`Open ${props.content.content.title}`}
         className="absolute w-full h-full left-0 top-0"
-        onClick={() => {props.openAndSwitchContent(props.content)}}
+        onClick={() => {props.openContent(props.content)}}
       />
     </div>
   )

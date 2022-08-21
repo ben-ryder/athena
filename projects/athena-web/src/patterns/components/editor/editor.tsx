@@ -5,8 +5,8 @@ import {jigsawTheme} from "./jigsaw-theme";
 
 
 export interface EditorProps {
-  content: string,
-  onContentChange: (body: string) => void
+  value: string,
+  onChange: (value: string) => void
 }
 
 
@@ -14,8 +14,13 @@ export function Editor(props: EditorProps) {
   return (
     <div className="max-h-full p-4 overflow-y-scroll">
       <CodeMirror
-        value={props.content}
-        onChange={props.onContentChange}
+        value={props.value}
+        onChange={(value) => {
+          // onChange is triggered even for external value changes, so this checks if there really was an update
+          if (value !== props.value) {
+            props.onChange(value);
+          }
+        }}
         extensions={[markdown({ base: markdownLanguage, codeLanguages: languages })]}
         theme={jigsawTheme}
         basicSetup={{

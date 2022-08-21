@@ -7,20 +7,20 @@ import {
 } from "lucide-react";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
-import {Content} from "../../../helpers/content-state";
+import {Content, ContentType} from "../../../helpers/content-state";
 
 
 export interface ContentFileTabProps {
   content: Content,
   active?: boolean,
-  openAndSwitchContent: (content: Content) => void,
-  closeContent: (content: Content) => void
+  switchToContent: () => void,
+  closeContent: () => void
 }
 
 
 export function ContentFileTab(props: ContentFileTabProps) {
   let icon;
-  if (props.content.type === "note-new" || props.content.type === "note-edit") {
+  if (props.content.type === ContentType.NOTE_NEW || props.content.type === ContentType.NOTE_EDIT) {
     icon = <NoteTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall}/>
   }
   else {
@@ -40,7 +40,7 @@ export function ContentFileTab(props: ContentFileTabProps) {
       <button
         data-tip={`Switch to ${props.content.content.title}`}
         className="hover:underline whitespace-nowrap text-br-whiteGrey-100 mx-2"
-        onClick={() => {props.openAndSwitchContent(props.content)}}
+        onClick={() => {props.switchToContent()}}
       >{props.content.content.title}</button>
       <IconButton
         label={`Actions for ${props.content.content.title}`}
@@ -54,7 +54,7 @@ export function ContentFileTab(props: ContentFileTabProps) {
         data-tip={`Close ${props.content.content.title}`}
         icon={<CloseIcon size={iconSizes.extraSmall} />}
         className={`${iconColorClassNames.secondary} h-full flex justify-center items-center`}
-        onClick={() => {props.closeContent(props.content)}}
+        onClick={() => {props.closeContent()}}
       />
     </div>
   )
