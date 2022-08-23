@@ -7,15 +7,18 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
-    "vite:dev-force": "vite --force",
-    "vite:clean": "rm -rf node_modules/.vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test:sb": "start-storybook -p 6006",
-    "test:sb-build": "build-storybook",
-    "test:cy": "cypress open -b firefox",
-    "test:cy-unit": "cypress open --component -b firefox",
-    "test:cy-e2e": "cypress open --e2e -b firefox"
+    "vite:dev-force": "vite --force",
+    "vite:clean": "rm -rf node_modules/.vite",
+    "sb": "start-storybook -p 6006",
+    "sb:build": "build-storybook",
+    "cy": "cypress open -b firefox",
+    "cy:unit": "cypress open --component -b firefox",
+    "cy:e2e": "cypress open --e2e -b firefox",
+    "test": "npm run test:cy-unit && npm run test:cy-e2e",
+    "test:cy-e2e": "cypress run --e2e -q",
+    "test:cy-unit": "cypress run --component -q"
   },
   "dependencies": {
     "@ben-ryder/athena-js-lib": "file:../athena-js-lib",
