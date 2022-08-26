@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
   ChevronFirst as OpenVaultSectionIcon,
@@ -12,25 +12,22 @@ import {
   Tags as TagsIcon
 } from "lucide-react";
 import classNames from "classnames";
-import {useNavigate, useParams} from "react-router-dom";
-import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
-import {LoadingPage} from "../../patterns/pages/loading-page";
-import {useAthena} from "../../helpers/use-athena";
-import {GeneralQueryStatus} from "../../types/general-query-status";
-import {NoteDto, TemplateDto, VaultDto} from "@ben-ryder/athena-js-lib";
+import {NoteDto, TemplateDto} from "@ben-ryder/athena-js-lib";
 import ReactTooltip from "react-tooltip";
-import {FileTabList, FileTabSection} from "../../patterns/components/file-tab/file-tab-section";
-import {ContentFileTab} from "../../patterns/components/file-tab/file-tab";
-import {Editor} from "../../patterns/components/editor/editor";
+import {FileTabList, FileTabSection} from "../patterns/components/file-tab/file-tab-section";
+import {ContentFileTab} from "../patterns/components/file-tab/file-tab";
+import {Editor} from "../patterns/components/editor/editor";
 import {
   SavedStatus,
   SavedStatusIndicator
-} from "../../patterns/components/saved-status-indicator/saved-status-indicator";
-import {Content, ContentList, ContentType} from "../../helpers/content-state";
-import {NotesList} from "./notes-list";
-import {ContentDetails} from "../../patterns/components/content-details/content-details";
-
+} from "../patterns/components/saved-status-indicator/saved-status-indicator";
+import {Content, ContentList, ContentType} from "../helpers/content-state";
+import {NotesList} from "../patterns/components/notes-list";
+import {ContentDetails} from "../patterns/components/content-details/content-details";
+import {v4 as createUUID} from "uuid";
+import {Provider} from "react-redux";
+import store from "./state/store";
 
 enum VaultSections {
   FOLDERS,
@@ -39,7 +36,6 @@ enum VaultSections {
   TEMPLATES,
   TAGS
 }
-
 
 function isActiveContent(content: Content, openContentList: ContentList, activeContentIndex: number|null) {
   const activeContent = activeContentIndex !== null ? openContentList[activeContentIndex] : null;
@@ -50,19 +46,15 @@ function isActiveContent(content: Content, openContentList: ContentList, activeC
   return content === activeContent;
 }
 
-
 export function MainPage() {
-  const navigate = useNavigate();
-  const {vaultId} = useParams();
-  const {apiClient} = useAthena();
+  return (
+    <Provider store={store}>
+      <Application />
+    </Provider>
+  )
+}
 
-  // General Page & App State
-  const [pageErrorMessage, setPageErrorMessage] = useState<string|null>(null);
-  
-  // Vault State
-  const [vault, setVault] = useState<VaultDto|null>(null);
-  const [vaultLoadStatus, setVaultLoadStatus] = useState<GeneralQueryStatus>(GeneralQueryStatus.LOADING);
-
+export function Application() {
   // Interface and Interaction State
   const [currentVaultSection, setCurrentVaultSection] = useState<VaultSections>(VaultSections.NOTES);
   const [savedStatus, setSavedStatus] = useState<SavedStatus>(SavedStatus.SAVED);
@@ -72,59 +64,14 @@ export function MainPage() {
   const [openContentList, setOpenContentList] = useState<ContentList>([]);
   const [activeContentIndex, setActiveContentIndex] = useState<number|null>(null);
 
-  // Notes State
-  const [notes, setNotes] = useState<NoteDto[]|null>(null);
+  // Content State
+  const [notes, setNotes] = useState<NoteDto[]>([]);
+  const [templates, setTemplates] = useState<TemplateDto[]>([]);
 
   async function saveActiveContent() {
     if (activeContentIndex === null) {
       return;
     }
-    const activeContent = openContentList[activeContentIndex];
-
-    if (activeContent?.type === ContentType.NOTE_NEW) {
-      await apiClient.createNote(vaultId!, {
-        title: activeContent.content.title,
-        description: activeContent.content.description,
-        body: activeContent.content.body,
-        tags: activeContent.content.tags.map(tag => tag.id)
-      });
-    }
-    else if (activeContent?.type === ContentType.NOTE_EDIT) {
-      const updatedNote = await apiClient.updateNote(vaultId!, activeContent.content.id, {
-        title: activeContent.content.title,
-        description: activeContent.content.description,
-        body: activeContent.content.body,
-        tags: activeContent.content.tags.map(tag => tag.id)
-      });
-
-      // Update notes state to reflect edits
-      if (notes) {
-        const updatedNotes = notes?.map(note => {
-          if (note.id === updatedNote.id) {
-            return updatedNote;
-          }
-          return note;
-        })
-        setNotes(updatedNotes);
-      }
-    }
-    else if (activeContent?.type === ContentType.TEMPLATE_NEW) {
-      await apiClient.createTemplate(vaultId!, {
-        title: activeContent.content.title,
-        description: activeContent.content.description,
-        body: activeContent.content.body,
-        tags: activeContent.content.tags.map(tag => tag.id)
-      });
-    }
-    else if (activeContent?.type === ContentType.TEMPLATE_EDIT) {
-      await apiClient.updateTemplate(vaultId!, activeContent.content.id, {
-        title: activeContent.content.title,
-        description: activeContent.content.description,
-        body: activeContent.content.body,
-        tags: activeContent.content.tags.map(tag => tag.id)
-      });
-    }
-
     setSavedStatus(SavedStatus.SAVED);
   }
 
@@ -167,46 +114,52 @@ export function MainPage() {
     }
   }
 
-  // Vault fetching
-  useEffect(() => {
-    async function getVault() {
-      try {
-        const vault = await apiClient.getVault(vaultId!);
-        setVaultLoadStatus(GeneralQueryStatus.SUCCESS);
-        setVault(vault);
-      }
-      catch (e: any) {
-        setVaultLoadStatus(GeneralQueryStatus.FAILED);
-
-        if (e.response?.statusCode === 404) {
-          setPageErrorMessage("The vault you requested does not exist.")
-        }
-        else if (e.response?.statusCode === 400) {
-          setPageErrorMessage("You appear to be requesting a vault with an invalid ID.")
-        }
-        else {
-          setPageErrorMessage("An unexpected error occurred while fetching the vault, try again later.");
-        }
-      }
+  async function createNote() {
+    const newNote: NoteDto = {
+      id: createUUID(),
+      title: "untitled",
+      description: null,
+      body: "",
+      createdAt: "",
+      updatedAt: "",
+      tags: []
     }
-    getVault();
-  }, [vaultId]);
 
-  if (!vault) {
-    return (
-      <>
-        <Helmet>
-          <title>Loading Vault... | Athena</title>
-        </Helmet>
-        <LoadingPage
-          hideHeader={true}
-          status={vaultLoadStatus}
-          loadingMessage="Loading vault..."
-          errorMessage={pageErrorMessage || "An unexpected error occured"}
-          emptyMessage="An unexpected error occurred"
-        />
-      </>
-    )
+    setNotes([
+      ...notes,
+      newNote
+    ])
+    setOpenContentList([
+      ...openContentList,
+      {
+        type: ContentType.NOTE_EDIT,
+        content: newNote
+      }
+    ])
+  }
+
+  async function createTemplate() {
+    const newTemplate: TemplateDto = {
+      id: createUUID(),
+      title: "untitled",
+      description: null,
+      body: "",
+      createdAt: "",
+      updatedAt: "",
+      tags: []
+    }
+
+    setTemplates([
+      ...templates,
+      newTemplate
+    ])
+    setOpenContentList([
+      ...openContentList,
+      {
+        type: ContentType.TEMPLATE_EDIT,
+        content: newTemplate
+      }
+    ])
   }
 
   let viewContent;
@@ -225,7 +178,7 @@ export function MainPage() {
   return (
     <>
       <Helmet>
-        <title>{`${vault.name} | Athena`}</title>
+        <title>{`Vault Name | Athena`}</title>
       </Helmet>
       <main className="h-[100vh] w-[100vw] bg-br-atom-700 flex">
 
@@ -244,18 +197,21 @@ export function MainPage() {
                 label="Back to vaults"
                 data-tip="Back to vaults"
                 icon={<BackIcon size={20} className={iconColorClassNames.secondary} />}
-                onClick={() => {
-                  navigate(routes.vaults.list)
-                }}
+                onClick={() => {}}
                 className="absolute left-[1rem] py-2"
               />
-              <p className="text-br-whiteGrey-100 font-bold py-2">{vault.name}</p>
+              <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name</p>
               <IconButton
-                label="Create Note"
-                data-tip="Create Note"
+                label={currentVaultSection === VaultSections.TEMPLATES ?  "Create Template" : "Create Note"}
+                data-tip={currentVaultSection === VaultSections.TEMPLATES ?  "Create Template" : "Create Note"}
                 icon={<AddNoteIcon size={20} className={iconColorClassNames.secondary} />}
                 onClick={() => {
-                  navigate(routes.vaults.list)
+                  if (currentVaultSection === VaultSections.TEMPLATES) {
+                    createTemplate()
+                  }
+                  else {
+                    createNote();
+                  }
                 }}
                 className="absolute right-[1rem] py-2"
               />

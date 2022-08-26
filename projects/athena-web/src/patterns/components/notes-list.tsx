@@ -1,4 +1,3 @@
-import {useAthena} from "../../helpers/use-athena";
 import React, {useEffect, useState} from "react";
 import {NoteDto} from "@ben-ryder/athena-js-lib";
 import {ContentCard} from "../../patterns/components/content-card/content-card";
@@ -14,8 +13,6 @@ export interface NotesListProps {
 
 export function NotesList(props: NotesListProps) {
   const {vaultId} = useParams();
-
-  const {apiClient} = useAthena();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   function isNoteActive(note: NoteDto, activeContent: Content | null) {
@@ -25,20 +22,6 @@ export function NotesList(props: NotesListProps) {
     }
     return active;
   }
-
-  useEffect(() => {
-    async function loadNotes() {
-      try {
-        const response = await apiClient.getNotes(vaultId!);
-        props.setNotes(response.notes);
-      }
-      catch (e) {
-        console.log(e);
-        setErrorMessage("There was an unexpected error loading your notes. Please try again later.")
-      }
-    }
-    loadNotes();
-  }, []);
 
   return (
     <>
