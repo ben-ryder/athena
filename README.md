@@ -1,30 +1,36 @@
 # Athena
-A place for encrypted notes, lists and reminders.
+A local-first app for notes, tasks and reminders.  
+
+- Core Features:
+  - Create notes, tasks lists and reminders.
+  - Create note templates to easily reuse common note structures.
+  - Organise your content with folders and tags.
+  - Markdown based notes.
+  - Use vaults to organise your data where each vault is its own collection of notes, tasks, folders etc.
+- Online Features:
+  - **Cloud Storage** - Sync your data to the cloud so you have access from anywhere.
+  - **Cross Device Sync** - Sync your data across unlimited devices. The app will automatically fix conflicts if multiple devices edit the same file simultaneously too!
+  - **Offline Support** - Make changes offline and they will be synced when your back online.
+  - **Client Side Encryption** - All your data is encrypted client side meaning only you will ever have access to your data.
 
 ## About
 **This project is very early in development and is not complete, stable or in an MVP release state yet.**  
 As I planned to open source this at MVP release anyway I thought I may as well just do it now.
 
-For initial minimum viable product (MVP) release, Athena will be a basic notes app with client side encryption.  
-Users will be able to create accounts and view/edit/manage notes.
-This will consist of a Node server backend to manage content and a React frontend for users to interact with.
-
-I have many possible directions and extra features I want to explore after initial release including:
-- Adding some form of lists and reminder functionality.
-- Creating a React Native mobile client.
-- Creating an Electron based desktop client.
-- and more...
+More documentation including usage instructions, development setup etc will come closer to the `v1.0` release.
 
 ## Project Structure
 This is a monorepo containing all projects related to Athena:
-- `athena-server` - The backend Node server and API responsible for managing and storing content.
-- `athena-web` - A React web application for users.
-- `athena-js-lib` - A general JavaScript SDK library containing an API client and encryption library.
-- `athena-testing` - Contains hardcoded test data which can be used across packages for testing
+- `athena-server` - The backend server and API responsible for user management, data storage & data sync.
+- `athena-web` - The web application for using Athena in a browser.
+- `athena-mobile` - The mobile application for using Athena on Android (PLANNED FOR AFTER `v1.0` RELEASE).
+- `athena-js-lib` - A library of generic functionality shared across other projects.
+- `athena-testing` - Contains hardcoded test data which can be used across projects for testing
 
 ## Contributions
-This project is currently open source, not open contribution.  
-While I welcome bug reports and similar I'm not interested in external code contributions or feature requests right now.
+This project is open source, not open contribution.  
+This is a personal project currently so while your more than welcome to try it out and even raise bug reports and similar
+I'm not interested in external code contributions or feature requests right now.
 
 ## License
 All projects that are part of Athena are released under the [GNU AGPLv3](https://choosealicense.com/licenses/agpl-3.0/) license.

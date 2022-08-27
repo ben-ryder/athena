@@ -1,50 +1,26 @@
-import React, {useEffect, useState} from "react";
-import {NoteDto} from "@ben-ryder/athena-js-lib";
-import {ContentCard} from "../../patterns/components/content-card/content-card";
-import {Content, ContentType} from "../../helpers/content-state";
-import {useParams} from "react-router-dom";
+import React from "react";
+import {NoteCard} from "./content-card/content-card";
+import {selectActiveContent} from "../../main/state/features/ui/ui-selctors";
+import {selectNoteList} from "../../main/state/features/open-vault/notes/notes-selectors";
+import {useSelector} from "react-redux";
 
-export interface NotesListProps {
-  notes: NoteDto[]|null,
-  setNotes: (notes: NoteDto[]|null) => void,
-  activeContent: Content | null;
-  openContent: (content: Content) => void
-}
 
-export function NotesList(props: NotesListProps) {
-  const {vaultId} = useParams();
-  const [errorMessage, setErrorMessage] = useState<string|null>(null);
-
-  function isNoteActive(note: NoteDto, activeContent: Content | null) {
-    let active = false;
-    if (activeContent && (activeContent.type === ContentType.NOTE_EDIT || activeContent.type === ContentType.TEMPLATE_EDIT)) {
-      active = activeContent.content.id === note.id
-    }
-    return active;
-  }
+export function NotesList() {
+  const activeContent = useSelector(selectActiveContent);
+  const notes = useSelector(selectNoteList);
 
   return (
     <>
-      {props.notes &&
-        <>
-          {props.notes.map(note =>
-            <ContentCard
-              key={note.id}
-              content={{type: ContentType.NOTE_EDIT, content: note}}
-              active={isNoteActive(note, props.activeContent)}
-              openContent={props.openContent}
-            />
-          )}
-          {props.notes.length === 0 &&
-              <div className="m-4">
-                  <p className="text-center text-br-whiteGrey-100">0 Notes Found</p>
-              </div>
-          }
-        </>
-      }
-      {errorMessage &&
+      {notes.map(note =>
+        <NoteCard
+          key={note.id}
+          note={note}
+          active={activeContent !== null && activeContent.data.id === note.id}
+        />
+      )}
+      {notes.length === 0 &&
           <div className="m-4">
-              <p className="text-center text-br-red-500">{errorMessage}</p>
+              <p className="text-center text-br-whiteGrey-100">0 Notes Found</p>
           </div>
       }
     </>

@@ -7,11 +7,12 @@ import {
 } from "lucide-react";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
-import {Content, ContentType} from "../../../helpers/content-state";
+import {ContentType} from "../../../main/state/features/ui/ui-interfaces";
+import {ContentData} from "../../../main/state/features/ui/ui-selctors";
 
 
 export interface ContentFileTabProps {
-  content: Content,
+  content: ContentData,
   active?: boolean,
   switchToContent: () => void,
   closeContent: () => void
@@ -20,7 +21,7 @@ export interface ContentFileTabProps {
 
 export function ContentFileTab(props: ContentFileTabProps) {
   let icon;
-  if (props.content.type === ContentType.NOTE_NEW || props.content.type === ContentType.NOTE_EDIT) {
+  if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall}/>
   }
   else {
@@ -38,23 +39,23 @@ export function ContentFileTab(props: ContentFileTabProps) {
     )}>
       {icon}
       <button
-        data-tip={`Switch to ${props.content.content.title}`}
+        data-tip={`Switch to ${props.content.data.name}`}
         className="hover:underline whitespace-nowrap text-br-whiteGrey-100 mx-2"
-        onClick={() => {props.switchToContent()}}
-      >{props.content.content.title}</button>
+        onClick={() => {}}
+      >{props.content.data.name}</button>
       <IconButton
-        label={`Actions for ${props.content.content.title}`}
-        data-tip={`Actions for ${props.content.content.title}`}
+        label={`Actions for ${props.content.data.name}`}
+        data-tip={`Actions for ${props.content.data.name}`}
         icon={<FileTabOptionsIcon size={iconSizes.extraSmall} />}
         className={`${iconColorClassNames.secondary} h-full flex justify-center items-center`}
         onClick={() => {}}
       />
       <IconButton
-        label={`Close ${props.content.content.title}`}
-        data-tip={`Close ${props.content.content.title}`}
+        label={`Close ${props.content.data.name}`}
+        data-tip={`Close ${props.content.data.name}`}
         icon={<CloseIcon size={iconSizes.extraSmall} />}
         className={`${iconColorClassNames.secondary} h-full flex justify-center items-center`}
-        onClick={() => {props.closeContent()}}
+        onClick={() => {}}
       />
     </div>
   )
