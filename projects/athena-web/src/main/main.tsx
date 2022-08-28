@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import {colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
+import {Button, colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
   ArrowLeftRight as VaultIcon,
   ChevronFirst as OpenVaultSectionIcon,
   ChevronLast as CloseVaultSectionIcon,
   FolderTree as FolderViewIcon,
   LayoutList as NoteListViewIcon,
-  LayoutTemplate as TemplateViewIcon,
   ListOrdered as HeadingIcon,
-  Tags as TagsIcon
+  Tags as TagsIcon,
+  Plus as AddContentIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {Helmet} from "react-helmet-async";
@@ -17,24 +17,21 @@ import {FileTabList, FileTabSection} from "../patterns/components/file-tab/file-
 import {ContentFileTab} from "../patterns/components/file-tab/file-tab";
 import {Editor} from "../patterns/components/editor/editor";
 import {SavedStatus, SavedStatusIndicator} from "../patterns/components/saved-status-indicator/saved-status-indicator";
-import {NotesList} from "../patterns/components/notes-list";
+import {ContentList} from "../patterns/components/content-list";
 import {ContentDetails} from "../patterns/components/content-details/content-details";
 import {Provider, useSelector} from "react-redux";
 import {store, useAppDispatch} from "./state/store";
-import {updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
-import {selectActiveContent, selectOpenContent} from "./state/features/ui/ui-selctors";
-import {ContentType} from "./state/features/ui/ui-interfaces";
+import {createNote, updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
+import {selectActiveContent, selectOpenContent} from "./state/features/ui/content/content-selctors";
+import {ContentType} from "./state/features/ui/content/content-interface";
 import {AccountIcon} from "../patterns/element/account-icon";
-import {TemplatesList} from "../patterns/components/templates-list";
 import {updateTemplateBody} from "./state/features/open-vault/templates/templates-actions";
+import {selectCurrentViewMode} from "./state/features/ui/view/view-selectors";
+import {ViewModes} from "./state/features/ui/view/view-interface";
+import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
+import {ListView} from "../patterns/components/list-view";
+import {v4 as createUUID} from "uuid";
 
-enum PanelSections {
-  FOLDERS = "FOLDERS",
-  NOTES = "NOTES",
-  QUERIES = "QUERIES",
-  TEMPLATES = "TEMPLATES",
-  TAGS = "TAGS"
-}
 
 export function MainPage() {
   return (
@@ -48,21 +45,21 @@ export function Application() {
   const dispatch = useAppDispatch();
   const openContent = useSelector(selectOpenContent);
   const activeContent = useSelector(selectActiveContent);
+  const currentViewMode = useSelector(selectCurrentViewMode);
 
   // Interface State
-  const [currentPanelSection, setCurrentPanelSection] = useState<PanelSections>(PanelSections.NOTES);
   const [savedStatus, setSavedStatus] = useState<SavedStatus>(SavedStatus.SAVED);
   const [vaultPanelIsOpen, setVaultPanelIsOpen] = useState<boolean>(true);
   
   let viewContent;
-  if (currentPanelSection === PanelSections.NOTES) {
-    viewContent = <NotesList />
+  if (currentViewMode === ViewModes.LIST_VIEW) {
+    viewContent = <ListView />
   }
-  else if (currentPanelSection === PanelSections.TEMPLATES) {
-    viewContent = <TemplatesList />
+  else if (currentViewMode === ViewModes.FOLDER_VIEW) {
+    viewContent = <p>Folder Tree</p>
   }
   else {
-    viewContent = <></>
+    viewContent = <p>Tags</p>
   }
 
   return (
@@ -84,19 +81,28 @@ export function Application() {
           {/** Vault Details **/}
           <div className={`flex justify-center items-center relative h-[40px] border-b border-br-blueGrey-700`}>
             <IconButton
-              label="Open Account Menu"
-              data-tip="Open Account Menu"
-              icon={<AccountIcon />}
+              label="Open Vault Menu"
+              data-tip="Open Vault Menu"
+              icon={<VaultIcon size={20} className={iconColorClassNames.secondary}/>}
               onClick={() => {}}
-              className="absolute left-[1rem] py-2"
+              className="absolute left-[15px] py-2"
             />
             <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name</p>
             <IconButton
               label="Open Vault Menu"
               data-tip="Open Vault Menu"
-              icon={<VaultIcon size={20} className={iconColorClassNames.secondary}/>}
-              onClick={() => {}}
-              className="absolute right-[1rem] py-2"
+              icon={<AddContentIcon size={20} className={iconColorClassNames.secondary}/>}
+              onClick={() => {
+                dispatch(createNote({
+                  id: createUUID(),
+                  name: "untitled",
+                  body: "",
+                  folderId: null,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString()
+                }))
+              }}
+              className="absolute right-[15px] py-2"
             />
           </div>
 
@@ -109,13 +115,13 @@ export function Application() {
                 <FolderViewIcon size={20}/>
               </div>}
               onClick={() => {
-                setCurrentPanelSection(PanelSections.FOLDERS);
+                dispatch(switchCurrentViewMode(ViewModes.FOLDER_VIEW));
               }}
               className={classNames(
                 "grow py-2",
                 {
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentPanelSection !== PanelSections.FOLDERS,
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentPanelSection === PanelSections.FOLDERS
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.FOLDER_VIEW,
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.FOLDER_VIEW
                 }
               )}/>
             <IconButton
@@ -125,29 +131,13 @@ export function Application() {
                 <NoteListViewIcon size={20}/>
               </div>}
               onClick={() => {
-                setCurrentPanelSection(PanelSections.NOTES);
+                dispatch(switchCurrentViewMode(ViewModes.LIST_VIEW));
               }}
               className={classNames(
                 "grow py-2",
                 {
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentPanelSection !== PanelSections.NOTES,
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentPanelSection === PanelSections.NOTES
-                }
-              )}/>
-            <IconButton
-              label="Templates"
-              data-tip="Templates"
-              icon={<div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
-                <TemplateViewIcon size={20}/>
-              </div>}
-              onClick={() => {
-                setCurrentPanelSection(PanelSections.TEMPLATES);
-              }}
-              className={classNames(
-                "grow py-2",
-                {
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentPanelSection !== PanelSections.TEMPLATES,
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentPanelSection === PanelSections.TEMPLATES
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.LIST_VIEW,
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.LIST_VIEW
                 }
               )}/>
             <IconButton
@@ -157,13 +147,13 @@ export function Application() {
                 <TagsIcon size={20}/>
               </div>}
               onClick={() => {
-                setCurrentPanelSection(PanelSections.TAGS);
+                dispatch(switchCurrentViewMode(ViewModes.TAGS_VIEW));
               }}
               className={classNames(
                 "grow py-2",
                 {
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentPanelSection !== PanelSections.TAGS,
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentPanelSection === PanelSections.TAGS
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.TAGS_VIEW,
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.TAGS_VIEW
                 }
               )}
             />
@@ -176,6 +166,13 @@ export function Application() {
 
           {/** Vault Section Bottom Content **/}
           <div className="bg-br-atom-900 h-[40px] min-h-[40px] flex justify-between items-center px-2 border-t border-br-blueGrey-700">
+            <IconButton
+              label="Open Account Menu"
+              data-tip="Open Account Menu"
+              icon={<AccountIcon />}
+              onClick={() => {}}
+
+            />
             <SavedStatusIndicator status={savedStatus}/>
             <IconButton
               label={vaultPanelIsOpen ? "Close Vault Section" : "Open Vault Section"}

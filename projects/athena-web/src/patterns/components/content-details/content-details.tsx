@@ -1,6 +1,6 @@
 import React from "react";
-import {ContentData} from "../../../main/state/features/ui/ui-selctors";
-import {ContentType} from "../../../main/state/features/ui/ui-interfaces";
+import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
+import {ContentType} from "../../../main/state/features/ui/content/content-interface";
 
 export interface ContentDetailsProps {
   content: ContentData

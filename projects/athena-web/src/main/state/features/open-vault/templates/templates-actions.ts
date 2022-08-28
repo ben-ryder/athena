@@ -1,5 +1,4 @@
 import {createAction} from "@reduxjs/toolkit";
-import {TemplatesActions} from "../../../action-types";
 import {
   DeleteActionPayload,
   MoveActionPayload,
@@ -7,6 +6,16 @@ import {
   UpdateTagsPayload
 } from "../../../common/action-interfaces";
 import {Template} from "../open-vault-interfaces";
+
+export enum TemplatesActions {
+  CREATE = "templates/create",
+  RENAME = "templates/update/rename",
+  UPDATE_BODY = "templates/update/body",
+  UPDATE_TAGS = "templates/update/tags",
+  MOVE = "templates/update/move",
+  UPDATE_TARGET = "templates/update/target",
+  DELETE = "templates/delete"
+}
 
 export const createTemplate = createAction<Template>(TemplatesActions.CREATE);
 

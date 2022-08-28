@@ -1,21 +1,23 @@
 import React from "react";
 import {IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw";
-import {v4 as createUUID} from "uuid";
 import {formatTimestampSting} from "../../../helpers/format-utc-string";
 import classNames from "classnames";
 import {MoreVertical as FileTabOptionsIcon} from "lucide-react";
-import {NoteData} from "../../../main/state/features/open-vault/notes/notes-selectors";
-import {useAppDispatch} from "../../../main/state/store";
-import {createNote} from "../../../main/state/features/open-vault/notes/notes-actions";
+import {selectNote} from "../../../main/state/features/open-vault/notes/notes-selectors";
+import {useAppDispatch, useAppSelector} from "../../../main/state/store";
 import {TemplateData} from "../../../main/state/features/open-vault/templates/templates-selectors";
+import {switchContent} from "../../../main/state/features/ui/content/content-actions";
+import {ContentType} from "../../../main/state/features/ui/content/content-interface";
 
 export interface NoteCardProps {
-  note: NoteData,
+  noteId: string,
   active?: boolean,
 }
 
 export function NoteCard(props: NoteCardProps) {
   const dispatch = useAppDispatch();
+  const state = useAppSelector(state => state);
+  const note = selectNote(state, props.noteId);
 
   return (
     <div className={classNames(
@@ -27,10 +29,10 @@ export function NoteCard(props: NoteCardProps) {
     )}>
       <div className="flex justify-between">
         <div>
-          <h3 className="text-xl font-bold text-br-whiteGrey-100">{props.note.name}</h3>
+          <h3 className="text-xl font-bold text-br-whiteGrey-100">{note.name}</h3>
 
           <div className="flex flex-wrap mt-1">
-            {props.note.tags.map(tag =>
+            {note.tags.map(tag =>
               <Tag
                 key={tag.id}
                 text={tag.name}
@@ -42,8 +44,8 @@ export function NoteCard(props: NoteCardProps) {
           </div>
         </div>
         <IconButton
-          label={`Actions for ${props.note.name}`}
-          data-tip={`Actions for ${props.note.name}`}
+          label={`Actions for ${note.name}`}
+          data-tip={`Actions for ${note.name}`}
           icon={<FileTabOptionsIcon size={iconSizes.extraSmall} />}
           className={`${iconColorClassNames.secondary} h-full flex justify-center items-center z-10`}
           onClick={() => {}}
@@ -52,16 +54,21 @@ export function NoteCard(props: NoteCardProps) {
 
       <div className="mt-3 flex justify-end">
           <p className="text-br-blueGrey-500 italic">{
-            formatTimestampSting(props.note.createdAt, props.note.updatedAt)
+            formatTimestampSting(note.createdAt, note.updatedAt)
           }</p>
       </div>
 
       <button
-        data-tip={`Open ${props.note.name}`}
+        data-tip={`Open ${note.name}`}
         data-place="right"
-        aria-label={`Open ${props.note.name}`}
+        aria-label={`Open ${note.name}`}
         className="absolute w-full h-full left-0 top-0"
-        onClick={() => {}}
+        onClick={() => {
+          dispatch(switchContent({
+            type: ContentType.NOTE,
+            id: note.id
+          }))
+        }}
       />
     </div>
   )

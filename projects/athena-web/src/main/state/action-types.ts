@@ -17,25 +17,6 @@ export enum TagsActions {
   DELETE = "tags/delete"
 }
 
-export enum NotesActions {
-  CREATE = "notes/create",
-  RENAME = "notes/update/rename",
-  UPDATE_BODY = "notes/update/body",
-  UPDATE_TAGS = "notes/update/tags",
-  MOVE = "notes/update/move",
-  DELETE = "notes/delete"
-}
-
-export enum TemplatesActions {
-  CREATE = "templates/create",
-  RENAME = "templates/update/rename",
-  UPDATE_BODY = "templates/update/body",
-  UPDATE_TAGS = "templates/update/tags",
-  MOVE = "templates/update/move",
-  UPDATE_TARGET = "templates/update/target",
-  DELETE = "templates/delete"
-}
-
 export enum FoldersActions {
   CREATE = "folders/create",
   RENAME = "folders/update/rename",
@@ -64,16 +45,3 @@ export enum TasksActions {
   DELETE = "task/delete"
 }
 
-export enum UIActions {
-  // Global Actions (will affect pretty much all state)
-  SWITCH_USER = "switch/user",
-  SWITCH_VAULT = "switch/vault",
-
-  // Content List
-  OPEN_NOTE = "open/note",
-  OPEN_TEMPLATE = "open/template",
-  OPEN_LIST= "open/taskList",
-
-  SWITCH_CONTENT = "content/switch",
-  CLOSE_CONTENT = "content/close"
-}

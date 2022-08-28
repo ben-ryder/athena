@@ -6,25 +6,21 @@ export interface NoteData extends Note {
   tags: Tag[]
 }
 
-const selectRawNotes = (state: ApplicationState) => state.openVault.notes;
+export const selectNoteList = (state: ApplicationState) => state.openVault.notes.ids;
+const selectNotes = (state: ApplicationState) => state.openVault.notes;
+const selectNoteId = (state: ApplicationState, noteId: string) => noteId;
 
 // @todo: move to tags
-const selectNotesTags = (state: ApplicationState) => state.openVault.notesTags;
-const selectTags = (state: ApplicationState) => state.openVault.tags;
+const selectNoteTags = (state: ApplicationState, noteId: string) => {
+  return state.openVault.notesTags.ids
+    .map(noteTagId => state.openVault.notesTags.entities[noteTagId])
+    .filter(noteTag => noteTag.noteId === noteId)
+    .map(noteTag => state.openVault.tags.entities[noteTag.tagId])
+};
 
-export const selectNotes = createSelector([selectRawNotes, selectNotesTags, selectTags], (notes, notesTags, tags) => {
-  return notes.ids.map(noteId => {
-    const note = notes.entities[noteId];
-
-    const noteTags = notesTags.ids
-      .filter(noteTagId => notesTags.entities[noteTagId].noteId === noteId)
-      .map(noteTagId => {
-        return tags.entities[notesTags.entities[noteTagId].tagId]
-      });
-
-    return {
-      ...note,
-      tags: noteTags
-    }
-  }) as NoteData[]
+export const selectNote = createSelector([selectNotes, selectNoteTags, selectNoteId], (notes, noteTags, noteId) => {
+  return {
+    ...notes.entities[noteId],
+    tags: noteTags
+  } as NoteData;
 })

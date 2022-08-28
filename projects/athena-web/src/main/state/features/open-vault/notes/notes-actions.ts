@@ -1,5 +1,4 @@
 import {createAction} from "@reduxjs/toolkit";
-import {NotesActions} from "../../../action-types";
 import {
   DeleteActionPayload,
   MoveActionPayload,
@@ -7,6 +6,15 @@ import {
   UpdateTagsPayload
 } from "../../../common/action-interfaces";
 import {Note} from "../open-vault-interfaces";
+
+export enum NotesActions {
+  CREATE = "notes/create",
+  RENAME = "notes/update/rename",
+  UPDATE_BODY = "notes/update/body",
+  UPDATE_TAGS = "notes/update/tags",
+  MOVE = "notes/update/move",
+  DELETE = "notes/delete"
+}
 
 export const createNote = createAction<Note>(NotesActions.CREATE);
 

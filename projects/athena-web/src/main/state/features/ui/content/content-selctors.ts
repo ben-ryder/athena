@@ -1,7 +1,7 @@
 import {createSelector} from "@reduxjs/toolkit";
-import {ApplicationState} from "../../state-interface";
-import {Content, ContentType} from "./ui-interfaces";
-import {Note, TaskList, Template} from "../open-vault/open-vault-interfaces";
+import {ApplicationState} from "../../../state-interface";
+import {Content, ContentType} from "./content-interface";
+import {Note, TaskList, Template} from "../../open-vault/open-vault-interfaces";
 
 export const selectRawActiveContent = (state: ApplicationState) => state.ui.content.activeContent;
 export const selectRawOpenContent = (state: ApplicationState) => state.ui.content.openContent;
