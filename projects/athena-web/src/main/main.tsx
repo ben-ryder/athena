@@ -1,14 +1,13 @@
 import React, {useState} from 'react';
 import {colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
+  ArrowLeftRight as VaultIcon,
   ChevronFirst as OpenVaultSectionIcon,
   ChevronLast as CloseVaultSectionIcon,
   FolderTree as FolderViewIcon,
-  Home as BackIcon,
   LayoutList as NoteListViewIcon,
   LayoutTemplate as TemplateViewIcon,
   ListOrdered as HeadingIcon,
-  Plus as AddNoteIcon,
   Tags as TagsIcon
 } from "lucide-react";
 import classNames from "classnames";
@@ -22,10 +21,12 @@ import {NotesList} from "../patterns/components/notes-list";
 import {ContentDetails} from "../patterns/components/content-details/content-details";
 import {Provider, useSelector} from "react-redux";
 import {store, useAppDispatch} from "./state/store";
-import {createNote, updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
-import {v4 as createUUID} from "uuid";
+import {updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
 import {selectActiveContent, selectOpenContent} from "./state/features/ui/ui-selctors";
 import {ContentType} from "./state/features/ui/ui-interfaces";
+import {AccountIcon} from "../patterns/element/account-icon";
+import {TemplatesList} from "../patterns/components/templates-list";
+import {updateTemplateBody} from "./state/features/open-vault/templates/templates-actions";
 
 enum PanelSections {
   FOLDERS = "FOLDERS",
@@ -57,6 +58,9 @@ export function Application() {
   if (currentPanelSection === PanelSections.NOTES) {
     viewContent = <NotesList />
   }
+  else if (currentPanelSection === PanelSections.TEMPLATES) {
+    viewContent = <TemplatesList />
+  }
   else {
     viewContent = <></>
   }
@@ -80,29 +84,20 @@ export function Application() {
           {/** Vault Details **/}
           <div className={`flex justify-center items-center relative h-[40px] border-b border-br-blueGrey-700`}>
             <IconButton
-              label="Back to vaults"
-              data-tip="Back to vaults"
-              icon={<BackIcon size={20} className={iconColorClassNames.secondary}/>}
-              onClick={() => {
-              }}
-              className="absolute left-[1rem] py-2"/>
+              label="Open Account Menu"
+              data-tip="Open Account Menu"
+              icon={<AccountIcon />}
+              onClick={() => {}}
+              className="absolute left-[1rem] py-2"
+            />
             <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name</p>
             <IconButton
-              label={currentPanelSection === PanelSections.TEMPLATES ? "Create Template" : "Create Note"}
-              data-tip={currentPanelSection === PanelSections.TEMPLATES ? "Create Template" : "Create Note"}
-              icon={<AddNoteIcon size={20} className={iconColorClassNames.secondary}/>}
-              onClick={async () => {
-                dispatch(createNote({
-                  id: createUUID(),
-                  uuid: createUUID(),
-                  name: "untitled",
-                  body: "",
-                  folderId: null,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                }));
-              }}
-              className="absolute right-[1rem] py-2"/>
+              label="Open Vault Menu"
+              data-tip="Open Vault Menu"
+              icon={<VaultIcon size={20} className={iconColorClassNames.secondary}/>}
+              onClick={() => {}}
+              className="absolute right-[1rem] py-2"
+            />
           </div>
 
           {/** View Switcher **/}
@@ -232,6 +227,12 @@ export function Application() {
                           body: updatedBody
                         }));
                       }
+                      else if (activeContent.type === ContentType.TEMPLATE) {
+                        dispatch(updateTemplateBody({
+                          id: activeContent.data.id,
+                          body: updatedBody
+                        }));
+                      }
                     }}
                 />
             }
@@ -257,8 +258,8 @@ export function Application() {
                 setVaultPanelIsOpen(!vaultPanelIsOpen);
               }}/>
             <div className="w-full flex justify-between items-center pl-2">
-              {(activeContent !== null && activeContent.type !== ContentType.TASK_LIST) &&
-                  <ContentDetails text={activeContent.data.body} />
+              {activeContent !== null &&
+                  <ContentDetails content={activeContent} />
               }
               <IconButton
                   label="Table of Contents"

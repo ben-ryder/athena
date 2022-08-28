@@ -9,6 +9,8 @@ import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
 import {ContentType} from "../../../main/state/features/ui/ui-interfaces";
 import {ContentData} from "../../../main/state/features/ui/ui-selctors";
+import {useAppDispatch} from "../../../main/state/store";
+import {switchContent} from "../../../main/state/features/ui/ui-actions";
 
 
 export interface ContentFileTabProps {
@@ -20,6 +22,8 @@ export interface ContentFileTabProps {
 
 
 export function ContentFileTab(props: ContentFileTabProps) {
+  const dispatch = useAppDispatch();
+
   let icon;
   if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall}/>
@@ -41,7 +45,12 @@ export function ContentFileTab(props: ContentFileTabProps) {
       <button
         data-tip={`Switch to ${props.content.data.name}`}
         className="hover:underline whitespace-nowrap text-br-whiteGrey-100 mx-2"
-        onClick={() => {}}
+        onClick={() => {
+          dispatch(switchContent({
+            type: props.content.type,
+            id: props.content.data.id
+          }))
+        }}
       >{props.content.data.name}</button>
       <IconButton
         label={`Actions for ${props.content.data.name}`}

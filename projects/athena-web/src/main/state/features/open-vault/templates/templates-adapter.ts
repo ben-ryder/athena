@@ -1,8 +1,8 @@
 import {createEntityAdapter} from "@reduxjs/toolkit";
-import {Note} from "../open-vault-interfaces";
+import {Template} from "../open-vault-interfaces";
 
 
-export const notesAdapter = createEntityAdapter<Note>({
+export const templatesAdapter = createEntityAdapter<Template>({
   selectId: (entity) => entity.id,
   sortComparer: (a, b) => a.name.localeCompare(b.name)
 })

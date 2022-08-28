@@ -6,13 +6,13 @@ export interface NoteData extends Note {
   tags: Tag[]
 }
 
-const selectNotes = (state: ApplicationState) => state.openVault.notes;
+const selectRawNotes = (state: ApplicationState) => state.openVault.notes;
 
 // @todo: move to tags
 const selectNotesTags = (state: ApplicationState) => state.openVault.notesTags;
 const selectTags = (state: ApplicationState) => state.openVault.tags;
 
-export const selectNoteList = createSelector([selectNotes, selectNotesTags, selectTags], (notes, notesTags, tags) => {
+export const selectNotes = createSelector([selectRawNotes, selectNotesTags, selectTags], (notes, notesTags, tags) => {
   return notes.ids.map(noteId => {
     const note = notes.entities[noteId];
 
