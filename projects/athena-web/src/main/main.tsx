@@ -20,7 +20,7 @@ import {Editor} from "../patterns/components/editor/editor";
 import {SavedStatus, SavedStatusIndicator} from "../patterns/components/saved-status-indicator/saved-status-indicator";
 import {ContentDetails} from "../patterns/components/content-details/content-details";
 import {Provider, useSelector} from "react-redux";
-import {store, useAppDispatch} from "./state/store";
+import {persistor, store, useAppDispatch} from "./state/store";
 import {createNote, updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
 import {selectActiveContent, selectOpenContent} from "./state/features/ui/content/content-selctors";
 import {ContentType} from "./state/features/ui/content/content-interface";
@@ -31,12 +31,15 @@ import {ViewModes} from "./state/features/ui/view/view-interface";
 import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
 import {ListView} from "../patterns/components/list-view";
 import {v4 as createUUID} from "uuid";
+import {PersistGate} from "redux-persist/integration/react";
 
 
 export function MainPage() {
   return (
     <Provider store={store}>
-      <Application />
+      <PersistGate loading={null} persistor={persistor}>
+        <Application />
+      </PersistGate>
     </Provider>
   )
 }

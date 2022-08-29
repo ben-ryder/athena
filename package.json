@@ -9,29 +9,24 @@
   },
   "scripts": {
     "prepare": "husky install",
-
     "setup": "npm run install-all && npm run build-all",
     "install-all": "concurrently 'npm:install:*'",
     "build-all": "npm run build:js-lib && npm run build:testing && npm run build:server && npm run build:web",
     "dev": "concurrently 'npm run dev:server' 'npm run dev:web'",
     "test-all": "npm run test:js-lib && npm run test:testing && npm run test:server && npm run test:web",
-
     "install:server": "cd ./projects/athena-server && npm i",
     "build:server": "cd ./projects/athena-server && npm run build",
     "dev:server": "cd ./projects/athena-server && npm run dev",
     "test:server": "cd ./projects/athena-server && npm run test",
     "run:server": "cd ./projects/athena-server && npm start",
-
     "install:js-lib": "cd projects/athena-js-lib && npm i",
     "build:js-lib": "cd projects/athena-js-lib && npm run build",
     "test:js-lib": "cd projects/athena-js-lib && npm run test",
-
     "install:web": "cd ./projects/athena-web && npm i",
     "build:web": "cd ./projects/athena-web && npm run build",
     "dev:web": "cd ./projects/athena-web && npm start",
     "test:web": "cd ./projects/athena-web && npm run test",
     "run:web": "cd ./projects/athena-web && npm run serve",
-
     "install:testing": "cd ./projects/athena-testing && npm i",
     "build:testing": "cd ./projects/athena-testing && npm run build",
     "dev:testing": "cd ./projects/athena-testing && npm start",
@@ -52,5 +47,8 @@
     "@commitlint/config-conventional": "^16.2.1",
     "concurrently": "^7.0.0",
     "husky": "^7.0.4"
+  },
+  "dependencies": {
+    "redux-persist": "^6.0.0"
   }
 }
