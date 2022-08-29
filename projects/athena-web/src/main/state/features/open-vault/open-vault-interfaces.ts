@@ -1,4 +1,5 @@
 import {BaseEntity} from "../../common/base-entity";
+import {ContentType} from "../ui/content/content-interface";
 
 
 export interface Note extends BaseEntity {
@@ -45,13 +46,14 @@ export enum OrderDirection {
 }
 export interface QueryTag {
   tagId: string,
-  queryId: string,
-  order: number
+  queryId: string
 }
 export interface Query extends BaseEntity {
   name: string,
+  contentTypes: ContentType[] | null
+  search: string | null,
   orderBy: OrderBy,
-  orderDirection: OrderDirection,
+  orderDirection: OrderDirection
 }
 
 export interface TaskList extends BaseEntity {

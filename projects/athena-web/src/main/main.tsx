@@ -8,7 +8,8 @@ import {
   LayoutList as NoteListViewIcon,
   ListOrdered as HeadingIcon,
   Tags as TagsIcon,
-  Plus as AddContentIcon
+  Plus as AddContentIcon,
+  Filter as QueryIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {Helmet} from "react-helmet-async";
@@ -17,7 +18,6 @@ import {FileTabList, FileTabSection} from "../patterns/components/file-tab/file-
 import {ContentFileTab} from "../patterns/components/file-tab/file-tab";
 import {Editor} from "../patterns/components/editor/editor";
 import {SavedStatus, SavedStatusIndicator} from "../patterns/components/saved-status-indicator/saved-status-indicator";
-import {ContentList} from "../patterns/components/content-list";
 import {ContentDetails} from "../patterns/components/content-details/content-details";
 import {Provider, useSelector} from "react-redux";
 import {store, useAppDispatch} from "./state/store";
@@ -85,7 +85,7 @@ export function Application() {
               data-tip="Open Vault Menu"
               icon={<VaultIcon size={20} className={iconColorClassNames.secondary}/>}
               onClick={() => {}}
-              className="absolute left-[15px] py-2"
+              className="absolute left-[10px] py-2"
             />
             <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name</p>
             <IconButton
@@ -102,7 +102,7 @@ export function Application() {
                   updatedAt: new Date().toISOString()
                 }))
               }}
-              className="absolute right-[15px] py-2"
+              className="absolute right-[10px] py-2"
             />
           </div>
 
@@ -123,7 +123,25 @@ export function Application() {
                   "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.FOLDER_VIEW,
                   "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.FOLDER_VIEW
                 }
-              )}/>
+              )}
+            />
+            <IconButton
+              label="Query View"
+              data-tip="Query View"
+              icon={<div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
+                <QueryIcon size={20}/>
+              </div>}
+              onClick={() => {
+                dispatch(switchCurrentViewMode(ViewModes.QUERY_VIEW));
+              }}
+              className={classNames(
+                "grow py-2",
+                {
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.QUERY_VIEW,
+                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.QUERY_VIEW
+                }
+              )}
+            />
             <IconButton
               label="List View"
               data-tip="List View"
@@ -139,7 +157,8 @@ export function Application() {
                   "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.LIST_VIEW,
                   "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.LIST_VIEW
                 }
-              )}/>
+              )}
+            />
             <IconButton
               label="Tags"
               data-tip="Tags"
