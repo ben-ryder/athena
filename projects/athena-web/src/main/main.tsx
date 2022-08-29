@@ -32,6 +32,8 @@ import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
 import {ListView} from "../patterns/components/list-view";
 import {v4 as createUUID} from "uuid";
 import {PersistGate} from "redux-persist/integration/react";
+import {PopupMenu} from "../patterns/components/popup-menu/popup-menu";
+import {CreateContentMenu} from "../patterns/components/popup-menu/create-content-menu";
 
 
 export function MainPage() {
@@ -53,6 +55,7 @@ export function Application() {
   // Interface State
   const [savedStatus, setSavedStatus] = useState<SavedStatus>(SavedStatus.SAVED);
   const [vaultPanelIsOpen, setVaultPanelIsOpen] = useState<boolean>(true);
+  const [addMenuIsVisible, setAddMenuIsVisible] = useState<boolean>(false);
   
   let viewContent;
   if (currentViewMode === ViewModes.LIST_VIEW) {
@@ -91,26 +94,11 @@ export function Application() {
               className="absolute left-[10px] py-2"
             />
             <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name</p>
-            <IconButton
-              label="Open Vault Menu"
-              data-tip="Open Vault Menu"
-              icon={<AddContentIcon size={20} className={iconColorClassNames.secondary}/>}
-              onClick={() => {
-                dispatch(createNote({
-                  id: createUUID(),
-                  name: "untitled",
-                  body: "",
-                  folderId: null,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                }))
-              }}
-              className="absolute right-[10px] py-2"
-            />
+            <CreateContentMenu />
           </div>
 
           {/** View Switcher **/}
-          <div className={`flex h-[40px] border-b border-br-blueGrey-700`}>
+          <div className={`flex h-[40px] min-h-[40px] border-b border-br-blueGrey-700`}>
             <IconButton
               label="Folder View"
               data-tip="Folder View"

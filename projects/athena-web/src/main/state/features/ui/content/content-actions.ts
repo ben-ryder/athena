@@ -2,13 +2,10 @@ import {createAction} from "@reduxjs/toolkit";
 import {Content} from "./content-interface";
 
 export enum UIContentActions {
-  // Content List
-  OPEN_NOTE = "open/note",
-  OPEN_TEMPLATE = "open/template",
-  OPEN_LIST= "open/taskList",
-
-  SWITCH_CONTENT = "content/switch",
+  SWITCH_CONTENT = "content/openAndSwitch",
   CLOSE_CONTENT = "content/close"
 }
 
-export const switchContent = createAction<Content>(UIContentActions.SWITCH_CONTENT);
+export const openAndSwitchContent = createAction<Content>(UIContentActions.SWITCH_CONTENT);
+
+export const closeContent = createAction<Content>(UIContentActions.CLOSE_CONTENT);

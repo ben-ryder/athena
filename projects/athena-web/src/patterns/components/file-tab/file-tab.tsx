@@ -10,7 +10,7 @@ import classNames from "classnames";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
 import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
 import {useAppDispatch} from "../../../main/state/store";
-import {switchContent} from "../../../main/state/features/ui/content/content-actions";
+import {closeContent, openAndSwitchContent} from "../../../main/state/features/ui/content/content-actions";
 
 
 export interface ContentFileTabProps {
@@ -46,7 +46,7 @@ export function ContentFileTab(props: ContentFileTabProps) {
         data-tip={`Switch to ${props.content.data.name}`}
         className="hover:underline whitespace-nowrap text-br-whiteGrey-100 mx-2"
         onClick={() => {
-          dispatch(switchContent({
+          dispatch(openAndSwitchContent({
             type: props.content.type,
             id: props.content.data.id
           }))
@@ -64,7 +64,12 @@ export function ContentFileTab(props: ContentFileTabProps) {
         data-tip={`Close ${props.content.data.name}`}
         icon={<CloseIcon size={iconSizes.extraSmall} />}
         className={`${iconColorClassNames.secondary} h-full flex justify-center items-center`}
-        onClick={() => {}}
+        onClick={() => {
+          dispatch(closeContent({
+            type: props.content.type,
+            id: props.content.data.id
+          }))
+        }}
       />
     </div>
   )
