@@ -48,7 +48,5 @@
     "concurrently": "^7.0.0",
     "husky": "^7.0.4"
   },
-  "dependencies": {
-    "redux-persist": "^6.0.0"
-  }
+  "dependencies": {}
 }
