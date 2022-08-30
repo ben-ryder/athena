@@ -2,7 +2,6 @@ import React from "react";
 import {
   File as NoteTypeIcon,
   LayoutTemplate as TemplateTypeIcon,
-  MoreVertical as FileTabOptionsIcon,
   X as CloseIcon
 } from "lucide-react";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
@@ -11,6 +10,7 @@ import {ContentType} from "../../../main/state/features/ui/content/content-inter
 import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
 import {useAppDispatch} from "../../../main/state/store";
 import {closeContent, openAndSwitchContent} from "../../../main/state/features/ui/content/content-actions";
+import {ContentActionsIconAndPopup} from "../popup-menus/content-actions-menu";
 
 
 export interface ContentFileTabProps {
@@ -52,13 +52,7 @@ export function ContentFileTab(props: ContentFileTabProps) {
           }))
         }}
       >{props.content.data.name}</button>
-      <IconButton
-        label={`Actions for ${props.content.data.name}`}
-        data-tip={`Actions for ${props.content.data.name}`}
-        icon={<FileTabOptionsIcon size={iconSizes.extraSmall} />}
-        className={`${iconColorClassNames.secondary} h-full flex justify-center items-center`}
-        onClick={() => {}}
-      />
+      <ContentActionsIconAndPopup content={props.content}/>
       <IconButton
         label={`Close ${props.content.data.name}`}
         data-tip={`Close ${props.content.data.name}`}

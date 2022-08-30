@@ -8,7 +8,3 @@ export function formatUTCString(utcString: string) {
 
   return `${day} ${monthName} ${year}`
 }
-
-export function formatTimestampSting(createdAt: string, updatedAt: string) {
-  return `${formatUTCString(createdAt)} | ${formatUTCString(updatedAt)}`
-}

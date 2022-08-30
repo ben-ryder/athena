@@ -5,4 +5,5 @@
 
 .__react_component_tooltip {
     opacity: 1 !important;
+    z-index: 10 !important;
 }

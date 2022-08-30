@@ -1,20 +1,18 @@
 import {Tag, Template} from "../open-vault-interfaces";
 import {ApplicationState} from "../../../state-interface";
 import {createSelector} from "@reduxjs/toolkit";
-import {NoteData} from "../notes/notes-selectors";
-import {TemplateCardProps} from "../../../../../patterns/components/content-card/content-card";
 
 export interface TemplateData extends Template {
   tags: Tag[]
 }
 
-const selectRawTemplates = (state: ApplicationState) => state.openVault.templates;
+export const selectTemplatesState = (state: ApplicationState) => state.openVault.templates;
 
 // @todo: move to tags
 const selectTemplatesTags = (state: ApplicationState) => state.openVault.templatesTags;
 const selectTags = (state: ApplicationState) => state.openVault.tags;
 
-export const selectTemplates = createSelector([selectRawTemplates, selectTemplatesTags, selectTags], (templates, templatesTags, tags) => {
+export const selectTemplates = createSelector([selectTemplatesState, selectTemplatesTags, selectTags], (templates, templatesTags, tags) => {
   return templates.ids.map(templateId => {
     const template = templates.entities[templateId];
 

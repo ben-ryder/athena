@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
+import {colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
   ArrowLeftRight as VaultIcon,
   ChevronFirst as OpenVaultSectionIcon,
@@ -8,7 +8,6 @@ import {
   LayoutList as NoteListViewIcon,
   ListOrdered as HeadingIcon,
   Tags as TagsIcon,
-  Plus as AddContentIcon,
   Filter as QueryIcon
 } from "lucide-react";
 import classNames from "classnames";
@@ -30,10 +29,8 @@ import {selectCurrentViewMode} from "./state/features/ui/view/view-selectors";
 import {ViewModes} from "./state/features/ui/view/view-interface";
 import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
 import {ListView} from "../patterns/components/list-view";
-import {v4 as createUUID} from "uuid";
 import {PersistGate} from "redux-persist/integration/react";
-import {PopupMenu} from "../patterns/components/popup-menu/popup-menu";
-import {CreateContentMenu} from "../patterns/components/popup-menu/create-content-menu";
+import {CreateContentIconAndPopup} from "../patterns/components/popup-menus/create-content-menu";
 
 
 export function MainPage() {
@@ -94,7 +91,9 @@ export function Application() {
               className="absolute left-[10px] py-2"
             />
             <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name</p>
-            <CreateContentMenu />
+            <div className="absolute right-[10px] flex">
+              <CreateContentIconAndPopup />
+            </div>
           </div>
 
           {/** View Switcher **/}
