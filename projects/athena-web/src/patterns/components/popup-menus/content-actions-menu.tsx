@@ -3,12 +3,16 @@ import {MoreVertical as FileTabOptionsIcon} from "lucide-react";
 import React from "react";
 import {IconWithMenuPopup} from "./icon-with-popup";
 import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
+import {useAppDispatch} from "../../../main/state/store";
+import {openRenameModal} from "../../../main/state/features/ui/modals/modals-actions";
 
 export interface ContentActionsIconAndPopupProps {
   content: ContentData
 }
 
 export function ContentActionsIconAndPopup(props: ContentActionsIconAndPopupProps) {
+  const dispatch = useAppDispatch();
+
   return (
     <IconWithMenuPopup
       label="Note Actions"
@@ -18,7 +22,9 @@ export function ContentActionsIconAndPopup(props: ContentActionsIconAndPopupProp
       menuItems={[
         {
           label: "Rename",
-          action: () => {}
+          action: () => {
+            dispatch(openRenameModal(props.content))
+          }
         },
         {
           label: "Delete",

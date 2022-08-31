@@ -31,6 +31,7 @@ import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
 import {ListView} from "../patterns/components/list-view";
 import {PersistGate} from "redux-persist/integration/react";
 import {CreateContentIconAndPopup} from "../patterns/components/popup-menus/create-content-menu";
+import {RenameModal} from "../patterns/components/modals/rename-modal";
 
 
 export function MainPage() {
@@ -52,7 +53,6 @@ export function Application() {
   // Interface State
   const [savedStatus, setSavedStatus] = useState<SavedStatus>(SavedStatus.SAVED);
   const [vaultPanelIsOpen, setVaultPanelIsOpen] = useState<boolean>(true);
-  const [addMenuIsVisible, setAddMenuIsVisible] = useState<boolean>(false);
   
   let viewContent;
   if (currentViewMode === ViewModes.LIST_VIEW) {
@@ -277,6 +277,8 @@ export function Application() {
           </section>
         </section>
       </main>
+
+      <RenameModal />
 
       <ReactTooltip
         place="bottom"

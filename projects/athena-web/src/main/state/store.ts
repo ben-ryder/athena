@@ -12,6 +12,7 @@ import storage from 'redux-persist/lib/storage';
 const persistConfig = {
   key: 'root',
   storage,
+  whitelist: ['openVault']
 }
 
 const rootAppReducer = combineReducers({
