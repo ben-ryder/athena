@@ -1,11 +1,9 @@
 import React from "react";
-import {IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw";
-import {formatTimestampSting} from "../../../helpers/format-utc-string";
+import {iconSizes} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
 import {
   File as NoteTypeIcon,
   LayoutTemplate as TemplateTypeIcon,
-  MoreVertical as FileTabOptionsIcon
 } from "lucide-react";
 import {useAppDispatch} from "../../../main/state/store";
 import {openAndSwitchContent} from "../../../main/state/features/ui/content/content-actions";
