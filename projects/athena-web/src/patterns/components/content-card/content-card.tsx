@@ -39,6 +39,21 @@ export function ContentCard(props: ContentCardProps) {
         "border-2 border-br-teal-600": active
       }
     )}>
+
+      {/** Button comes first to ensure content comes before actions menu in tab order **/}
+      <button
+        data-tip={`Open ${props.content.data.name}`}
+        data-place="right"
+        aria-label={`Open ${props.content.data.name}`}
+        className="absolute w-full h-full left-0 top-0"
+        onClick={() => {
+          dispatch(openAndSwitchContent({
+            type: props.content.type,
+            id: props.content.data.id
+          }))
+        }}
+      />
+
       <div className="flex justify-between items-center">
         <div>
           {icon}
@@ -61,19 +76,6 @@ export function ContentCard(props: ContentCardProps) {
           <ContentActionsIconAndPopup content={props.content} />
         </div>
       </div>
-
-      <button
-        data-tip={`Open ${props.content.data.name}`}
-        data-place="right"
-        aria-label={`Open ${props.content.data.name}`}
-        className="absolute w-full h-full left-0 top-0"
-        onClick={() => {
-          dispatch(openAndSwitchContent({
-            type: props.content.type,
-            id: props.content.data.id
-          }))
-        }}
-      />
     </div>
   )
 }
