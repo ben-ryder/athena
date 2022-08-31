@@ -36,7 +36,7 @@ export function IconWithMenuPopup(props: IconWithMenuPopupProps) {
                     item.action()
                     close()
                   }}
-                  className="whitespace-nowrap p-1 text-center w-full text-br-whiteGrey-100 hover:text-br-teal-600"
+                  className="whitespace-nowrap py-1 px-2 text-center w-full text-br-whiteGrey-100 hover:text-br-teal-600"
                 >{item.label}</button>
               )}
             </>

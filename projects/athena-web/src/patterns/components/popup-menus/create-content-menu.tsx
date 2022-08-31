@@ -1,11 +1,10 @@
 import {iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {Plus as AddContentIcon} from "lucide-react";
 import React from "react";
-import {createNote} from "../../../main/state/features/open-vault/notes/notes-actions";
-import {v4 as createUUID} from "uuid";
 import {useAppDispatch} from "../../../main/state/store";
 import {IconWithMenuPopup} from "./icon-with-popup";
-import {createTemplate} from "../../../main/state/features/open-vault/templates/templates-actions";
+import {openCreateModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {ContentType} from "../../../main/state/features/ui/content/content-interface";
 
 export function CreateContentIconAndPopup() {
   const dispatch = useAppDispatch();
@@ -20,37 +19,20 @@ export function CreateContentIconAndPopup() {
         {
           label: "Note",
           action: () => {
-            dispatch(createNote({
-              id: createUUID(),
-              name: "untitled",
-              body: "",
-              folderId: null,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            }))
+            dispatch(openCreateModal(ContentType.NOTE));
           }
-        },
-        {
-          label: "From Template",
-          action: () => {}
         },
         {
           label: "Template",
           action: () => {
-            dispatch(createTemplate({
-              id: createUUID(),
-              name: "untitled",
-              body: "",
-              folderId: null,
-              targetFolderId: null,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            }))
+            dispatch(openCreateModal(ContentType.TEMPLATE));
           }
         },
         {
           label: "Task List",
-          action: () => {}
+          action: () => {
+            dispatch(openCreateModal(ContentType.TASK_LIST));
+          }
         }
       ]}
     />

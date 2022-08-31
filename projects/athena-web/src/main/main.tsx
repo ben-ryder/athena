@@ -33,6 +33,7 @@ import {PersistGate} from "redux-persist/integration/react";
 import {CreateContentIconAndPopup} from "../patterns/components/popup-menus/create-content-menu";
 import {RenameModal} from "../patterns/components/modals/rename-modal";
 import {DeleteModal} from "../patterns/components/modals/delete-modal";
+import {CreateModal} from "../patterns/components/modals/create-modal";
 
 
 export function MainPage() {
@@ -279,6 +280,7 @@ export function Application() {
         </section>
       </main>
 
+      <CreateModal />
       <RenameModal />
       <DeleteModal />
 

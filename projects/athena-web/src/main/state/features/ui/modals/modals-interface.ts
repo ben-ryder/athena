@@ -1,4 +1,5 @@
 import {ContentData} from "../content/content-selctors";
+import {ContentType} from "../content/content-interface";
 
 
 export interface UIModalsState {
@@ -9,5 +10,9 @@ export interface UIModalsState {
   deleteContent: {
     isOpen: boolean,
     content: ContentData | null
+  },
+  createContent: {
+    isOpen: boolean,
+    type: ContentType | null
   }
 }
