@@ -33,6 +33,7 @@ import {CreateContentIconAndPopup} from "../patterns/components/popup-menus/crea
 import {RenameModal} from "../patterns/components/modals/rename-modal";
 import {DeleteModal} from "../patterns/components/modals/delete-modal";
 import {CreateModal} from "../patterns/components/modals/create-modal";
+import {TagSelector} from "../patterns/components/tag-selector/tag-selector";
 
 
 export function MainPage() {
@@ -228,9 +229,29 @@ export function Application() {
             }
           </section>
 
-          <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 px-4`}>
+          <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 p-2`}>
             {activeContent !== null &&
-                <p className="text-br-whiteGrey-100"># tags go here</p>
+                <TagSelector
+                    id="tag-selector"
+                    label="Select Content Tags"
+                    placeholder="Select tags..."
+                    options={[
+                      {
+                        name: "test 1",
+                        value: "1"
+                      },
+                      {
+                        name: "test 2",
+                        value: "2"
+                      },
+                      {
+                        name: "test 3",
+                        value: "3"
+                      }
+                    ]}
+                    currentOptions={[]}
+                    onOptionsChange={() => {}}
+                />
             }
           </section>
           <section id="bottom-panel" className={`h-[40px] bg-br-atom-800 p-2 flex items-center border-t border-br-blueGrey-700`}>
