@@ -1,7 +1,7 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {createNote} from "../../open-vault/notes/notes-actions";
-import {Content, ContentType, UIContentState} from "./content-interface";
-import {createTemplate} from "../../open-vault/templates/templates-actions";
+import {createNote, deleteNote} from "../../open-vault/notes/notes-actions";
+import {ContentType, UIContentState} from "./content-interface";
+import {createTemplate, deleteTemplate} from "../../open-vault/templates/templates-actions";
 import {closeContent, openAndSwitchContent} from "./content-actions";
 
 
@@ -57,6 +57,26 @@ export const uiContentReducer = createReducer(
       if (JSON.stringify(state.activeContent) === JSON.stringify(action.payload)) {
         state.activeContent = null;
       }
+    })
+
+    builder.addCase(deleteNote, (state, action) => {
+      if (state.activeContent?.id === action.payload.id) {
+        state.activeContent = null;
+      }
+
+      state.openContent = state.openContent.filter(content => {
+        return content.id !== action.payload.id;
+      })
+    })
+
+    builder.addCase(deleteTemplate, (state, action) => {
+      if (state.activeContent?.id === action.payload.id) {
+        state.activeContent = null;
+      }
+
+      state.openContent = state.openContent.filter(content => {
+        return content.id !== action.payload.id;
+      })
     })
   }
 );

@@ -34,7 +34,26 @@ export function RenameModal() {
       isOpen={renameModal.isOpen}
       onClose={closeModal}
       content={
-        <>
+        <form
+          onSubmit={() => {
+            if (renameModal.content?.type === ContentType.NOTE) {
+              dispatch(renameNote({
+                id: renameModal.content.data.id,
+                name: newName
+              }))
+            }
+            else if (renameModal.content?.type === ContentType.TEMPLATE) {
+              dispatch(renameTemplate({
+                id: renameModal.content.data.id,
+                name: newName
+              }))
+            }
+            else if (renameModal.content?.type === ContentType.TASK_LIST) {
+              console.log("update task list title");
+            }
+            closeModal();
+          }}
+        >
           <Input
             ref={ref}
             value={newName} onChange={(e) => {setNewName(e.target.value)}}
@@ -47,27 +66,10 @@ export function RenameModal() {
           />
 
           <div className="mt-4 flex justify-end items-center">
-            <Button styling="secondary" onClick={closeModal}>Cancel</Button>
-            <Button className="ml-2" onClick={() => {
-              if (renameModal.content?.type === ContentType.NOTE) {
-                dispatch(renameNote({
-                  id: renameModal.content.data.id,
-                  name: newName
-                }))
-              }
-              else if (renameModal.content?.type === ContentType.TEMPLATE) {
-                dispatch(renameTemplate({
-                  id: renameModal.content.data.id,
-                  name: newName
-                }))
-              }
-              else if (renameModal.content?.type === ContentType.TASK_LIST) {
-                console.log("update task list title");
-              }
-              closeModal();
-            }}>Save</Button>
+            <Button styling="secondary" onClick={closeModal} type="button">Cancel</Button>
+            <Button className="ml-2" type="submit">Save</Button>
           </div>
-        </>
+        </form>
       }
     />
   )
