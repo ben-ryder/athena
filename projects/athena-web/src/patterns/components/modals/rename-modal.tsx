@@ -14,7 +14,20 @@ export function RenameModal() {
   const dispatch = useAppDispatch();
   const renameModal = useSelector(selectRenameModal);
   const closeModal = () => {dispatch(closeRenameModal())};
+
+  const [newName, setNewName] = useState<string>("");
   const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setNewName(renameModal.content?.data.name || "");
+
+    // A bit of a hack to get the input text to stay selected after the newName state is updated.
+    setTimeout(() => {
+      if (ref.current) {
+        ref.current.select()
+      }
+    }, 5);
+  }, [renameModal])
 
   return (
     <Dialog
@@ -24,7 +37,6 @@ export function RenameModal() {
       <Dialog.Panel
         className="absolute left-0 top-0 min-w-[100vw] min-h-[100vh] bg-br-blackGrey-900/40 z-30 flex items-center justify-center"
       >
-
         <div className={classNames(
           "bg-br-atom-500 m-4 p-4",
           "w-full max-w-[400px]"
@@ -33,7 +45,8 @@ export function RenameModal() {
 
           <div className="mt-4">
             <Input
-              ref={ref} defaultValue={renameModal.content?.data.name || ""}
+              ref={ref}
+              value={newName} onChange={(e) => {setNewName(e.target.value)}}
               id="new-name" label="New Name" type="text"
               onFocus={(e) => {
                 // Automatically select all text on focus. This makes it quicker to fully override the name
@@ -45,22 +58,20 @@ export function RenameModal() {
             <div className="mt-4 flex justify-end items-center">
               <Button styling="secondary" onClick={closeModal}>Cancel</Button>
               <Button className="ml-2" onClick={() => {
-                if (ref.current) {
-                  if (renameModal.content?.type === ContentType.NOTE) {
-                    dispatch(renameNote({
-                      id: renameModal.content.data.id,
-                      name: ref.current.value
-                    }))
-                  }
-                  else if (renameModal.content?.type === ContentType.TEMPLATE) {
-                    dispatch(renameTemplate({
-                      id: renameModal.content.data.id,
-                      name: ref.current.value
-                    }))
-                  }
-                  else if (renameModal.content?.type === ContentType.TASK_LIST) {
-                    console.log("update task list title");
-                  }
+                if (renameModal.content?.type === ContentType.NOTE) {
+                  dispatch(renameNote({
+                    id: renameModal.content.data.id,
+                    name: newName
+                  }))
+                }
+                else if (renameModal.content?.type === ContentType.TEMPLATE) {
+                  dispatch(renameTemplate({
+                    id: renameModal.content.data.id,
+                    name: newName
+                  }))
+                }
+                else if (renameModal.content?.type === ContentType.TASK_LIST) {
+                  console.log("update task list title");
                 }
                 closeModal();
               }}>Save</Button>

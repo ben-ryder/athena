@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@ben-ryder/athena-js-lib": "file:../athena-js-lib",
-    "@ben-ryder/jigsaw": "^0.6.1",
+    "@ben-ryder/jigsaw": "^0.6.2",
     "@codemirror/lang-markdown": "^6.0.1",
     "@codemirror/language-data": "^6.1.0",
     "@headlessui-float/react": "^0.8.0",
