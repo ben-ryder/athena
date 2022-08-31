@@ -4,7 +4,7 @@ import React from "react";
 import {IconWithMenuPopup} from "./icon-with-popup";
 import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
 import {useAppDispatch} from "../../../main/state/store";
-import {openRenameModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {openDeleteModal, openRenameModal} from "../../../main/state/features/ui/modals/modals-actions";
 
 export interface ContentActionsIconAndPopupProps {
   content: ContentData
@@ -28,7 +28,9 @@ export function ContentActionsIconAndPopup(props: ContentActionsIconAndPopupProp
         },
         {
           label: "Delete",
-          action: () => {}
+          action: () => {
+            dispatch(openDeleteModal(props.content))
+          }
         }
       ]}
     />
