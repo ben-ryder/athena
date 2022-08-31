@@ -2,7 +2,7 @@ import {iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {Plus as AddContentIcon} from "lucide-react";
 import React from "react";
 import {useAppDispatch} from "../../../main/state/store";
-import {IconWithMenuPopup} from "./icon-with-popup";
+import {IconWithMenuPopup} from "./icon-with-menu-popup";
 import {openCreateModal} from "../../../main/state/features/ui/modals/modals-actions";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
 

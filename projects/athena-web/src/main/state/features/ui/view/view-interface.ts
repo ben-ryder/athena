@@ -4,7 +4,6 @@ import {OrderBy, OrderDirection} from "../../open-vault/open-vault-interfaces";
 export enum ViewModes {
   FOLDER_VIEW = "FOLDER_VIEW",
   LIST_VIEW = "LIST_VIEW",
-  QUERY_VIEW = "QUERY_VIEW",
   TAGS_VIEW = "TAGS_VIEW"
 }
 

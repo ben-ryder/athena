@@ -1,7 +1,7 @@
 import {iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {MoreVertical as FileTabOptionsIcon} from "lucide-react";
 import React from "react";
-import {IconWithMenuPopup} from "./icon-with-popup";
+import {IconWithMenuPopup} from "./icon-with-menu-popup";
 import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
 import {useAppDispatch} from "../../../main/state/store";
 import {openDeleteModal, openRenameModal} from "../../../main/state/features/ui/modals/modals-actions";

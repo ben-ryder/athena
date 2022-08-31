@@ -7,8 +7,7 @@ import {
   FolderTree as FolderViewIcon,
   LayoutList as NoteListViewIcon,
   ListOrdered as HeadingIcon,
-  Tags as TagsIcon,
-  Filter as QueryIcon
+  Tags as TagsIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {Helmet} from "react-helmet-async";
@@ -20,7 +19,7 @@ import {SavedStatus, SavedStatusIndicator} from "../patterns/components/saved-st
 import {ContentDetails} from "../patterns/components/content-details/content-details";
 import {Provider, useSelector} from "react-redux";
 import {persistor, store, useAppDispatch} from "./state/store";
-import {createNote, updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
+import {updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
 import {selectActiveContent, selectOpenContent} from "./state/features/ui/content/content-selctors";
 import {ContentType} from "./state/features/ui/content/content-interface";
 import {AccountIcon} from "../patterns/element/account-icon";
@@ -114,23 +113,6 @@ export function Application() {
                 {
                   "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.FOLDER_VIEW,
                   "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.FOLDER_VIEW
-                }
-              )}
-            />
-            <IconButton
-              label="Query View"
-              data-tip="Query View"
-              icon={<div className={iconColorClassNames.secondary + " flex justify-center items-center"}>
-                <QueryIcon size={20}/>
-              </div>}
-              onClick={() => {
-                dispatch(switchCurrentViewMode(ViewModes.QUERY_VIEW));
-              }}
-              className={classNames(
-                "grow py-2",
-                {
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200": currentViewMode !== ViewModes.QUERY_VIEW,
-                  "stroke-br-whiteGrey-100 text-br-whiteGrey-200 bg-br-teal-600": currentViewMode === ViewModes.QUERY_VIEW
                 }
               )}
             />
