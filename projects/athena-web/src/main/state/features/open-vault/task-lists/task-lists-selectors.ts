@@ -1,6 +1,3 @@
-import {Tag, Task, TaskList} from "../open-vault-interfaces";
+import {ApplicationState} from "../../../state-interface";
 
-export interface TaskListData extends TaskList {
-  tags: Tag[],
-  tasks: Task[]
-}
+export const selectTaskListsState = (state: ApplicationState) => state.openVault.taskLists;

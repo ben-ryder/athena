@@ -78,35 +78,30 @@ export const TagSelector = forwardRef<HTMLSelectElement, TagSelectorProps>((prop
                 </div>
               </div>
               <Combobox.Options
-                as={Fragment}
+                className={classNames(
+                  "absolute mt-1 block outline-none bg-br-atom-600",
+                  "border border-br-blueGrey-600 text-br-whiteGrey-200",
+                  "flex p-2"
+                )}
               >
-                <ul
-                  className={classNames(
-                    "absolute mt-1 block outline-none bg-br-atom-600",
-                    "border border-br-blueGrey-600 text-br-whiteGrey-200",
-                    "flex p-2"
-                  )}
-                  {...props}
-                >
-                  {filteredOptions.map((option) => (
-                    <Combobox.Option
-                      key={option.value}
-                      value={option}
-                      as={Fragment}
-                    >
-                      {({ active, selected }) => (
-                        <li>
-                          <Tag
-                            className="text-sm ml-2"
-                            text={option.name}
-                            bgColor={active ? colourPalette.teal["600"] : colourPalette.blueGrey["700"]}
-                            fgColor={colourPalette.whiteGrey["50"]}
-                          />
-                        </li>
-                      )}
-                    </Combobox.Option>
-                  ))}
-                </ul>
+                {filteredOptions.map((option) => (
+                  <Combobox.Option
+                    key={option.value}
+                    value={option}
+                    as={Fragment}
+                  >
+                    {({ active, selected }) => (
+                      <li>
+                        <Tag
+                          className="text-sm ml-2"
+                          text={option.name}
+                          bgColor={active ? colourPalette.teal["600"] : colourPalette.blueGrey["700"]}
+                          fgColor={colourPalette.whiteGrey["50"]}
+                        />
+                      </li>
+                    )}
+                  </Combobox.Option>
+                ))}
               </Combobox.Options>
             </>
           </>

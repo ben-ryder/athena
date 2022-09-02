@@ -4,6 +4,7 @@ import classNames from "classnames";
 import {
   File as NoteTypeIcon,
   LayoutTemplate as TemplateTypeIcon,
+  ListChecks as TaskListTypeIcon
 } from "lucide-react";
 import {useAppDispatch} from "../../../main/state/store";
 import {openAndSwitchContent} from "../../../main/state/features/ui/content/content-actions";
@@ -25,13 +26,16 @@ export function ContentCard(props: ContentCardProps) {
   if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600" size={iconSizes.small}/>
   }
-  else {
+  else if (props.content.type === ContentType.TEMPLATE) {
     icon = <TemplateTypeIcon className="text-br-teal-600" size={iconSizes.small} />
+  }
+  else {
+    icon = <TaskListTypeIcon className="text-br-teal-600" size={iconSizes.small} />
   }
 
   return (
     <div className={classNames(
-      "p-4 mb-4 shadow-sm relative bg-br-atom-700 hover:bg-br-atom-500",
+      "p-3 mb-4 shadow-sm relative bg-br-atom-700 hover:bg-br-atom-500",
       {
         "border-2 border-br-atom-700": !active,
         "border-2 border-br-teal-600": active

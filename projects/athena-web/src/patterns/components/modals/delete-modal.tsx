@@ -7,6 +7,7 @@ import {ContentType} from "../../../main/state/features/ui/content/content-inter
 import {deleteNote} from "../../../main/state/features/open-vault/notes/notes-actions";
 import {deleteTemplate} from "../../../main/state/features/open-vault/templates/templates-actions";
 import {Modal} from "./modal";
+import {deleteTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-actions";
 
 export function DeleteModal() {
   const dispatch = useAppDispatch();
@@ -39,7 +40,9 @@ export function DeleteModal() {
                   }))
                 }
                 else if (deleteModal.content?.type === ContentType.TASK_LIST) {
-                  console.log("delete task list");
+                  dispatch(deleteTaskList({
+                    id: deleteModal.content.data.id
+                  }))
                 }
                 closeModal();
               }}>Delete</Button>

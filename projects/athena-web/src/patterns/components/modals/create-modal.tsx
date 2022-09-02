@@ -9,6 +9,7 @@ import {createNote} from "../../../main/state/features/open-vault/notes/notes-ac
 import {createTemplate} from "../../../main/state/features/open-vault/templates/templates-actions";
 import {Modal} from "./modal";
 import {v4 as createUUID} from "uuid";
+import {createTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-actions";
 
 export function CreateModal() {
   const dispatch = useAppDispatch();
@@ -57,7 +58,13 @@ export function CreateModal() {
               }));
             }
             else if (createModal.type === ContentType.TASK_LIST) {
-              console.log("create task list");
+              dispatch(createTaskList({
+                id: createUUID(),
+                name: name,
+                folderId: null,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+              }));
             }
 
             // Reset name so it won't persist on next use of the modal.

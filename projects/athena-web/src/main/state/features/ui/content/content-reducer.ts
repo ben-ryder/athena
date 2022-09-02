@@ -3,6 +3,7 @@ import {createNote, deleteNote} from "../../open-vault/notes/notes-actions";
 import {ContentType, UIContentState} from "./content-interface";
 import {createTemplate, deleteTemplate} from "../../open-vault/templates/templates-actions";
 import {closeContent, openAndSwitchContent} from "./content-actions";
+import {createTaskList, deleteTaskList} from "../../open-vault/task-lists/task-lists-actions";
 
 
 export const initialUIContentState: UIContentState = {
@@ -26,6 +27,16 @@ export const uiContentReducer = createReducer(
     builder.addCase(createTemplate, (state, action) => {
       const content = {
         type: ContentType.TEMPLATE,
+        id: action.payload.id
+      };
+
+      state.openContent.push(content);
+      state.activeContent = content;
+    })
+
+    builder.addCase(createTaskList, (state, action) => {
+      const content = {
+        type: ContentType.TASK_LIST,
         id: action.payload.id
       };
 
@@ -70,6 +81,16 @@ export const uiContentReducer = createReducer(
     })
 
     builder.addCase(deleteTemplate, (state, action) => {
+      if (state.activeContent?.id === action.payload.id) {
+        state.activeContent = null;
+      }
+
+      state.openContent = state.openContent.filter(content => {
+        return content.id !== action.payload.id;
+      })
+    })
+
+    builder.addCase(deleteTaskList, (state, action) => {
       if (state.activeContent?.id === action.payload.id) {
         state.activeContent = null;
       }

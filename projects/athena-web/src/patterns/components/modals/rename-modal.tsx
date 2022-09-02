@@ -8,6 +8,7 @@ import {ContentType} from "../../../main/state/features/ui/content/content-inter
 import {renameNote} from "../../../main/state/features/open-vault/notes/notes-actions";
 import {renameTemplate} from "../../../main/state/features/open-vault/templates/templates-actions";
 import {Modal} from "./modal";
+import {renameTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-actions";
 
 export function RenameModal() {
   const dispatch = useAppDispatch();
@@ -49,7 +50,10 @@ export function RenameModal() {
               }))
             }
             else if (renameModal.content?.type === ContentType.TASK_LIST) {
-              console.log("update task list title");
+              dispatch(renameTaskList({
+                id: renameModal.content.data.id,
+                name: newName
+              }))
             }
             closeModal();
           }}

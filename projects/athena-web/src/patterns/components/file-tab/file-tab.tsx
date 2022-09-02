@@ -2,6 +2,7 @@ import React from "react";
 import {
   File as NoteTypeIcon,
   LayoutTemplate as TemplateTypeIcon,
+  ListChecks as TaskListTypeIcon,
   X as CloseIcon
 } from "lucide-react";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
@@ -28,8 +29,11 @@ export function ContentFileTab(props: ContentFileTabProps) {
   if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall}/>
   }
-  else {
+  else if (props.content.type === ContentType.TEMPLATE){
     icon = <TemplateTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall} />
+  }
+  else {
+      icon = <TaskListTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall} />
   }
 
   return (

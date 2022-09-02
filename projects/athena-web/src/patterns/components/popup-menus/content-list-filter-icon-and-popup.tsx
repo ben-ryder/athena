@@ -49,10 +49,6 @@ export function ContentListFilterIconAndPopup() {
                   value: "notes"
                 },
                 {
-                  name: "Templates",
-                  value: "templates"
-                },
-                {
                   name: "Task Lists",
                   value: "taskLists"
                 }
