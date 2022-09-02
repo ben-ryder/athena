@@ -9,11 +9,11 @@ export default defineConfig({
     })
   ],
   optimizeDeps: {
-    include: ["@ben-ryder/athena-js-lib", "@ben-ryder/athena-testing"]
+    include: ["@ben-ryder/athena-js-lib"]
   },
   build: {
     commonjsOptions: {
-      include: [/athena-js-lib/, /athena-testing/, /node_modules/],
+      include: [/athena-js-lib/, /node_modules/],
     }
   },
   server: {

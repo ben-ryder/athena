@@ -4,10 +4,7 @@ import { Combobox } from '@headlessui/react';
 
 import {X as XIcon, Tags as TagsIcon} from "lucide-react";
 
-import {ErrorText, Label, iconColorClassNames, iconSizes, IconButton, colourPalette} from "@ben-ryder/jigsaw";
-import {DropdownOption} from "./dropdown-option";
-import {DropdownContainer} from "./dropdown-container";
-import {Tag} from "../../element/tag";
+import {ErrorText, Label, iconColorClassNames, iconSizes, IconButton, colourPalette, Tag} from "@ben-ryder/jigsaw";
 
 export interface TagSelectorOption {
   name: string,
