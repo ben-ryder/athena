@@ -8,16 +8,17 @@ export enum ViewModes {
 }
 
 export interface ListViewFilters {
-  contentTypes: ContentType[] | null,
-  search: string | null,
+  contentTypes: ContentType[],
+  search: string,
   orderBy: OrderBy,
   orderDirection: OrderDirection,
-  currentPage: number
+  tags: string[]
 }
 
 export interface UIViewState {
   currentViewMode: ViewModes,
   listView: {
-    filters: ListViewFilters
+    filters: ListViewFilters,
+    currentPage: number
   }
 }

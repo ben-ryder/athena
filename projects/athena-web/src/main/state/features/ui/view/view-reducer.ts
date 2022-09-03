@@ -1,16 +1,22 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {switchCurrentViewMode} from "./view-actions";
-import {UIViewState, ViewModes} from "./view-interface";
+import {decrementPage, incrementPage, resetListFilters, switchCurrentViewMode, updateListFilters} from "./view-actions";
+import {ListViewFilters, UIViewState, ViewModes} from "./view-interface";
+import {ContentType} from "../content/content-interface";
+import {OrderBy, OrderDirection} from "../../open-vault/open-vault-interfaces";
+
+export const defaultListFilters: ListViewFilters = {
+  search: "",
+  contentTypes: [ContentType.NOTE, ContentType.TASK_LIST],
+  orderBy: OrderBy.NAME,
+  orderDirection: OrderDirection.DESC,
+  tags: []
+}
 
 export const initialUIViewState: UIViewState = {
   currentViewMode: ViewModes.LIST_VIEW,
   listView: {
-    filters: {
-      search: null,
-      contentType: null,
-      pageSize: 12,
-      currentPage: 0
-    }
+    filters: defaultListFilters,
+    currentPage: 1
   }
 };
 
@@ -19,6 +25,24 @@ export const uiViewReducer = createReducer(
   (builder) => {
     builder.addCase(switchCurrentViewMode, (state, action) => {
       state.currentViewMode = action.payload;
+    })
+
+    builder.addCase(updateListFilters, (state, action) => {
+      state.listView.filters = action.payload;
+    })
+
+    builder.addCase(resetListFilters, (state, action) => {
+      state.listView.filters = defaultListFilters;
+    })
+
+    builder.addCase(incrementPage, (state) => {
+      state.listView.currentPage++;
+    })
+
+    builder.addCase(decrementPage, (state) => {
+      if (state.listView.currentPage > 1) {
+        state.listView.currentPage--;
+      }
     })
   }
 );
