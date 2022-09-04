@@ -12,7 +12,7 @@ export function ContentList() {
   const dispatch = useAppDispatch();
   const contentListData = useSelector(selectContentList);
 
-  const totalPages = Math.round(contentListData.meta.total / contentListData.meta.pageSize);
+  const totalPages = Math.max(Math.round(contentListData.meta.total / contentListData.meta.pageSize), 1);
   const totalCurrentCount = contentListData.meta.pageSize * (contentListData.meta.currentPage - 1) + contentListData.list.length;
 
   const showBackArrow = contentListData.meta.currentPage > 1;

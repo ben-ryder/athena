@@ -45,13 +45,13 @@ const orderByOptions = [
 
 const orderDirectionOptions = [
   {
-    name: "DESC",
-    value: OrderDirection.DESC
-  },
-  {
     name: "ASC",
     value: OrderDirection.ASC
   },
+  {
+    name: "DESC",
+    value: OrderDirection.DESC
+  }
 ];
 
 export interface ListFilterFormProps {

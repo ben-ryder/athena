@@ -47,7 +47,7 @@ export function ContentCard(props: ContentCardProps) {
         data-tip={`Open ${props.content.data.name}`}
         data-place="right"
         aria-label={`Open ${props.content.data.name}`}
-        className="absolute w-full h-full left-0 top-0"
+        className="absolute w-[calc(100%-50px)] h-full left-0 top-0"
         onClick={() => {
           dispatch(openAndSwitchContent({
             type: props.content.type,
@@ -74,7 +74,7 @@ export function ContentCard(props: ContentCardProps) {
             {/*)}*/}
           </div>
         </div>
-        <div className="z-20">
+        <div className="">
           <ContentActionsIconAndPopup content={props.content} />
         </div>
       </div>

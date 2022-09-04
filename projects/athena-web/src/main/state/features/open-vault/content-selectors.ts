@@ -5,6 +5,7 @@ import {selectTemplatesState} from "./templates/templates-selectors";
 import {ContentData} from "../ui/content/content-selctors";
 import {selectTaskListsState} from "./task-lists/task-lists-selectors";
 import {selectCurrentPage, selectListFilters} from "../ui/view/view-selectors";
+import {OrderBy, OrderDirection} from "./open-vault-interfaces";
 
 export const pageSize = 12;
 
@@ -41,11 +42,56 @@ export const selectContentList = createSelector([selectCurrentPage, selectListFi
     }
   })
 
-  const allContent = noteContent
+  let allContent = noteContent
     .concat(templateContent)
     .concat(taskListContent)
-    // todo: in future other state will determine specific sort field, pagination etc
-    .sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+  allContent = allContent.filter(content => {
+    if (!content.data.name.toLowerCase().includes(filters.search.toLowerCase())) {
+      return false;
+    }
+
+    if (!filters.contentTypes.includes(content.type)) {
+      return false;
+    }
+
+    // todo: add tags filter
+
+    return true;
+  })
+
+  if (filters.orderBy === OrderBy.NAME) {
+    if (filters.orderDirection === OrderDirection.ASC) {
+      allContent = allContent.sort((a, b) => a.data.name.localeCompare(b.data.name));
+    }
+    else {
+      allContent = allContent.sort((a, b) => b.data.name.localeCompare(a.data.name));
+    }
+  }
+  else if (filters.orderBy === OrderBy.UPDATED_AT) {
+    if (filters.orderDirection === OrderDirection.ASC) {
+      allContent = allContent.sort((a, b) => {
+        return a.data.updatedAt > b.data.updatedAt ? 1 : -1;
+      })
+    }
+    else {
+      allContent = allContent.sort((a, b) => {
+        return a.data.updatedAt > b.data.updatedAt ? -1 : 1;
+      })
+    }
+  }
+  else {
+    if (filters.orderDirection === OrderDirection.ASC) {
+      allContent = allContent.sort((a, b) => {
+        return a.data.createdAt > b.data.createdAt ? 1 : -1;
+      })
+    }
+    else {
+      allContent = allContent.sort((a, b) => {
+        return a.data.createdAt > b.data.createdAt ? -1 : 1;
+      })
+    }
+  }
 
   const contentListPage = allContent
     .slice(pageSize * (page - 1), pageSize * (page - 1) + pageSize);

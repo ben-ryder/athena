@@ -8,7 +8,7 @@ export const defaultListFilters: ListViewFilters = {
   search: "",
   contentTypes: [ContentType.NOTE, ContentType.TASK_LIST],
   orderBy: OrderBy.NAME,
-  orderDirection: OrderDirection.DESC,
+  orderDirection: OrderDirection.ASC,
   tags: []
 }
 
@@ -29,10 +29,12 @@ export const uiViewReducer = createReducer(
 
     builder.addCase(updateListFilters, (state, action) => {
       state.listView.filters = action.payload;
+      state.listView.currentPage = 1;
     })
 
     builder.addCase(resetListFilters, (state, action) => {
       state.listView.filters = defaultListFilters;
+      state.listView.currentPage = 1;
     })
 
     builder.addCase(incrementPage, (state) => {
