@@ -19,7 +19,7 @@ export function ContentList() {
   const showForwardArrow = contentListData.meta.total - totalCurrentCount > 0;
 
   return (
-    <div>
+    <>
       <div className="mx-4 mt-4">
         {contentListData.list.map(content =>
           <ContentCard
@@ -33,7 +33,7 @@ export function ContentList() {
             </div>
         }
       </div>
-      <div className="mt-6 mx-4 flex justify-between items-center">
+      <div className="my-6 mx-4 flex justify-between items-center">
         <p className="text-br-whiteGrey-100">page {contentListData.meta.currentPage}/{totalPages} - {totalCurrentCount}/{contentListData.meta.total} items</p>
         <div className="flex items-center">
           {showBackArrow &&
@@ -51,6 +51,6 @@ export function ContentList() {
           }
         </div>
       </div>
-    </div>
+    </>
   )
 }

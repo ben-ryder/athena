@@ -34,6 +34,7 @@ import {RenameModal} from "../patterns/components/modals/rename-modal";
 import {DeleteModal} from "../patterns/components/modals/delete-modal";
 import {CreateModal} from "../patterns/components/modals/create-modal";
 import {TagSelector} from "../patterns/components/tag-selector/tag-selector";
+import {TagsView} from "../patterns/components/tags-view";
 
 
 export function MainPage() {
@@ -64,7 +65,7 @@ export function Application() {
     viewContent = <p>Folder Tree</p>
   }
   else {
-    viewContent = <p>Tags</p>
+    viewContent = <TagsView />
   }
 
   return (
