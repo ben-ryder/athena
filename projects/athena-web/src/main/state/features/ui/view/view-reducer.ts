@@ -1,10 +1,15 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {decrementPage, incrementPage, resetListFilters, switchCurrentViewMode, updateListFilters} from "./view-actions";
-import {ListViewFilters, UIViewState, ViewModes} from "./view-interface";
+import {
+  decrementContentList,
+  decrementTagsList, incrementContentList,
+  incrementTagsList, resetContentListFilters, resetTagsListFilters,
+  switchCurrentViewMode, updateContentListFilters, updateTagsListFilters,
+} from "./view-actions";
+import {ContentListFilters, TagsListFilters, UIViewState, ViewModes} from "./view-interface";
 import {ContentType} from "../content/content-interface";
 import {OrderBy, OrderDirection} from "../../open-vault/open-vault-interfaces";
 
-export const defaultListFilters: ListViewFilters = {
+export const defaultContentListFilters: ContentListFilters = {
   search: "",
   contentTypes: [ContentType.NOTE, ContentType.TASK_LIST],
   orderBy: OrderBy.NAME,
@@ -12,10 +17,21 @@ export const defaultListFilters: ListViewFilters = {
   tags: []
 }
 
+export const defaultTagsListFilters: TagsListFilters = {
+  search: "",
+  orderBy: OrderBy.NAME,
+  orderDirection: OrderDirection.ASC
+}
+
+
 export const initialUIViewState: UIViewState = {
   currentViewMode: ViewModes.LIST_VIEW,
-  listView: {
-    filters: defaultListFilters,
+  contentList: {
+    filters: defaultContentListFilters,
+    currentPage: 1
+  },
+  tagsList: {
+    filters: defaultTagsListFilters,
     currentPage: 1
   }
 };
@@ -27,23 +43,45 @@ export const uiViewReducer = createReducer(
       state.currentViewMode = action.payload;
     })
 
-    builder.addCase(updateListFilters, (state, action) => {
-      state.listView.filters = action.payload;
-      state.listView.currentPage = 1;
+    // Content List
+    builder.addCase(updateContentListFilters, (state, action) => {
+      state.contentList.filters = action.payload;
+      state.contentList.currentPage = 1;
     })
 
-    builder.addCase(resetListFilters, (state, action) => {
-      state.listView.filters = defaultListFilters;
-      state.listView.currentPage = 1;
+    builder.addCase(resetContentListFilters, (state, action) => {
+      state.contentList.filters = defaultContentListFilters;
+      state.contentList.currentPage = 1;
     })
 
-    builder.addCase(incrementPage, (state) => {
-      state.listView.currentPage++;
+    builder.addCase(incrementContentList, (state) => {
+      state.contentList.currentPage++;
     })
 
-    builder.addCase(decrementPage, (state) => {
-      if (state.listView.currentPage > 1) {
-        state.listView.currentPage--;
+    builder.addCase(decrementContentList, (state) => {
+      if (state.contentList.currentPage > 1) {
+        state.contentList.currentPage--;
+      }
+    })
+
+    // Tags List
+    builder.addCase(updateTagsListFilters, (state, action) => {
+      state.tagsList.filters = action.payload;
+      state.tagsList.currentPage = 1;
+    })
+
+    builder.addCase(resetTagsListFilters, (state, action) => {
+      state.tagsList.filters = defaultTagsListFilters;
+      state.tagsList.currentPage = 1;
+    })
+
+    builder.addCase(incrementTagsList, (state) => {
+      state.tagsList.currentPage++;
+    })
+
+    builder.addCase(decrementTagsList, (state) => {
+      if (state.tagsList.currentPage > 1) {
+        state.tagsList.currentPage--;
       }
     })
   }

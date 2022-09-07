@@ -5,27 +5,15 @@ import {Button, iconSizes, Input, MultiSelect, Select} from "@ben-ryder/jigsaw";
 import React, {useState} from "react";
 import {useAppDispatch} from "../../../main/state/store";
 import {useSelector} from "react-redux";
-import {selectContentListFilters} from "../../../main/state/features/ui/view/view-selectors";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
+import {selectTagsListFilters} from "../../../main/state/features/ui/view/view-selectors";
 import {OrderBy, OrderDirection} from "../../../main/state/features/open-vault/open-vault-interfaces";
-import {resetContentListFilters, updateContentListFilters} from "../../../main/state/features/ui/view/view-actions";
+import {
+  resetTagsListFilters,
+  updateTagsListFilters
+} from "../../../main/state/features/ui/view/view-actions";
 import { Popover } from "@headlessui/react";
-import {defaultContentListFilters} from "../../../main/state/features/ui/view/view-reducer";
+import {defaultTagsListFilters} from "../../../main/state/features/ui/view/view-reducer";
 
-const contentTypeOptions = [
-  {
-    name: "Notes",
-    value: ContentType.NOTE
-  },
-  {
-    name: "Task Lists",
-    value: ContentType.TASK_LIST
-  },
-  {
-    name: "Templates",
-    value: ContentType.TEMPLATE
-  }
-];
 
 const orderByOptions = [
   {
@@ -58,15 +46,13 @@ export interface ListFilterFormProps {
 }
 
 
-export function ListFilterForm(props: ListFilterFormProps) {
+export function TagsListFilterForm(props: ListFilterFormProps) {
   const dispatch = useAppDispatch();
-  const filters = useSelector(selectContentListFilters);
+  const filters = useSelector(selectTagsListFilters);
 
   const [search, setSearch] = useState<string>(filters.search);
-  const [contentTypes, setContentTypes] = useState<ContentType[]>(filters.contentTypes);
   const [orderBy, setOrderBy] = useState<OrderBy>(filters.orderBy);
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(filters.orderDirection);
-  const [tags, setTags] = useState<string[]>(filters.tags);
 
   let orderByOption;
   if (orderBy === OrderBy.NAME) {
@@ -104,68 +90,36 @@ export function ListFilterForm(props: ListFilterFormProps) {
 
   return (
     <form
-      className="p-2 max-w-[350px]"
+      className="p-2 w-[350px]"
       onSubmit={(e) => {
         e.preventDefault();
 
         props.onClose()
-        dispatch(updateContentListFilters({
+        dispatch(updateTagsListFilters({
           search: search,
-          contentTypes: contentTypes,
           orderBy: orderBy,
-          orderDirection: orderDirection,
-          tags: []
+          orderDirection: orderDirection
         }))
       }}
     >
       <div className="">
         <Input
-          id="filters-search" label="Search" type="text" placeholder="search content..."
+          id="tags-list-search" label="Search" type="text" placeholder="search tags..."
           value={search} onChange={(e) => {setSearch(e.target.value)}}
-        />
-      </div>
-      <div className="mt-2">
-        <MultiSelect
-          id="filters-content-type" label="Content Types" placeholder="select types..."
-          options={contentTypeOptions}
-          currentOptions={contentTypes.map(contentType => {
-            if (contentType === ContentType.NOTE) {
-              return {
-                name: "Notes",
-                value: ContentType.NOTE
-              }
-            }
-            else if (contentType === ContentType.TASK_LIST) {
-              return {
-                name: "Task Lists",
-                value: ContentType.TASK_LIST
-              }
-            }
-            else {
-             return {
-               name: "Templates",
-               value: ContentType.TEMPLATE
-             }
-            }
-          })}
-          onOptionsChange={(options) => {
-            const contentTypes = options.map(option => option.value) as ContentType[];
-            setContentTypes(contentTypes);
-          }}
         />
       </div>
       <div className="mt-2">
         <div className="flex items-center">
           <Select
             className="w-[60%]"
-            id="filters-sort-by" label="Order By"
+            id="tags-list-sort-by" label="Order By"
             options={orderByOptions}
             currentOption={orderByOption}
             onOptionChange={(option) => {setOrderBy(option.value as OrderBy)}}
           />
           <Select
             className="w-[40%] ml-2"
-            id="filters-order-direction" label="Order Direction"
+            id="tags-list-order-direction" label="Order Direction"
             options={orderDirectionOptions}
             currentOption={orderDirectionOption}
             onOptionChange={(option) => {setOrderDirection(option.value as OrderDirection)}}
@@ -173,42 +127,11 @@ export function ListFilterForm(props: ListFilterFormProps) {
         </div>
       </div>
 
-      <div className="mt-2">
-        <MultiSelect
-          id="filters-tags" label="Tags" placeholder="select tags..."
-          options={[
-            {
-              name: "Tag 1",
-              value: "tag 2"
-            },
-            {
-              name: "Tag 2",
-              value: "tag 2"
-            },
-            {
-              name: "Tag 3",
-              value: "tag 3"
-            }
-          ]}
-          currentOptions={[
-            {
-              name: "Tag 1",
-              value: "tag 1"
-            },
-            {
-              name: "Tag 2",
-              value: "tag 2"
-            }
-          ]}
-          onOptionsChange={() => {}}
-        />
-      </div>
-
       <div className="mt-4 flex justify-end items-center">
         <Popover.Button
           as={Button}
           styling="secondary" type="button" className="mr-2"
-          onClick={() => {dispatch(resetContentListFilters())}}
+          onClick={() => {dispatch(resetTagsListFilters())}}
         >Clear</Popover.Button>
         <Popover.Button
           as={Button}
@@ -220,9 +143,9 @@ export function ListFilterForm(props: ListFilterFormProps) {
 }
 
 
-export function ContentListFilterIconAndPopup() {
-  const filters = useSelector(selectContentListFilters);
-  const filtersAreActive = JSON.stringify(filters) !== JSON.stringify(defaultContentListFilters)
+export function TagsListFilterIconAndPopup() {
+  const filters = useSelector(selectTagsListFilters);
+  const filtersAreActive = JSON.stringify(filters) !== JSON.stringify(defaultTagsListFilters)
 
   return (
     <ContentWithPopup
@@ -242,7 +165,7 @@ export function ContentListFilterIconAndPopup() {
       }
       popupContent={
         <div className="p-2 maw-w-[350px]">
-          <ListFilterForm onClose={() => {}} />
+          <TagsListFilterForm onClose={() => {}} />
         </div>
       }
     />

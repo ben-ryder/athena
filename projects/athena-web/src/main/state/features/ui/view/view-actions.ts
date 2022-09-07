@@ -1,20 +1,34 @@
 import {createAction} from "@reduxjs/toolkit";
-import {ListViewFilters, ViewModes} from "./view-interface";
+import {ContentListFilters, TagsListFilters, ViewModes} from "./view-interface";
 
 export enum UIViewActions {
   SWITCH_VIEW_MODE = "viewMode/switch",
-  UPDATE_FILTERS = "listFilters/update",
-  RESET_FILTERS = "listFilters/reset",
-  PAGE_INCREMENT = "listPage/increment",
-  PAGE_DECREMENT = "listPage/decrement"
+  CONTENT_LIST_UPDATE_FILTERS = "contentList/filters/update",
+  CONTENT_LIST_RESET_FILTERS = "contentList/filters/reset",
+  CONTENT_LIST_INCREMENT = "contentList/increment",
+  CONTENT_LIST_DECREMENT = "contentList/decrement",
+  TAGS_LIST_UPDATE_FILTERS = "tagsList/filters/update",
+  TAGS_LIST_RESET_FILTERS = "tagsList/filters/reset",
+  TAGS_INCREMENT = "tagsList/increment",
+  TAGS_DECREMENT = "tagsList/decrement"
 }
 
 export const switchCurrentViewMode = createAction<ViewModes>(UIViewActions.SWITCH_VIEW_MODE);
 
-export const updateListFilters = createAction<ListViewFilters>(UIViewActions.UPDATE_FILTERS);
+// Content List
+export const updateContentListFilters = createAction<ContentListFilters>(UIViewActions.CONTENT_LIST_UPDATE_FILTERS);
 
-export const resetListFilters = createAction(UIViewActions.RESET_FILTERS);
+export const resetContentListFilters = createAction(UIViewActions.CONTENT_LIST_RESET_FILTERS);
 
-export const incrementPage = createAction(UIViewActions.PAGE_INCREMENT);
+export const incrementContentList = createAction(UIViewActions.CONTENT_LIST_INCREMENT);
 
-export const decrementPage = createAction(UIViewActions.PAGE_DECREMENT);
+export const decrementContentList = createAction(UIViewActions.CONTENT_LIST_DECREMENT);
+
+// Tags List
+export const updateTagsListFilters = createAction<TagsListFilters>(UIViewActions.TAGS_LIST_UPDATE_FILTERS);
+
+export const resetTagsListFilters = createAction(UIViewActions.TAGS_LIST_RESET_FILTERS);
+
+export const incrementTagsList = createAction(UIViewActions.TAGS_INCREMENT);
+
+export const decrementTagsList = createAction(UIViewActions.TAGS_DECREMENT);

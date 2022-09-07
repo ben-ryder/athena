@@ -1,11 +1,11 @@
 import React from "react";
 import {ContentCard} from "./content-card/content-card";
 import {useSelector} from "react-redux";
-import {selectContentList} from "../../main/state/features/open-vault/content-selectors";
+import {selectContentList} from "../../main/state/features/open-vault/content-list-selectors";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {ArrowLeft, ArrowRight } from "lucide-react";
 import {useAppDispatch} from "../../main/state/store";
-import {decrementPage, incrementPage} from "../../main/state/features/ui/view/view-actions";
+import {decrementContentList, incrementContentList} from "../../main/state/features/ui/view/view-actions";
 
 
 export function ContentList() {
@@ -39,14 +39,14 @@ export function ContentList() {
           {showBackArrow &&
               <IconButton
                   label="Back Page" icon={<ArrowLeft size={iconSizes.medium} className={iconColorClassNames.secondary}/>}
-                  onClick={() => {dispatch(decrementPage())}}
+                  onClick={() => {dispatch(decrementContentList())}}
               />
           }
           {showForwardArrow &&
               <IconButton
                   className="ml-2"
                   label="Forward Page" icon={<ArrowRight size={iconSizes.medium} className={iconColorClassNames.secondary}/>}
-                  onClick={() => {dispatch(incrementPage())}}
+                  onClick={() => {dispatch(incrementContentList())}}
               />
           }
         </div>

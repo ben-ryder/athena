@@ -7,7 +7,7 @@ export enum ViewModes {
   TAGS_VIEW = "TAGS_VIEW"
 }
 
-export interface ListViewFilters {
+export interface ContentListFilters {
   contentTypes: ContentType[],
   search: string,
   orderBy: OrderBy,
@@ -15,10 +15,20 @@ export interface ListViewFilters {
   tags: string[]
 }
 
+export interface TagsListFilters {
+  search: string,
+  orderBy: OrderBy,
+  orderDirection: OrderDirection
+}
+
 export interface UIViewState {
   currentViewMode: ViewModes,
-  listView: {
-    filters: ListViewFilters,
+  contentList: {
+    filters: ContentListFilters,
+    currentPage: number
+  },
+  tagsList: {
+    filters: TagsListFilters,
     currentPage: number
   }
 }

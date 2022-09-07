@@ -4,23 +4,18 @@ import {selectNotesState} from "./notes/notes-selectors";
 import {selectTemplatesState} from "./templates/templates-selectors";
 import {ContentData} from "../ui/content/content-selctors";
 import {selectTaskListsState} from "./task-lists/task-lists-selectors";
-import {selectCurrentPage, selectListFilters} from "../ui/view/view-selectors";
+import {selectContentListPage, selectContentListFilters} from "../ui/view/view-selectors";
 import {OrderBy, OrderDirection} from "./open-vault-interfaces";
+import {ListingMetadata} from "../../common/listing-metadata";
 
-export const pageSize = 12;
-
-export interface ListingMetadata {
-  currentPage: number,
-  pageSize: number,
-  total: number
-}
+export const contentListPageSize = 12;
 
 export interface ContentListData {
   meta: ListingMetadata,
   list: ContentData[]
 }
 
-export const selectContentList = createSelector([selectCurrentPage, selectListFilters, selectNotesState, selectTemplatesState, selectTaskListsState], (page, filters, notes, templates, taskLists) => {
+export const selectContentList = createSelector([selectContentListPage, selectContentListFilters, selectNotesState, selectTemplatesState, selectTaskListsState], (page, filters, notes, templates, taskLists) => {
   const noteContent: ContentData[] = notes.ids.map(noteId => {
     return {
       type: ContentType.NOTE,
@@ -94,11 +89,11 @@ export const selectContentList = createSelector([selectCurrentPage, selectListFi
   }
 
   const contentListPage = allContent
-    .slice(pageSize * (page - 1), pageSize * (page - 1) + pageSize);
+    .slice(contentListPageSize * (page - 1), contentListPageSize * (page - 1) + contentListPageSize);
 
   const meta: ListingMetadata = {
     total: allContent.length,
-    pageSize: pageSize,
+    pageSize: contentListPageSize,
     currentPage: page
   }
 
