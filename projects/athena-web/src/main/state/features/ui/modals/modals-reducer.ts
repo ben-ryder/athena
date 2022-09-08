@@ -1,12 +1,12 @@
 import {UIModalsState} from "./modals-interface";
 import {createReducer} from "@reduxjs/toolkit";
 import {
-  closeCreateModal,
-  closeDeleteModal,
-  closeRenameModal,
-  openCreateModal,
-  openDeleteModal,
-  openRenameModal
+  closeCreateContentModal,
+  closeDeleteContentModal, closeDeleteTagModal,
+  closeRenameContentModal,
+  openCreateContentModal,
+  openDeleteContentModal, openDeleteTagModal,
+  openRenameContentModal
 } from "./modals-actions";
 
 export const initialUIModalsState: UIModalsState = {
@@ -21,40 +21,56 @@ export const initialUIModalsState: UIModalsState = {
   createContent: {
     isOpen: false,
     type: null
+  },
+  deleteTag: {
+    isOpen: false,
+    tag: null
   }
 };
 
 export const uiModalsReducer = createReducer(
   initialUIModalsState,
   (builder) => {
-    builder.addCase(openRenameModal, (state, action) => {
+    // Content Modals
+    builder.addCase(openRenameContentModal, (state, action) => {
       state.renameContent.isOpen = true;
       state.renameContent.content = action.payload;
     })
 
-    builder.addCase(closeRenameModal, (state) => {
+    builder.addCase(closeRenameContentModal, (state) => {
       state.renameContent.isOpen = false;
       state.renameContent.content = null;
     })
 
-    builder.addCase(openDeleteModal, (state, action) => {
+    builder.addCase(openDeleteContentModal, (state, action) => {
       state.deleteContent.isOpen = true;
       state.deleteContent.content = action.payload;
     })
 
-    builder.addCase(closeDeleteModal, (state) => {
+    builder.addCase(closeDeleteContentModal, (state) => {
       state.deleteContent.isOpen = false;
       state.deleteContent.content = null;
     })
 
-    builder.addCase(openCreateModal, (state, action) => {
+    builder.addCase(openCreateContentModal, (state, action) => {
       state.createContent.isOpen = true;
       state.createContent.type = action.payload;
     })
 
-    builder.addCase(closeCreateModal, (state) => {
+    builder.addCase(closeCreateContentModal, (state) => {
       state.createContent.isOpen = false;
       state.createContent.type = null;
+    })
+
+    // Tag Modals
+    builder.addCase(openDeleteTagModal, (state, action) => {
+      state.deleteTag.isOpen = true;
+      state.deleteTag.tag = action.payload;
+    })
+
+    builder.addCase(closeDeleteTagModal, (state) => {
+      state.deleteTag.isOpen = false;
+      state.deleteTag.tag = null;
     })
   }
 );

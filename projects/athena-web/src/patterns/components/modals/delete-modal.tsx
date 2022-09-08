@@ -1,7 +1,7 @@
 import {useSelector} from "react-redux";
-import {selectDeleteModal} from "../../../main/state/features/ui/modals/modals-selectors";
+import {selectDeleteContentModal} from "../../../main/state/features/ui/modals/modals-selectors";
 import {useAppDispatch} from "../../../main/state/store";
-import {closeDeleteModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {closeDeleteContentModal} from "../../../main/state/features/ui/modals/modals-actions";
 import {Button} from "@ben-ryder/jigsaw";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
 import {deleteNote} from "../../../main/state/features/open-vault/notes/notes-actions";
@@ -11,12 +11,28 @@ import {deleteTaskList} from "../../../main/state/features/open-vault/task-lists
 
 export function DeleteModal() {
   const dispatch = useAppDispatch();
-  const deleteModal = useSelector(selectDeleteModal);
-  const closeModal = () => {dispatch(closeDeleteModal())};
+  const deleteModal = useSelector(selectDeleteContentModal);
+  const closeModal = () => {dispatch(closeDeleteContentModal())};
+
+  let contentType;
+  switch (deleteModal.content?.type) {
+    case ContentType.TASK_LIST: {
+      contentType = "task list"
+      break;
+    }
+    case ContentType.TEMPLATE: {
+      contentType = "template"
+      break ;
+    }
+    default: {
+      contentType = "note"
+      break;
+    }
+  }
 
   return (
     <Modal
-      heading={`Delete ${deleteModal.content?.data.name}`}
+      heading={`Delete '${deleteModal.content?.data.name}' ${contentType}`}
       isOpen={deleteModal.isOpen}
       onClose={closeModal}
       content={

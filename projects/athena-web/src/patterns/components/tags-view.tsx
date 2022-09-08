@@ -12,6 +12,7 @@ import {
   decrementTagsList,
   incrementTagsList
 } from "../../main/state/features/ui/view/view-actions";
+import {TagCard} from "./tag-card";
 
 export function TagsView() {
   const dispatch = useAppDispatch();
@@ -60,13 +61,7 @@ export function TagsView() {
           </div>
       }
       {tagsData.list.map(tag =>
-        <div className="bg-br-atom-700 p-4 m-4">
-          <Tag
-            text={tag.name}
-            bgColor={tag.backgroundColour || colourPalette.teal["600"]}
-            fgColor={tag.textColour || colourPalette.whiteGrey["50"]}
-          />
-        </div>
+        <TagCard tag={tag} />
       )}
       <div className="my-6 mx-4 flex justify-between items-center">
         <p className="text-br-whiteGrey-100">page {tagsData.meta.currentPage}/{totalPages} - {totalCurrentCount}/{tagsData.meta.total} items</p>

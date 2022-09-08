@@ -1,7 +1,7 @@
 import {useSelector} from "react-redux";
-import {selectRenameModal} from "../../../main/state/features/ui/modals/modals-selectors";
+import {selectRenameContentModal} from "../../../main/state/features/ui/modals/modals-selectors";
 import {useAppDispatch} from "../../../main/state/store";
-import {closeRenameModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {closeRenameContentModal} from "../../../main/state/features/ui/modals/modals-actions";
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useEffect, useRef, useState} from "react";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
@@ -12,11 +12,27 @@ import {renameTaskList} from "../../../main/state/features/open-vault/task-lists
 
 export function RenameModal() {
   const dispatch = useAppDispatch();
-  const renameModal = useSelector(selectRenameModal);
-  const closeModal = () => {dispatch(closeRenameModal())};
+  const renameModal = useSelector(selectRenameContentModal);
+  const closeModal = () => {dispatch(closeRenameContentModal())};
 
   const [newName, setNewName] = useState<string>("");
   const ref = useRef<HTMLInputElement>(null);
+
+  let contentType;
+  switch (renameModal.content?.type) {
+    case ContentType.TASK_LIST: {
+      contentType = "task list"
+      break;
+    }
+    case ContentType.TEMPLATE: {
+      contentType = "template"
+      break ;
+    }
+    default: {
+      contentType = "note"
+      break;
+    }
+  }
 
   useEffect(() => {
     setNewName(renameModal.content?.data.name || "");
@@ -31,7 +47,7 @@ export function RenameModal() {
 
   return (
     <Modal
-      heading={`Rename ${renameModal.content?.data.name}`}
+      heading={`Rename '${renameModal.content?.data.name}' ${contentType}`}
       isOpen={renameModal.isOpen}
       onClose={closeModal}
       content={

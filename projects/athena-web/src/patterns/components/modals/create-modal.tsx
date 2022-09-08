@@ -1,7 +1,7 @@
 import {useSelector} from "react-redux";
-import {selectCreateModal} from "../../../main/state/features/ui/modals/modals-selectors";
+import {selectCreateContentModal} from "../../../main/state/features/ui/modals/modals-selectors";
 import {useAppDispatch} from "../../../main/state/store";
-import {closeCreateModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {closeCreateContentModal} from "../../../main/state/features/ui/modals/modals-actions";
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
@@ -13,8 +13,8 @@ import {createTaskList} from "../../../main/state/features/open-vault/task-lists
 
 export function CreateModal() {
   const dispatch = useAppDispatch();
-  const createModal = useSelector(selectCreateModal);
-  const closeModal = () => {dispatch(closeCreateModal())};
+  const createModal = useSelector(selectCreateContentModal);
+  const closeModal = () => {dispatch(closeCreateContentModal())};
   const [name, setName] = useState<string>("");
 
   let contentType;

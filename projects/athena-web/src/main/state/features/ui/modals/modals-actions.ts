@@ -1,24 +1,36 @@
 import {createAction} from "@reduxjs/toolkit";
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
+import {Tag} from "../../open-vault/open-vault-interfaces";
 
 export enum UIModalsActions {
-  RENAME_OPEN = "modals/rename/open",
-  RENAME_CLOSE = "modals/rename/close",
-  DELETE_OPEN = "modals/delete/open",
-  DELETE_CLOSE = "modals/delete/close",
-  CREATE_OPEN = "modals/create/open",
-  CREATE_CLOSE = "modals/create/close"
+  // Content
+  RENAME_CONTENT_OPEN = "modals/content/rename/open",
+  RENAME_CONTENT_CLOSE = "modals/content/rename/close",
+  DELETE_CONTENT_OPEN = "modals/content/delete/open",
+  DELETE_CONTENT_CLOSE = "modals/content/delete/close",
+  CREATE_CONTENT_OPEN = "modals/content/create/open",
+  CREATE_CONTENT_CLOSE = "modals/content/create/close",
+
+  // Tags
+  DELETE_TAG_OPEN = "modals/tags/delete/open",
+  DELETE_TAG_CLOSE = "modals/tags/delete/close",
 }
 
-export const openRenameModal = createAction<ContentData>(UIModalsActions.RENAME_OPEN);
+// Content Modals
+export const openRenameContentModal = createAction<ContentData>(UIModalsActions.RENAME_CONTENT_OPEN);
 
-export const closeRenameModal = createAction(UIModalsActions.RENAME_CLOSE);
+export const closeRenameContentModal = createAction(UIModalsActions.RENAME_CONTENT_CLOSE);
 
-export const openDeleteModal = createAction<ContentData>(UIModalsActions.DELETE_OPEN);
+export const openDeleteContentModal = createAction<ContentData>(UIModalsActions.DELETE_CONTENT_OPEN);
 
-export const closeDeleteModal = createAction(UIModalsActions.DELETE_CLOSE);
+export const closeDeleteContentModal = createAction(UIModalsActions.DELETE_CONTENT_CLOSE);
 
-export const openCreateModal = createAction<ContentType>(UIModalsActions.CREATE_OPEN);
+export const openCreateContentModal = createAction<ContentType>(UIModalsActions.CREATE_CONTENT_OPEN);
 
-export const closeCreateModal = createAction(UIModalsActions.CREATE_CLOSE);
+export const closeCreateContentModal = createAction(UIModalsActions.CREATE_CONTENT_CLOSE);
+
+// Tag Modals
+export const openDeleteTagModal = createAction<Tag>(UIModalsActions.DELETE_TAG_OPEN);
+
+export const closeDeleteTagModal = createAction(UIModalsActions.DELETE_TAG_CLOSE);

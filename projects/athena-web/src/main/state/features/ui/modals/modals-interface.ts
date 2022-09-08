@@ -1,5 +1,6 @@
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
+import {Tag} from "../../open-vault/open-vault-interfaces";
 
 
 export interface UIModalsState {
@@ -14,5 +15,9 @@ export interface UIModalsState {
   createContent: {
     isOpen: boolean,
     type: ContentType | null
+  },
+  deleteTag: {
+    isOpen: boolean,
+    tag: Tag | null
   }
 }

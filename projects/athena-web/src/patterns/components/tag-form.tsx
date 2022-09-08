@@ -1,6 +1,6 @@
 import {Tag} from "../../main/state/features/open-vault/open-vault-interfaces";
-import {useState} from "react";
-import {Button, Input} from "@ben-ryder/jigsaw";
+import React, {useState} from "react";
+import {Button, colourPalette, Input, Label, Tag as TagComponent} from "@ben-ryder/jigsaw";
 
 export interface TagFormFields {
   name: string,
@@ -39,6 +39,14 @@ export function TagForm(props: TagFormProps) {
         <div className="ml-2 w-full">
           <Input className="h-[40px]" id="new-tag-text-colour" label="Text Colour" type="color" value={textColour} onChange={(e) => {setTextColour(e.target.value)}} />
         </div>
+      </div>
+      <div className="mt-4">
+        <p className="font-bold text-br-whiteGrey-100">Preview</p>
+        <TagComponent
+          text={name}
+          bgColor={backgroundColour || colourPalette.teal["600"]}
+          fgColor={textColour || colourPalette.whiteGrey["50"]}
+        />
       </div>
       <div className="mt-4 flex justify-end">
         <button

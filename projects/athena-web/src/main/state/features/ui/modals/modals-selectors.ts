@@ -1,7 +1,9 @@
 import {ApplicationState} from "../../../state-interface";
 
-export const selectRenameModal = (state: ApplicationState) => state.ui.modals.renameContent;
+export const selectRenameContentModal = (state: ApplicationState) => state.ui.modals.renameContent;
 
-export const selectDeleteModal = (state: ApplicationState) => state.ui.modals.deleteContent;
+export const selectDeleteContentModal = (state: ApplicationState) => state.ui.modals.deleteContent;
 
-export const selectCreateModal = (state: ApplicationState) => state.ui.modals.createContent;
+export const selectCreateContentModal = (state: ApplicationState) => state.ui.modals.createContent;
+
+export const selectDeleteTagModal = (state: ApplicationState) => state.ui.modals.deleteTag;

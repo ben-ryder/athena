@@ -3,7 +3,7 @@ import {Plus as AddContentIcon} from "lucide-react";
 import React from "react";
 import {useAppDispatch} from "../../../main/state/store";
 import {IconWithMenuPopup} from "./icon-with-menu-popup";
-import {openCreateModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {openCreateContentModal} from "../../../main/state/features/ui/modals/modals-actions";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
 
 export function CreateContentIconAndPopup() {
@@ -19,19 +19,19 @@ export function CreateContentIconAndPopup() {
         {
           label: "Note",
           action: () => {
-            dispatch(openCreateModal(ContentType.NOTE));
+            dispatch(openCreateContentModal(ContentType.NOTE));
           }
         },
         {
           label: "Template",
           action: () => {
-            dispatch(openCreateModal(ContentType.TEMPLATE));
+            dispatch(openCreateContentModal(ContentType.TEMPLATE));
           }
         },
         {
           label: "Task List",
           action: () => {
-            dispatch(openCreateModal(ContentType.TASK_LIST));
+            dispatch(openCreateContentModal(ContentType.TASK_LIST));
           }
         }
       ]}
