@@ -4,9 +4,12 @@ import {selectNotesState} from "./notes/notes-selectors";
 import {selectTemplatesState} from "./templates/templates-selectors";
 import {ContentData} from "../ui/content/content-selctors";
 import {selectTaskListsState} from "./task-lists/task-lists-selectors";
-import {selectContentListPage, selectContentListFilters} from "../ui/view/view-selectors";
+import {selectContentListFilters, selectContentListPage} from "../ui/view/view-selectors";
 import {OrderBy, OrderDirection} from "./open-vault-interfaces";
 import {ListingMetadata} from "../../common/listing-metadata";
+import {selectNotesTagsState} from "./notes-tags/notes-tags-selectors";
+import {selectTemplatesTagsState} from "./templates-tags/templates-tags-selectors";
+import {selectTaskListsTagsState} from "./task-lists-tags/task-lists-tags-selectors";
 
 export const contentListPageSize = 12;
 
@@ -15,7 +18,15 @@ export interface ContentListData {
   list: ContentData[]
 }
 
-export const selectContentList = createSelector([selectContentListPage, selectContentListFilters, selectNotesState, selectTemplatesState, selectTaskListsState], (page, filters, notes, templates, taskLists) => {
+export const selectContentList = createSelector([
+  selectContentListPage, selectContentListFilters,
+  selectNotesState, selectTemplatesState, selectTaskListsState,
+  selectNotesTagsState, selectTemplatesTagsState, selectTaskListsTagsState
+], (
+  currentPage, filters,
+  notes, templates, taskLists,
+  notesTags, templatesTags, taskListTags
+) => {
   const noteContent: ContentData[] = notes.ids.map(noteId => {
     return {
       type: ContentType.NOTE,
@@ -42,15 +53,49 @@ export const selectContentList = createSelector([selectContentListPage, selectCo
     .concat(taskListContent)
 
   allContent = allContent.filter(content => {
+    // Filter content by name
     if (!content.data.name.toLowerCase().includes(filters.search.toLowerCase())) {
       return false;
     }
 
+    // Filter content by type
     if (!filters.contentTypes.includes(content.type)) {
       return false;
     }
 
-    // todo: add tags filter
+    // Filter content by tags
+    if (filters.tags.length > 0) {
+      let contentTags: string[];
+      if (content.type === ContentType.NOTE) {
+        contentTags = notesTags.ids
+          .map(id => notesTags.entities[id])
+          .filter(noteTag => noteTag.noteId === content.data.id)
+          .map(noteTag => noteTag.tagId)
+      }
+      else if (content.type === ContentType.TEMPLATE) {
+        contentTags = templatesTags.ids
+          .map(id => templatesTags.entities[id])
+          .filter(templateTag => templateTag.templateId === content.data.id)
+          .map(templateTag => templateTag.tagId)
+      }
+      else {
+        contentTags = taskListTags.ids
+          .map(id => taskListTags.entities[id])
+          .filter(taskListTag => taskListTag.taskListId === content.data.id)
+          .map(taskListTag => taskListTag.tagId)
+      }
+
+      if (contentTags.length > 0) {
+        for (const filterTag of filters.tags) {
+          if (!contentTags.includes(filterTag)) {
+            return false;
+          }
+        }
+      }
+      else {
+        return false;
+      }
+    }
 
     return true;
   })
@@ -89,12 +134,12 @@ export const selectContentList = createSelector([selectContentListPage, selectCo
   }
 
   const contentListPage = allContent
-    .slice(contentListPageSize * (page - 1), contentListPageSize * (page - 1) + contentListPageSize);
+    .slice(contentListPageSize * (currentPage - 1), contentListPageSize * (currentPage - 1) + contentListPageSize);
 
   const meta: ListingMetadata = {
     total: allContent.length,
     pageSize: contentListPageSize,
-    currentPage: page
+    currentPage: currentPage
   }
 
   return {
