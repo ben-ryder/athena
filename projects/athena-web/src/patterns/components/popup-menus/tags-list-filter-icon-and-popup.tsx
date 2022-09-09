@@ -54,40 +54,6 @@ export function TagsListFilterForm(props: ListFilterFormProps) {
   const [orderBy, setOrderBy] = useState<OrderBy>(filters.orderBy);
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(filters.orderDirection);
 
-  let orderByOption;
-  if (orderBy === OrderBy.NAME) {
-    orderByOption = {
-      name: "Name",
-      value: OrderBy.NAME
-    }
-  }
-  else if (orderBy === OrderBy.CREATED_AT) {
-    orderByOption = {
-      name: "Created At",
-      value: OrderBy.CREATED_AT
-    }
-  }
-  else {
-    orderByOption = {
-      name: "Updated At",
-      value: OrderBy.UPDATED_AT
-    }
-  }
-
-  let orderDirectionOption;
-  if (orderDirection === OrderDirection.DESC) {
-    orderDirectionOption = {
-      name: "DESC",
-      value: OrderDirection.DESC
-    }
-  }
-  else {
-    orderDirectionOption = {
-      name: "ASC",
-      value: OrderDirection.ASC
-    }
-  }
-
   return (
     <form
       className="p-2 w-[350px]"
@@ -114,15 +80,15 @@ export function TagsListFilterForm(props: ListFilterFormProps) {
             className="w-[60%]"
             id="tags-list-sort-by" label="Order By"
             options={orderByOptions}
-            currentOption={orderByOption}
-            onOptionChange={(option) => {setOrderBy(option.value as OrderBy)}}
+            currentOption={orderBy}
+            onOptionChange={(option) => {setOrderBy(option as OrderBy)}}
           />
           <Select
             className="w-[40%] ml-2"
             id="tags-list-order-direction" label="Order Direction"
             options={orderDirectionOptions}
-            currentOption={orderDirectionOption}
-            onOptionChange={(option) => {setOrderDirection(option.value as OrderDirection)}}
+            currentOption={orderDirection}
+            onOptionChange={(option) => {setOrderDirection(option as OrderDirection)}}
           />
         </div>
       </div>

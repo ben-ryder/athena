@@ -68,40 +68,6 @@ export function ListFilterForm(props: ListFilterFormProps) {
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(filters.orderDirection);
   const [tags, setTags] = useState<string[]>(filters.tags);
 
-  let orderByOption;
-  if (orderBy === OrderBy.NAME) {
-    orderByOption = {
-      name: "Name",
-      value: OrderBy.NAME
-    }
-  }
-  else if (orderBy === OrderBy.CREATED_AT) {
-    orderByOption = {
-      name: "Created At",
-      value: OrderBy.CREATED_AT
-    }
-  }
-  else {
-    orderByOption = {
-      name: "Updated At",
-      value: OrderBy.UPDATED_AT
-    }
-  }
-
-  let orderDirectionOption;
-  if (orderDirection === OrderDirection.DESC) {
-    orderDirectionOption = {
-      name: "DESC",
-      value: OrderDirection.DESC
-    }
-  }
-  else {
-    orderDirectionOption = {
-      name: "ASC",
-      value: OrderDirection.ASC
-    }
-  }
-
   return (
     <form
       className="p-2 max-w-[350px]"
@@ -128,30 +94,8 @@ export function ListFilterForm(props: ListFilterFormProps) {
         <MultiSelect
           id="filters-content-type" label="Content Types" placeholder="select types..."
           options={contentTypeOptions}
-          currentOptions={contentTypes.map(contentType => {
-            if (contentType === ContentType.NOTE) {
-              return {
-                name: "Notes",
-                value: ContentType.NOTE
-              }
-            }
-            else if (contentType === ContentType.TASK_LIST) {
-              return {
-                name: "Task Lists",
-                value: ContentType.TASK_LIST
-              }
-            }
-            else {
-             return {
-               name: "Templates",
-               value: ContentType.TEMPLATE
-             }
-            }
-          })}
-          onOptionsChange={(options) => {
-            const contentTypes = options.map(option => option.value) as ContentType[];
-            setContentTypes(contentTypes);
-          }}
+          currentOptions={contentTypes}
+          onOptionsChange={(options) => {setContentTypes(options as ContentType[]);}}
         />
       </div>
       <div className="mt-2">
@@ -160,15 +104,15 @@ export function ListFilterForm(props: ListFilterFormProps) {
             className="w-[60%]"
             id="filters-sort-by" label="Order By"
             options={orderByOptions}
-            currentOption={orderByOption}
-            onOptionChange={(option) => {setOrderBy(option.value as OrderBy)}}
+            currentOption={orderBy}
+            onOptionChange={(option) => {setOrderBy(option as OrderBy)}}
           />
           <Select
             className="w-[40%] ml-2"
             id="filters-order-direction" label="Order Direction"
             options={orderDirectionOptions}
-            currentOption={orderDirectionOption}
-            onOptionChange={(option) => {setOrderDirection(option.value as OrderDirection)}}
+            currentOption={orderDirection}
+            onOptionChange={(option) => {setOrderDirection(option as OrderDirection)}}
           />
         </div>
       </div>
@@ -190,16 +134,7 @@ export function ListFilterForm(props: ListFilterFormProps) {
               value: "tag 3"
             }
           ]}
-          currentOptions={[
-            {
-              name: "Tag 1",
-              value: "tag 1"
-            },
-            {
-              name: "Tag 2",
-              value: "tag 2"
-            }
-          ]}
+          currentOptions={[]}
           onOptionsChange={() => {}}
         />
       </div>

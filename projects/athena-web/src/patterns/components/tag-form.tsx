@@ -44,8 +44,8 @@ export function TagForm(props: TagFormProps) {
         <p className="font-bold text-br-whiteGrey-100">Preview</p>
         <TagComponent
           text={name}
-          bgColor={backgroundColour || colourPalette.teal["600"]}
-          fgColor={textColour || colourPalette.whiteGrey["50"]}
+          backgroundColour={backgroundColour || colourPalette.teal["600"]}
+          textColour={textColour || colourPalette.whiteGrey["50"]}
         />
       </div>
       <div className="mt-4 flex justify-end">

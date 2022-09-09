@@ -5,7 +5,7 @@ import {Pencil as EditIcon, Trash as DeleteIcon} from "lucide-react";
 import {TagForm} from "./tag-form";
 import {updateTag} from "../../main/state/features/open-vault/tags/tags-actions";
 import {useAppDispatch} from "../../main/state/store";
-import {openDeleteContentModal, openDeleteTagModal} from "../../main/state/features/ui/modals/modals-actions";
+import {openDeleteTagModal} from "../../main/state/features/ui/modals/modals-actions";
 
 export interface TagCardProps {
   tag: Tag
@@ -22,8 +22,8 @@ export function TagCard(props: TagCardProps) {
             <TagComponent
                 className="mr-auto"
                 text={props.tag.name}
-                bgColor={props.tag.backgroundColour || colourPalette.teal["600"]}
-                fgColor={props.tag.textColour || colourPalette.whiteGrey["50"]}
+                backgroundColour={props.tag.backgroundColour || colourPalette.teal["600"]}
+                textColour={props.tag.textColour || colourPalette.whiteGrey["50"]}
             />
             <IconButton
                 label={`Delete tag ${props.tag.name}`}
