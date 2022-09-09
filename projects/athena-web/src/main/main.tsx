@@ -33,7 +33,6 @@ import {CreateContentIconAndPopup} from "../patterns/components/popup-menus/crea
 import {RenameModal} from "../patterns/components/modals/rename-modal";
 import {DeleteModal} from "../patterns/components/modals/delete-modal";
 import {CreateModal} from "../patterns/components/modals/create-modal";
-import {TagSelector} from "../patterns/components/tag-selector/tag-selector";
 import {TagsView} from "../patterns/components/tags-view";
 import {DeleteTagModal} from "../patterns/components/modals/delete-tag-modal";
 import { ContentTagEditor } from '../patterns/components/content-tag-editor';

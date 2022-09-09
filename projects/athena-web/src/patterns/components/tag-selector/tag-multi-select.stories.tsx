@@ -1,19 +1,19 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { TagSelector } from './tag-selector';
+import { TagMultiSelect } from './tag-multi-select';
 import {useArgs} from "@storybook/client-api";
 
 export default {
   title: 'Elements/TagSelector',
-  component: TagSelector
-} as ComponentMeta<typeof TagSelector>;
+  component: TagMultiSelect
+} as ComponentMeta<typeof TagMultiSelect>;
 
-const Template: ComponentStory<typeof TagSelector> = (args) => {
+const Template: ComponentStory<typeof TagMultiSelect> = (args) => {
   const [{ currentOptions, onOptionsChange }, updateArgs] = useArgs();
 
   return (
-    <TagSelector
+    <TagMultiSelect
       {...args}
       currentOptions={currentOptions}
       onOptionsChange={(options) => {
@@ -39,5 +39,5 @@ Default.args = {
   label: "Select Note Tags",
   placeholder: "select tags...",
   options: options,
-  currentOptions: [options[0], options[3]]
+  currentOptions: [options[0].value, options[3].value]
 };

@@ -1,9 +1,9 @@
-import React, {forwardRef, Fragment, useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import classNames from "classnames";
 import { Combobox } from '@headlessui/react';
 import {X as XIcon} from "lucide-react";
 import {
-  colourPalette, ErrorText,
+  colourPalette,
   getOptionLookup,
   IconButton,
   iconColorClassNames,
@@ -12,10 +12,9 @@ import {
   MultiSelectProps,
   Tag
 } from "@ben-ryder/jigsaw";
-import {SelectContainer} from "@ben-ryder/jigsaw/dist/patterns/02-partials/select/select-container";
 import { Float } from '@headlessui-float/react';
 
-export const TagSelector = forwardRef<HTMLSelectElement, MultiSelectProps>((props, ref) => {
+export function TagMultiSelect(props: MultiSelectProps) {
   const [query, setQuery] = useState<string>("");
   const optionLookup = getOptionLookup(props.options, props.currentOptions);
 
@@ -77,7 +76,9 @@ export const TagSelector = forwardRef<HTMLSelectElement, MultiSelectProps>((prop
             ))}
             <Combobox.Input
               type="text"
-              onChange={(event) => {setQuery(event.target.value)}}
+              onChange={(event) => {
+                setQuery(event.target.value)
+              }}
               placeholder="search tags..."
               className="py-0.5 px-1.5 bg-transparent border-none outline-none focus:ring-0"
             />
@@ -122,4 +123,4 @@ export const TagSelector = forwardRef<HTMLSelectElement, MultiSelectProps>((prop
       </Float>
     </Combobox>
   )
-});
+}
