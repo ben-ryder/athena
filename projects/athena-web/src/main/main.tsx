@@ -36,6 +36,7 @@ import {CreateModal} from "../patterns/components/modals/create-modal";
 import {TagSelector} from "../patterns/components/tag-selector/tag-selector";
 import {TagsView} from "../patterns/components/tags-view";
 import {DeleteTagModal} from "../patterns/components/modals/delete-tag-modal";
+import { ContentTagEditor } from '../patterns/components/content-tag-editor';
 
 
 export function MainPage() {
@@ -231,30 +232,8 @@ export function Application() {
             }
           </section>
 
-          <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800 p-2`}>
-            {activeContent !== null &&
-                <TagSelector
-                    id="tag-selector"
-                    label="Select Content Tags"
-                    placeholder="Select tags..."
-                    options={[
-                      {
-                        name: "test 1",
-                        value: "1"
-                      },
-                      {
-                        name: "test 2",
-                        value: "2"
-                      },
-                      {
-                        name: "test 3",
-                        value: "3"
-                      }
-                    ]}
-                    currentOptions={[]}
-                    onOptionsChange={() => {}}
-                />
-            }
+          <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800`}>
+            <ContentTagEditor />
           </section>
           <section id="bottom-panel" className={`h-[40px] bg-br-atom-800 p-2 flex items-center border-t border-br-blueGrey-700`}>
             <IconButton

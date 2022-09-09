@@ -1,115 +1,125 @@
-import React, {ComponentProps, forwardRef, Fragment, useState} from 'react';
+import React, {forwardRef, Fragment, useState} from 'react';
 import classNames from "classnames";
 import { Combobox } from '@headlessui/react';
+import {X as XIcon} from "lucide-react";
+import {
+  colourPalette, ErrorText,
+  getOptionLookup,
+  IconButton,
+  iconColorClassNames,
+  iconSizes,
+  Label,
+  MultiSelectProps,
+  Tag
+} from "@ben-ryder/jigsaw";
+import {SelectContainer} from "@ben-ryder/jigsaw/dist/patterns/02-partials/select/select-container";
+import { Float } from '@headlessui-float/react';
 
-import {X as XIcon, Tags as TagsIcon} from "lucide-react";
-
-import {ErrorText, Label, iconColorClassNames, iconSizes, IconButton, colourPalette, Tag} from "@ben-ryder/jigsaw";
-
-export interface TagSelectorOption {
-  name: string,
-  value: string,
-}
-
-export interface TagSelectorProps extends ComponentProps<'select'> {
-  id: string,
-  label: string,
-  error?: string,
-  placeholder: string,
-  options: TagSelectorOption[],
-  currentOptions: TagSelectorOption[],
-  onOptionsChange: (options: TagSelectorOption[]) => void,
-}
-
-export const TagSelector = forwardRef<HTMLSelectElement, TagSelectorProps>((props, ref) => {
+export const TagSelector = forwardRef<HTMLSelectElement, MultiSelectProps>((props, ref) => {
   const [query, setQuery] = useState<string>("");
+  const optionLookup = getOptionLookup(props.options, props.currentOptions);
 
-  const filteredOptions =
-    query === ''
-      ? props.options
-      : props.options.filter((option) => {
-        return option.name.toLowerCase().includes(query.toLowerCase())
-      })
+  const filteredOptions = props.options
+    .filter((option) => {
+      if (!option.name.toLowerCase().includes(query.toLowerCase())) {
+        return false;
+      }
+
+      for (const currentOption of props.currentOptions) {
+        if (currentOption === option.value) {
+          return false;
+        }
+      }
+
+      return true;
+    })
 
   return (
-    <div className="relative">
-      <Combobox value={props.currentOptions} onChange={props.onOptionsChange} multiple={true}>
-        {({ open }) => (
-          <>
-            <Combobox.Label as={Fragment}>
-              <Label isHidden={true}>{ props.label }</Label>
-            </Combobox.Label>
-            <>
-              <div
-                className={classNames(
-                  "relative flex w-full outline-none p-1.5",
-                  "text-br-whiteGrey-200",
-                )}
-              >
-                <TagsIcon className="mr-2 min-w-[24px]" size={iconSizes.small} strokeWidth={1} />
-                <div className="inline-flex items-center overflow-x-scroll">
-                  {props.currentOptions.map(option => (
-                    <Tag
-                      key={option.name}
-                      text={option.name}
-                      rightContent={
-                        <IconButton
-                          label={`Unselect ${option.name}`}
-                          icon={
-                            <XIcon size={iconSizes.extraSmall} strokeWidth={2} />
-                          }
-                          className={iconColorClassNames.secondary}
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            event.preventDefault()
-                            props.onOptionsChange(props.currentOptions.filter((filterOption) => filterOption !== option))
-                          }}
-                        />
-                      }
-                      className="mr-1.5 text-sm"
-                    />
-                  ))}
-                  <Combobox.Input
-                    type="text"
-                    onChange={(event) => {setQuery(event.target.value)}}
-                    placeholder={props.placeholder}
-                    className="p-0 bg-transparent border-none outline-none focus:ring-0"
+    <Combobox value={props.currentOptions} onChange={props.onOptionsChange} multiple={true}>
+      <Combobox.Label as={Fragment}>
+        <Label isHidden={true}>Content Tags</Label>
+      </Combobox.Label>
+      <Float placement="top-start" offset={4} zIndex={30} flip={false}>
+        {/** Selected Tags Input & Display **/}
+        <div
+          className={classNames(
+            "relative block w-full outline-none text-br-whiteGrey-200 overflow-x-scroll"
+          )}
+        >
+          <div className="flex items-center p-1.5 gap-1.5">
+            {props.currentOptions.map(option => (
+              <Tag
+                key={option}
+                text={optionLookup[option].name}
+                backgroundColour={optionLookup[option].backgroundColour}
+                textColour={optionLookup[option].textColour}
+                rightContent={
+                  <IconButton
+                    label={`Unselect ${optionLookup[option]}`}
+                    icon={
+                      <XIcon
+                        size={iconSizes.small}
+                        style={{
+                          stroke: optionLookup[option].textColour || colourPalette.whiteGrey["50"],
+                          fill: optionLookup[option].textColour || colourPalette.whiteGrey["50"]
+                        }}
+                      />
+                    }
+                    className={iconColorClassNames.secondary}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      event.preventDefault()
+                      props.onOptionsChange(props.currentOptions.filter((filterOption) => filterOption !== option))
+                    }}
                   />
-                </div>
-              </div>
-              <Combobox.Options
-                className={classNames(
-                  "absolute mt-1 block outline-none bg-br-atom-600",
-                  "border border-br-blueGrey-600 text-br-whiteGrey-200",
-                  "flex p-2"
-                )}
-              >
-                {filteredOptions.map((option) => (
-                  <Combobox.Option
-                    key={option.value}
-                    value={option}
-                    as={Fragment}
-                  >
-                    {({ active, selected }) => (
-                      <li>
-                        <Tag
-                          className="text-sm ml-2"
-                          text={option.name}
-                          bgColor={active ? colourPalette.teal["600"] : colourPalette.blueGrey["700"]}
-                          fgColor={colourPalette.whiteGrey["50"]}
-                        />
-                      </li>
-                    )}
-                  </Combobox.Option>
-                ))}
-              </Combobox.Options>
-            </>
-          </>
-        )}
-      </Combobox>
-      {props.error &&
-          <ErrorText>{props.error}</ErrorText>
-      }
-    </div>
+                }
+              />
+            ))}
+            <Combobox.Input
+              type="text"
+              onChange={(event) => {setQuery(event.target.value)}}
+              placeholder="search tags..."
+              className="py-0.5 px-1.5 bg-transparent border-none outline-none focus:ring-0"
+            />
+          </div>
+        </div>
+        {/** Select Tag Popup **/}
+        <Combobox.Options
+          as={Fragment}
+        >
+          <div className="w-full rounded-md shadow-md rounded bg-br-atom-600 border border-br-blueGrey-700 ml-2">
+            <div className="flex flex-wrap gap-2 p-2">
+              {filteredOptions.map((option) => (
+                <Combobox.Option
+                  key={option.value}
+                  value={option.value}
+                  as={Fragment}
+                >
+                  {({active}) =>
+                    <button
+                      className={classNames(
+                        "py-0.5 px-1 rounded font-sm", // styles copied from Tag element
+                        {
+                          "underline": active
+                        }
+                      )}
+                      style={{
+                        backgroundColor: option.backgroundColour || colourPalette.teal["600"],
+                        color: option.textColour || colourPalette.whiteGrey["50"]
+                      }}
+                    >
+                      {option.name}
+                    </button>
+                  }
+                </Combobox.Option>
+              ))}
+              {filteredOptions.length === 0 &&
+                  <p className="text-br-whiteGrey-100">No Tags Found</p>
+              }
+            </div>
+          </div>
+        </Combobox.Options>
+      </Float>
+    </Combobox>
   )
 });

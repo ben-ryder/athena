@@ -11,6 +11,7 @@ import {OrderBy, OrderDirection} from "../../../main/state/features/open-vault/o
 import {resetContentListFilters, updateContentListFilters} from "../../../main/state/features/ui/view/view-actions";
 import { Popover } from "@headlessui/react";
 import {defaultContentListFilters} from "../../../main/state/features/ui/view/view-reducer";
+import {selectTagOptions} from "../../../main/state/features/open-vault/tags/tags-selectors";
 
 const contentTypeOptions = [
   {
@@ -61,6 +62,7 @@ export interface ListFilterFormProps {
 export function ListFilterForm(props: ListFilterFormProps) {
   const dispatch = useAppDispatch();
   const filters = useSelector(selectContentListFilters);
+  const tagOptions = useSelector(selectTagOptions);
 
   const [search, setSearch] = useState<string>(filters.search);
   const [contentTypes, setContentTypes] = useState<ContentType[]>(filters.contentTypes);
@@ -80,7 +82,7 @@ export function ListFilterForm(props: ListFilterFormProps) {
           contentTypes: contentTypes,
           orderBy: orderBy,
           orderDirection: orderDirection,
-          tags: []
+          tags: tags
         }))
       }}
     >
@@ -120,22 +122,9 @@ export function ListFilterForm(props: ListFilterFormProps) {
       <div className="mt-2">
         <MultiSelect
           id="filters-tags" label="Tags" placeholder="select tags..."
-          options={[
-            {
-              name: "Tag 1",
-              value: "tag 2"
-            },
-            {
-              name: "Tag 2",
-              value: "tag 2"
-            },
-            {
-              name: "Tag 3",
-              value: "tag 3"
-            }
-          ]}
-          currentOptions={[]}
-          onOptionsChange={() => {}}
+          options={tagOptions}
+          currentOptions={tags}
+          onOptionsChange={(newTags) => {setTags(newTags)}}
         />
       </div>
 
