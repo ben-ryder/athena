@@ -54,7 +54,7 @@ export function NoteTagsEditor(props: TagsEditorProps) {
       label="Select Content Tags"
       placeholder="Select tags..."
       options={props.tagOptions}
-      currentOptions={noteTags.map(noteTag => noteTag.tagId)}
+      currentOptions={noteTags.map(noteTag => noteTag.id)}
       onOptionsChange={(newTags) => {
         dispatch(updateNoteTags({
           id: props.contentId,
@@ -75,7 +75,7 @@ export function TemplateTagsEditor(props: TagsEditorProps) {
       label="Select Content Tags"
       placeholder="Select tags..."
       options={props.tagOptions}
-      currentOptions={templateTags.map(templateTag => templateTag.tagId)}
+      currentOptions={templateTags.map(templateTag => templateTag.id)}
       onOptionsChange={(newTags) => {
         dispatch(updateTemplateTags({
           id: props.contentId,
@@ -96,7 +96,7 @@ export function TaskListTagsEditor(props: TagsEditorProps) {
       label="Select Content Tags"
       placeholder="Select tags..."
       options={props.tagOptions}
-      currentOptions={taskListTags.map(taskListTag => taskListTag.tagId)}
+      currentOptions={taskListTags.map(taskListTag => taskListTag.id)}
       onOptionsChange={(newTags) => {
         dispatch(updateTaskListTags({
           id: props.contentId,

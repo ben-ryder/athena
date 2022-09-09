@@ -12,6 +12,7 @@ import {ContentType} from "../../../main/state/features/ui/content/content-inter
 import {ContentActionsIconAndPopup} from "../popup-menus/content-actions-menu";
 import {useSelector} from "react-redux";
 import {ContentData, selectActiveContent} from "../../../main/state/features/ui/content/content-selctors";
+import {ContentTags} from "./content-tags";
 
 export interface ContentCardProps {
   content: ContentData
@@ -47,7 +48,7 @@ export function ContentCard(props: ContentCardProps) {
         data-tip={`Open ${props.content.data.name}`}
         data-place="right"
         aria-label={`Open ${props.content.data.name}`}
-        className="absolute w-[calc(100%-50px)] h-full left-0 top-0"
+        className="absolute w-full h-full left-0 top-0"
         onClick={() => {
           dispatch(openAndSwitchContent({
             type: props.content.type,
@@ -57,24 +58,14 @@ export function ContentCard(props: ContentCardProps) {
       />
 
       <div className="flex justify-between items-center">
-        <div>
+        <div className="mr-3">
           {icon}
         </div>
-        <div>
-          <h3 className="text-xl font-bold text-br-whiteGrey-100">{props.content.data.name}</h3>
-          <div className="flex flex-wrap mt-1">
-            {/*{props.content.data.tags.map(tag =>*/}
-            {/*  <Tag*/}
-            {/*    key={tag.id}*/}
-            {/*    text={tag.name}*/}
-            {/*    bgColor={tag.backgroundColour || undefined}*/}
-            {/*    fgColor={tag.textColour || undefined}*/}
-            {/*    className="mr-2 mt-2"*/}
-            {/*  />*/}
-            {/*)}*/}
-          </div>
+        <div className="grow">
+          <h3 className="text-xl font-bold text-br-whiteGrey-100 mb-2">{props.content.data.name}</h3>
+          <ContentTags content={props.content} />
         </div>
-        <div className="">
+        <div className="z-10">
           <ContentActionsIconAndPopup content={props.content} />
         </div>
       </div>
