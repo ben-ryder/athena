@@ -37,6 +37,10 @@ export function RenameModal() {
   useEffect(() => {
     setNewName(renameModal.content?.data.name || "");
 
+    // todo: fix/refine the select functionality to work better, it's not that reliable.
+    // maybe this could mean rendering the modal "in line" when required, rather than all the time? That could then also
+    // fix the tab order getting borked.
+
     // A bit of a hack to get the input text to stay selected after the newName state is updated.
     setTimeout(() => {
       if (ref.current) {

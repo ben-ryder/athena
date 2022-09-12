@@ -5,7 +5,7 @@ import {UIState} from "./features/ui/ui-interface";
 
 export interface ApplicationState {
   ui: UIState,
-  users: UsersState
+  // users: UsersState
   vaults: VaultsState
   openVault: OpenVaultState
 }
