@@ -1,15 +1,12 @@
 import {BaseDatabaseEntity} from "../../common/base-database-entity";
 import {ContentType} from "../ui/content/content-interface";
-import {DatabaseNote, NotesState} from "./notes/notes-interface";
+
+// todo: move all these interfaces to correct slice folder
 
 export interface Tag extends BaseDatabaseEntity {
   name: string,
   textColour: string,
   backgroundColour: string,
-}
-
-export interface Template extends DatabaseNote {
-  targetFolderId: string | null
 }
 
 export interface NoteTag {
@@ -50,44 +47,15 @@ export interface Query extends BaseDatabaseEntity {
   orderDirection: OrderDirection
 }
 
-export interface TaskList extends BaseDatabaseEntity {
-  name: string,
-  folderId: string | null
-}
-
 export interface TaskListTag {
   id: string,
   taskListId: string,
   tagId: string
 }
 
-export enum TaskStatus {
-  OPEN = "OPEN",
-  COMPLETED = "COMPLETED"
-}
-export interface Task extends BaseDatabaseEntity {
-  name: string,
-  status: TaskStatus,
-  taskListId: string
-}
-
-export interface TagsState {
-  entities: {
-    [key: string]: Tag
-  },
-  ids: string[]
-}
-
 export interface NotesTagsState {
   entities: {
     [key: string]: NoteTag
-  },
-  ids: string[]
-}
-
-export interface TemplatesState {
-  entities: {
-    [key: string]: Template
   },
   ids: string[]
 }
@@ -120,37 +88,9 @@ export interface QueriesTagsState {
   ids: string[]
 }
 
-export interface TaskListsState {
-  entities: {
-    [key: string]: TaskList
-  },
-  ids: string[]
-}
-
 export interface TaskListsTagsState {
   entities: {
     [key: string]: TaskListTag
   },
   ids: string[]
-}
-
-export interface TasksState {
-  entities: {
-    [key: string]: Task
-  },
-  ids: string[]
-}
-
-export interface OpenVaultState {
-  tags: TagsState;
-  notes: NotesState;
-  notesTags: NotesTagsState;
-  templates: TemplatesState;
-  templatesTags: TemplatesTagsState;
-  folders: FoldersState;
-  queries: QueriesState;
-  queriesTags: QueriesTagsState;
-  taskLists: TaskListsState;
-  taskListsTags: TaskListsTagsState
-  tasks: TasksState;
 }

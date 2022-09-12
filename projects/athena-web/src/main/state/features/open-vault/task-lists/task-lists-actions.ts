@@ -1,26 +1,24 @@
 import {createAction} from "@reduxjs/toolkit";
 import {
-  DeleteActionPayload,
-  MoveActionPayload,
-  RenameActionPayload,
   UpdateTagsPayload
 } from "../../../common/action-interfaces";
-import {Note, TaskList} from "../open-vault-interfaces";
+import {DatabaseTaskList} from "./task-lists-interface";
 
 export enum TaskListsActions {
   CREATE = "taskLists/create",
-  RENAME = "taskLists/update/rename",
+  UPDATE = "taskLists/update",
   UPDATE_TAGS = "taskLists/update/tags",
-  MOVE = "taskLists/update/move",
   DELETE = "taskLists/delete"
 }
 
-export const createTaskList= createAction<TaskList>(TaskListsActions.CREATE);
+export const createTaskList= createAction<DatabaseTaskList>(TaskListsActions.CREATE);
 
-export const renameTaskList = createAction<RenameActionPayload>(TaskListsActions.RENAME);
-
-export const moveTaskList = createAction<MoveActionPayload>(TaskListsActions.MOVE);
+export interface UpdateTaskListPayload {
+  id: string,
+  changes: Partial<DatabaseTaskList>
+}
+export const updateTaskList = createAction<UpdateTaskListPayload>(TaskListsActions.UPDATE);
 
 export const updateTaskListTags = createAction<UpdateTagsPayload>(TaskListsActions.UPDATE_TAGS);
 
-export const deleteTaskList = createAction<DeleteActionPayload>(TaskListsActions.DELETE);
+export const deleteTaskList = createAction<string>(TaskListsActions.DELETE);

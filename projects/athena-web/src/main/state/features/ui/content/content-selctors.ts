@@ -1,7 +1,9 @@
 import {createSelector} from "@reduxjs/toolkit";
-import {ApplicationState} from "../../../state-interface";
 import {Content, ContentType} from "./content-interface";
-import {Note, TaskList, Template} from "../../open-vault/open-vault-interfaces";
+import {DatabaseNote} from "../../open-vault/notes/notes-interface";
+import {DatabaseTemplate} from "../../open-vault/templates/templates-interface";
+import {DatabaseTaskList} from "../../open-vault/task-lists/task-lists-interface";
+import {ApplicationState} from "../../../store";
 
 export const selectRawActiveContent = (state: ApplicationState) => state.ui.content.activeContent;
 export const selectRawOpenContent = (state: ApplicationState) => state.ui.content.openContent;
@@ -12,20 +14,20 @@ export const selectTaskListEntities = (state: ApplicationState) => state.openVau
 
 export type ContentData = {
   type: ContentType.NOTE,
-  data: Note
+  data: DatabaseNote
 } | {
   type: ContentType.TEMPLATE,
-  data: Template
+  data: DatabaseTemplate
 } | {
   type: ContentType.TASK_LIST,
-  data: TaskList
+  data: DatabaseTaskList
 }
 
 function parseContent(
   content: Content,
-  noteEntities: {[k: string]: Note},
-  templateEntities: {[k: string]: Template},
-  taskListEntities: {[k: string]: TaskList}
+  noteEntities: {[k: string]: DatabaseNote},
+  templateEntities: {[k: string]: DatabaseTemplate},
+  taskListEntities: {[k: string]: DatabaseTaskList}
 ): ContentData {
   if (content.type === ContentType.NOTE) {
     return {
@@ -64,5 +66,5 @@ export const selectOpenContent = createSelector([
   selectTemplateEntities,
   selectTaskListEntities
 ], (openContent, noteEntities, templateEntities, taskListEntities) => {
-  return openContent.map(content => parseContent(content, noteEntities, templateEntities, taskListEntities));
+  return openContent.map((content: Content) => parseContent(content, noteEntities, templateEntities, taskListEntities));
 })

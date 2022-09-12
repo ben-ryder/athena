@@ -1,3 +1,3 @@
-import {ApplicationState} from "../../../state-interface";
+import {ApplicationState} from "../../../store";
 
 export const selectTaskListsState = (state: ApplicationState) => state.openVault.taskLists;

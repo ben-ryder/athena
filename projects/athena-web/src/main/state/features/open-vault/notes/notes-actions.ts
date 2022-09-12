@@ -1,7 +1,7 @@
 import {createAction} from "@reduxjs/toolkit";
 import {
   UpdateTagsPayload
-} from "../../../common/action-interfaces";;
+} from "../../../common/action-interfaces";
 import {DatabaseNote} from "./notes-interface";
 
 export enum NotesActions {

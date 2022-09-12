@@ -19,10 +19,9 @@ import {SavedStatus, SavedStatusIndicator} from "../patterns/components/saved-st
 import {ContentDetails} from "../patterns/components/content-details/content-details";
 import {Provider, useSelector} from "react-redux";
 import {persistor, store, useAppDispatch} from "./state/store";
-import {selectActiveContent, selectOpenContent} from "./state/features/ui/content/content-selctors";
+import {ContentData, selectActiveContent, selectOpenContent} from "./state/features/ui/content/content-selctors";
 import {ContentType} from "./state/features/ui/content/content-interface";
 import {AccountIcon} from "../patterns/element/account-icon";
-import {updateTemplateBody} from "./state/features/open-vault/templates/templates-actions";
 import {selectCurrentViewMode} from "./state/features/ui/view/view-selectors";
 import {ViewModes} from "./state/features/ui/view/view-interface";
 import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
@@ -36,6 +35,7 @@ import {TagsView} from "../patterns/components/tags-view";
 import {DeleteTagModal} from "../patterns/components/modals/delete-tag-modal";
 import { ContentTagEditor } from '../patterns/components/content-tag-editor';
 import {updateNoteBody} from "./state/features/open-vault/notes/notes-thunks";
+import {updateTemplateBody} from "./state/features/open-vault/templates/templates-thunks";
 
 
 export function MainPage() {
@@ -198,7 +198,7 @@ export function Application() {
         )}>
           <FileTabSection>
             <FileTabList>
-              {openContent.map((content, index) =>
+              {openContent.map((content: ContentData) =>
                 <ContentFileTab
                   key={content.data.id}
                   content={content}
@@ -218,10 +218,7 @@ export function Application() {
                         dispatch(updateNoteBody(activeContent.data.id, updatedBody));
                       }
                       else if (activeContent.type === ContentType.TEMPLATE) {
-                        dispatch(updateTemplateBody({
-                          id: activeContent.data.id,
-                          body: updatedBody
-                        }));
+                        dispatch(updateTemplateBody(activeContent.data.id, updatedBody));
                       }
                     }}
                 />

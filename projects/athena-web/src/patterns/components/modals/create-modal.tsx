@@ -5,11 +5,10 @@ import {closeCreateContentModal} from "../../../main/state/features/ui/modals/mo
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
-import {createTemplate} from "../../../main/state/features/open-vault/templates/templates-actions";
 import {Modal} from "./modal";
-import {v4 as createUUID} from "uuid";
-import {createTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-actions";
 import {createNewNote} from "../../../main/state/features/open-vault/notes/notes-thunks";
+import {createNewTemplate} from "../../../main/state/features/open-vault/templates/templates-thunks";
+import {createNewTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-thunks";
 
 export function CreateModal() {
   const dispatch = useAppDispatch();
@@ -40,24 +39,10 @@ export function CreateModal() {
               dispatch(createNewNote(name));
             }
             else if (createModal.type === ContentType.TEMPLATE) {
-              dispatch(createTemplate({
-                id: createUUID(),
-                name: name,
-                body: "",
-                folderId: null,
-                targetFolderId: null,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-              }));
+              dispatch(createNewTemplate(name));
             }
             else if (createModal.type === ContentType.TASK_LIST) {
-              dispatch(createTaskList({
-                id: createUUID(),
-                name: name,
-                folderId: null,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-              }));
+              dispatch(createNewTaskList(name));
             }
 
             // Reset name so it won't persist on next use of the modal.

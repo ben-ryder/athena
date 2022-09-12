@@ -3,12 +3,9 @@ import {selectDeleteTagModal} from "../../../main/state/features/ui/modals/modal
 import {useAppDispatch} from "../../../main/state/store";
 import {closeDeleteTagModal} from "../../../main/state/features/ui/modals/modals-actions";
 import {Button} from "@ben-ryder/jigsaw";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
-import {deleteNote} from "../../../main/state/features/open-vault/notes/notes-actions";
-import {deleteTemplate} from "../../../main/state/features/open-vault/templates/templates-actions";
 import {Modal} from "./modal";
-import {deleteTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-actions";
 import {deleteTag} from "../../../main/state/features/open-vault/tags/tags-actions";
+
 
 export function DeleteTagModal() {
   const dispatch = useAppDispatch();

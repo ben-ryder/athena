@@ -5,10 +5,10 @@ import {closeRenameContentModal} from "../../../main/state/features/ui/modals/mo
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useEffect, useRef, useState} from "react";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
-import {renameTemplate} from "../../../main/state/features/open-vault/templates/templates-actions";
 import {Modal} from "./modal";
-import {renameTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-actions";
 import {renameNote} from "../../../main/state/features/open-vault/notes/notes-thunks";
+import {renameTemplate} from "../../../main/state/features/open-vault/templates/templates-thunks";
+import {renameTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-thunks";
 
 export function RenameModal() {
   const dispatch = useAppDispatch();
@@ -58,19 +58,13 @@ export function RenameModal() {
         <form
           onSubmit={() => {
             if (renameModal.content?.type === ContentType.NOTE) {
-              dispatch(renameNote(renameModal.content.data.id, newName))
+              dispatch(renameNote(renameModal.content.data.id, newName));
             }
             else if (renameModal.content?.type === ContentType.TEMPLATE) {
-              dispatch(renameTemplate({
-                id: renameModal.content.data.id,
-                name: newName
-              }))
+              dispatch(renameTemplate(renameModal.content.data.id, newName));
             }
             else if (renameModal.content?.type === ContentType.TASK_LIST) {
-              dispatch(renameTaskList({
-                id: renameModal.content.data.id,
-                name: newName
-              }))
+              dispatch(renameTaskList(renameModal.content.data.id, newName));
             }
             closeModal();
           }}

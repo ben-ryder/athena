@@ -1,10 +1,6 @@
-import {Tag, Template} from "../open-vault-interfaces";
-import {ApplicationState} from "../../../state-interface";
 import {createSelector} from "@reduxjs/toolkit";
-
-export interface TemplateData extends Template {
-  tags: Tag[]
-}
+import {ApplicationState} from "../../../store";
+import {Template} from "./templates-interface";
 
 export const selectTemplatesState = (state: ApplicationState) => state.openVault.templates;
 
@@ -26,5 +22,5 @@ export const selectTemplates = createSelector([selectTemplatesState, selectTempl
       ...template,
       tags: templateTags
     }
-  }) as TemplateData[]
+  }) as Template[]
 })
