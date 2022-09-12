@@ -1,8 +1,7 @@
 import {createEntityAdapter} from "@reduxjs/toolkit";
-import {Note} from "../open-vault-interfaces";
+import {DatabaseNote} from "./notes-interface";
 
-
-export const notesAdapter = createEntityAdapter<Note>({
+export const notesAdapter = createEntityAdapter<DatabaseNote>({
   selectId: (entity) => entity.id,
   sortComparer: (a, b) => a.name.localeCompare(b.name)
 })

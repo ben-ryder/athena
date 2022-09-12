@@ -1,13 +1,72 @@
 import {v4 as createUUID} from "uuid";
 
-import {createNote, updateNoteTags} from "./notes-actions";
-import {ApplicationState} from "../../../state-interface";
-import {AnyAction, ThunkAction, ThunkDispatch} from "@reduxjs/toolkit";
+import {createNote, updateNote, updateNoteTags} from "./notes-actions";
 import {openRenameContentModal} from "../../ui/modals/modals-actions";
 import {ContentType} from "../../ui/content/content-interface";
+import {AppThunk, ApplicationState, AppThunkDispatch} from "../../../store";
 
-export function createNoteFromTemplate(templateId: string): ThunkAction<void, ApplicationState, unknown, AnyAction> {
-  return function createNoteUsingTemplate(dispatch: ThunkDispatch<ApplicationState, unknown, AnyAction>, getState: () => ApplicationState) {
+
+export function createNewNote(noteTitle: string) {
+  return (dispatch: AppThunkDispatch) => {
+    const noteId = createUUID();
+    const timestamp = new Date().toISOString();
+
+    const note = {
+      id: noteId,
+      name: noteTitle,
+      body: "",
+      folderId: null,
+      createdAt: timestamp,
+      updatedAt: timestamp
+    }
+    dispatch(createNote(note))
+  }
+}
+
+export function renameNote(noteId: string, newName: string) {
+  return (dispatch: AppThunkDispatch) => {
+    const timestamp = new Date().toISOString();
+
+    dispatch(updateNote({
+      id: noteId,
+      changes: {
+        name: newName,
+        updatedAt: timestamp
+      }
+    }));
+  }
+}
+
+export function moveNote(noteId: string, newFolder: string | null) {
+  return (dispatch: AppThunkDispatch) => {
+    const timestamp = new Date().toISOString();
+
+    dispatch(updateNote({
+      id: noteId,
+      changes: {
+        folderId: newFolder,
+        updatedAt: timestamp
+      }
+    }));
+  }
+}
+
+export function updateNoteBody(noteId: string, newBody: string) {
+  return (dispatch: AppThunkDispatch) => {
+    const timestamp = new Date().toISOString();
+
+    dispatch(updateNote({
+      id: noteId,
+      changes: {
+        body: newBody,
+        updatedAt: timestamp
+      }
+    }));
+  }
+}
+
+export function createNoteFromTemplate(templateId: string): AppThunk {
+  return function createNoteUsingTemplate(dispatch: AppThunkDispatch, getState: () => ApplicationState) {
     const state = getState();
     const template = state.openVault.templates.entities[templateId];
     let tagsToAdd: string[] = [];

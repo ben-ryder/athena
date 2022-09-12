@@ -46,9 +46,7 @@ export function DeleteModal() {
               className="ml-2"
               onClick={() => {
                 if (deleteModal.content?.type === ContentType.NOTE) {
-                  dispatch(deleteNote({
-                    id: deleteModal.content.data.id
-                  }))
+                  dispatch(deleteNote(deleteModal.content.data.id))
                 }
                 else if (deleteModal.content?.type === ContentType.TEMPLATE) {
                   dispatch(deleteTemplate({

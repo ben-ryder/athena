@@ -71,12 +71,12 @@ export const uiContentReducer = createReducer(
     })
 
     builder.addCase(deleteNote, (state, action) => {
-      if (state.activeContent?.id === action.payload.id) {
+      if (state.activeContent?.id === action.payload) {
         state.activeContent = null;
       }
 
       state.openContent = state.openContent.filter(content => {
-        return content.id !== action.payload.id;
+        return content.id !== action.payload;
       })
     })
 

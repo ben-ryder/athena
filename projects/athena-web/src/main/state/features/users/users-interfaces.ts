@@ -1,4 +1,4 @@
-import {BaseEntity} from "../../common/base-entity";
+import {BaseEntity} from "../../common/base-database-entity";
 
 export interface User extends BaseEntity {
   username: string

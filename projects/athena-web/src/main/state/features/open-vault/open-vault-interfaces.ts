@@ -1,20 +1,14 @@
-import {BaseEntity} from "../../common/base-entity";
+import {BaseDatabaseEntity} from "../../common/base-database-entity";
 import {ContentType} from "../ui/content/content-interface";
+import {DatabaseNote, NotesState} from "./notes/notes-interface";
 
-
-export interface Note extends BaseEntity {
-  name: string,
-  body: string,
-  folderId: string | null
-}
-
-export interface Tag extends BaseEntity {
+export interface Tag extends BaseDatabaseEntity {
   name: string,
   textColour: string,
   backgroundColour: string,
 }
 
-export interface Template extends Note {
+export interface Template extends DatabaseNote {
   targetFolderId: string | null
 }
 
@@ -30,7 +24,7 @@ export interface TemplateTag {
   tagId: string
 }
 
-export interface Folder extends BaseEntity {
+export interface Folder extends BaseDatabaseEntity {
   name: string,
   parentId: string | null,
 }
@@ -48,7 +42,7 @@ export interface QueryTag {
   tagId: string,
   queryId: string
 }
-export interface Query extends BaseEntity {
+export interface Query extends BaseDatabaseEntity {
   name: string,
   contentTypes: ContentType[] | null
   search: string | null,
@@ -56,7 +50,7 @@ export interface Query extends BaseEntity {
   orderDirection: OrderDirection
 }
 
-export interface TaskList extends BaseEntity {
+export interface TaskList extends BaseDatabaseEntity {
   name: string,
   folderId: string | null
 }
@@ -71,7 +65,7 @@ export enum TaskStatus {
   OPEN = "OPEN",
   COMPLETED = "COMPLETED"
 }
-export interface Task extends BaseEntity {
+export interface Task extends BaseDatabaseEntity {
   name: string,
   status: TaskStatus,
   taskListId: string
@@ -80,13 +74,6 @@ export interface Task extends BaseEntity {
 export interface TagsState {
   entities: {
     [key: string]: Tag
-  },
-  ids: string[]
-}
-
-export interface NotesState {
-  entities: {
-    [key: string]: Note
   },
   ids: string[]
 }

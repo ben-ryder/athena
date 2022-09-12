@@ -1,33 +1,24 @@
 import {createAction} from "@reduxjs/toolkit";
 import {
-  DeleteActionPayload,
-  MoveActionPayload,
-  RenameActionPayload,
   UpdateTagsPayload
-} from "../../../common/action-interfaces";
-import {Note} from "../open-vault-interfaces";
+} from "../../../common/action-interfaces";;
+import {DatabaseNote} from "./notes-interface";
 
 export enum NotesActions {
   CREATE = "notes/create",
-  RENAME = "notes/update/rename",
-  UPDATE_BODY = "notes/update/body",
+  UPDATE = "notes/update",
   UPDATE_TAGS = "notes/update/tags",
-  MOVE = "notes/update/move",
   DELETE = "notes/delete"
 }
 
-export const createNote = createAction<Note>(NotesActions.CREATE);
+export const createNote = createAction<DatabaseNote>(NotesActions.CREATE);
 
-export const renameNote = createAction<RenameActionPayload>(NotesActions.RENAME);
-
-export const moveNote = createAction<MoveActionPayload>(NotesActions.MOVE);
-
-export interface UpdateBodyActionPayload {
+export interface UpdateNotePayload {
   id: string,
-  body: string
+  changes: Partial<DatabaseNote>
 }
-export const updateNoteBody = createAction<UpdateBodyActionPayload>(NotesActions.UPDATE_BODY);
+export const updateNote = createAction<UpdateNotePayload>(NotesActions.UPDATE);
 
 export const updateNoteTags = createAction<UpdateTagsPayload>(NotesActions.UPDATE_TAGS);
 
-export const deleteNote = createAction<DeleteActionPayload>(NotesActions.DELETE);
+export const deleteNote = createAction<string>(NotesActions.DELETE);

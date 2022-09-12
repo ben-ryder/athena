@@ -19,7 +19,6 @@ import {SavedStatus, SavedStatusIndicator} from "../patterns/components/saved-st
 import {ContentDetails} from "../patterns/components/content-details/content-details";
 import {Provider, useSelector} from "react-redux";
 import {persistor, store, useAppDispatch} from "./state/store";
-import {updateNoteBody} from "./state/features/open-vault/notes/notes-actions";
 import {selectActiveContent, selectOpenContent} from "./state/features/ui/content/content-selctors";
 import {ContentType} from "./state/features/ui/content/content-interface";
 import {AccountIcon} from "../patterns/element/account-icon";
@@ -36,6 +35,7 @@ import {CreateModal} from "../patterns/components/modals/create-modal";
 import {TagsView} from "../patterns/components/tags-view";
 import {DeleteTagModal} from "../patterns/components/modals/delete-tag-modal";
 import { ContentTagEditor } from '../patterns/components/content-tag-editor';
+import {updateNoteBody} from "./state/features/open-vault/notes/notes-thunks";
 
 
 export function MainPage() {
@@ -215,10 +215,7 @@ export function Application() {
                     value={activeContent.data.body}
                     onChange={(updatedBody) => {
                       if (activeContent?.type === ContentType.NOTE) {
-                        dispatch(updateNoteBody({
-                          id: activeContent.data.id,
-                          body: updatedBody
-                        }));
+                        dispatch(updateNoteBody(activeContent.data.id, updatedBody));
                       }
                       else if (activeContent.type === ContentType.TEMPLATE) {
                         dispatch(updateTemplateBody({
