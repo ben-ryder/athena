@@ -36,6 +36,7 @@ import {DeleteTagModal} from "../patterns/components/modals/delete-tag-modal";
 import { ContentTagEditor } from '../patterns/components/content-tag-editor';
 import {updateNoteBody} from "./state/features/open-vault/notes/notes-thunks";
 import {updateTemplateBody} from "./state/features/open-vault/templates/templates-thunks";
+import {FolderView} from "../patterns/components/folder-view";
 
 
 export function MainPage() {
@@ -63,7 +64,7 @@ export function Application() {
     viewContent = <ListView />
   }
   else if (currentViewMode === ViewModes.FOLDER_VIEW) {
-    viewContent = <p>Folder Tree</p>
+    viewContent = <FolderView />
   }
   else {
     viewContent = <TagsView />
