@@ -23,6 +23,10 @@ export function ContentActionsIconAndPopup(props: ContentActionsIconAndPopupProp
       }
     },
     {
+      label: "Move",
+      action: () => {}
+    },
+    {
       label: "Delete",
       action: () => {
         dispatch(openDeleteContentModal(props.content))

@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import {iconSizes} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
+import {useAppDispatch} from "../../main/state/store";
+import {openAndSwitchContent} from "../../main/state/features/ui/content/content-actions";
 
 const indentSize = 15;
 
@@ -36,6 +38,9 @@ export function FolderItem(props: FolderItemProps) {
         "flex items-center"
       )}
       onClick={props.onClick}
+      onContextMenu={(e) => {
+        e.preventDefault()
+      }}
     >
       {props.isExpanded
         ? <FolderOpenIcon size={iconSizes.extraSmall} className="stroke-br-whiteGrey-200 mr-1" />
@@ -51,6 +56,8 @@ export interface FileItemProps {
   level: number
 }
 export function FileItem(props: FileItemProps) {
+  const dispatch = useAppDispatch();
+
   let icon;
   if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600 mr-1" size={iconSizes.extraSmall}/>
@@ -68,7 +75,7 @@ export function FileItem(props: FileItemProps) {
         paddingLeft: `${indentSize * props.level}px`,
         // @ts-ignore
         "--folder-line-offset": `${(indentSize * props.level) - (4 * props.level)}px`
-    }}
+      }}
       className={classNames(
         "w-full py-0.5 text-left",
         "text-br-whiteGrey-100 hover:bg-br-atom-800",
@@ -77,6 +84,15 @@ export function FileItem(props: FileItemProps) {
           "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
         }
       )}
+      onClick={() => {
+        dispatch(openAndSwitchContent({
+          type: props.content.type,
+          id: props.content.data.id
+        }))
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault()
+      }}
     >
       {icon}
       {props.content.data.name}
@@ -158,7 +174,7 @@ export function FolderView() {
           {
             type: ContentType.NOTE,
             data: {
-              id: "test",
+              id: "d1ebe0ec-a94d-4778-b1ea-87996c91d851",
               name: "test name",
               body: "",
               createdAt: "",
@@ -173,7 +189,7 @@ export function FolderView() {
       {
         type: ContentType.NOTE,
         data: {
-          id: "test",
+          id: "d1ebe0ec-a94d-4778-b1ea-87996c91d851",
           name: "test name",
           body: "",
           createdAt: "",
@@ -185,6 +201,8 @@ export function FolderView() {
   }
 
   return (
-    <FolderStructure {...rootFolder} />
+    <>
+      <FolderStructure {...rootFolder} />
+    </>
   )
 }
