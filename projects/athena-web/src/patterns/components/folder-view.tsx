@@ -31,7 +31,7 @@ export function FolderItem(props: FolderItemProps) {
     <button
       style={{paddingLeft: `${indentSize * props.level}px`}}
       className={classNames(
-        "w-full py-1 text-left",
+        "w-full py-0.5 text-left",
         "text-br-whiteGrey-100 hover:bg-br-atom-800",
         "flex items-center"
       )}
@@ -64,11 +64,18 @@ export function FileItem(props: FileItemProps) {
 
   return (
     <button
-      style={{paddingLeft: `${indentSize * props.level}px`}}
+      style={{
+        paddingLeft: `${indentSize * props.level}px`,
+        // @ts-ignore
+        "--folder-line-offset": `${(indentSize * props.level) - (4 * props.level)}px`
+    }}
       className={classNames(
-        "w-full py-1 text-left",
+        "w-full py-0.5 text-left",
         "text-br-whiteGrey-100 hover:bg-br-atom-800",
-        "flex items-center"
+        "flex items-center relative",
+        {
+          "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
+        }
       )}
     >
       {icon}
@@ -78,27 +85,31 @@ export function FileItem(props: FileItemProps) {
 }
 
 export function FolderStructure(props: FolderStructureProps) {
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const [isExpanded, setIsExpanded] = useState<boolean>(props.level <= 0);
 
   return (
-    <div>
+    <div
+      // @ts-ignore
+      style={{"--folder-line-offset": `${(indentSize * props.level) - (4 * props.level)}px`}}
+    className={classNames(
+      "relative",
+      {
+        "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
+      }
+    )}
+    >
       <FolderItem
         name={props.name}
         level={props.level}
         isExpanded={isExpanded}
         onClick={() => {setIsExpanded(!isExpanded)}}
       />
-      <div
-        className={classNames(
-        "transition-transform",
-          {
-            "h-0 opacity-0": !isExpanded
-          }
-        )}
-      >
-        {props.folders.map(folderStructure => <FolderStructure {...folderStructure} />)}
-        {props.files.map(contentData => <FileItem content={contentData} level={props.level + 1} />)}
-      </div>
+      {isExpanded &&
+          <div>
+            {props.folders.map(folderStructure => <FolderStructure {...folderStructure} />)}
+            {props.files.map(contentData => <FileItem content={contentData} level={props.level + 1} />)}
+          </div>
+      }
     </div>
   )
 }
