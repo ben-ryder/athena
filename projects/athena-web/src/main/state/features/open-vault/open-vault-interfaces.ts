@@ -3,12 +3,6 @@ import {ContentType} from "../ui/content/content-interface";
 
 // todo: move all these interfaces to correct slice folder
 
-export interface Tag extends BaseDatabaseEntity {
-  name: string,
-  textColour: string,
-  backgroundColour: string,
-}
-
 export interface NoteTag {
   id: string,
   noteId: string,

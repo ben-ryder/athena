@@ -1,4 +1,5 @@
-import {ApplicationState} from "../../../state-interface";
+import {ApplicationState} from "../../../store";
+
 
 export const selectRenameContentModal = (state: ApplicationState) => state.ui.modals.renameContent;
 

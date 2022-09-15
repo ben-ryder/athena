@@ -1,6 +1,7 @@
-import {BaseEntity} from "../../common/base-database-entity";
+import {BaseDatabaseEntity} from "../../common/base-database-entity";
 
-export interface Vault extends BaseEntity {
+
+export interface Vault extends BaseDatabaseEntity {
   name: string,
   description: string | null,
   userId: string

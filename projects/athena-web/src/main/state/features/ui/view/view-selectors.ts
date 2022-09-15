@@ -1,4 +1,5 @@
-import {ApplicationState} from "../../../state-interface";
+import {ApplicationState} from "../../../store";
+
 
 export const selectCurrentViewMode = (state: ApplicationState) => state.ui.view.currentViewMode;
 

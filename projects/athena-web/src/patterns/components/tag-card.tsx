@@ -1,11 +1,11 @@
 import {colourPalette, IconButton, iconColorClassNames, iconSizes, Tag as TagComponent} from "@ben-ryder/jigsaw";
 import React, {useState} from "react";
-import {Tag} from "../../main/state/features/open-vault/open-vault-interfaces";
 import {Pencil as EditIcon, Trash as DeleteIcon} from "lucide-react";
 import {TagForm} from "./tag-form";
 import {updateTag} from "../../main/state/features/open-vault/tags/tags-actions";
 import {useAppDispatch} from "../../main/state/store";
 import {openDeleteTagModal} from "../../main/state/features/ui/modals/modals-actions";
+import {Tag} from "../../main/state/features/open-vault/tags/tags-interface";
 
 export interface TagCardProps {
   tag: Tag
@@ -42,13 +42,16 @@ export function TagCard(props: TagCardProps) {
         <TagForm
             tag={props.tag}
             onSubmit={(tagFields => {
+              // todo: add tags-thunks to update timestamps on update
               dispatch(updateTag({
                 id: props.tag.id,
-                name: tagFields.name,
-                backgroundColour: tagFields.backgroundColour,
-                textColour: tagFields.textColour,
-                createdAt: props.tag.createdAt,
-                updatedAt: new Date().toISOString()
+                changes: {
+                  name: tagFields.name,
+                  backgroundColour: tagFields.backgroundColour,
+                  textColour: tagFields.textColour,
+                  createdAt: props.tag.createdAt,
+                  updatedAt: new Date().toISOString()
+                }
               }))
               setShowEditForm(false);
             })}

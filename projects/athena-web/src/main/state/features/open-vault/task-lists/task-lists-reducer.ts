@@ -2,15 +2,15 @@ import {createReducer} from "@reduxjs/toolkit";
 
 import {createTaskList, deleteTaskList, updateTaskList} from "./task-lists-actions";
 import {taskListsAdapter} from "./task-lists-adapter";
-import {NotesState} from "../notes/notes-interface";
+import {TaskListState} from "./task-lists-interface";
 
-export const initialNotes: NotesState = {
+export const initialTaskLists: TaskListState = {
   entities: {},
   ids: []
 };
 
 export const taskListsReducer = createReducer(
-  initialNotes,
+  initialTaskLists,
   (builder) => {
     builder.addCase(createTaskList, taskListsAdapter.addOne)
     builder.addCase(updateTaskList, taskListsAdapter.updateOne);

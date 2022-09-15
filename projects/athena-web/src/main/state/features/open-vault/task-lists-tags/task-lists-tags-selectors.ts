@@ -1,6 +1,7 @@
-import {ApplicationState} from "../../../state-interface";
+
 import {createSelector} from "@reduxjs/toolkit";
 import {selectTagsState} from "../tags/tags-selectors";
+import {ApplicationState} from "../../../store";
 
 export const selectTaskListsTagsState = (state: ApplicationState) => state.openVault.taskListsTags;
 

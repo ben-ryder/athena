@@ -1,8 +1,5 @@
 import {createAction} from "@reduxjs/toolkit";
-import {
-  DeleteActionPayload
-} from "../../../common/action-interfaces";
-import {Tag} from "../open-vault-interfaces";
+import {DatabaseTag, Tag} from "./tags-interface";
 
 export enum TagsActions {
   CREATE = "tags/create",
@@ -12,6 +9,10 @@ export enum TagsActions {
 
 export const createTag = createAction<Tag>(TagsActions.CREATE);
 
-export const updateTag = createAction<Tag>(TagsActions.UPDATE);
+export interface UpdateTagPayload {
+  id: string,
+  changes: Partial<DatabaseTag>
+}
+export const updateTag = createAction<UpdateTagPayload>(TagsActions.UPDATE);
 
-export const deleteTag = createAction<DeleteActionPayload>(TagsActions.DELETE);
+export const deleteTag = createAction<string>(TagsActions.DELETE);

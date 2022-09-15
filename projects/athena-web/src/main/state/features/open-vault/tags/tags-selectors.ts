@@ -1,5 +1,5 @@
-import {ApplicationState} from "../../../state-interface";
 import {createSelector} from "@reduxjs/toolkit";
+import {ApplicationState} from "../../../store";
 
 export const selectTagsState = (state: ApplicationState) => state.openVault.tags;
 

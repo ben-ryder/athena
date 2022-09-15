@@ -1,6 +1,6 @@
 import {BaseDatabaseEntity} from "../../../common/base-database-entity";
-import {Tag} from "../open-vault-interfaces";
 import {NoteContent} from "../notes/notes-interface";
+import {Tag} from "../tags/tags-interface";
 
 export interface TemplateContent extends NoteContent {
   targetFolderId: string | null

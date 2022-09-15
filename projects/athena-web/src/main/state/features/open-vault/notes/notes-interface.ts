@@ -1,5 +1,5 @@
 import {BaseDatabaseEntity} from "../../../common/base-database-entity";
-import {Tag} from "../open-vault-interfaces";
+import {Tag} from "../tags/tags-interface";
 
 export interface NoteContent {
   name: string,

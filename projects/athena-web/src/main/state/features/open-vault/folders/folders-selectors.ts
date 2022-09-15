@@ -1,4 +1,4 @@
-import {Content} from "../../ui/ui-interface";
+import {Content} from "../../ui/content/content-interface";
 
 export interface FolderTreeData {
   name: string,

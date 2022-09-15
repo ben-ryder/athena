@@ -28,9 +28,7 @@ export function DeleteTagModal() {
               className="ml-2"
               onClick={() => {
                 if (deleteTagModal.tag) {
-                  dispatch(deleteTag({
-                    id: deleteTagModal.tag.id
-                  }));
+                  dispatch(deleteTag(deleteTagModal.tag.id));
                 }
                 closeModal();
               }}>Delete</Button>

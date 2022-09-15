@@ -1,7 +1,6 @@
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
-import {Tag} from "../../open-vault/open-vault-interfaces";
-
+import {Tag} from "../../open-vault/tags/tags-interface";
 
 export interface UIModalsState {
   renameContent: {
