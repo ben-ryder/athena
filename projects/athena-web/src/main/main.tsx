@@ -37,6 +37,7 @@ import { ContentTagEditor } from '../patterns/components/content-tag-editor';
 import {updateNoteBody} from "./state/features/open-vault/notes/notes-thunks";
 import {updateTemplateBody} from "./state/features/open-vault/templates/templates-thunks";
 import {FolderView} from "../patterns/components/folder-view";
+import {WelcomeMessage} from "../patterns/components/welcome-message";
 
 
 export function MainPage() {
@@ -212,18 +213,19 @@ export function Application() {
           </FileTabSection>
           <section id="note-content" className="h-[calc(100vh-120px)] max-h-[calc(100vh-120px)]">
             {(activeContent !== null && activeContent.type !== ContentType.TASK_LIST) &&
-                <Editor
-                    value={activeContent.data.body}
-                    onChange={(updatedBody) => {
-                      if (activeContent?.type === ContentType.NOTE) {
-                        dispatch(updateNoteBody(activeContent.data.id, updatedBody));
-                      }
-                      else if (activeContent.type === ContentType.TEMPLATE) {
-                        dispatch(updateTemplateBody(activeContent.data.id, updatedBody));
-                      }
-                    }}
-                />
+              <Editor
+                value={activeContent.data.body}
+                onChange={(updatedBody) => {
+                  if (activeContent?.type === ContentType.NOTE) {
+                    dispatch(updateNoteBody(activeContent.data.id, updatedBody));
+                  }
+                  else if (activeContent.type === ContentType.TEMPLATE) {
+                    dispatch(updateTemplateBody(activeContent.data.id, updatedBody));
+                  }
+                }}
+              />
             }
+            {!activeContent && <WelcomeMessage />}
           </section>
 
           <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800`}>
