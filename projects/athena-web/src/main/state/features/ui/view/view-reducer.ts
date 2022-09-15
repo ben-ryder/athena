@@ -25,7 +25,7 @@ export const defaultTagsListFilters: TagsListFilters = {
 
 
 export const initialUIViewState: UIViewState = {
-  currentViewMode: ViewModes.LIST_VIEW,
+  currentViewMode: ViewModes.FOLDER_VIEW,
   contentList: {
     filters: defaultContentListFilters,
     currentPage: 1

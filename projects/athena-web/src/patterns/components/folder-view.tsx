@@ -1,6 +1,6 @@
 import {ContentData} from "../../main/state/features/ui/content/content-selctors";
 import {ContentType} from "../../main/state/features/ui/content/content-interface";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   ChevronDown as FolderOpenIcon,
   ChevronRight as FolderClosedIcon,
@@ -8,7 +8,7 @@ import {
   LayoutTemplate as TemplateTypeIcon,
   ListChecks as TaskListTypeIcon
 } from "lucide-react";
-import {iconSizes} from "@ben-ryder/jigsaw";
+import {iconSizes, StrictReactNode} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
 import {useAppDispatch} from "../../main/state/store";
 import {openAndSwitchContent} from "../../main/state/features/ui/content/content-actions";
@@ -58,7 +58,11 @@ export interface FileItemProps {
 export function FileItem(props: FileItemProps) {
   const dispatch = useAppDispatch();
 
-  let icon;
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuPosition, setMenuPosition] = useState<[number, number] | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+  let icon: StrictReactNode;
   if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600 mr-1" size={iconSizes.extraSmall}/>
   }
@@ -69,34 +73,82 @@ export function FileItem(props: FileItemProps) {
     icon = <TaskListTypeIcon className="text-br-teal-600 mr-1" size={iconSizes.extraSmall} />
   }
 
+  function checkEvent(e: FocusEvent | MouseEvent) {
+    if (menuRef && menuRef.current) {
+      if (!menuRef.current.contains(e.target as HTMLElement)) {
+        setIsMenuOpen(false);
+        document.removeEventListener("focusin", checkEvent);
+        document.removeEventListener("click", checkEvent);
+        setMenuPosition(null);
+      }
+    }
+  }
+
+  // todo: test if this works.
+  useEffect(() => {
+    if (isMenuOpen) {
+      if (menuRef && menuRef.current) {
+        menuRef.current.focus()
+      }
+    }
+  }, [isMenuOpen])
+
   return (
-    <button
-      style={{
-        paddingLeft: `${indentSize * props.level}px`,
-        // @ts-ignore
-        "--folder-line-offset": `${(indentSize * props.level) - (4 * props.level)}px`
-      }}
-      className={classNames(
-        "w-full py-0.5 text-left",
-        "text-br-whiteGrey-100 hover:bg-br-atom-800",
-        "flex items-center relative",
-        {
-          "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
-        }
-      )}
-      onClick={() => {
-        dispatch(openAndSwitchContent({
-          type: props.content.type,
-          id: props.content.data.id
-        }))
-      }}
-      onContextMenu={(e) => {
-        e.preventDefault()
-      }}
-    >
-      {icon}
-      {props.content.data.name}
-    </button>
+    <>
+      <button
+        style={{
+          paddingLeft: `${indentSize * props.level}px`,
+          // @ts-ignore
+          "--folder-line-offset": `${(indentSize * props.level) - (4 * props.level)}px`
+        }}
+        className={classNames(
+          "w-full py-0.5 text-left",
+          "text-br-whiteGrey-100 hover:bg-br-atom-800",
+          "flex items-center relative",
+          {
+            "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
+          }
+        )}
+        onClick={() => {
+          dispatch(openAndSwitchContent({
+            type: props.content.type,
+            id: props.content.data.id
+          }))
+        }}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setIsMenuOpen(true);
+          setMenuPosition([e.pageX, e.pageY]);
+
+          document.addEventListener("focusin", checkEvent);
+          document.addEventListener("click", checkEvent);
+          // todo: add listener to close on any scroll action?
+        }}
+      >
+        {icon}
+        {props.content.data.name}
+      </button>
+
+      <div
+        ref={menuRef}
+        className="fixed z-50"
+        style={{
+          left: `${menuPosition ? menuPosition[0] : 0}px`,
+          top: `${menuPosition ? menuPosition[1] : 0}px`
+        }}
+      >
+        <div
+          className={classNames(
+            "shadow-md rounded bg-br-atom-600 border border-br-blueGrey-700",
+            {
+              "hidden": !isMenuOpen
+            }
+          )}
+        >
+          <p>test content</p>
+        </div>
+      </div>
+    </>
   )
 }
 
@@ -107,12 +159,12 @@ export function FolderStructure(props: FolderStructureProps) {
     <div
       // @ts-ignore
       style={{"--folder-line-offset": `${(indentSize * props.level) - (4 * props.level)}px`}}
-    className={classNames(
-      "relative",
-      {
-        "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
-      }
-    )}
+      className={classNames(
+        "relative",
+        {
+          "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
+        }
+      )}
     >
       <FolderItem
         name={props.name}
