@@ -9,7 +9,7 @@ import {
 import {useAppDispatch} from "../../../main/state/store";
 import {openAndSwitchContent} from "../../../main/state/features/ui/content/content-actions";
 import {ContentType} from "../../../main/state/features/ui/content/content-interface";
-import {ContentActionsIconAndPopup} from "../popup-menus/content-actions-menu";
+import {ContentActionsIconAndPopup} from "../popup-menus/content-actions-icon-and-popup";
 import {useSelector} from "react-redux";
 import {ContentData, selectActiveContent} from "../../../main/state/features/ui/content/content-selctors";
 import {ContentTags} from "./content-tags";

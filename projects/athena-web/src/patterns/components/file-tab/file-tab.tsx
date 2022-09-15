@@ -11,7 +11,7 @@ import {ContentType} from "../../../main/state/features/ui/content/content-inter
 import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
 import {useAppDispatch} from "../../../main/state/store";
 import {closeContent, openAndSwitchContent} from "../../../main/state/features/ui/content/content-actions";
-import {ContentActionsIconAndPopup} from "../popup-menus/content-actions-menu";
+import {ContentActionsIconAndPopup} from "../popup-menus/content-actions-icon-and-popup";
 
 
 export interface ContentFileTabProps {

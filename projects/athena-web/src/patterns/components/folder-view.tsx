@@ -12,6 +12,7 @@ import {iconSizes, StrictReactNode} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
 import {useAppDispatch} from "../../main/state/store";
 import {openAndSwitchContent} from "../../main/state/features/ui/content/content-actions";
+import {ContentActionMenu} from "./popup-menus/content-actions-menus";
 
 const indentSize = 15;
 
@@ -106,7 +107,11 @@ export function FileItem(props: FileItemProps) {
           "text-br-whiteGrey-100 hover:bg-br-atom-800",
           "flex items-center relative",
           {
-            "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0
+            "bg-br-atom-800": isMenuOpen,
+            "bg-br-atom-900 hover:bg-br-atom-800": !isMenuOpen
+          },
+          {
+            "before:content-[''] before:w-[1px] before:h-full before:bg-br-blueGrey-700 before:z-10 before:block before:absolute before:top-0 before:left-[var(--folder-line-offset)]": props.level > 0,
           }
         )}
         onClick={() => {
@@ -131,22 +136,18 @@ export function FileItem(props: FileItemProps) {
 
       <div
         ref={menuRef}
-        className="fixed z-50"
+        className={classNames(
+          "fixed z-50",
+          {
+            "hidden": !isMenuOpen
+          }
+        )}
         style={{
           left: `${menuPosition ? menuPosition[0] : 0}px`,
           top: `${menuPosition ? menuPosition[1] : 0}px`
         }}
       >
-        <div
-          className={classNames(
-            "shadow-md rounded bg-br-atom-600 border border-br-blueGrey-700",
-            {
-              "hidden": !isMenuOpen
-            }
-          )}
-        >
-          <p>test content</p>
-        </div>
+        <ContentActionMenu content={props.content} />
       </div>
     </>
   )
@@ -174,8 +175,8 @@ export function FolderStructure(props: FolderStructureProps) {
       />
       {isExpanded &&
           <div>
-            {props.folders.map(folderStructure => <FolderStructure {...folderStructure} />)}
-            {props.files.map(contentData => <FileItem content={contentData} level={props.level + 1} />)}
+            {props.folders.map(folderStructure => <FolderStructure key={folderStructure.name} {...folderStructure} />)}
+            {props.files.map(contentData => <FileItem key={contentData.data.id} content={contentData} level={props.level + 1} />)}
           </div>
       }
     </div>
@@ -226,7 +227,7 @@ export function FolderView() {
           {
             type: ContentType.NOTE,
             data: {
-              id: "d1ebe0ec-a94d-4778-b1ea-87996c91d851",
+              id: "5f293276-358e-45c7-838a-30f54793d969",
               name: "test name",
               body: "",
               createdAt: "",
@@ -241,7 +242,7 @@ export function FolderView() {
       {
         type: ContentType.NOTE,
         data: {
-          id: "d1ebe0ec-a94d-4778-b1ea-87996c91d851",
+          id: "5f293276-358e-45c7-838a-30f54793d969",
           name: "test name",
           body: "",
           createdAt: "",

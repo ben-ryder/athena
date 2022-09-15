@@ -19,9 +19,7 @@ export function ContentWithPopup(props: ContentWithPopupProps) {
           {props.content}
         </Popover.Button>
 
-        <Popover.Panel
-          className="shadow-md rounded bg-br-atom-600 border border-br-blueGrey-700"
-        >
+        <Popover.Panel>
           {props.popupContent}
         </Popover.Panel>
       </Float>
