@@ -29,7 +29,7 @@ export function ContentFileTab(props: ContentFileTabProps) {
   if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall}/>
   }
-  else if (props.content.type === ContentType.TEMPLATE){
+  else if (props.content.type === ContentType.NOTE_TEMPLATE){
     icon = <TemplateTypeIcon className="text-br-teal-600" size={iconSizes.extraSmall} />
   }
   else {

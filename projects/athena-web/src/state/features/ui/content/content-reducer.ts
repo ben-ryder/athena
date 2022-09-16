@@ -1,7 +1,7 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {createNote, deleteNote} from "../../current-vault/notes/notes-actions";
 import {ContentType, UIContentState} from "./content-interface";
-import {createTemplate, deleteTemplate} from "../../current-vault/templates/templates-actions";
+import {createNoteTemplate, deleteNoteTemplate} from "../../current-vault/note-templates/note-templates-actions";
 import {closeContent, openAndSwitchContent} from "./content-actions";
 import {createTaskList, deleteTaskList} from "../../current-vault/task-lists/task-lists-actions";
 
@@ -24,9 +24,9 @@ export const uiContentReducer = createReducer(
       state.activeContent = content;
     })
 
-    builder.addCase(createTemplate, (state, action) => {
+    builder.addCase(createNoteTemplate, (state, action) => {
       const content = {
-        type: ContentType.TEMPLATE,
+        type: ContentType.NOTE_TEMPLATE,
         id: action.payload.id
       };
 
@@ -80,7 +80,7 @@ export const uiContentReducer = createReducer(
       })
     })
 
-    builder.addCase(deleteTemplate, (state, action) => {
+    builder.addCase(deleteNoteTemplate, (state, action) => {
       if (state.activeContent?.id === action.payload) {
         state.activeContent = null;
       }

@@ -17,8 +17,8 @@ import {ContentFileTab} from "./patterns/components/file-tab/file-tab";
 import {Editor} from "./patterns/components/editor/editor";
 import {SavedStatus, SavedStatusIndicator} from "./patterns/components/saved-status-indicator/saved-status-indicator";
 import {ContentDetails} from "./patterns/components/content-details/content-details";
-import {Provider, useSelector} from "react-redux";
-import {persistor, store, useAppDispatch} from "./state/store";
+import {useSelector} from "react-redux";
+import {useAppDispatch} from "./state/store";
 import {ContentData, selectActiveContent, selectOpenContent} from "./state/features/ui/content/content-selctors";
 import {ContentType} from "./state/features/ui/content/content-interface";
 import {AccountIcon} from "./patterns/element/account-icon";
@@ -26,7 +26,6 @@ import {selectCurrentViewMode} from "./state/features/ui/view/view-selectors";
 import {ViewModes} from "./state/features/ui/view/view-interface";
 import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
 import {ListView} from "./patterns/components/list-view";
-import {PersistGate} from "redux-persist/integration/react";
 import {CreateContentIconAndPopup} from "./patterns/components/popup-menus/create-content-menu";
 import {RenameModal} from "./patterns/components/modals/rename-modal";
 import {DeleteModal} from "./patterns/components/modals/delete-modal";
@@ -35,7 +34,7 @@ import {TagsView} from "./patterns/components/tags-view";
 import {DeleteTagModal} from "./patterns/components/modals/delete-tag-modal";
 import { ContentTagEditor } from './patterns/components/content-tag-editor';
 import {updateNoteBody} from "./state/features/current-vault/notes/notes-thunks";
-import {updateTemplateBody} from "./state/features/current-vault/templates/templates-thunks";
+import {updateNoteTemplateBody} from "./state/features/current-vault/note-templates/note-templates-thunks";
 import {FolderView} from "./patterns/components/folder-view";
 import {WelcomeMessage} from "./patterns/components/welcome-message";
 
@@ -208,8 +207,8 @@ export function Application() {
                   if (activeContent?.type === ContentType.NOTE) {
                     dispatch(updateNoteBody(activeContent.data.id, updatedBody));
                   }
-                  else if (activeContent.type === ContentType.TEMPLATE) {
-                    dispatch(updateTemplateBody(activeContent.data.id, updatedBody));
+                  else if (activeContent.type === ContentType.NOTE_TEMPLATE) {
+                    dispatch(updateNoteTemplateBody(activeContent.data.id, updatedBody));
                   }
                 }}
               />

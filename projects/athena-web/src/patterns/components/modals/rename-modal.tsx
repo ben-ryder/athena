@@ -7,7 +7,7 @@ import {useEffect, useRef, useState} from "react";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
 import {renameNote} from "../../../state/features/current-vault/notes/notes-thunks";
-import {renameTemplate} from "../../../state/features/current-vault/templates/templates-thunks";
+import {renameNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-thunks";
 import {renameTaskList} from "../../../state/features/current-vault/task-lists/task-lists-thunks";
 
 export function RenameModal() {
@@ -24,8 +24,8 @@ export function RenameModal() {
       contentType = "task list"
       break;
     }
-    case ContentType.TEMPLATE: {
-      contentType = "template"
+    case ContentType.NOTE_TEMPLATE: {
+      contentType = "note template"
       break ;
     }
     default: {
@@ -60,8 +60,8 @@ export function RenameModal() {
             if (renameModal.content?.type === ContentType.NOTE) {
               dispatch(renameNote(renameModal.content.data.id, newName));
             }
-            else if (renameModal.content?.type === ContentType.TEMPLATE) {
-              dispatch(renameTemplate(renameModal.content.data.id, newName));
+            else if (renameModal.content?.type === ContentType.NOTE_TEMPLATE) {
+              dispatch(renameNoteTemplate(renameModal.content.data.id, newName));
             }
             else if (renameModal.content?.type === ContentType.TASK_LIST) {
               dispatch(renameTaskList(renameModal.content.data.id, newName));

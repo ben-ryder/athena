@@ -67,7 +67,7 @@ export function FileItem(props: FileItemProps) {
   if (props.content.type === ContentType.NOTE) {
     icon = <NoteTypeIcon className="text-br-teal-600 mr-1" size={iconSizes.extraSmall}/>
   }
-  else if (props.content.type === ContentType.TEMPLATE) {
+  else if (props.content.type === ContentType.NOTE_TEMPLATE) {
     icon = <TemplateTypeIcon className="text-br-teal-600 mr-1" size={iconSizes.extraSmall} />
   }
   else {
@@ -199,7 +199,7 @@ export function FolderView() {
             folders: [],
             files: [
               {
-                type: ContentType.TEMPLATE,
+                type: ContentType.NOTE_TEMPLATE,
                 data: {
                   id: "test",
                   name: "test name",

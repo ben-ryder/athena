@@ -1,7 +1,7 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {Content, ContentType} from "./content-interface";
 import {DatabaseNote} from "../../current-vault/notes/notes-interface";
-import {DatabaseTemplate} from "../../current-vault/templates/templates-interface";
+import {DatabaseNoteTemplate} from "../../current-vault/note-templates/note-templates-interface";
 import {DatabaseTaskList} from "../../current-vault/task-lists/task-lists-interface";
 import {ApplicationState} from "../../../store";
 
@@ -16,8 +16,8 @@ export type ContentData = {
   type: ContentType.NOTE,
   data: DatabaseNote
 } | {
-  type: ContentType.TEMPLATE,
-  data: DatabaseTemplate
+  type: ContentType.NOTE_TEMPLATE,
+  data: DatabaseNoteTemplate
 } | {
   type: ContentType.TASK_LIST,
   data: DatabaseTaskList
@@ -26,7 +26,7 @@ export type ContentData = {
 function parseContent(
   content: Content,
   noteEntities: {[k: string]: DatabaseNote},
-  templateEntities: {[k: string]: DatabaseTemplate},
+  templateEntities: {[k: string]: DatabaseNoteTemplate},
   taskListEntities: {[k: string]: DatabaseTaskList}
 ): ContentData {
   if (content.type === ContentType.NOTE) {
@@ -35,9 +35,9 @@ function parseContent(
       data: noteEntities[content.id]
     }
   }
-  else if (content.type === ContentType.TEMPLATE) {
+  else if (content.type === ContentType.NOTE_TEMPLATE) {
     return {
-      type: ContentType.TEMPLATE,
+      type: ContentType.NOTE_TEMPLATE,
       data: templateEntities[content.id]
     }
   }

@@ -1,17 +1,17 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {v4 as createUUID} from "uuid";
-import {updateTemplateTags} from "../templates/templates-actions";
-import {TemplatesTagsState} from "./template-tags-interface";
+import {updateNoteTemplateTags} from "../note-templates/note-templates-actions";
+import {NoteTemplatesTagsState} from "./note-template-tags-interface";
 
-export const initialTemplatesTags: TemplatesTagsState = {
+export const initialNoteTemplatesTags: NoteTemplatesTagsState = {
   entities: {},
   ids: []
 };
 
-export const templatesTagsReducer = createReducer(
-  initialTemplatesTags,
+export const noteTemplateTagsReducer = createReducer(
+  initialNoteTemplatesTags,
   (builder) => {
-    builder.addCase(updateTemplateTags, (state, action) => {
+    builder.addCase(updateNoteTemplateTags, (state, action) => {
       const existingTags = state.ids.filter(templateTagId => {
         return state.entities[templateTagId].templateId === action.payload.id
       });

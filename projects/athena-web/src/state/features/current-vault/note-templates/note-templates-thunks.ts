@@ -1,9 +1,9 @@
 import {v4 as createUUID} from "uuid";
 import {AppThunkDispatch} from "../../../store";
-import {createTemplate, updateTemplate} from "./templates-actions";
+import {createNoteTemplate, updateNoteTemplate} from "./note-templates-actions";
 
 
-export function createNewTemplate(name: string) {
+export function createNewNoteTemplate(name: string) {
   return (dispatch: AppThunkDispatch) => {
     const templateId = createUUID();
     const timestamp = new Date().toISOString();
@@ -17,15 +17,15 @@ export function createNewTemplate(name: string) {
       createdAt: timestamp,
       updatedAt: timestamp
     }
-    dispatch(createTemplate(template))
+    dispatch(createNoteTemplate(template))
   }
 }
 
-export function renameTemplate(templateId: string, newName: string) {
+export function renameNoteTemplate(templateId: string, newName: string) {
   return (dispatch: AppThunkDispatch) => {
     const timestamp = new Date().toISOString();
 
-    dispatch(updateTemplate({
+    dispatch(updateNoteTemplate({
       id: templateId,
       changes: {
         name: newName,
@@ -35,11 +35,11 @@ export function renameTemplate(templateId: string, newName: string) {
   }
 }
 
-export function moveTemplate(templateId: string, newFolder: string | null) {
+export function moveNoteTemplate(templateId: string, newFolder: string | null) {
   return (dispatch: AppThunkDispatch) => {
     const timestamp = new Date().toISOString();
 
-    dispatch(updateTemplate({
+    dispatch(updateNoteTemplate({
       id: templateId,
       changes: {
         folderId: newFolder,
@@ -49,11 +49,11 @@ export function moveTemplate(templateId: string, newFolder: string | null) {
   }
 }
 
-export function updateTemplateBody(templateId: string, newBody: string) {
+export function updateNoteTemplateBody(templateId: string, newBody: string) {
   return (dispatch: AppThunkDispatch) => {
     const timestamp = new Date().toISOString();
 
-    dispatch(updateTemplate({
+    dispatch(updateNoteTemplate({
       id: templateId,
       changes: {
         body: newBody,

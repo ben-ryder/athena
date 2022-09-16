@@ -7,8 +7,8 @@ import {ContentType} from "../../state/features/ui/content/content-interface";
 import {Option} from "@ben-ryder/jigsaw";
 import {ApplicationState, useAppDispatch} from "../../state/store";
 import {updateNoteTags} from "../../state/features/current-vault/notes/notes-actions";
-import {selectTemplateTags} from "../../state/features/current-vault/templates-tags/templates-tags-selectors";
-import {updateTemplateTags} from "../../state/features/current-vault/templates/templates-actions";
+import {selectTemplateTags} from "../../state/features/current-vault/note-templates-tags/note-template-tags-selectors";
+import {updateNoteTemplateTags} from "../../state/features/current-vault/note-templates/note-templates-actions";
 import {updateTaskListTags} from "../../state/features/current-vault/task-lists/task-lists-actions";
 import {selectTaskListTags} from "../../state/features/current-vault/task-lists-tags/task-lists-tags-selectors";
 
@@ -31,7 +31,7 @@ export function ContentTagEditor() {
       <NoteTagsEditor contentId={activeContent.data.id} tagOptions={tagOptions} />
     )
   }
-  else if (activeContent.type === ContentType.TEMPLATE) {
+  else if (activeContent.type === ContentType.NOTE_TEMPLATE) {
     return (
       <TemplateTagsEditor contentId={activeContent.data.id} tagOptions={tagOptions} />
     )
@@ -76,7 +76,7 @@ export function TemplateTagsEditor(props: TagsEditorProps) {
       options={props.tagOptions}
       currentOptions={templateTags.map(templateTag => templateTag.id)}
       onOptionsChange={(newTags) => {
-        dispatch(updateTemplateTags({
+        dispatch(updateNoteTemplateTags({
           id: props.contentId,
           tags: newTags
         }))

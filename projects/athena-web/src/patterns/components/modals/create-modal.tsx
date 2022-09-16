@@ -7,7 +7,7 @@ import {useState} from "react";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
 import {createNewNote} from "../../../state/features/current-vault/notes/notes-thunks";
-import {createNewTemplate} from "../../../state/features/current-vault/templates/templates-thunks";
+import {createNewNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-thunks";
 import {createNewTaskList} from "../../../state/features/current-vault/task-lists/task-lists-thunks";
 
 export function CreateModal() {
@@ -20,8 +20,8 @@ export function CreateModal() {
   if (createModal.type === ContentType.NOTE) {
     contentType = "Note"
   }
-  else if (createModal.type === ContentType.TEMPLATE) {
-    contentType = "Template"
+  else if (createModal.type === ContentType.NOTE_TEMPLATE) {
+    contentType = "Note Template"
   }
   else if (createModal.type === ContentType.TASK_LIST) {
     contentType = "Task List"
@@ -38,8 +38,8 @@ export function CreateModal() {
             if (createModal.type === ContentType.NOTE) {
               dispatch(createNewNote(name));
             }
-            else if (createModal.type === ContentType.TEMPLATE) {
-              dispatch(createNewTemplate(name));
+            else if (createModal.type === ContentType.NOTE_TEMPLATE) {
+              dispatch(createNewNoteTemplate(name));
             }
             else if (createModal.type === ContentType.TASK_LIST) {
               dispatch(createNewTaskList(name));
@@ -52,7 +52,7 @@ export function CreateModal() {
         >
           <Input
             value={name} onChange={(e) => {setName(e.target.value)}}
-            id="name" label={`${contentType} Name`} type="text"
+            id="name" label="Name" type="text"
           />
 
           <div className="mt-4 flex justify-end items-center">

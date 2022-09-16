@@ -13,6 +13,7 @@ import {defaultContentListFilters} from "../../../state/features/ui/view/view-re
 import {selectTagOptions} from "../../../state/features/current-vault/tags/tags-selectors";
 import {OrderDirection} from "../../../state/common/order-direction-enum";
 import {OrderBy} from "../../../state/common/order-by-enum";
+import {PopupPanel} from "../popup-panel/popup-panel";
 
 const contentTypeOptions = [
   {
@@ -24,8 +25,8 @@ const contentTypeOptions = [
     value: ContentType.TASK_LIST
   },
   {
-    name: "Templates",
-    value: ContentType.TEMPLATE
+    name: "Note Templates",
+    value: ContentType.NOTE_TEMPLATE
   }
 ];
 
@@ -166,9 +167,9 @@ export function ContentListFilterIconAndPopup() {
         </button>
       }
       popupContent={
-        <div className="p-2 maw-w-[350px]">
+        <PopupPanel className="p-2 maw-w-[350px]">
           <ListFilterForm onClose={() => {}} />
-        </div>
+        </PopupPanel>
       }
     />
   )

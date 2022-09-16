@@ -5,7 +5,7 @@ import {closeDeleteContentModal} from "../../../state/features/ui/modals/modals-
 import {Button} from "@ben-ryder/jigsaw";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {deleteNote} from "../../../state/features/current-vault/notes/notes-actions";
-import {deleteTemplate} from "../../../state/features/current-vault/templates/templates-actions";
+import {deleteNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-actions";
 import {Modal} from "./modal";
 import {deleteTaskList} from "../../../state/features/current-vault/task-lists/task-lists-actions";
 
@@ -20,8 +20,8 @@ export function DeleteModal() {
       contentType = "task list"
       break;
     }
-    case ContentType.TEMPLATE: {
-      contentType = "template"
+    case ContentType.NOTE_TEMPLATE: {
+      contentType = "note template"
       break ;
     }
     default: {
@@ -48,8 +48,8 @@ export function DeleteModal() {
                 if (deleteModal.content?.type === ContentType.NOTE) {
                   dispatch(deleteNote(deleteModal.content.data.id));
                 }
-                else if (deleteModal.content?.type === ContentType.TEMPLATE) {
-                  dispatch(deleteTemplate(deleteModal.content.data.id));
+                else if (deleteModal.content?.type === ContentType.NOTE_TEMPLATE) {
+                  dispatch(deleteNoteTemplate(deleteModal.content.data.id));
                 }
                 else if (deleteModal.content?.type === ContentType.TASK_LIST) {
                   dispatch(deleteTaskList(deleteModal.content.data.id));

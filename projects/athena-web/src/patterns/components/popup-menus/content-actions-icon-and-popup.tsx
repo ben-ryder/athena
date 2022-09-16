@@ -12,7 +12,7 @@ export interface ContentActionsIconAndPopupProps {
 export function ContentActionsIconAndPopup(props: ContentActionsIconAndPopupProps) {
   return (
     <ContentWithPopup
-      label="Note Actions"
+      label="Content Actions"
       content={
         <FileTabOptionsIcon size={iconSizes.extraSmall} className={iconColorClassNames.secondary} />
       }

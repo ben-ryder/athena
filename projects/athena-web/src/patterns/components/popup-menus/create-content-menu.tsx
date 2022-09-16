@@ -18,9 +18,9 @@ export function CreateContentIconAndPopup() {
       }
     },
     {
-      label: "Template",
+      label: "Note Template",
       action: () => {
-        dispatch(openCreateContentModal(ContentType.TEMPLATE));
+        dispatch(openCreateContentModal(ContentType.NOTE_TEMPLATE));
       }
     },
     {

@@ -1,7 +1,7 @@
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {useSelector} from "react-redux";
 import {selectNoteTags} from "../../../state/features/current-vault/notes-tags/notes-tags-selectors";
-import {selectTemplateTags} from "../../../state/features/current-vault/templates-tags/templates-tags-selectors";
+import {selectTemplateTags} from "../../../state/features/current-vault/note-templates-tags/note-template-tags-selectors";
 import {selectTaskListTags} from "../../../state/features/current-vault/task-lists-tags/task-lists-tags-selectors";
 import {Tag as TagElement} from "@ben-ryder/jigsaw";
 import {ContentData} from "../../../state/features/ui/content/content-selctors";
@@ -16,7 +16,7 @@ export function ContentTags(props: ContentTagsProps) {
   if (props.content.type === ContentType.NOTE) {
     return <NoteTags id={props.content.data.id} />
   }
-  else if (props.content.type === ContentType.TEMPLATE) {
+  else if (props.content.type === ContentType.NOTE_TEMPLATE) {
     return <TemplateTags id={props.content.data.id} />
   }
   else {

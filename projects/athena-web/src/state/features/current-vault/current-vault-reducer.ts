@@ -1,18 +1,18 @@
 import {combineReducers} from "@reduxjs/toolkit";
 import {notesReducer} from "./notes/notes-reducer";
-import {templatesReducer} from "./templates/templates-reducer";
+import {noteTemplatesReducer} from "./note-templates/note-templates-reducer";
 import {taskListsReducer} from "./task-lists/task-lists-reducer";
 import {tagsReducer} from "./tags/tags-reducer";
 import {notesTagsReducer} from "./notes-tags/notes-tags-reducer";
-import {templatesTagsReducer} from "./templates-tags/templates-tags-reducer";
+import {noteTemplateTagsReducer} from "./note-templates-tags/note-template-tags-reducer";
 import {taskListsTagsReducer} from "./task-lists-tags/task-lists-tags-reducer";
 
 export const currentVaultReducer = combineReducers({
   tags: tagsReducer,
   notes: notesReducer,
   notesTags: notesTagsReducer,
-  templates: templatesReducer,
-  templatesTags: templatesTagsReducer,
+  templates: noteTemplatesReducer,
+  templatesTags: noteTemplateTagsReducer,
   taskLists: taskListsReducer,
   taskListsTags: taskListsTagsReducer
 })

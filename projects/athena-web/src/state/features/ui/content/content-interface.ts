@@ -1,6 +1,6 @@
 export enum ContentType {
   NOTE = "NOTE",
-  TEMPLATE = "TEMPLATE",
+  NOTE_TEMPLATE = "NOTE_TEMPLATE",
   TASK_LIST = "TASK_LIST"
 }
 

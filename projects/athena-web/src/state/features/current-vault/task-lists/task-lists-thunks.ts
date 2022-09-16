@@ -2,7 +2,6 @@ import {v4 as createUUID} from "uuid";
 import {AppThunkDispatch} from "../../../store";
 import {createTaskList, updateTaskList} from "./task-lists-actions";
 import {DatabaseTaskList} from "./task-lists-interface";
-import {updateTemplate} from "../templates/templates-actions";
 
 export function createNewTaskList(name: string) {
   return (dispatch: AppThunkDispatch) => {
@@ -38,7 +37,7 @@ export function moveTaskList(taskListId: string, newFolder: string | null) {
   return (dispatch: AppThunkDispatch) => {
     const timestamp = new Date().toISOString();
 
-    dispatch(updateTemplate({
+    dispatch(updateTaskList({
       id: taskListId,
       changes: {
         folderId: newFolder,

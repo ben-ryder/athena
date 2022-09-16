@@ -1,13 +1,13 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {ContentType} from "../ui/content/content-interface";
 import {selectNotesState} from "./notes/notes-selectors";
-import {selectTemplatesState} from "./templates/templates-selectors";
+import {selectNoteTemplatesState} from "./note-templates/note-templates-selectors";
 import {ContentData} from "../ui/content/content-selctors";
 import {selectTaskListsState} from "./task-lists/task-lists-selectors";
 import {selectContentListFilters, selectContentListPage} from "../ui/view/view-selectors";
 import {ListingMetadata} from "../../common/listing-metadata";
 import {selectNotesTagsState} from "./notes-tags/notes-tags-selectors";
-import {selectTemplatesTagsState} from "./templates-tags/templates-tags-selectors";
+import {selectTemplatesTagsState} from "./note-templates-tags/note-template-tags-selectors";
 import {selectTaskListsTagsState} from "./task-lists-tags/task-lists-tags-selectors";
 import {OrderBy} from "../../common/order-by-enum";
 import {OrderDirection} from "../../common/order-direction-enum";
@@ -21,7 +21,7 @@ export interface ContentListData {
 
 export const selectContentList = createSelector([
   selectContentListPage, selectContentListFilters,
-  selectNotesState, selectTemplatesState, selectTaskListsState,
+  selectNotesState, selectNoteTemplatesState, selectTaskListsState,
   selectNotesTagsState, selectTemplatesTagsState, selectTaskListsTagsState
 ], (
   currentPage, filters,
@@ -37,7 +37,7 @@ export const selectContentList = createSelector([
 
   const templateContent: ContentData[] = templates.ids.map(templateId => {
     return {
-      type: ContentType.TEMPLATE,
+      type: ContentType.NOTE_TEMPLATE,
       data: templates.entities[templateId],
     }
   })
@@ -73,7 +73,7 @@ export const selectContentList = createSelector([
           .filter(noteTag => noteTag.noteId === content.data.id)
           .map(noteTag => noteTag.tagId)
       }
-      else if (content.type === ContentType.TEMPLATE) {
+      else if (content.type === ContentType.NOTE_TEMPLATE) {
         contentTags = templatesTags.ids
           .map(id => templatesTags.entities[id])
           .filter(templateTag => templateTag.templateId === content.data.id)
