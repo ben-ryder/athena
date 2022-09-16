@@ -1,9 +1,8 @@
 import {TagForm} from "./tag-form";
-import {Button, colourPalette, IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw";
+import {Button, IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw";
 import React, {useState} from "react";
 import {useAppDispatch} from "../../state/store";
-import {createTag} from "../../state/features/open-vault/tags/tags-actions";
-import {v4 as createUUID} from "uuid";
+import {createNewTag} from "../../state/features/open-vault/tags/tags-thunks";
 import {useSelector} from "react-redux";
 import {selectTagsList} from "../../state/features/open-vault/tags-list-selectors";
 import {TagsListFilterIconAndPopup} from "./popup-menus/tags-list-filter-icon-and-popup";
@@ -36,13 +35,10 @@ export function TagsView() {
           <div className="bg-br-atom-700 p-4">
             <TagForm
               onSubmit={(tagFields) => {
-                dispatch(createTag({
-                  id: createUUID(),
+                dispatch(createNewTag({
                   name: tagFields.name,
                   backgroundColour: tagFields.backgroundColour,
-                  textColour: tagFields.textColour,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
+                  textColour: tagFields.textColour
                 }))
 
                 // As this stops the form rendering which means its state is deleted so there's no need

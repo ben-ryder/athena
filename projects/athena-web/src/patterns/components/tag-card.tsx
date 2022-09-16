@@ -2,7 +2,7 @@ import {colourPalette, IconButton, iconColorClassNames, iconSizes, Tag as TagCom
 import React, {useState} from "react";
 import {Pencil as EditIcon, Trash as DeleteIcon} from "lucide-react";
 import {TagForm} from "./tag-form";
-import {updateTag} from "../../state/features/open-vault/tags/tags-actions";
+import {updateExistingTag} from "../../state/features/open-vault/tags/tags-thunks";
 import {useAppDispatch} from "../../state/store";
 import {openDeleteTagModal} from "../../state/features/ui/modals/modals-actions";
 import {Tag} from "../../state/features/open-vault/tags/tags-interface";
@@ -42,16 +42,10 @@ export function TagCard(props: TagCardProps) {
         <TagForm
             tag={props.tag}
             onSubmit={(tagFields => {
-              // todo: add tags-thunks to update timestamps on update
-              dispatch(updateTag({
-                id: props.tag.id,
-                changes: {
-                  name: tagFields.name,
-                  backgroundColour: tagFields.backgroundColour,
-                  textColour: tagFields.textColour,
-                  createdAt: props.tag.createdAt,
-                  updatedAt: new Date().toISOString()
-                }
+              dispatch(updateExistingTag(props.tag.id, {
+                name: tagFields.name,
+                backgroundColour: tagFields.backgroundColour,
+                textColour: tagFields.textColour,
               }))
               setShowEditForm(false);
             })}

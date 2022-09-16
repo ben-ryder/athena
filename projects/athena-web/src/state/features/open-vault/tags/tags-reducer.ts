@@ -8,8 +8,6 @@ export const initialTags: TagsState = {
   ids: []
 };
 
-// todo: add tags-thunks to update timestamps on update
-
 export const tagsReducer = createReducer(
   initialTags,
   (builder) => {
