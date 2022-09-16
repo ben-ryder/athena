@@ -1,7 +1,7 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {TemplatesTagsState} from "../open-vault-interfaces";
 import {v4 as createUUID} from "uuid";
 import {updateTemplateTags} from "../templates/templates-actions";
+import {TemplatesTagsState} from "./template-tags-interface";
 
 export const initialTemplatesTags: TemplatesTagsState = {
   entities: {},

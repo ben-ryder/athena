@@ -2,8 +2,9 @@ import {createSelector} from "@reduxjs/toolkit";
 import {selectTagsState} from "./tags/tags-selectors";
 import {selectTagsListFilters, selectTagsListPage} from "../ui/view/view-selectors";
 import {ListingMetadata} from "../../common/listing-metadata";
-import {OrderBy, OrderDirection} from "./open-vault-interfaces";
 import {Tag} from "./tags/tags-interface";
+import {OrderBy} from "../../common/order-by-enum";
+import {OrderDirection} from "../../common/order-direction-enum";
 
 export const tagsListPageSize = 20;
 

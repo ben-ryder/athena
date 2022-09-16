@@ -7,7 +7,8 @@ import {
 } from "./view-actions";
 import {ContentListFilters, TagsListFilters, UIViewState, ViewModes} from "./view-interface";
 import {ContentType} from "../content/content-interface";
-import {OrderBy, OrderDirection} from "../../open-vault/open-vault-interfaces";
+import {OrderDirection} from "../../../common/order-direction-enum";
+import {OrderBy} from "../../../common/order-by-enum";
 
 export const defaultContentListFilters: ContentListFilters = {
   search: "",

@@ -5,11 +5,12 @@ import {selectTemplatesState} from "./templates/templates-selectors";
 import {ContentData} from "../ui/content/content-selctors";
 import {selectTaskListsState} from "./task-lists/task-lists-selectors";
 import {selectContentListFilters, selectContentListPage} from "../ui/view/view-selectors";
-import {OrderBy, OrderDirection} from "./open-vault-interfaces";
 import {ListingMetadata} from "../../common/listing-metadata";
 import {selectNotesTagsState} from "./notes-tags/notes-tags-selectors";
 import {selectTemplatesTagsState} from "./templates-tags/templates-tags-selectors";
 import {selectTaskListsTagsState} from "./task-lists-tags/task-lists-tags-selectors";
+import {OrderBy} from "../../common/order-by-enum";
+import {OrderDirection} from "../../common/order-direction-enum";
 
 export const contentListPageSize = 12;
 

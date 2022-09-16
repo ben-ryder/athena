@@ -7,11 +7,12 @@ import {useAppDispatch} from "../../../state/store";
 import {useSelector} from "react-redux";
 import {selectContentListFilters} from "../../../state/features/ui/view/view-selectors";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
-import {OrderBy, OrderDirection} from "../../../state/features/open-vault/open-vault-interfaces";
 import {resetContentListFilters, updateContentListFilters} from "../../../state/features/ui/view/view-actions";
 import { Popover } from "@headlessui/react";
 import {defaultContentListFilters} from "../../../state/features/ui/view/view-reducer";
 import {selectTagOptions} from "../../../state/features/open-vault/tags/tags-selectors";
+import {OrderDirection} from "../../../state/common/order-direction-enum";
+import {OrderBy} from "../../../state/common/order-by-enum";
 
 const contentTypeOptions = [
   {

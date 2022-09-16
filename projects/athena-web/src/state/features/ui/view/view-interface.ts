@@ -1,5 +1,6 @@
 import {ContentType} from "../content/content-interface";
-import {OrderBy, OrderDirection} from "../../open-vault/open-vault-interfaces";
+import {OrderDirection} from "../../../common/order-direction-enum";
+import {OrderBy} from "../../../common/order-by-enum";
 
 export enum ViewModes {
   FOLDER_VIEW = "FOLDER_VIEW",

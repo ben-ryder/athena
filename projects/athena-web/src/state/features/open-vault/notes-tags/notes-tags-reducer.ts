@@ -1,7 +1,7 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {NotesTagsState} from "../open-vault-interfaces";
 import {updateNoteTags} from "../notes/notes-actions";
 import {v4 as createUUID} from "uuid";
+import {NotesTagsState} from "./note-tags-interface";
 
 export const initialNotesTags: NotesTagsState = {
   entities: {},

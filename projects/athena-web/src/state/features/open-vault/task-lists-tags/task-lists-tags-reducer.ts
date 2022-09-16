@@ -1,7 +1,7 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {TaskListsTagsState} from "../open-vault-interfaces";
 import {v4 as createUUID} from "uuid";
 import {updateTaskListTags} from "../task-lists/task-lists-actions";
+import {TaskListsTagsState} from "./task-list-tags-interface";
 
 export const initialTaskListsTags: TaskListsTagsState = {
   entities: {},
