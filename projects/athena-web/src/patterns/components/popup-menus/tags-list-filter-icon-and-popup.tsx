@@ -3,16 +3,16 @@ import classNames from "classnames";
 import {Filter} from "lucide-react";
 import {Button, iconSizes, Input, MultiSelect, Select} from "@ben-ryder/jigsaw";
 import React, {useState} from "react";
-import {useAppDispatch} from "../../../main/state/store";
+import {useAppDispatch} from "../../../state/store";
 import {useSelector} from "react-redux";
-import {selectTagsListFilters} from "../../../main/state/features/ui/view/view-selectors";
-import {OrderBy, OrderDirection} from "../../../main/state/features/open-vault/open-vault-interfaces";
+import {selectTagsListFilters} from "../../../state/features/ui/view/view-selectors";
+import {OrderBy, OrderDirection} from "../../../state/features/open-vault/open-vault-interfaces";
 import {
   resetTagsListFilters,
   updateTagsListFilters
-} from "../../../main/state/features/ui/view/view-actions";
+} from "../../../state/features/ui/view/view-actions";
 import { Popover } from "@headlessui/react";
-import {defaultTagsListFilters} from "../../../main/state/features/ui/view/view-reducer";
+import {defaultTagsListFilters} from "../../../state/features/ui/view/view-reducer";
 
 
 const orderByOptions = [

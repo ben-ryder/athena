@@ -1,10 +1,10 @@
 import React from "react";
-import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
-import {useAppDispatch} from "../../../main/state/store";
-import {openDeleteContentModal, openRenameContentModal} from "../../../main/state/features/ui/modals/modals-actions";
-import {createNoteFromTemplate} from "../../../main/state/features/open-vault/notes/notes-thunks";
+import {ContentData} from "../../../state/features/ui/content/content-selctors";
+import {useAppDispatch} from "../../../state/store";
+import {openDeleteContentModal, openRenameContentModal} from "../../../state/features/ui/modals/modals-actions";
+import {createNoteFromTemplate} from "../../../state/features/open-vault/notes/notes-thunks";
 import {MenuPopup} from "./menu-popup";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
+import {ContentType} from "../../../state/features/ui/content/content-interface";
 
 export interface ContentActionMenuProps {
   content: ContentData

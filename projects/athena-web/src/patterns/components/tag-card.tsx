@@ -2,10 +2,10 @@ import {colourPalette, IconButton, iconColorClassNames, iconSizes, Tag as TagCom
 import React, {useState} from "react";
 import {Pencil as EditIcon, Trash as DeleteIcon} from "lucide-react";
 import {TagForm} from "./tag-form";
-import {updateTag} from "../../main/state/features/open-vault/tags/tags-actions";
-import {useAppDispatch} from "../../main/state/store";
-import {openDeleteTagModal} from "../../main/state/features/ui/modals/modals-actions";
-import {Tag} from "../../main/state/features/open-vault/tags/tags-interface";
+import {updateTag} from "../../state/features/open-vault/tags/tags-actions";
+import {useAppDispatch} from "../../state/store";
+import {openDeleteTagModal} from "../../state/features/ui/modals/modals-actions";
+import {Tag} from "../../state/features/open-vault/tags/tags-interface";
 
 export interface TagCardProps {
   tag: Tag

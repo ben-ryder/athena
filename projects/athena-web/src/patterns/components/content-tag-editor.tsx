@@ -1,16 +1,16 @@
 import {TagMultiSelect} from "./tag-selector/tag-multi-select";
 import {useSelector} from "react-redux";
-import {selectActiveContent} from "../../main/state/features/ui/content/content-selctors";
-import {selectTagOptions} from "../../main/state/features/open-vault/tags/tags-selectors";
-import {selectNoteTags} from "../../main/state/features/open-vault/notes-tags/notes-tags-selectors";
-import {ContentType} from "../../main/state/features/ui/content/content-interface";
+import {selectActiveContent} from "../../state/features/ui/content/content-selctors";
+import {selectTagOptions} from "../../state/features/open-vault/tags/tags-selectors";
+import {selectNoteTags} from "../../state/features/open-vault/notes-tags/notes-tags-selectors";
+import {ContentType} from "../../state/features/ui/content/content-interface";
 import {Option} from "@ben-ryder/jigsaw";
-import {ApplicationState, useAppDispatch} from "../../main/state/store";
-import {updateNoteTags} from "../../main/state/features/open-vault/notes/notes-actions";
-import {selectTemplateTags} from "../../main/state/features/open-vault/templates-tags/templates-tags-selectors";
-import {updateTemplateTags} from "../../main/state/features/open-vault/templates/templates-actions";
-import {updateTaskListTags} from "../../main/state/features/open-vault/task-lists/task-lists-actions";
-import {selectTaskListTags} from "../../main/state/features/open-vault/task-lists-tags/task-lists-tags-selectors";
+import {ApplicationState, useAppDispatch} from "../../state/store";
+import {updateNoteTags} from "../../state/features/open-vault/notes/notes-actions";
+import {selectTemplateTags} from "../../state/features/open-vault/templates-tags/templates-tags-selectors";
+import {updateTemplateTags} from "../../state/features/open-vault/templates/templates-actions";
+import {updateTaskListTags} from "../../state/features/open-vault/task-lists/task-lists-actions";
+import {selectTaskListTags} from "../../state/features/open-vault/task-lists-tags/task-lists-tags-selectors";
 
 export interface TagsEditorProps {
   contentId: string,

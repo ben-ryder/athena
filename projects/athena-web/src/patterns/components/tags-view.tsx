@@ -1,17 +1,17 @@
 import {TagForm} from "./tag-form";
 import {Button, colourPalette, IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw";
 import React, {useState} from "react";
-import {useAppDispatch} from "../../main/state/store";
-import {createTag} from "../../main/state/features/open-vault/tags/tags-actions";
+import {useAppDispatch} from "../../state/store";
+import {createTag} from "../../state/features/open-vault/tags/tags-actions";
 import {v4 as createUUID} from "uuid";
 import {useSelector} from "react-redux";
-import {selectTagsList} from "../../main/state/features/open-vault/tags-list-selectors";
+import {selectTagsList} from "../../state/features/open-vault/tags-list-selectors";
 import {TagsListFilterIconAndPopup} from "./popup-menus/tags-list-filter-icon-and-popup";
 import {ArrowLeft, ArrowRight} from "lucide-react";
 import {
   decrementTagsList,
   incrementTagsList
-} from "../../main/state/features/ui/view/view-actions";
+} from "../../state/features/ui/view/view-actions";
 import {TagCard} from "./tag-card";
 
 export function TagsView() {

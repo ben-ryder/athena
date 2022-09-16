@@ -1,14 +1,14 @@
 import {useSelector} from "react-redux";
-import {selectCreateContentModal} from "../../../main/state/features/ui/modals/modals-selectors";
-import {useAppDispatch} from "../../../main/state/store";
-import {closeCreateContentModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {selectCreateContentModal} from "../../../state/features/ui/modals/modals-selectors";
+import {useAppDispatch} from "../../../state/store";
+import {closeCreateContentModal} from "../../../state/features/ui/modals/modals-actions";
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
+import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {createNewNote} from "../../../main/state/features/open-vault/notes/notes-thunks";
-import {createNewTemplate} from "../../../main/state/features/open-vault/templates/templates-thunks";
-import {createNewTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-thunks";
+import {createNewNote} from "../../../state/features/open-vault/notes/notes-thunks";
+import {createNewTemplate} from "../../../state/features/open-vault/templates/templates-thunks";
+import {createNewTaskList} from "../../../state/features/open-vault/task-lists/task-lists-thunks";
 
 export function CreateModal() {
   const dispatch = useAppDispatch();

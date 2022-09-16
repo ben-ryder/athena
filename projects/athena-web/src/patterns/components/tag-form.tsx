@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Button, colourPalette, Input, Label, Tag as TagComponent} from "@ben-ryder/jigsaw";
-import {Tag} from "../../main/state/features/open-vault/tags/tags-interface";
+import {Tag} from "../../state/features/open-vault/tags/tags-interface";
 
 export interface TagFormFields {
   name: string,

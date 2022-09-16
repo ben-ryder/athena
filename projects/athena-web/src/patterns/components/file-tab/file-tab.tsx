@@ -7,10 +7,10 @@ import {
 } from "lucide-react";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
-import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
-import {useAppDispatch} from "../../../main/state/store";
-import {closeContent, openAndSwitchContent} from "../../../main/state/features/ui/content/content-actions";
+import {ContentType} from "../../../state/features/ui/content/content-interface";
+import {ContentData} from "../../../state/features/ui/content/content-selctors";
+import {useAppDispatch} from "../../../state/store";
+import {closeContent, openAndSwitchContent} from "../../../state/features/ui/content/content-actions";
 import {ContentActionsIconAndPopup} from "../popup-menus/content-actions-icon-and-popup";
 
 

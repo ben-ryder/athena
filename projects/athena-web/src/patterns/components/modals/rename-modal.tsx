@@ -1,14 +1,14 @@
 import {useSelector} from "react-redux";
-import {selectRenameContentModal} from "../../../main/state/features/ui/modals/modals-selectors";
-import {useAppDispatch} from "../../../main/state/store";
-import {closeRenameContentModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {selectRenameContentModal} from "../../../state/features/ui/modals/modals-selectors";
+import {useAppDispatch} from "../../../state/store";
+import {closeRenameContentModal} from "../../../state/features/ui/modals/modals-actions";
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useEffect, useRef, useState} from "react";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
+import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {renameNote} from "../../../main/state/features/open-vault/notes/notes-thunks";
-import {renameTemplate} from "../../../main/state/features/open-vault/templates/templates-thunks";
-import {renameTaskList} from "../../../main/state/features/open-vault/task-lists/task-lists-thunks";
+import {renameNote} from "../../../state/features/open-vault/notes/notes-thunks";
+import {renameTemplate} from "../../../state/features/open-vault/templates/templates-thunks";
+import {renameTaskList} from "../../../state/features/open-vault/task-lists/task-lists-thunks";
 
 export function RenameModal() {
   const dispatch = useAppDispatch();

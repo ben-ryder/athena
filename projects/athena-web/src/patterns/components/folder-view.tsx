@@ -1,5 +1,5 @@
-import {ContentData} from "../../main/state/features/ui/content/content-selctors";
-import {ContentType} from "../../main/state/features/ui/content/content-interface";
+import {ContentData} from "../../state/features/ui/content/content-selctors";
+import {ContentType} from "../../state/features/ui/content/content-interface";
 import React, {useEffect, useRef, useState} from "react";
 import {
   ChevronDown as FolderOpenIcon,
@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import {iconSizes, StrictReactNode} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
-import {useAppDispatch} from "../../main/state/store";
-import {openAndSwitchContent} from "../../main/state/features/ui/content/content-actions";
+import {useAppDispatch} from "../../state/store";
+import {openAndSwitchContent} from "../../state/features/ui/content/content-actions";
 import {ContentActionMenu} from "./popup-menus/content-actions-menus";
 
 const indentSize = 15;

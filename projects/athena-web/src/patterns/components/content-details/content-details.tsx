@@ -1,6 +1,6 @@
 import React from "react";
-import {ContentData} from "../../../main/state/features/ui/content/content-selctors";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
+import {ContentData} from "../../../state/features/ui/content/content-selctors";
+import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {formatUTCString} from "../../../helpers/format-utc-string";
 
 export interface ContentDetailsProps {

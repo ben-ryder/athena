@@ -1,10 +1,10 @@
 import {useSelector} from "react-redux";
-import {selectDeleteTagModal} from "../../../main/state/features/ui/modals/modals-selectors";
-import {useAppDispatch} from "../../../main/state/store";
-import {closeDeleteTagModal} from "../../../main/state/features/ui/modals/modals-actions";
+import {selectDeleteTagModal} from "../../../state/features/ui/modals/modals-selectors";
+import {useAppDispatch} from "../../../state/store";
+import {closeDeleteTagModal} from "../../../state/features/ui/modals/modals-actions";
 import {Button} from "@ben-ryder/jigsaw";
 import {Modal} from "./modal";
-import {deleteTag} from "../../../main/state/features/open-vault/tags/tags-actions";
+import {deleteTag} from "../../../state/features/open-vault/tags/tags-actions";
 
 
 export function DeleteTagModal() {

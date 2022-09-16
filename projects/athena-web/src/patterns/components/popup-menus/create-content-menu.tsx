@@ -1,9 +1,9 @@
 import {iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {Plus as AddContentIcon} from "lucide-react";
 import React from "react";
-import {useAppDispatch} from "../../../main/state/store";
-import {openCreateContentModal} from "../../../main/state/features/ui/modals/modals-actions";
-import {ContentType} from "../../../main/state/features/ui/content/content-interface";
+import {useAppDispatch} from "../../../state/store";
+import {openCreateContentModal} from "../../../state/features/ui/modals/modals-actions";
+import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {ContentWithPopup} from "./content-with-popup";
 import {MenuPopup} from "./menu-popup";
 
