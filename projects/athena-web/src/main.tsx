@@ -37,6 +37,7 @@ import {updateNoteBody} from "./state/features/current-vault/notes/notes-thunks"
 import {updateNoteTemplateBody} from "./state/features/current-vault/note-templates/note-templates-thunks";
 import {FolderView} from "./patterns/components/folder-view";
 import {WelcomeMessage} from "./patterns/components/welcome-message";
+import {MoveModal} from "./patterns/components/modals/move-modal";
 
 export function Application() {
   const dispatch = useAppDispatch();
@@ -250,6 +251,7 @@ export function Application() {
 
       <CreateModal />
       <RenameModal />
+      <MoveModal />
       <DeleteModal />
       <DeleteTagModal />
 

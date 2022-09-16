@@ -92,7 +92,7 @@ export function FileItem(props: FileItemProps) {
         menuRef.current.focus()
       }
     }
-  }, [isMenuOpen])
+  }, [isMenuOpen]);
 
   return (
     <>

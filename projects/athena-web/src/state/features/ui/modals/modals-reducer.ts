@@ -2,15 +2,23 @@ import {UIModalsState} from "./modals-interface";
 import {createReducer} from "@reduxjs/toolkit";
 import {
   closeCreateContentModal,
-  closeDeleteContentModal, closeDeleteTagModal,
+  closeDeleteContentModal, closeDeleteTagModal, closeMoveContentModal,
   closeRenameContentModal,
   openCreateContentModal,
-  openDeleteContentModal, openDeleteTagModal,
+  openDeleteContentModal, openDeleteTagModal, openMoveContentModal,
   openRenameContentModal
 } from "./modals-actions";
 
 export const initialUIModalsState: UIModalsState = {
+  createContent: {
+    isOpen: false,
+    type: null
+  },
   renameContent: {
+    isOpen: false,
+    content: null
+  },
+  moveContent: {
     isOpen: false,
     content: null
   },
@@ -18,10 +26,7 @@ export const initialUIModalsState: UIModalsState = {
     isOpen: false,
     content: null
   },
-  createContent: {
-    isOpen: false,
-    type: null
-  },
+
   deleteTag: {
     isOpen: false,
     tag: null
@@ -32,6 +37,16 @@ export const uiModalsReducer = createReducer(
   initialUIModalsState,
   (builder) => {
     // Content Modals
+    builder.addCase(openCreateContentModal, (state, action) => {
+      state.createContent.isOpen = true;
+      state.createContent.type = action.payload;
+    })
+
+    builder.addCase(closeCreateContentModal, (state) => {
+      state.createContent.isOpen = false;
+      state.createContent.type = null;
+    })
+
     builder.addCase(openRenameContentModal, (state, action) => {
       state.renameContent.isOpen = true;
       state.renameContent.content = action.payload;
@@ -42,6 +57,16 @@ export const uiModalsReducer = createReducer(
       state.renameContent.content = null;
     })
 
+    builder.addCase(openMoveContentModal, (state, action) => {
+      state.moveContent.isOpen = true;
+      state.moveContent.content = action.payload;
+    })
+
+    builder.addCase(closeMoveContentModal, (state) => {
+      state.moveContent.isOpen = false;
+      state.moveContent.content = null;
+    })
+
     builder.addCase(openDeleteContentModal, (state, action) => {
       state.deleteContent.isOpen = true;
       state.deleteContent.content = action.payload;
@@ -50,16 +75,6 @@ export const uiModalsReducer = createReducer(
     builder.addCase(closeDeleteContentModal, (state) => {
       state.deleteContent.isOpen = false;
       state.deleteContent.content = null;
-    })
-
-    builder.addCase(openCreateContentModal, (state, action) => {
-      state.createContent.isOpen = true;
-      state.createContent.type = action.payload;
-    })
-
-    builder.addCase(closeCreateContentModal, (state) => {
-      state.createContent.isOpen = false;
-      state.createContent.type = null;
     })
 
     // Tag Modals
