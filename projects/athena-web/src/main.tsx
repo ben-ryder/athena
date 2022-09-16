@@ -34,8 +34,8 @@ import {CreateModal} from "./patterns/components/modals/create-modal";
 import {TagsView} from "./patterns/components/tags-view";
 import {DeleteTagModal} from "./patterns/components/modals/delete-tag-modal";
 import { ContentTagEditor } from './patterns/components/content-tag-editor';
-import {updateNoteBody} from "./state/features/open-vault/notes/notes-thunks";
-import {updateTemplateBody} from "./state/features/open-vault/templates/templates-thunks";
+import {updateNoteBody} from "./state/features/current-vault/notes/notes-thunks";
+import {updateTemplateBody} from "./state/features/current-vault/templates/templates-thunks";
 import {FolderView} from "./patterns/components/folder-view";
 import {WelcomeMessage} from "./patterns/components/welcome-message";
 

@@ -1,7 +1,7 @@
 import {createAction} from "@reduxjs/toolkit";
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
-import {Tag} from "../../open-vault/tags/tags-interface";
+import {Tag} from "../../current-vault/tags/tags-interface";
 
 export enum UIModalsActions {
   // Content

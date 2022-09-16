@@ -2,7 +2,7 @@ import React from "react";
 import {ContentData} from "../../../state/features/ui/content/content-selctors";
 import {useAppDispatch} from "../../../state/store";
 import {openDeleteContentModal, openRenameContentModal} from "../../../state/features/ui/modals/modals-actions";
-import {createNoteFromTemplate} from "../../../state/features/open-vault/notes/notes-thunks";
+import {createNoteFromTemplate} from "../../../state/features/current-vault/notes/notes-thunks";
 import {MenuPopup} from "./menu-popup";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 

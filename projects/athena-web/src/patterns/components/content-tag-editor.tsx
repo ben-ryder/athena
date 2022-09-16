@@ -1,16 +1,16 @@
 import {TagMultiSelect} from "./tag-selector/tag-multi-select";
 import {useSelector} from "react-redux";
 import {selectActiveContent} from "../../state/features/ui/content/content-selctors";
-import {selectTagOptions} from "../../state/features/open-vault/tags/tags-selectors";
-import {selectNoteTags} from "../../state/features/open-vault/notes-tags/notes-tags-selectors";
+import {selectTagOptions} from "../../state/features/current-vault/tags/tags-selectors";
+import {selectNoteTags} from "../../state/features/current-vault/notes-tags/notes-tags-selectors";
 import {ContentType} from "../../state/features/ui/content/content-interface";
 import {Option} from "@ben-ryder/jigsaw";
 import {ApplicationState, useAppDispatch} from "../../state/store";
-import {updateNoteTags} from "../../state/features/open-vault/notes/notes-actions";
-import {selectTemplateTags} from "../../state/features/open-vault/templates-tags/templates-tags-selectors";
-import {updateTemplateTags} from "../../state/features/open-vault/templates/templates-actions";
-import {updateTaskListTags} from "../../state/features/open-vault/task-lists/task-lists-actions";
-import {selectTaskListTags} from "../../state/features/open-vault/task-lists-tags/task-lists-tags-selectors";
+import {updateNoteTags} from "../../state/features/current-vault/notes/notes-actions";
+import {selectTemplateTags} from "../../state/features/current-vault/templates-tags/templates-tags-selectors";
+import {updateTemplateTags} from "../../state/features/current-vault/templates/templates-actions";
+import {updateTaskListTags} from "../../state/features/current-vault/task-lists/task-lists-actions";
+import {selectTaskListTags} from "../../state/features/current-vault/task-lists-tags/task-lists-tags-selectors";
 
 export interface TagsEditorProps {
   contentId: string,

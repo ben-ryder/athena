@@ -6,9 +6,9 @@ import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {createNewNote} from "../../../state/features/open-vault/notes/notes-thunks";
-import {createNewTemplate} from "../../../state/features/open-vault/templates/templates-thunks";
-import {createNewTaskList} from "../../../state/features/open-vault/task-lists/task-lists-thunks";
+import {createNewNote} from "../../../state/features/current-vault/notes/notes-thunks";
+import {createNewTemplate} from "../../../state/features/current-vault/templates/templates-thunks";
+import {createNewTaskList} from "../../../state/features/current-vault/task-lists/task-lists-thunks";
 
 export function CreateModal() {
   const dispatch = useAppDispatch();

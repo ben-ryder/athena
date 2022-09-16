@@ -1,12 +1,12 @@
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {useSelector} from "react-redux";
-import {selectNoteTags} from "../../../state/features/open-vault/notes-tags/notes-tags-selectors";
-import {selectTemplateTags} from "../../../state/features/open-vault/templates-tags/templates-tags-selectors";
-import {selectTaskListTags} from "../../../state/features/open-vault/task-lists-tags/task-lists-tags-selectors";
+import {selectNoteTags} from "../../../state/features/current-vault/notes-tags/notes-tags-selectors";
+import {selectTemplateTags} from "../../../state/features/current-vault/templates-tags/templates-tags-selectors";
+import {selectTaskListTags} from "../../../state/features/current-vault/task-lists-tags/task-lists-tags-selectors";
 import {Tag as TagElement} from "@ben-ryder/jigsaw";
 import {ContentData} from "../../../state/features/ui/content/content-selctors";
 import {ApplicationState} from "../../../state/store";
-import {Tag} from "../../../state/features/open-vault/tags/tags-interface";
+import {Tag} from "../../../state/features/current-vault/tags/tags-interface";
 
 export interface ContentTagsProps {
   content: ContentData

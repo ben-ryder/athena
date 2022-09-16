@@ -1,9 +1,9 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {createNote, deleteNote} from "../../open-vault/notes/notes-actions";
+import {createNote, deleteNote} from "../../current-vault/notes/notes-actions";
 import {ContentType, UIContentState} from "./content-interface";
-import {createTemplate, deleteTemplate} from "../../open-vault/templates/templates-actions";
+import {createTemplate, deleteTemplate} from "../../current-vault/templates/templates-actions";
 import {closeContent, openAndSwitchContent} from "./content-actions";
-import {createTaskList, deleteTaskList} from "../../open-vault/task-lists/task-lists-actions";
+import {createTaskList, deleteTaskList} from "../../current-vault/task-lists/task-lists-actions";
 
 
 export const initialUIContentState: UIContentState = {

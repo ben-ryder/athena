@@ -2,7 +2,7 @@ import {createSelector} from "@reduxjs/toolkit";
 import {selectTagsState} from "../tags/tags-selectors";
 import {ApplicationState} from "../../../store";
 
-export const selectTemplatesTagsState = (state: ApplicationState) => state.openVault.templatesTags;
+export const selectTemplatesTagsState = (state: ApplicationState) => state.currentVault.templatesTags;
 
 export const selectTemplateId = (state: ApplicationState, templateId: string) => templateId;
 

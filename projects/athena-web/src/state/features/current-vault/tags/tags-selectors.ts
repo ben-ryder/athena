@@ -1,7 +1,7 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {ApplicationState} from "../../../store";
 
-export const selectTagsState = (state: ApplicationState) => state.openVault.tags;
+export const selectTagsState = (state: ApplicationState) => state.currentVault.tags;
 
 export const selectTagOptions = createSelector([selectTagsState], (tags) => {
   return tags.ids

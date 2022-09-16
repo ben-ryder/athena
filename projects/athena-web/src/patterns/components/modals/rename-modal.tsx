@@ -6,9 +6,9 @@ import {Button, Input} from "@ben-ryder/jigsaw";
 import {useEffect, useRef, useState} from "react";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {renameNote} from "../../../state/features/open-vault/notes/notes-thunks";
-import {renameTemplate} from "../../../state/features/open-vault/templates/templates-thunks";
-import {renameTaskList} from "../../../state/features/open-vault/task-lists/task-lists-thunks";
+import {renameNote} from "../../../state/features/current-vault/notes/notes-thunks";
+import {renameTemplate} from "../../../state/features/current-vault/templates/templates-thunks";
+import {renameTaskList} from "../../../state/features/current-vault/task-lists/task-lists-thunks";
 
 export function RenameModal() {
   const dispatch = useAppDispatch();

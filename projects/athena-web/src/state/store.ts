@@ -3,7 +3,7 @@ import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import {uiReducer} from "./features/ui/ui-reducer";
 //import {usersSlice} from "./features/users/users-slice";
 import {vaultsSlice} from "./features/vaults/vaults-slice";
-import {openVaultReducer} from "./features/open-vault/open-vault-reducer";
+import {currentVaultReducer} from "./features/current-vault/current-vault-reducer";
 
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -11,14 +11,14 @@ import storage from 'redux-persist/lib/storage';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['openVault']
+  whitelist: ['currentVault']
 }
 
 const rootAppReducer = combineReducers({
   ui: uiReducer,
   //users: usersSlice,
   vaults: vaultsSlice,
-  openVault: openVaultReducer
+  currentVault: currentVaultReducer
 })
 
 const rootReducer = persistReducer(persistConfig, rootAppReducer);

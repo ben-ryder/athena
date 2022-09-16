@@ -4,10 +4,10 @@ import {useAppDispatch} from "../../../state/store";
 import {closeDeleteContentModal} from "../../../state/features/ui/modals/modals-actions";
 import {Button} from "@ben-ryder/jigsaw";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
-import {deleteNote} from "../../../state/features/open-vault/notes/notes-actions";
-import {deleteTemplate} from "../../../state/features/open-vault/templates/templates-actions";
+import {deleteNote} from "../../../state/features/current-vault/notes/notes-actions";
+import {deleteTemplate} from "../../../state/features/current-vault/templates/templates-actions";
 import {Modal} from "./modal";
-import {deleteTaskList} from "../../../state/features/open-vault/task-lists/task-lists-actions";
+import {deleteTaskList} from "../../../state/features/current-vault/task-lists/task-lists-actions";
 
 export function DeleteModal() {
   const dispatch = useAppDispatch();

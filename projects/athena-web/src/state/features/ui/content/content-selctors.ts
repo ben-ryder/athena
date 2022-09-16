@@ -1,16 +1,16 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {Content, ContentType} from "./content-interface";
-import {DatabaseNote} from "../../open-vault/notes/notes-interface";
-import {DatabaseTemplate} from "../../open-vault/templates/templates-interface";
-import {DatabaseTaskList} from "../../open-vault/task-lists/task-lists-interface";
+import {DatabaseNote} from "../../current-vault/notes/notes-interface";
+import {DatabaseTemplate} from "../../current-vault/templates/templates-interface";
+import {DatabaseTaskList} from "../../current-vault/task-lists/task-lists-interface";
 import {ApplicationState} from "../../../store";
 
 export const selectRawActiveContent = (state: ApplicationState) => state.ui.content.activeContent;
 export const selectRawOpenContent = (state: ApplicationState) => state.ui.content.openContent;
 
-export const selectNoteEntities = (state: ApplicationState) => state.openVault.notes.entities;
-export const selectTemplateEntities = (state: ApplicationState) => state.openVault.templates.entities;
-export const selectTaskListEntities = (state: ApplicationState) => state.openVault.taskLists.entities;
+export const selectNoteEntities = (state: ApplicationState) => state.currentVault.notes.entities;
+export const selectTemplateEntities = (state: ApplicationState) => state.currentVault.templates.entities;
+export const selectTaskListEntities = (state: ApplicationState) => state.currentVault.taskLists.entities;
 
 export type ContentData = {
   type: ContentType.NOTE,

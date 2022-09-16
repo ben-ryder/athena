@@ -2,9 +2,9 @@ import {TagForm} from "./tag-form";
 import {Button, IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw";
 import React, {useState} from "react";
 import {useAppDispatch} from "../../state/store";
-import {createNewTag} from "../../state/features/open-vault/tags/tags-thunks";
+import {createNewTag} from "../../state/features/current-vault/tags/tags-thunks";
 import {useSelector} from "react-redux";
-import {selectTagsList} from "../../state/features/open-vault/tags-list-selectors";
+import {selectTagsList} from "../../state/features/current-vault/tags-list-selectors";
 import {TagsListFilterIconAndPopup} from "./popup-menus/tags-list-filter-icon-and-popup";
 import {ArrowLeft, ArrowRight} from "lucide-react";
 import {
