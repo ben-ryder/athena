@@ -9,7 +9,7 @@ export const selectRawActiveContent = (state: ApplicationState) => state.ui.cont
 export const selectRawOpenContent = (state: ApplicationState) => state.ui.content.openContent;
 
 export const selectNoteEntities = (state: ApplicationState) => state.currentVault.notes.entities;
-export const selectTemplateEntities = (state: ApplicationState) => state.currentVault.templates.entities;
+export const selectTemplateEntities = (state: ApplicationState) => state.currentVault.noteTemplates.entities;
 export const selectTaskListEntities = (state: ApplicationState) => state.currentVault.taskLists.entities;
 
 export type ContentData = {

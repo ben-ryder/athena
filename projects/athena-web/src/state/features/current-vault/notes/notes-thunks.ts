@@ -68,12 +68,12 @@ export function updateNoteBody(noteId: string, newBody: string) {
 export function createNoteFromTemplate(templateId: string): AppThunk {
   return function createNoteUsingTemplate(dispatch: AppThunkDispatch, getState: () => ApplicationState) {
     const state = getState();
-    const template = state.currentVault.templates.entities[templateId];
+    const template = state.currentVault.noteTemplates.entities[templateId];
     let tagsToAdd: string[] = [];
 
     // todo: repeated logic in selectors, refactor to reduce repeated code
-    for (const templateTagId of state.currentVault.templatesTags.ids) {
-      const templateTag = state.currentVault.templatesTags.entities[templateTagId];
+    for (const templateTagId of state.currentVault.noteTemplatesTags.ids) {
+      const templateTag = state.currentVault.noteTemplatesTags.entities[templateTagId];
       if (templateTag.templateId === templateId) {
         tagsToAdd.push(templateTag.tagId);
       }

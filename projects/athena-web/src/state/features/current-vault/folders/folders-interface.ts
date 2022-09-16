@@ -11,7 +11,7 @@ export interface Folder extends BaseDatabaseEntity, FolderContent {}
 
 export interface FoldersState {
   entities: {
-    [key: string]: Folder
+    [key: string]: DatabaseFolder
   },
   ids: string[]
 }
