@@ -13,42 +13,90 @@ import classNames from "classnames";
 import {useAppDispatch} from "../../state/store";
 import {openAndSwitchContent} from "../../state/features/ui/content/content-actions";
 import {ContentActionMenu} from "./popup-menus/content-actions-menus";
+import {useSelector} from "react-redux";
+import {FileSystemFolder, selectFileSystemTree} from "../../state/features/current-vault/folders/folders-selectors";
+import {FolderActionsMenu, RootFolderActionsMenu} from "./popup-menus/folder-actions-menus";
+import {Folder} from "../../state/features/current-vault/folders/folders-interface";
 
 const indentSize = 15;
 
-export interface FolderStructureProps {
-  name: string,
-  level: number,
-  folders: FolderStructureProps[],
-  files: ContentData[]
-}
-
 export interface FolderItemProps {
-  name: string,
+  folder: Folder | string,
   level: number,
   onClick: () => void,
   isExpanded: boolean
 }
 export function FolderItem(props: FolderItemProps) {
-  return (
-    <button
-      style={{paddingLeft: `${indentSize * props.level}px`}}
-      className={classNames(
-        "w-full py-0.5 text-left",
-        "text-br-whiteGrey-100 hover:bg-br-atom-800",
-        "flex items-center"
-      )}
-      onClick={props.onClick}
-      onContextMenu={(e) => {
-        e.preventDefault()
-      }}
-    >
-      {props.isExpanded
-        ? <FolderOpenIcon size={iconSizes.extraSmall} className="stroke-br-whiteGrey-200 mr-1" />
-        : <FolderClosedIcon size={iconSizes.extraSmall} className="stroke-br-whiteGrey-200 mr-1" />
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuPosition, setMenuPosition] = useState<[number, number] | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+  function checkEvent(e: FocusEvent | MouseEvent) {
+    if (menuRef && menuRef.current) {
+      if (!menuRef.current.contains(e.target as HTMLElement)) {
+        setIsMenuOpen(false);
+        document.removeEventListener("focusin", checkEvent);
+        document.removeEventListener("click", checkEvent);
+        setMenuPosition(null);
       }
-      {props.name}
-    </button>
+    }
+  }
+
+  // todo: test if this works.
+  useEffect(() => {
+    if (isMenuOpen) {
+      if (menuRef && menuRef.current) {
+        menuRef.current.focus()
+      }
+    }
+  }, [isMenuOpen]);
+
+  return (
+    <>
+      <button
+        style={{paddingLeft: `${indentSize * props.level}px`}}
+        className={classNames(
+          "w-full py-0.5 text-left",
+          "text-br-whiteGrey-100 hover:bg-br-atom-800",
+          "flex items-center"
+        )}
+        onClick={props.onClick}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setIsMenuOpen(true);
+          setMenuPosition([e.pageX, e.pageY]);
+
+          document.addEventListener("focusin", checkEvent);
+          document.addEventListener("click", checkEvent);
+          // todo: add listener to close on any scroll action?
+        }}
+      >
+        {props.isExpanded
+          ? <FolderOpenIcon size={iconSizes.extraSmall} className="stroke-br-whiteGrey-200 mr-1" />
+          : <FolderClosedIcon size={iconSizes.extraSmall} className="stroke-br-whiteGrey-200 mr-1" />
+        }
+        {typeof props.folder === "string" ? props.folder : props.folder.name}
+      </button>
+
+      <div
+        ref={menuRef}
+        className={classNames(
+          "fixed z-50",
+          {
+            "hidden": !isMenuOpen
+          }
+        )}
+        style={{
+          left: `${menuPosition ? menuPosition[0] : 0}px`,
+          top: `${menuPosition ? menuPosition[1] : 0}px`
+        }}
+      >
+        {typeof props.folder === "string"
+          ? <RootFolderActionsMenu />
+          : <FolderActionsMenu folder={props.folder} />
+        }
+      </div>
+    </>
   )
 }
 
@@ -153,8 +201,38 @@ export function FileItem(props: FileItemProps) {
   )
 }
 
-export function FolderStructure(props: FolderStructureProps) {
-  const [isExpanded, setIsExpanded] = useState<boolean>(props.level <= 0);
+export function FileSystem() {
+  const fileSystemTree = useSelector(selectFileSystemTree);
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+
+  return (
+    <>
+      <FolderItem
+        folder="Vault Name"
+        level={0}
+        isExpanded={isExpanded}
+        onClick={() => {setIsExpanded(!isExpanded)}}
+      />
+      {isExpanded &&
+          <div>
+            {fileSystemTree.folders.map(folderStructure =>
+              <FileSystemItem key={folderStructure.details.id} folder={folderStructure} level={1}/>
+            )}
+            {fileSystemTree.files.map(contentData =>
+              <FileItem key={contentData.data.id} content={contentData} level={1}/>
+            )}
+          </div>
+      }
+    </>
+  )
+}
+
+export interface FileSystemItemProps {
+  folder: FileSystemFolder,
+  level: number
+}
+export function FileSystemItem(props: FileSystemItemProps) {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   return (
     <div
@@ -168,15 +246,19 @@ export function FolderStructure(props: FolderStructureProps) {
       )}
     >
       <FolderItem
-        name={props.name}
+        folder={props.folder.details}
         level={props.level}
         isExpanded={isExpanded}
         onClick={() => {setIsExpanded(!isExpanded)}}
       />
       {isExpanded &&
           <div>
-            {props.folders.map(folderStructure => <FolderStructure key={folderStructure.name} {...folderStructure} />)}
-            {props.files.map(contentData => <FileItem key={contentData.data.id} content={contentData} level={props.level + 1} />)}
+            {props.folder.folders.map(folderStructure =>
+              <FileSystemItem key={folderStructure.details.id} folder={folderStructure} level={props.level + 1} />
+            )}
+            {props.folder.files.map(contentData =>
+              <FileItem key={contentData.data.id} content={contentData} level={props.level + 1} />
+            )}
           </div>
       }
     </div>
@@ -185,77 +267,9 @@ export function FolderStructure(props: FolderStructureProps) {
 
 
 export function FolderView() {
-  const rootFolder: FolderStructureProps = {
-    name: "Vault Name",
-    level: 0,
-    folders: [
-      {
-        name: "test 1",
-        level: 1,
-        folders: [
-          {
-            name: "test 2",
-            level: 2,
-            folders: [],
-            files: [
-              {
-                type: ContentType.NOTE_TEMPLATE,
-                data: {
-                  id: "test",
-                  name: "test name",
-                  body: "",
-                  createdAt: "",
-                  updatedAt: "",
-                  folderId: null,
-                  targetFolderId: null,
-                }
-              },
-              {
-                type: ContentType.TASK_LIST,
-                data: {
-                  id: "test",
-                  name: "test name",
-                  createdAt: "",
-                  updatedAt: "",
-                  folderId: null
-                }
-              }
-            ]
-          }
-        ],
-        files: [
-          {
-            type: ContentType.NOTE,
-            data: {
-              id: "5f293276-358e-45c7-838a-30f54793d969",
-              name: "test name",
-              body: "",
-              createdAt: "",
-              updatedAt: "",
-              folderId: null
-            }
-          }
-        ]
-      }
-    ],
-    files: [
-      {
-        type: ContentType.NOTE,
-        data: {
-          id: "5f293276-358e-45c7-838a-30f54793d969",
-          name: "test name",
-          body: "",
-          createdAt: "",
-          updatedAt: "",
-          folderId: null
-        }
-      }
-    ]
-  }
-
   return (
     <>
-      <FolderStructure {...rootFolder} />
+      <FileSystem />
     </>
   )
 }

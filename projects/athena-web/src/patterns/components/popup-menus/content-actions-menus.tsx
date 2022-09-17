@@ -60,7 +60,7 @@ export function TemplateActionMenu(props: ContentActionMenuProps) {
 
   let menuItems = [
     {
-      label: "Create Note",
+      label: "New Note",
       action: () => {
         // todo: fix types issue with thunk dispatch
         // @ts-ignore

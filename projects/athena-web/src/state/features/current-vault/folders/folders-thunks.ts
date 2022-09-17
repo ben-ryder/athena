@@ -1,8 +1,9 @@
 import {v4 as createUUID} from "uuid";
 
 import {ApplicationState, AppThunkDispatch} from "../../../store";
-import {FolderContent, FoldersState} from "./folders-interface";
+import {FolderContent} from "./folders-interface";
 import {createFolder, updateFolder} from "./folders-actions";
+import {validateFolderMove} from "./file-system-helpers";
 
 
 export function createNewFolder(folderContent: FolderContent) {
@@ -35,9 +36,6 @@ export function renameFolder(folderId: string, newName: string) {
   }
 }
 
-export function validateFolderMove(foldersState: FoldersState, folderId: string, newParentId: string): boolean {
-  return false;
-}
 
 export function moveFolder(folderId: string, newParentId: string) {
   return (dispatch: AppThunkDispatch, state: ApplicationState) => {
