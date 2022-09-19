@@ -2,7 +2,7 @@ import {FoldersState} from "./folders-interface";
 import {FileSystemFolder, FolderTreeItem} from "./folders-selectors";
 import {NotesState} from "../notes/notes-interface";
 import {NoteTemplatesState} from "../note-templates/note-templates-interface";
-import {TaskListState} from "../task-lists/task-lists-interface";
+import {TaskListsState} from "../task-lists/task-lists-interface";
 import {ContentData} from "../../ui/content/content-selctors";
 import {ContentType} from "../../ui/content/content-interface";
 
@@ -30,7 +30,7 @@ export function getChildFolders(foldersState: FoldersState, parentFolderId: stri
 }
 
 export function getFolderFiles(
-  folderId: string | null, notesState: NotesState, noteTemplatesState: NoteTemplatesState, taskListsState: TaskListState
+  folderId: string | null, notesState: NotesState, noteTemplatesState: NoteTemplatesState, taskListsState: TaskListsState
 ) {
   const files: ContentData[] = [];
 
@@ -68,14 +68,14 @@ export function getFolderFiles(
 }
 
 export function getChildFileSystemFolders(
-  folderId: string | null, foldersState: FoldersState, notesState: NotesState, noteTemplatesState: NoteTemplatesState, taskListsState: TaskListState
+  parentFolderId: string | null, foldersState: FoldersState, notesState: NotesState, noteTemplatesState: NoteTemplatesState, taskListsState: TaskListsState
 ) {
   const fileSystemFolders: FileSystemFolder[] = [];
 
   for (const folderId of foldersState.ids) {
     const folder = foldersState.entities[folderId];
 
-    if (folder.parentId === folderId) {
+    if (folder.parentId === parentFolderId) {
       const fileSystemFolder: FileSystemFolder = {
         details: folder,
         folders: getChildFileSystemFolders(folder.id, foldersState, notesState, noteTemplatesState, taskListsState),

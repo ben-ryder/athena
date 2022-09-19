@@ -27,9 +27,9 @@ import {ViewModes} from "./state/features/ui/view/view-interface";
 import {switchCurrentViewMode} from "./state/features/ui/view/view-actions";
 import {ListView} from "./patterns/components/list-view";
 import {CreateContentIconAndPopup} from "./patterns/components/popup-menus/create-content-menu";
-import {RenameModal} from "./patterns/components/modals/rename-modal";
-import {DeleteModal} from "./patterns/components/modals/delete-modal";
-import {CreateModal} from "./patterns/components/modals/create-modal";
+import {RenameContentModal} from "./patterns/components/modals/rename-content-modal";
+import {DeleteContentModal} from "./patterns/components/modals/delete-content-modal";
+import {CreateContentModal} from "./patterns/components/modals/create-content-modal";
 import {TagsView} from "./patterns/components/tags-view";
 import {DeleteTagModal} from "./patterns/components/modals/delete-tag-modal";
 import { ContentTagEditor } from './patterns/components/content-tag-editor';
@@ -37,7 +37,10 @@ import {updateNoteBody} from "./state/features/current-vault/notes/notes-thunks"
 import {updateNoteTemplateBody} from "./state/features/current-vault/note-templates/note-templates-thunks";
 import {FolderView} from "./patterns/components/folder-view";
 import {WelcomeMessage} from "./patterns/components/welcome-message";
-import {MoveModal} from "./patterns/components/modals/move-modal";
+import {MoveContentModal} from "./patterns/components/modals/move-content-modal";
+import {CreateFolderModal} from "./patterns/components/modals/create-folder-modal";
+import {RenameFolderModal} from "./patterns/components/modals/rename-folder-modal";
+import {DeleteFolderModal} from "./patterns/components/modals/delete-folder-modal";
 
 export function Application() {
   const dispatch = useAppDispatch();
@@ -249,11 +252,19 @@ export function Application() {
         </section>
       </main>
 
-      <CreateModal />
-      <RenameModal />
-      <MoveModal />
-      <DeleteModal />
+      {/** Content Modals **/}
+      <CreateContentModal />
+      <RenameContentModal />
+      <MoveContentModal />
+      <DeleteContentModal />
+
+      {/** Tag Modals **/}
       <DeleteTagModal />
+
+      {/** Folder Modals **/}
+      <CreateFolderModal />
+      <RenameFolderModal />
+      <DeleteFolderModal />
 
       <ReactTooltip
         place="bottom"

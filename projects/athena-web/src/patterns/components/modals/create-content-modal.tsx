@@ -10,7 +10,8 @@ import {createNewNote} from "../../../state/features/current-vault/notes/notes-t
 import {createNewNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-thunks";
 import {createNewTaskList} from "../../../state/features/current-vault/task-lists/task-lists-thunks";
 
-export function CreateModal() {
+
+export function CreateContentModal() {
   const dispatch = useAppDispatch();
   const createModal = useSelector(selectCreateContentModal);
   const closeModal = () => {dispatch(closeCreateContentModal())};
@@ -36,13 +37,13 @@ export function CreateModal() {
         <form
           onSubmit={() => {
             if (createModal.type === ContentType.NOTE) {
-              dispatch(createNewNote(name));
+              dispatch(createNewNote(name, createModal.targetFolderId));
             }
             else if (createModal.type === ContentType.NOTE_TEMPLATE) {
-              dispatch(createNewNoteTemplate(name));
+              dispatch(createNewNoteTemplate(name, createModal.targetFolderId));
             }
             else if (createModal.type === ContentType.TASK_LIST) {
-              dispatch(createNewTaskList(name));
+              dispatch(createNewTaskList(name, createModal.targetFolderId));
             }
 
             // Reset name so it won't persist on next use of the modal.

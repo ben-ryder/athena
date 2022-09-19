@@ -10,7 +10,8 @@ import {renameNote} from "../../../state/features/current-vault/notes/notes-thun
 import {renameNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-thunks";
 import {renameTaskList} from "../../../state/features/current-vault/task-lists/task-lists-thunks";
 
-export function RenameModal() {
+
+export function RenameContentModal() {
   const dispatch = useAppDispatch();
   const renameModal = useSelector(selectRenameContentModal);
   const closeModal = () => {dispatch(closeRenameContentModal())};
@@ -47,11 +48,15 @@ export function RenameModal() {
         ref.current.select()
       }
     }, 5);
-  }, [renameModal])
+  }, [renameModal]);
+
+  if (!renameModal.content) {
+    return null;
+  }
 
   return (
     <Modal
-      heading={`Rename '${renameModal.content?.data.name}' ${contentType}`}
+      heading={`Rename '${renameModal.content.data.name}' ${contentType}`}
       isOpen={renameModal.isOpen}
       onClose={closeModal}
       content={

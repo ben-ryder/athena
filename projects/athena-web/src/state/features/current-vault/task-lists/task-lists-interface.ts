@@ -19,7 +19,7 @@ export interface TaskContent {
 }
 export interface DatabaseTask extends BaseDatabaseEntity, TaskContent {}
 
-export interface TaskListState {
+export interface TaskListsState {
   entities: {
     [key: string]: DatabaseTaskList
   },

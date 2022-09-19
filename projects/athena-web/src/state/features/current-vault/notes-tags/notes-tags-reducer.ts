@@ -1,5 +1,5 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {updateNoteTags} from "../notes/notes-actions";
+import {deleteNote, updateNoteTags} from "../notes/notes-actions";
 import {v4 as createUUID} from "uuid";
 import {NotesTagsState} from "./note-tags-interface";
 
@@ -32,6 +32,19 @@ export const notesTagsReducer = createReducer(
           tagId: tagId
         }
       }
+    })
+
+
+    builder.addCase(deleteNote, (state, action) => {
+      state.ids = state.ids.filter(id => {
+        const entity = state.entities[id];
+
+        if (entity.noteId === action.payload) {
+          delete state.entities[id];
+          return false;
+        }
+        return true;
+      })
     })
   }
 );

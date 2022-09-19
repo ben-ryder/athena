@@ -6,7 +6,7 @@ import {ContentType} from "../../ui/content/content-interface";
 import {AppThunk, ApplicationState, AppThunkDispatch} from "../../../store";
 
 
-export function createNewNote(name: string) {
+export function createNewNote(name: string, folderId: string | null) {
   return (dispatch: AppThunkDispatch) => {
     const noteId = createUUID();
     const timestamp = new Date().toISOString();
@@ -15,7 +15,7 @@ export function createNewNote(name: string) {
       id: noteId,
       name: name,
       body: "",
-      folderId: null,
+      folderId: folderId,
       createdAt: timestamp,
       updatedAt: timestamp
     }

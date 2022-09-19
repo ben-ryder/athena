@@ -1,6 +1,6 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {v4 as createUUID} from "uuid";
-import {updateTaskListTags} from "../task-lists/task-lists-actions";
+import {deleteTaskList, updateTaskListTags} from "../task-lists/task-lists-actions";
 import {TaskListsTagsState} from "./task-list-tags-interface";
 
 export const initialTaskListsTags: TaskListsTagsState = {
@@ -32,6 +32,18 @@ export const taskListsTagsReducer = createReducer(
           tagId: tagId
         }
       }
+    })
+
+    builder.addCase(deleteTaskList, (state, action) => {
+      state.ids = state.ids.filter(id => {
+        const entity = state.entities[id];
+
+        if (entity.taskListId === action.payload) {
+          delete state.entities[id];
+          return false;
+        }
+        return true;
+      })
     })
   }
 );

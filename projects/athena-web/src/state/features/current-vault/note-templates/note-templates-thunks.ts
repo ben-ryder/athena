@@ -3,7 +3,7 @@ import {AppThunkDispatch} from "../../../store";
 import {createNoteTemplate, updateNoteTemplate} from "./note-templates-actions";
 
 
-export function createNewNoteTemplate(name: string) {
+export function createNewNoteTemplate(name: string, folderId: string | null) {
   return (dispatch: AppThunkDispatch) => {
     const templateId = createUUID();
     const timestamp = new Date().toISOString();
@@ -12,7 +12,7 @@ export function createNewNoteTemplate(name: string) {
       id: templateId,
       name: name,
       body: "",
-      folderId: null,
+      folderId: folderId,
       targetFolderId: null,
       createdAt: timestamp,
       updatedAt: timestamp

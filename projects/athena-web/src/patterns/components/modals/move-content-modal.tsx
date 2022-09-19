@@ -2,14 +2,11 @@ import {useSelector} from "react-redux";
 import {selectMoveContentModal} from "../../../state/features/ui/modals/modals-selectors";
 import {useAppDispatch} from "../../../state/store";
 import {closeMoveContentModal} from "../../../state/features/ui/modals/modals-actions";
-import {Button} from "@ben-ryder/jigsaw";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
-import {deleteNote} from "../../../state/features/current-vault/notes/notes-actions";
-import {deleteNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-actions";
 import {Modal} from "./modal";
-import {deleteTaskList} from "../../../state/features/current-vault/task-lists/task-lists-actions";
 
-export function MoveModal() {
+
+export function MoveContentModal() {
   const dispatch = useAppDispatch();
   const deleteModal = useSelector(selectMoveContentModal);
   const closeModal = () => {dispatch(closeMoveContentModal())};

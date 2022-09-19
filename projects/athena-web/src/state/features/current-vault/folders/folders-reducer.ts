@@ -13,6 +13,8 @@ export const foldersReducer = createReducer(
   (builder) => {
     builder.addCase(createFolder, foldersAdapter.addOne)
     builder.addCase(updateFolder, foldersAdapter.updateOne)
-    builder.addCase(deleteFolder, foldersAdapter.removeOne)
+    // Delete folder handled by global reducer because of the logic and amount of state changes required
+    // in recursively finding and deleting all other folders and content.
+    //builder.addCase(deleteFolder, foldersAdapter.removeOne)
   }
 );

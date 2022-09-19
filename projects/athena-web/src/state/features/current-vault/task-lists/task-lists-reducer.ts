@@ -2,9 +2,9 @@ import {createReducer} from "@reduxjs/toolkit";
 
 import {createTaskList, deleteTaskList, updateTaskList} from "./task-lists-actions";
 import {taskListsAdapter} from "./task-lists-adapter";
-import {TaskListState} from "./task-lists-interface";
+import {TaskListsState} from "./task-lists-interface";
 
-export const initialTaskLists: TaskListState = {
+export const initialTaskLists: TaskListsState = {
   entities: {},
   ids: []
 };

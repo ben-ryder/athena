@@ -9,13 +9,18 @@ import {deleteNoteTemplate} from "../../../state/features/current-vault/note-tem
 import {Modal} from "./modal";
 import {deleteTaskList} from "../../../state/features/current-vault/task-lists/task-lists-actions";
 
-export function DeleteModal() {
+
+export function DeleteContentModal() {
   const dispatch = useAppDispatch();
   const deleteModal = useSelector(selectDeleteContentModal);
   const closeModal = () => {dispatch(closeDeleteContentModal())};
 
+  if (!deleteModal.content) {
+    return null;
+  }
+
   let contentType;
-  switch (deleteModal.content?.type) {
+  switch (deleteModal.content.type) {
     case ContentType.TASK_LIST: {
       contentType = "task list"
       break;
@@ -32,12 +37,12 @@ export function DeleteModal() {
 
   return (
     <Modal
-      heading={`Delete '${deleteModal.content?.data.name}' ${contentType}`}
+      heading={`Delete '${deleteModal.content.data.name}' ${contentType}`}
       isOpen={deleteModal.isOpen}
       onClose={closeModal}
       content={
         <>
-          <p className="text-br-whiteGrey-200">This will permanently delete <b>{deleteModal.content?.data.name}</b>. Are you sure?</p>
+          <p className="text-br-whiteGrey-200">This will permanently delete <b>{deleteModal.content.data.name}</b>. Are you sure?</p>
 
           <div className="mt-4 flex justify-end items-center">
             <Button styling="secondary" onClick={closeModal}>Cancel</Button>

@@ -14,19 +14,28 @@ export function CreateContentIconAndPopup() {
     {
       label: "Note",
       action: () => {
-        dispatch(openCreateContentModal(ContentType.NOTE));
+        dispatch(openCreateContentModal({
+          contentType: ContentType.NOTE,
+          targetFolderId: null
+        }))
       }
     },
     {
       label: "Note Template",
       action: () => {
-        dispatch(openCreateContentModal(ContentType.NOTE_TEMPLATE));
+        dispatch(openCreateContentModal({
+          contentType: ContentType.NOTE_TEMPLATE,
+          targetFolderId: null
+        }))
       }
     },
     {
       label: "Task List",
       action: () => {
-        dispatch(openCreateContentModal(ContentType.TASK_LIST));
+        dispatch(openCreateContentModal({
+          contentType: ContentType.TASK_LIST,
+          targetFolderId: null
+        }))
       }
     }
   ];

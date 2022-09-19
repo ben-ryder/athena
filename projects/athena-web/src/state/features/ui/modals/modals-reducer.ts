@@ -1,18 +1,20 @@
 import {UIModalsState} from "./modals-interface";
 import {createReducer} from "@reduxjs/toolkit";
 import {
-  closeCreateContentModal,
-  closeDeleteContentModal, closeDeleteTagModal, closeMoveContentModal,
-  closeRenameContentModal,
-  openCreateContentModal,
-  openDeleteContentModal, openDeleteTagModal, openMoveContentModal,
-  openRenameContentModal
+  closeCreateContentModal, closeCreateFolderModal,
+  closeDeleteContentModal, closeDeleteFolderModal, closeDeleteTagModal, closeMoveContentModal, closeMoveFolderModal,
+  closeRenameContentModal, closeRenameFolderModal,
+  openCreateContentModal, openCreateFolderModal,
+  openDeleteContentModal, openDeleteFolderModal, openDeleteTagModal, openMoveContentModal, openMoveFolderModal,
+  openRenameContentModal, openRenameFolderModal
 } from "./modals-actions";
 
 export const initialUIModalsState: UIModalsState = {
+  // Content Modals
   createContent: {
     isOpen: false,
-    type: null
+    type: null,
+    targetFolderId: null
   },
   renameContent: {
     isOpen: false,
@@ -27,10 +29,29 @@ export const initialUIModalsState: UIModalsState = {
     content: null
   },
 
+  // Tag Modals
   deleteTag: {
     isOpen: false,
     tag: null
-  }
+  },
+
+  // Folder Modals
+  createFolder: {
+    isOpen: false,
+    targetFolderId: null
+  },
+  renameFolder: {
+    isOpen: false,
+    folder: null
+  },
+  moveFolder: {
+    isOpen: false,
+    folder: null
+  },
+  deleteFolder: {
+    isOpen: false,
+    folder: null
+  },
 };
 
 export const uiModalsReducer = createReducer(
@@ -39,12 +60,14 @@ export const uiModalsReducer = createReducer(
     // Content Modals
     builder.addCase(openCreateContentModal, (state, action) => {
       state.createContent.isOpen = true;
-      state.createContent.type = action.payload;
+      state.createContent.type = action.payload.contentType;
+      state.createContent.targetFolderId = action.payload.targetFolderId;
     })
 
     builder.addCase(closeCreateContentModal, (state) => {
       state.createContent.isOpen = false;
       state.createContent.type = null;
+      state.createContent.targetFolderId = null;
     })
 
     builder.addCase(openRenameContentModal, (state, action) => {
@@ -86,6 +109,47 @@ export const uiModalsReducer = createReducer(
     builder.addCase(closeDeleteTagModal, (state) => {
       state.deleteTag.isOpen = false;
       state.deleteTag.tag = null;
+    })
+
+    // Folder Modals
+    builder.addCase(openCreateFolderModal, (state, action) => {
+      state.createFolder.isOpen = true;
+      state.createFolder.targetFolderId = action.payload;
+    })
+
+    builder.addCase(closeCreateFolderModal, (state) => {
+      state.createFolder.isOpen = false;
+      state.createFolder.targetFolderId = null;
+    })
+
+    builder.addCase(openRenameFolderModal, (state, action) => {
+      state.renameFolder.isOpen = true;
+      state.renameFolder.folder = action.payload;
+    })
+
+    builder.addCase(closeRenameFolderModal, (state) => {
+      state.renameFolder.isOpen = false;
+      state.renameFolder.folder = null;
+    })
+
+    builder.addCase(openMoveFolderModal, (state, action) => {
+      state.moveFolder.isOpen = true;
+      state.moveFolder.folder = action.payload;
+    })
+
+    builder.addCase(closeMoveFolderModal, (state) => {
+      state.moveFolder.isOpen = false;
+      state.moveFolder.folder = null;
+    })
+
+    builder.addCase(openDeleteFolderModal, (state, action) => {
+      state.deleteFolder.isOpen = true;
+      state.deleteFolder.folder = action.payload;
+    })
+
+    builder.addCase(closeDeleteFolderModal, (state) => {
+      state.deleteFolder.isOpen = false;
+      state.deleteFolder.folder = null;
     })
   }
 );

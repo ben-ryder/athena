@@ -1,7 +1,8 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {v4 as createUUID} from "uuid";
-import {updateNoteTemplateTags} from "../note-templates/note-templates-actions";
+import {deleteNoteTemplate, updateNoteTemplateTags} from "../note-templates/note-templates-actions";
 import {NoteTemplatesTagsState} from "./note-template-tags-interface";
+import {deleteNote} from "../notes/notes-actions";
 
 export const initialNoteTemplatesTags: NoteTemplatesTagsState = {
   entities: {},
@@ -32,6 +33,18 @@ export const noteTemplateTagsReducer = createReducer(
           tagId: tagId
         }
       }
+    })
+
+    builder.addCase(deleteNoteTemplate, (state, action) => {
+      state.ids = state.ids.filter(id => {
+        const entity = state.entities[id];
+
+        if (entity.templateId === action.payload) {
+          delete state.entities[id];
+          return false;
+        }
+        return true;
+      })
     })
   }
 );

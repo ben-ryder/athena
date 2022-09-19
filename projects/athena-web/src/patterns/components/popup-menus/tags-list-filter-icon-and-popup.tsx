@@ -14,6 +14,7 @@ import { Popover } from "@headlessui/react";
 import {defaultTagsListFilters} from "../../../state/features/ui/view/view-reducer";
 import {OrderBy} from "../../../state/common/order-by-enum";
 import {OrderDirection} from "../../../state/common/order-direction-enum";
+import {PopupPanel} from "../popup-panel/popup-panel";
 
 
 const orderByOptions = [
@@ -131,9 +132,9 @@ export function TagsListFilterIconAndPopup() {
         </button>
       }
       popupContent={
-        <div className="p-2 maw-w-[350px]">
+        <PopupPanel className="p-2 maw-w-[350px]">
           <TagsListFilterForm onClose={() => {}} />
-        </div>
+        </PopupPanel>
       }
     />
   )

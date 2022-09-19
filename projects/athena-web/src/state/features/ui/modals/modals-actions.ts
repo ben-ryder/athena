@@ -2,6 +2,8 @@ import {createAction} from "@reduxjs/toolkit";
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
 import {Tag} from "../../current-vault/tags/tags-interface";
+import {Folder} from "../../current-vault/folders/folders-interface";
+
 
 export enum UIModalsActions {
   // Content
@@ -17,10 +19,24 @@ export enum UIModalsActions {
   // Tags
   DELETE_TAG_OPEN = "modals/tags/delete/open",
   DELETE_TAG_CLOSE = "modals/tags/delete/close",
+
+  // Folders
+  CREATE_FOLDER_OPEN = "modals/folder/create/open",
+  CREATE_FOLDER_CLOSE = "modals/folder/create/close",
+  RENAME_FOLDER_OPEN = "modals/folder/rename/open",
+  RENAME_FOLDER_CLOSE = "modals/folder/rename/close",
+  MOVE_FOLDER_OPEN = "modals/folder/move/open",
+  MOVE_FOLDER_CLOSE = "modals/folder/move/close",
+  DELETE_FOLDER_OPEN = "modals/folder/delete/open",
+  DELETE_FOLDER_CLOSE = "modals/folder/delete/close",
 }
 
 // Content Modals
-export const openCreateContentModal = createAction<ContentType>(UIModalsActions.CREATE_CONTENT_OPEN);
+export interface CreateContentModalData {
+  contentType: ContentType,
+  targetFolderId: string | null
+}
+export const openCreateContentModal = createAction<CreateContentModalData>(UIModalsActions.CREATE_CONTENT_OPEN);
 
 export const closeCreateContentModal = createAction(UIModalsActions.CREATE_CONTENT_CLOSE);
 
@@ -40,3 +56,20 @@ export const closeDeleteContentModal = createAction(UIModalsActions.DELETE_CONTE
 export const openDeleteTagModal = createAction<Tag>(UIModalsActions.DELETE_TAG_OPEN);
 
 export const closeDeleteTagModal = createAction(UIModalsActions.DELETE_TAG_CLOSE);
+
+// Folder Modals
+export const openCreateFolderModal = createAction<string|null>(UIModalsActions.CREATE_FOLDER_OPEN);
+
+export const closeCreateFolderModal = createAction(UIModalsActions.CREATE_FOLDER_CLOSE);
+
+export const openRenameFolderModal = createAction<Folder>(UIModalsActions.RENAME_FOLDER_OPEN);
+
+export const closeRenameFolderModal = createAction(UIModalsActions.RENAME_FOLDER_CLOSE);
+
+export const openMoveFolderModal = createAction<Folder>(UIModalsActions.MOVE_FOLDER_OPEN);
+
+export const closeMoveFolderModal = createAction(UIModalsActions.MOVE_FOLDER_CLOSE);
+
+export const openDeleteFolderModal = createAction<Folder>(UIModalsActions.DELETE_FOLDER_OPEN);
+
+export const closeDeleteFolderModal = createAction(UIModalsActions.DELETE_FOLDER_CLOSE);
