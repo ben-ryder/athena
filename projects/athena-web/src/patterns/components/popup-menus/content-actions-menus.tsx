@@ -75,7 +75,9 @@ export function TemplateActionMenu(props: ContentActionMenuProps) {
     },
     {
       label: "Move",
-      action: () => {}
+      action: () => {
+        dispatch(openMoveContentModal(props.content))
+      }
     },
     {
       label: "Delete",
@@ -102,7 +104,9 @@ export function TaskListActionMenu(props: ContentActionMenuProps) {
     },
     {
       label: "Move",
-      action: () => {}
+      action: () => {
+        dispatch(openMoveContentModal(props.content))
+      }
     },
     {
       label: "Delete",
