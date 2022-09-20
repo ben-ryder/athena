@@ -21,20 +21,22 @@ export function Modal(props: ModalProps) {
       }
       <Dialog.Panel
         className={classNames(
-          "bg-br-atom-500 m-4 p-4 rounded",
+          "relative bg-br-atom-500 m-4 p-4 rounded",
           "z-50 w-full max-w-[400px]"
         )}
       >
-        <div className="flex justify-between items-start">
-          <Dialog.Title className="text-br-whiteGrey-100 font-bold text-xl">{props.heading}</Dialog.Title>
-          <IconButton
-            label="Close Modal"
-            icon={<CloseIcon size={iconSizes.small} className={iconColorClassNames.secondary}/>}
-            onClick={props.onClose} />
-        </div>
+        <Dialog.Title className="text-br-whiteGrey-100 font-bold text-xl mr-10">{props.heading}</Dialog.Title>
 
         <div className="mt-4">
           {props.content}
+        </div>
+
+        <div className="absolute top-4 right-4">
+          <IconButton
+            label="Close Modal"
+            icon={<CloseIcon size={iconSizes.small} className={iconColorClassNames.secondary}/>}
+            onClick={props.onClose}
+          />
         </div>
       </Dialog.Panel>
   </Dialog>

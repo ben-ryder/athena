@@ -81,7 +81,7 @@ export function FolderItem(props: FolderItemProps) {
       <div
         ref={menuRef}
         className={classNames(
-          "fixed z-50",
+          "fixed z-50 max-w-[160px]",
           {
             "hidden": !isMenuOpen
           }
@@ -185,7 +185,7 @@ export function FileItem(props: FileItemProps) {
       <div
         ref={menuRef}
         className={classNames(
-          "fixed z-50",
+          "fixed z-50 max-w-[160px]",
           {
             "hidden": !isMenuOpen
           }
