@@ -105,9 +105,7 @@ export function MoveFolderView(props: MoveFolderViewProps) {
     <div
       // @ts-ignore
       style={{"--folder-line-offset": `${(indentSize * props.level) - (4 * props.level)}px`}}
-      className={classNames(
-        "relative"
-      )}
+      className="relative bg-br-atom-900"
     >
       <FolderFileSystemItem
         folder="Vault Name"

@@ -1,6 +1,7 @@
 import {Dialog} from "@headlessui/react";
-import {StrictReactNode} from "@ben-ryder/jigsaw";
+import {IconButton, iconColorClassNames, iconSizes, StrictReactNode} from "@ben-ryder/jigsaw";
 import classNames from "classnames";
+import {X as CloseIcon} from "lucide-react";
 export interface ModalProps {
   heading: string,
   isOpen: boolean,
@@ -24,7 +25,13 @@ export function Modal(props: ModalProps) {
           "z-50 w-full max-w-[400px]"
         )}
       >
-        <Dialog.Title className="text-br-whiteGrey-100 font-bold text-xl">{props.heading}</Dialog.Title>
+        <div className="flex justify-between items-start">
+          <Dialog.Title className="text-br-whiteGrey-100 font-bold text-xl">{props.heading}</Dialog.Title>
+          <IconButton
+            label="Close Modal"
+            icon={<CloseIcon size={iconSizes.small} className={iconColorClassNames.secondary}/>}
+            onClick={props.onClose} />
+        </div>
 
         <div className="mt-4">
           {props.content}

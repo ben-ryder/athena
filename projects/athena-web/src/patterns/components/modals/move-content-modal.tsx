@@ -60,7 +60,7 @@ export function MoveContentModal() {
         <>
           <p className="text-br-whiteGrey-100">Select the folder to move <span className="font-bold">{deleteModal.content?.data.name}</span> to:</p>
 
-          <div className="mt-2">
+          <div className="mt-4">
             <MoveFolderView onFolderSelect={onFolderSelect} />
           </div>
         </>
