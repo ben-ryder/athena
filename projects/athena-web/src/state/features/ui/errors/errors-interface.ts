@@ -1,4 +1,9 @@
 
+export interface ApplicationError {
+  heading: string,
+  text: string
+}
+
 export interface UIErrorsState {
-  applicationError: string | null
+  applicationError: ApplicationError | null
 }

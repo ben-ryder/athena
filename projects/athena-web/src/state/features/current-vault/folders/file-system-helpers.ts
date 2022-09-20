@@ -6,11 +6,35 @@ import {TaskListsState} from "../task-lists/task-lists-interface";
 import {ContentData} from "../../ui/content/content-selctors";
 import {ContentType} from "../../ui/content/content-interface";
 
-export function validateFolderMove(foldersState: FoldersState, folderId: string, newParentId: string): boolean {
-  return false;
+export enum FolderMoveValidationResult {
+  VALID = "VALID",
+  ERROR_SELECTED_SELF = "ERROR_SELECTED_SELF",
+  ERROR_SAME_PARENT = "ERROR_SAME_PARENT",
+  ERROR_CHILD_FOLDER = "ERROR_CHILD_FOLDER",
+}
+export function validateFolderMove(foldersState: FoldersState, folderId: string, newParentId: string | null): FolderMoveValidationResult {
+  const currentFolder = foldersState.entities[folderId];
+
+  if (newParentId === folderId) {
+    return FolderMoveValidationResult.ERROR_SELECTED_SELF;
+  }
+  if (newParentId === currentFolder.parentId) {
+    return FolderMoveValidationResult.ERROR_SAME_PARENT
+  }
+
+  if (newParentId === null) {
+    return FolderMoveValidationResult.VALID;
+  }
+
+  const childFolders = getChildFolderIds(foldersState, folderId);
+  if (childFolders.includes(newParentId)) {
+    return FolderMoveValidationResult.ERROR_CHILD_FOLDER;
+  }
+
+  return FolderMoveValidationResult.VALID;
 }
 
-export function getChildFolders(foldersState: FoldersState, parentFolderId: string | null) {
+export function getChildFolderTrees(foldersState: FoldersState, parentFolderId: string | null) {
   const folders: FolderTreeItem[] = [];
 
   for (const folderId of foldersState.ids) {
@@ -19,7 +43,7 @@ export function getChildFolders(foldersState: FoldersState, parentFolderId: stri
     if (folder.parentId === parentFolderId) {
       const folderItem: FolderTreeItem = {
         details: folder,
-        folders: getChildFolders(foldersState, folder.id)
+        folders: getChildFolderTrees(foldersState, folder.id)
       }
 
       folders.push(folderItem);
@@ -27,6 +51,25 @@ export function getChildFolders(foldersState: FoldersState, parentFolderId: stri
   }
 
   return folders;
+}
+
+export function flattenFolderTree(folderTreeItem: FolderTreeItem) {
+  const folderIds: string[] = [folderTreeItem.details.id];
+  for (const folder of folderTreeItem.folders) {
+    folderIds.push(...flattenFolderTree(folder));
+  }
+
+  return folderIds;
+}
+
+export function getChildFolderIds(foldersState: FoldersState, parentFolderId: string | null) {
+  const childFolderTrees = getChildFolderTrees(foldersState, parentFolderId);
+  const folderIds: string[] = [];
+  for (const folderTree of childFolderTrees) {
+    folderIds.push(...flattenFolderTree(folderTree))
+  }
+
+  return folderIds;
 }
 
 export function getFolderFiles(

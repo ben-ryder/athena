@@ -1,24 +1,13 @@
 import {ApplicationState} from "../../../store";
-import {getChildFolders} from "./file-system-helpers";
-import {FolderTreeItem} from "./folders-selectors";
+import {getChildFolderIds} from "./file-system-helpers";
 import {produce} from "immer";
-
-export function flattenFolderTree(folderTreeItem: FolderTreeItem) {
-  const folderIds: string[] = [folderTreeItem.details.id];
-  for (const folder of folderTreeItem.folders) {
-     folderIds.push(...flattenFolderTree(folder));
-  }
-
-  return folderIds;
-}
 
 export function deleteFoldersReducer(state: ApplicationState, folderId: string) {
   return produce(state, state => {
-    const foldersToDelete: string[] = [folderId];
-    const childFolders = getChildFolders(state.currentVault.folders, folderId);
-    for (const folder of childFolders) {
-      foldersToDelete.push(...flattenFolderTree(folder));
-    }
+    const foldersToDelete: string[] = [
+      folderId,
+      ...getChildFolderIds(state.currentVault.folders, folderId)
+    ];
 
     // Delete notes and related tags
     state.currentVault.notesTags.ids = state.currentVault.notesTags.ids.filter(id => {

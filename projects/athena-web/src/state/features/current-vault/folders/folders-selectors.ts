@@ -2,7 +2,7 @@ import {ContentData} from "../../ui/content/content-selctors";
 import {Folder} from "./folders-interface";
 import {createSelector} from "@reduxjs/toolkit";
 import {ApplicationState} from "../../../store";
-import {getChildFileSystemFolders, getChildFolders, getFolderFiles} from "./file-system-helpers";
+import {getChildFileSystemFolders, getChildFolderTrees, getFolderFiles} from "./file-system-helpers";
 import {selectNotesState} from "../notes/notes-selectors";
 import {selectNoteTemplatesState} from "../note-templates/note-templates-selectors";
 import {selectTaskListsState} from "../task-lists/task-lists-selectors";
@@ -31,7 +31,7 @@ export const selectFoldersState = (state: ApplicationState) => state.currentVaul
 
 export const selectFolderTree = createSelector([selectFoldersState], (foldersState) => {
   const folderTree: FolderTree = {
-    folders: getChildFolders(foldersState, null)
+    folders: getChildFolderTrees(foldersState, null)
   }
 
   return folderTree;

@@ -12,11 +12,11 @@ import {moveNote} from "../../../state/features/current-vault/notes/notes-thunks
 
 export function MoveContentModal() {
   const dispatch = useAppDispatch();
-  const deleteModal = useSelector(selectMoveContentModal);
+  const moveModal = useSelector(selectMoveContentModal);
   const closeModal = () => {dispatch(closeMoveContentModal())};
 
   let contentType: string;
-  switch (deleteModal.content?.type) {
+  switch (moveModal.content?.type) {
     case ContentType.TASK_LIST: {
       contentType = "task list"
       break;
@@ -32,18 +32,17 @@ export function MoveContentModal() {
   }
 
   function onFolderSelect(destinationFolderId: string | null) {
-    console.log("move");
-    switch (deleteModal.content?.type) {
+    switch (moveModal.content?.type) {
       case ContentType.TASK_LIST: {
-        dispatch(moveTaskList(deleteModal.content.data.id, destinationFolderId));
+        dispatch(moveTaskList(moveModal.content.data.id, destinationFolderId));
         break;
       }
       case ContentType.NOTE_TEMPLATE: {
-        dispatch(moveNoteTemplate(deleteModal.content.data.id, destinationFolderId));
+        dispatch(moveNoteTemplate(moveModal.content.data.id, destinationFolderId));
         break;
       }
       case ContentType.NOTE: {
-        dispatch(moveNote(deleteModal.content.data.id, destinationFolderId));
+        dispatch(moveNote(moveModal.content.data.id, destinationFolderId));
         break;
       }
     }
@@ -53,12 +52,12 @@ export function MoveContentModal() {
 
   return (
     <Modal
-      heading={`Move '${deleteModal.content?.data.name}' ${contentType}`}
-      isOpen={deleteModal.isOpen}
+      heading={`Move '${moveModal.content?.data.name}' ${contentType}`}
+      isOpen={moveModal.isOpen}
       onClose={closeModal}
       content={
         <>
-          <p className="text-br-whiteGrey-100">Select the folder to move <span className="font-bold">{deleteModal.content?.data.name}</span> to:</p>
+          <p className="text-br-whiteGrey-100">Select the folder to move <span className="font-bold">{moveModal.content?.data.name}</span> to:</p>
 
           <div className="mt-4">
             <MoveFolderView onFolderSelect={onFolderSelect} />

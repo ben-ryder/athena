@@ -41,6 +41,8 @@ import {MoveContentModal} from "./patterns/components/modals/move-content-modal"
 import {CreateFolderModal} from "./patterns/components/modals/create-folder-modal";
 import {RenameFolderModal} from "./patterns/components/modals/rename-folder-modal";
 import {DeleteFolderModal} from "./patterns/components/modals/delete-folder-modal";
+import {MoveFolderModal} from "./patterns/components/modals/move-folder-modal";
+import {AppErrorModal} from "./patterns/components/modals/app-error-modal";
 
 export function Application() {
   const dispatch = useAppDispatch();
@@ -252,6 +254,9 @@ export function Application() {
         </section>
       </main>
 
+      {/** Error Modals **/}
+      <AppErrorModal />
+
       {/** Content Modals **/}
       <CreateContentModal />
       <RenameContentModal />
@@ -264,6 +269,7 @@ export function Application() {
       {/** Folder Modals **/}
       <CreateFolderModal />
       <RenameFolderModal />
+      <MoveFolderModal />
       <DeleteFolderModal />
 
       <ReactTooltip

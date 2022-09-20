@@ -1,4 +1,5 @@
 import {createAction} from "@reduxjs/toolkit";
+import {ApplicationError} from "./errors-interface";
 
 export enum UIErrorsActions {
   // Application Error
@@ -6,6 +7,6 @@ export enum UIErrorsActions {
   CLEAR_APPLICATION_ERROR = "errors/application/clear",
 }
 
-export const setApplicationError = createAction<string>(UIErrorsActions.SET_APPLICATION_ERROR);
+export const setApplicationError = createAction<ApplicationError>(UIErrorsActions.SET_APPLICATION_ERROR);
 
 export const clearApplicationError = createAction(UIErrorsActions.CLEAR_APPLICATION_ERROR);
