@@ -6,8 +6,7 @@ import {ContentListFilterIconAndPopup} from "./popup-menus/content-list-filter-i
 export function ListView() {
   return (
     <div>
-      <div className="mt-4 mx-4 flex justify-between items-center">
-        <button className="text-br-whiteGrey-100 underline hover:text-br-teal-600 font-bold underline-offset-4">Saved Queries</button>
+      <div className="mt-4 mx-4 flex justify-end items-center">
         <ContentListFilterIconAndPopup />
       </div>
       <ContentList />
