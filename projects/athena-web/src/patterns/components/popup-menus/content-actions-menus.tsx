@@ -11,18 +11,19 @@ import {MenuPopup} from "./menu-popup";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 
 export interface ContentActionMenuProps {
-  content: ContentData
+  content: ContentData,
+  onClose: () => void
 }
 
 export function ContentActionMenu(props: ContentActionMenuProps) {
   if (props.content.type === ContentType.NOTE) {
-    return <NoteActionMenu content={props.content} />
+    return <NoteActionMenu content={props.content} onClose={props.onClose} />
   }
   else if (props.content.type === ContentType.TASK_LIST) {
-    return <TaskListActionMenu content={props.content} />
+    return <TaskListActionMenu content={props.content} onClose={props.onClose}/>
   }
   else {
-    return <TemplateActionMenu content={props.content} />
+    return <TemplateActionMenu content={props.content} onClose={props.onClose}/>
   }
 }
 
@@ -51,7 +52,7 @@ export function NoteActionMenu(props: ContentActionMenuProps) {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} />
+    <MenuPopup menuItems={menuItems} onClose={props.onClose} />
   )
 }
 
@@ -88,7 +89,7 @@ export function TemplateActionMenu(props: ContentActionMenuProps) {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} />
+    <MenuPopup menuItems={menuItems} onClose={props.onClose} />
   )
 }
 
@@ -117,6 +118,6 @@ export function TaskListActionMenu(props: ContentActionMenuProps) {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} />
+    <MenuPopup menuItems={menuItems} onClose={props.onClose}/>
   )
 }

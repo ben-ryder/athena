@@ -49,6 +49,9 @@ export function CreateContentIconAndPopup() {
       popupContent={
         <MenuPopup
           menuItems={menuItems}
+          onClose={() => {
+            //Visibility is handled by the popup functionality, so no on close function is required.
+          }}
         />
       }
     />

@@ -74,7 +74,12 @@ export function FolderActionsMenu(props: FolderActionsMenuProps) {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} />
+    <MenuPopup
+        menuItems={menuItems}
+        onClose={() => {
+          //Visibility is handled by the popup functionality, so no on close function is required.
+        }}
+    />
   )
 }
 
@@ -118,6 +123,11 @@ export function RootFolderActionsMenu() {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} />
+    <MenuPopup
+        menuItems={menuItems}
+        onClose={() => {
+          //Visibility is handled by the popup functionality, so no on close function is required.
+        }}
+    />
   )
 }

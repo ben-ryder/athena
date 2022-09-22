@@ -195,7 +195,7 @@ export function FileItem(props: FileItemProps) {
           top: `${menuPosition ? menuPosition[1] : 0}px`
         }}
       >
-        <ContentActionMenu content={props.content} />
+        <ContentActionMenu content={props.content} onClose={() => {setIsMenuOpen(false)}} />
       </div>
     </>
   )

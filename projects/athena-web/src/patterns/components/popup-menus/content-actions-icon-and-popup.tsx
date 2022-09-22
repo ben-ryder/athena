@@ -16,7 +16,14 @@ export function ContentActionsIconAndPopup(props: ContentActionsIconAndPopupProp
       content={
         <FileTabOptionsIcon size={iconSizes.extraSmall} className={iconColorClassNames.secondary} />
       }
-      popupContent={<ContentActionMenu content={props.content} />}
+      popupContent={
+        <ContentActionMenu
+            content={props.content}
+            onClose={() => {
+                //Visibility is handled by the popup functionality, so no on close function is required.
+            }}
+        />
+      }
     />
   )
 }

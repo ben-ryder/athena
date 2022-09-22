@@ -7,7 +7,8 @@ export interface MenuItem {
 }
 
 export interface MenuPopupProps {
-  menuItems: MenuItem[]
+  menuItems: MenuItem[],
+  onClose: () => void
 }
 
 export function MenuPopup(props: MenuPopupProps) {
@@ -18,7 +19,7 @@ export function MenuPopup(props: MenuPopupProps) {
           key={item.label}
           onClick={() => {
             item.action()
-            close()
+            props.onClose()
           }}
           className="whitespace-nowrap py-1 px-2 text-center w-full text-br-whiteGrey-100 hover:text-br-teal-600"
         >{item.label}</button>
