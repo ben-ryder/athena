@@ -8,21 +8,21 @@ export interface ContentDetailsProps {
 }
 
 export function ContentDetails(props: ContentDetailsProps) {
-  const createdDate = formatUTCString(props.content.data.createdAt);
-  const updatedDate = formatUTCString(props.content.data.updatedAt);
-
   let details;
   if (props.content.type === ContentType.TASK_LIST) {
     details = (
-      <p className="text-br-whiteGrey-700 text-center italic">0 open tasks | 0 complete tasks | created {createdDate} | updated {updatedDate}</p>
+      <p className="text-br-whiteGrey-700 text-center italic">0 open tasks | 0 complete tasks</p>
     )
   }
   else {
-    const wordCount = props.content.data.body.split(" ").length;
+    const wordCount = props.content.data.body
+      .split(" ")
+      .filter(word => word !== "")
+      .length;
     const charCount = props.content.data.body.length;
     details = (
       <div>
-        <p className="text-br-whiteGrey-700 text-center italic">{wordCount} words | {charCount} chars | created {createdDate} | updated {updatedDate}</p>
+        <p className="text-br-whiteGrey-700 text-center italic">{wordCount} words | {charCount} chars</p>
       </div>
     )
   }

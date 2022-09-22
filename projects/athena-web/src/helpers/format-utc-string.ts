@@ -1,10 +1,15 @@
 
+function padNumberString(num: number) {
+  return num.toString().padStart(2, "0");
+}
 
 export function formatUTCString(utcString: string) {
-  let [year, month, day] = utcString.split("T")[0].split("-");
-  year = year.slice(2, 4);
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const monthName = months[parseInt(month)-1];
+  const date = new Date(utcString);
+  const day = padNumberString(date.getDate());
+  const month = padNumberString(date.getMonth() + 1);
+  const year = date.getFullYear();
+  const hours = padNumberString(date.getHours());
+  const minutes = padNumberString(date.getMinutes());
 
-  return `${day} ${monthName} ${year}`
+  return `${day}-${month}-${year} @ ${hours}:${minutes}`
 }

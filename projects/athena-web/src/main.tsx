@@ -7,7 +7,8 @@ import {
   FolderTree as FolderViewIcon,
   LayoutList as NoteListViewIcon,
   ListOrdered as HeadingIcon,
-  Tags as TagsIcon
+  Tags as TagsIcon,
+  History as HistoryIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {Helmet} from "react-helmet-async";
@@ -43,6 +44,8 @@ import {RenameFolderModal} from "./patterns/components/modals/rename-folder-moda
 import {DeleteFolderModal} from "./patterns/components/modals/delete-folder-modal";
 import {MoveFolderModal} from "./patterns/components/modals/move-folder-modal";
 import {AppErrorModal} from "./patterns/components/modals/app-error-modal";
+import {ContentHistory} from "./patterns/components/content-history";
+import {TableOfContents} from "./patterns/components/table-of-contents";
 
 export function Application() {
   const dispatch = useAppDispatch();
@@ -241,14 +244,14 @@ export function Application() {
               }}/>
             <div className="w-full flex justify-between items-center pl-2">
               {activeContent !== null &&
-                  <ContentDetails content={activeContent} />
+                  <>
+                      <ContentDetails content={activeContent} />
+                      <div className="flex items-center">
+                          <TableOfContents content={activeContent} />
+                          <ContentHistory content={activeContent} />
+                      </div>
+                  </>
               }
-              <IconButton
-                  label="Table of Contents"
-                  data-tip="Table of Contents"
-                  icon={<HeadingIcon size={iconSizes.small} className={iconColorClassNames.secondary}/>}
-                  onClick={() => {}}
-              />
             </div>
           </section>
         </section>
