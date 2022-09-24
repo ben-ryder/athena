@@ -7,6 +7,7 @@ import {notesTagsReducer} from "./notes-tags/notes-tags-reducer";
 import {noteTemplateTagsReducer} from "./note-templates-tags/note-template-tags-reducer";
 import {taskListsTagsReducer} from "./task-lists-tags/task-lists-tags-reducer";
 import {foldersReducer} from "./folders/folders-reducer";
+import {tasksReducer} from "./task-lists/tasks/tasks-reducer";
 
 export const currentVaultReducer = combineReducers({
   tags: tagsReducer,
@@ -15,6 +16,7 @@ export const currentVaultReducer = combineReducers({
   noteTemplates: noteTemplatesReducer,
   noteTemplatesTags: noteTemplateTagsReducer,
   taskLists: taskListsReducer,
+  tasks: tasksReducer,
   taskListsTags: taskListsTagsReducer,
   folders: foldersReducer
 })

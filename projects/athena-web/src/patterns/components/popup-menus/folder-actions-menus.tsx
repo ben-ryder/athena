@@ -106,7 +106,7 @@ export function RootFolderActionsMenu() {
       label: "New Note Template",
       action: () => {
         dispatch(openCreateContentModal({
-          contentType: ContentType.NOTE,
+          contentType: ContentType.NOTE_TEMPLATE,
           targetFolderId: null
         }))
       }
@@ -115,7 +115,7 @@ export function RootFolderActionsMenu() {
       label: "New Task List",
       action: () => {
         dispatch(openCreateContentModal({
-          contentType: ContentType.NOTE,
+          contentType: ContentType.TASK_LIST,
           targetFolderId: null
         }))
       }

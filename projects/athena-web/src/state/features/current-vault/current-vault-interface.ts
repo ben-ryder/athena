@@ -6,6 +6,7 @@ import {TagsState} from "./tags/tags-interface";
 import {TaskListsState} from "./task-lists/task-lists-interface";
 import {TaskListsTagsState} from "./task-lists-tags/task-list-tags-interface";
 import {NoteTemplatesTagsState} from "./note-templates-tags/note-template-tags-interface";
+import {TasksState} from "./task-lists/tasks/task-interface";
 
 export interface CurrentVaultInterface {
   folders: FoldersState,
@@ -14,6 +15,7 @@ export interface CurrentVaultInterface {
   notes: NotesState,
   notesTags: NotesTagsState,
   tags: TagsState,
-  taskLists: TaskListsState
+  taskLists: TaskListsState,
+  tasks: TasksState,
   taskListsTags: TaskListsTagsState
 }

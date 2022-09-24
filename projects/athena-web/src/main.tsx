@@ -46,6 +46,7 @@ import {ContentHistory} from "./patterns/components/content-history";
 import {TableOfContents} from "./patterns/components/table-of-contents";
 import {NoteTemplateFolderButton} from "./patterns/components/note-template-folder-button";
 import {NoteTemplateFolderModal} from "./patterns/components/modals/note-template-folder-modal";
+import {TaskListEditor} from "./patterns/components/task-list-editor/task-list-editor";
 
 export function Application() {
   const dispatch = useAppDispatch();
@@ -221,6 +222,12 @@ export function Application() {
                   }
                 }}
               />
+            }
+
+            {(activeContent !== null && activeContent.type === ContentType.TASK_LIST) &&
+                <TaskListEditor
+                    taskList={activeContent.data}
+                />
             }
             {!activeContent && <WelcomeMessage />}
           </section>

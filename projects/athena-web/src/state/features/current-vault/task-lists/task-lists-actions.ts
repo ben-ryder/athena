@@ -11,7 +11,7 @@ export enum TaskListsActions {
   DELETE = "taskLists/delete"
 }
 
-export const createTaskList= createAction<DatabaseTaskList>(TaskListsActions.CREATE);
+export const createTaskList = createAction<DatabaseTaskList>(TaskListsActions.CREATE);
 
 export interface UpdateTaskListPayload {
   id: string,
