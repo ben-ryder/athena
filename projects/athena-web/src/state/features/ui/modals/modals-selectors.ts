@@ -9,6 +9,9 @@ export const selectMoveContentModal = (state: ApplicationState) => state.ui.moda
 
 export const selectDeleteContentModal = (state: ApplicationState) => state.ui.modals.deleteContent;
 
+// Note Template
+export const selectNoteTemplateFolderModal = (state: ApplicationState) => state.ui.modals.noteTemplateFolder;
+
 // Tag Modals
 export const selectDeleteTagModal = (state: ApplicationState) => state.ui.modals.deleteTag;
 

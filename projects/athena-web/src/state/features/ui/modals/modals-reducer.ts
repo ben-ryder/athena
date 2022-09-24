@@ -1,12 +1,26 @@
 import {UIModalsState} from "./modals-interface";
 import {createReducer} from "@reduxjs/toolkit";
 import {
-  closeCreateContentModal, closeCreateFolderModal,
-  closeDeleteContentModal, closeDeleteFolderModal, closeDeleteTagModal, closeMoveContentModal, closeMoveFolderModal,
-  closeRenameContentModal, closeRenameFolderModal,
-  openCreateContentModal, openCreateFolderModal,
-  openDeleteContentModal, openDeleteFolderModal, openDeleteTagModal, openMoveContentModal, openMoveFolderModal,
-  openRenameContentModal, openRenameFolderModal
+  closeCreateContentModal,
+  closeCreateFolderModal,
+  closeDeleteContentModal,
+  closeDeleteFolderModal,
+  closeDeleteTagModal,
+  closeMoveContentModal,
+  closeMoveFolderModal,
+  closeNoteTemplateFolderModal,
+  closeRenameContentModal,
+  closeRenameFolderModal,
+  openCreateContentModal,
+  openCreateFolderModal,
+  openDeleteContentModal,
+  openDeleteFolderModal,
+  openDeleteTagModal,
+  openMoveContentModal,
+  openMoveFolderModal,
+  openNoteTemplateFolderModal,
+  openRenameContentModal,
+  openRenameFolderModal
 } from "./modals-actions";
 
 export const initialUIModalsState: UIModalsState = {
@@ -27,6 +41,12 @@ export const initialUIModalsState: UIModalsState = {
   deleteContent: {
     isOpen: false,
     content: null
+  },
+
+  // Note Template
+  noteTemplateFolder: {
+    isOpen: false,
+    noteTemplate: null
   },
 
   // Tag Modals
@@ -98,6 +118,17 @@ export const uiModalsReducer = createReducer(
     builder.addCase(closeDeleteContentModal, (state) => {
       state.deleteContent.isOpen = false;
       state.deleteContent.content = null;
+    })
+
+    // Note Template
+    builder.addCase(openNoteTemplateFolderModal, (state, action) => {
+      state.noteTemplateFolder.isOpen = true;
+      state.noteTemplateFolder.noteTemplate = action.payload;
+    })
+
+    builder.addCase(closeNoteTemplateFolderModal, (state, action) => {
+      state.noteTemplateFolder.isOpen = false;
+      state.noteTemplateFolder.noteTemplate = null;
     })
 
     // Tag Modals

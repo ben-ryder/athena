@@ -1,14 +1,12 @@
 import React, {useState} from 'react';
-import {colourPalette, IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
+import {colourPalette, IconButton, iconColorClassNames, Select} from "@ben-ryder/jigsaw";
 import {
   ArrowLeftRight as VaultIcon,
   ChevronFirst as OpenVaultSectionIcon,
   ChevronLast as CloseVaultSectionIcon,
   FolderTree as FolderViewIcon,
   LayoutList as NoteListViewIcon,
-  ListOrdered as HeadingIcon,
-  Tags as TagsIcon,
-  History as HistoryIcon
+  Tags as TagsIcon
 } from "lucide-react";
 import classNames from "classnames";
 import {Helmet} from "react-helmet-async";
@@ -33,7 +31,7 @@ import {DeleteContentModal} from "./patterns/components/modals/delete-content-mo
 import {CreateContentModal} from "./patterns/components/modals/create-content-modal";
 import {TagsView} from "./patterns/components/tags-view";
 import {DeleteTagModal} from "./patterns/components/modals/delete-tag-modal";
-import { ContentTagEditor } from './patterns/components/content-tag-editor';
+import {ContentTagEditor} from './patterns/components/content-tag-editor';
 import {updateNoteBody} from "./state/features/current-vault/notes/notes-thunks";
 import {updateNoteTemplateBody} from "./state/features/current-vault/note-templates/note-templates-thunks";
 import {FolderView} from "./patterns/components/folder-view";
@@ -46,6 +44,8 @@ import {MoveFolderModal} from "./patterns/components/modals/move-folder-modal";
 import {AppErrorModal} from "./patterns/components/modals/app-error-modal";
 import {ContentHistory} from "./patterns/components/content-history";
 import {TableOfContents} from "./patterns/components/table-of-contents";
+import {NoteTemplateFolderButton} from "./patterns/components/note-template-folder-button";
+import {NoteTemplateFolderModal} from "./patterns/components/modals/note-template-folder-modal";
 
 export function Application() {
   const dispatch = useAppDispatch();
@@ -226,7 +226,18 @@ export function Application() {
           </section>
 
           <section className={`h-[40px] flex items-center overflow-y-hidden w-full bg-br-atom-800`}>
-            <ContentTagEditor />
+            {activeContent &&
+              <>
+                {activeContent.type === ContentType.NOTE_TEMPLATE &&
+                  <div className="flex">
+                      <NoteTemplateFolderButton noteTemplate={activeContent.data} />
+                  </div>
+                }
+                <div className="flex items-center">
+                  <ContentTagEditor />
+                </div>
+              </>
+            }
           </section>
           <section id="bottom-panel" className={`h-[40px] bg-br-atom-800 p-2 flex items-center border-t border-br-blueGrey-700`}>
             <IconButton
@@ -265,6 +276,9 @@ export function Application() {
       <RenameContentModal />
       <MoveContentModal />
       <DeleteContentModal />
+
+      {/** Note Template Modals **/}
+      <NoteTemplateFolderModal />
 
       {/** Tag Modals **/}
       <DeleteTagModal />

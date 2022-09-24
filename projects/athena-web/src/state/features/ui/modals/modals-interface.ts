@@ -2,6 +2,7 @@ import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
 import {Tag} from "../../current-vault/tags/tags-interface";
 import {Folder} from "../../current-vault/folders/folders-interface";
+import {DatabaseNoteTemplate, NoteTemplate} from "../../current-vault/note-templates/note-templates-interface";
 
 export interface UIModalsState {
   // Content
@@ -22,6 +23,12 @@ export interface UIModalsState {
     isOpen: boolean,
     content: ContentData | null
   },
+
+  // Note Templates
+  noteTemplateFolder: {
+    isOpen: boolean,
+    noteTemplate: DatabaseNoteTemplate | null
+  }
 
   // Tags
   deleteTag: {

@@ -4,6 +4,7 @@ import {useAppDispatch} from "../../../state/store";
 import {
   openDeleteContentModal,
   openMoveContentModal,
+  openNoteTemplateFolderModal,
   openRenameContentModal
 } from "../../../state/features/ui/modals/modals-actions";
 import {createNoteFromTemplate} from "../../../state/features/current-vault/notes/notes-thunks";
@@ -52,7 +53,7 @@ export function NoteActionMenu(props: ContentActionMenuProps) {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} onClose={props.onClose} />
+    <MenuPopup menuItems={menuItems} onClose={props.onClose} className="max-w-[160px]" />
   )
 }
 
@@ -66,6 +67,15 @@ export function TemplateActionMenu(props: ContentActionMenuProps) {
         // todo: fix types issue with thunk dispatch
         // @ts-ignore
         dispatch(createNoteFromTemplate(props.content.data.id));
+      }
+    },
+    {
+      label: "Set Target Folder",
+      action: () => {
+        // todo: update typings to stop this check being required
+        if (props.content.type === ContentType.NOTE_TEMPLATE) {
+          dispatch(openNoteTemplateFolderModal(props.content.data))
+        }
       }
     },
     {
@@ -89,7 +99,7 @@ export function TemplateActionMenu(props: ContentActionMenuProps) {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} onClose={props.onClose} />
+    <MenuPopup menuItems={menuItems} onClose={props.onClose} className="max-w-[160px]" />
   )
 }
 
@@ -118,6 +128,6 @@ export function TaskListActionMenu(props: ContentActionMenuProps) {
   ];
 
   return (
-    <MenuPopup menuItems={menuItems} onClose={props.onClose}/>
+    <MenuPopup menuItems={menuItems} onClose={props.onClose} className="max-w-[160px]" />
   )
 }

@@ -62,3 +62,18 @@ export function updateNoteTemplateBody(templateId: string, newBody: string) {
     }));
   }
 }
+
+export function updateNoteTemplateTargetFolder(templateId: string, targetFolderId: string | null) {
+  return (dispatch: AppThunkDispatch) => {
+    const timestamp = new Date().toISOString();
+
+    dispatch(updateNoteTemplate({
+      id: templateId,
+      changes: {
+        targetFolderId: targetFolderId,
+        updatedAt: timestamp
+      }
+    }));
+  }
+}
+

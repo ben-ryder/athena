@@ -3,6 +3,7 @@ import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
 import {Tag} from "../../current-vault/tags/tags-interface";
 import {Folder} from "../../current-vault/folders/folders-interface";
+import {DatabaseNoteTemplate} from "../../current-vault/note-templates/note-templates-interface";
 
 
 export enum UIModalsActions {
@@ -15,6 +16,10 @@ export enum UIModalsActions {
   MOVE_CONTENT_CLOSE = "modals/content/move/close",
   DELETE_CONTENT_OPEN = "modals/content/delete/open",
   DELETE_CONTENT_CLOSE = "modals/content/delete/close",
+
+  // Note Template
+  NOTE_TEMPLATE_FOLDER_OPEN = "modals/note-template-folder/open",
+  NOTE_TEMPLATE_FOLDER_CLOSE = "modals/note-template-folder/close",
 
   // Tags
   DELETE_TAG_OPEN = "modals/tags/delete/open",
@@ -51,6 +56,11 @@ export const closeMoveContentModal = createAction(UIModalsActions.MOVE_CONTENT_C
 export const openDeleteContentModal = createAction<ContentData>(UIModalsActions.DELETE_CONTENT_OPEN);
 
 export const closeDeleteContentModal = createAction(UIModalsActions.DELETE_CONTENT_CLOSE);
+
+// Note Templates
+export const openNoteTemplateFolderModal = createAction<DatabaseNoteTemplate>(UIModalsActions.NOTE_TEMPLATE_FOLDER_OPEN);
+
+export const closeNoteTemplateFolderModal = createAction(UIModalsActions.NOTE_TEMPLATE_FOLDER_CLOSE);
 
 // Tag Modals
 export const openDeleteTagModal = createAction<Tag>(UIModalsActions.DELETE_TAG_OPEN);

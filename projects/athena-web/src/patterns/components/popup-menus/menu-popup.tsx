@@ -1,5 +1,6 @@
 import {PopupPanel} from "../popup-panel/popup-panel";
 import React from "react";
+import classNames from "classnames";
 
 export interface MenuItem {
   label: string,
@@ -8,12 +9,13 @@ export interface MenuItem {
 
 export interface MenuPopupProps {
   menuItems: MenuItem[],
-  onClose: () => void
+  onClose: () => void,
+  className?: string
 }
 
 export function MenuPopup(props: MenuPopupProps) {
   return (
-    <PopupPanel>
+    <PopupPanel className={classNames(props.className)}>
       {props.menuItems.map(item =>
         <button
           key={item.label}
