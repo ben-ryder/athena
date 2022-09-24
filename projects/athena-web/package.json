@@ -2,7 +2,7 @@
   "name": "@ben-ryder/athena-web",
   "description": "The React web frontend for Athena.",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0-alpha",
   "type": "module",
   "scripts": {
     "start": "npm run dev",
