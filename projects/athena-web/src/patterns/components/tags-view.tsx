@@ -57,7 +57,7 @@ export function TagsView() {
           </div>
       }
       {tagsData.list.map(tag =>
-        <TagCard tag={tag} />
+        <TagCard key={tag.id} tag={tag} />
       )}
       <div className="my-6 mx-4 flex justify-between items-center">
         <p className="text-br-whiteGrey-100">page {tagsData.meta.currentPage}/{totalPages} - {totalCurrentCount}/{tagsData.meta.total} items</p>

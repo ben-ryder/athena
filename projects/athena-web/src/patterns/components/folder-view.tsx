@@ -208,7 +208,7 @@ export function FileSystem() {
   return (
     <>
       <FolderItem
-        folder="Vault Name"
+        folder="/"
         level={0}
         isExpanded={isExpanded}
         onClick={() => {setIsExpanded(!isExpanded)}}

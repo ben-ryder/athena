@@ -1,7 +1,8 @@
-import {AppThunkDispatch} from "../../../../store";
+import {ApplicationState, AppThunkDispatch} from "../../../../store";
 import {v4 as createUUID} from "uuid";
 import {DatabaseTask, TaskStatus} from "./task-interface";
 import {createTask, updateTask} from "./task-actions";
+import {updateTaskList} from "../task-lists-actions";
 
 
 export function createNewTask(taskListId: string, name: string) {
@@ -18,11 +19,20 @@ export function createNewTask(taskListId: string, name: string) {
       updatedAt: timestamp
     }
     dispatch(createTask(task));
+
+    dispatch(updateTaskList({
+      id: taskListId,
+      changes: {
+        updatedAt: timestamp
+      }
+    }))
   }
 }
 
 export function renameTask(taskId: string, name: string) {
-  return (dispatch: AppThunkDispatch) => {
+  return (dispatch: AppThunkDispatch, getState: () => ApplicationState) => {
+    const state = getState();
+    const task = state.currentVault.tasks.entities[taskId]
     const updatedAt = new Date().toISOString();
 
     dispatch(updateTask({
@@ -32,11 +42,20 @@ export function renameTask(taskId: string, name: string) {
         updatedAt: updatedAt
       }
     }));
+
+    dispatch(updateTaskList({
+      id: task.taskListId,
+      changes: {
+        updatedAt: updatedAt
+      }
+    }))
   }
 }
 
 export function completeTask(taskId: string) {
-  return (dispatch: AppThunkDispatch) => {
+  return (dispatch: AppThunkDispatch, getState: () => ApplicationState) => {
+    const state = getState();
+    const task = state.currentVault.tasks.entities[taskId]
     const updatedAt = new Date().toISOString();
 
     dispatch(updateTask({
@@ -46,11 +65,20 @@ export function completeTask(taskId: string) {
         updatedAt: updatedAt
       }
     }));
+
+    dispatch(updateTaskList({
+      id: task.taskListId,
+      changes: {
+        updatedAt: updatedAt
+      }
+    }))
   }
 }
 
 export function reopenTask(taskId: string) {
-  return (dispatch: AppThunkDispatch) => {
+  return (dispatch: AppThunkDispatch, getState: () => ApplicationState) => {
+    const state = getState();
+    const task = state.currentVault.tasks.entities[taskId]
     const updatedAt = new Date().toISOString();
 
     dispatch(updateTask({
@@ -60,5 +88,12 @@ export function reopenTask(taskId: string) {
         updatedAt: updatedAt
       }
     }));
+
+    dispatch(updateTaskList({
+      id: task.taskListId,
+      changes: {
+        updatedAt: updatedAt
+      }
+    }))
   }
 }

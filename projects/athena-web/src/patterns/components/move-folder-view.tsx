@@ -108,7 +108,7 @@ export function MoveFolderView(props: MoveFolderViewProps) {
       className="relative bg-br-atom-900"
     >
       <FolderFileSystemItem
-        folder="Vault Name"
+        folder="/"
         level={0}
         isExpanded={isExpanded}
         onFolderClick={() => {setIsExpanded(!isExpanded)}}

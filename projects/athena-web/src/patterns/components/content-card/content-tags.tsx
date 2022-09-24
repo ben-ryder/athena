@@ -50,6 +50,7 @@ export function TagsDisplay(props: {tags: Tag[]}) {
     <div className="flex flex-wrap gap-1.5">
       {props.tags.map(tag =>
         <TagElement
+          key={tag.id}
           text={tag.name}
           backgroundColour={tag.backgroundColour}
           textColour={tag.textColour}

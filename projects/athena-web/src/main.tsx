@@ -72,7 +72,7 @@ export function Application() {
   return (
     <>
       <Helmet>
-        <title>{`Vault Name | Athena`}</title>
+        <title>{`Application | Athena`}</title>
       </Helmet>
       <main className="h-[100vh] w-[100vw] bg-br-atom-700 flex">
         {/** Vault Section **/}
@@ -94,7 +94,7 @@ export function Application() {
               onClick={() => {}}
               className="absolute left-[10px] py-2"
             />
-            <p className="text-br-whiteGrey-100 font-bold py-2">Vault Name</p>
+            <p className="text-br-whiteGrey-100 font-bold py-2">Athena</p>
             <div className="absolute right-[10px] flex">
               <CreateContentIconAndPopup />
             </div>

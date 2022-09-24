@@ -11,6 +11,10 @@ export function WelcomeMessage() {
         <div className="mt-5">
           <p className="text-br-red-500">This app is in development, expect bugs and incomplete functionality!</p>
         </div>
+
+        <div className="mt-5">
+          <p className="text-br-blueGrey-600">v0.1.0-alpha</p>
+        </div>
       </div>
     </div>
   )

@@ -154,17 +154,11 @@ export function ContentListFilterIconAndPopup() {
     <ContentWithPopup
       label="Open Filter Menu"
       content={
-        <button
-          className={classNames(
-            "p-1 flex items-center",
-            "text-br-whiteGrey-50 hover:text-br-teal-600"
-          )}
-          aria-label="Open Filter Menu"
-        >
+        <div className="p-1 flex items-center text-br-whiteGrey-50 hover:text-br-teal-600">
           {filtersAreActive && <i className="h-[10px] w-[10px] rounded-full bg-br-teal-600 mr-1"></i>}
           <span className="mr-1 font-bold underline underline-offset-4">Filters</span>
           <Filter size={iconSizes.small} />
-        </button>
+        </div>
       }
       popupContent={
         <PopupPanel className="p-2 maw-w-[350px]">
