@@ -7,3 +7,24 @@
     opacity: 1 !important;
     z-index: 10 !important;
 }
+
+/**
+todo: better way of fixing editor styles?
+ */
+.cm-panels.cm-panels-bottom {
+    position: fixed;
+    bottom: 80px !important;
+    background-color: #20242B;
+    border-bottom: 1px solid #374151;
+    width: calc(100vw - 400px);
+    left: 400px;
+}
+
+.cm-panels .cm-textfield {
+    border-color: #374151;
+}
+
+.cm-panels .cm-button {
+    border-color: #374151;
+    background: transparent;
+}

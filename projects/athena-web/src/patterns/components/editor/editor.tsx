@@ -2,6 +2,8 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import {jigsawTheme} from "./jigsaw-theme";
+import { EditorView } from "@codemirror/view";
+import { hyperLink } from '@uiw/codemirror-extensions-hyper-link';
 
 
 export interface EditorProps {
@@ -21,12 +23,17 @@ export function Editor(props: EditorProps) {
             props.onChange(value);
           }
         }}
-        extensions={[markdown({ base: markdownLanguage, codeLanguages: languages })]}
+        extensions={[
+          markdown({ base: markdownLanguage, codeLanguages: languages }),
+          EditorView.lineWrapping,
+          hyperLink
+        ]}
         theme={jigsawTheme}
         basicSetup={{
           lineNumbers: false,
           foldGutter: false,
           highlightActiveLine: false,
+          highlightSelectionMatches: false
         }}
         className="h-full overflow-y-scroll text-base"
       />
