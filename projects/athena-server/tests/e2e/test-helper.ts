@@ -13,6 +13,8 @@ import {SuperAgentTest, agent} from "supertest";
 import {CacheService} from "../../src/services/cache/cache.service";
 import {UserDto} from "@ben-ryder/athena-js-lib";
 import {InfoController} from "../../src/modules/info/info.controller";
+import {TestingController} from "../../src/modules/testing/testing.controller";
+import {ChangesController} from "../../src/modules/changes/changes.controller";
 
 /**
  * This class encapsulates all the test specific application functionality that is required.
@@ -33,7 +35,9 @@ export class TestHelper {
         BaseController,
         InfoController,
         AuthController,
-        UsersController
+        UsersController,
+        TestingController,
+        ChangesController
       ],
       authValidator: AuthValidator,
       bodyValidator: ZodValidator,

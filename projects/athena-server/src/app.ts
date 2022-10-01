@@ -7,6 +7,7 @@ import {UsersController} from "./modules/users/users.controller";
 import {ZodValidator} from "@kangojs/zod-validation";
 import {InfoController} from "./modules/info/info.controller";
 import {TestingController} from "./modules/testing/testing.controller";
+import {ChangesController} from "./modules/changes/changes.controller";
 
 
 export async function createApp() {
@@ -17,7 +18,8 @@ export async function createApp() {
       InfoController,
       AuthController,
       UsersController,
-      TestingController
+      TestingController,
+      ChangesController
     ],
     authValidator: AuthValidator,
     bodyValidator: ZodValidator,
