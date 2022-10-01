@@ -1,7 +1,6 @@
 import {TokenPair, TokenService} from "../../src/services/token/token.service";
 import {DatabaseService} from "../../src/services/database/database.service";
 import {resetTestData} from "@ben-ryder/athena-testing";
-import {createServeSPAMiddleware} from "@kangojs/serve-spa";
 import {ConfigService} from "../../src/services/config/config";
 import {BaseController} from "../../src/modules/base/base.controller";
 import {AuthController} from "../../src/modules/auth/auth.controller";
@@ -13,7 +12,6 @@ import {KangoJS} from "@kangojs/core";
 import {SuperAgentTest, agent} from "supertest";
 import {CacheService} from "../../src/services/cache/cache.service";
 import {UserDto} from "@ben-ryder/athena-js-lib";
-import {VaultsController} from "../../src/modules/vaults/vaults.controller";
 import {InfoController} from "../../src/modules/info/info.controller";
 
 /**
@@ -24,10 +22,6 @@ export class TestHelper {
   client: SuperAgentTest;
 
   constructor() {
-    const serveSpaMiddleware = createServeSPAMiddleware({
-      folderPath: "../../dashboard/build"
-    });
-
     this.application = new KangoJS({
       dependencyOverrides: [
         {
@@ -39,11 +33,7 @@ export class TestHelper {
         BaseController,
         InfoController,
         AuthController,
-        UsersController,
-        VaultsController
-      ],
-      middleware: [
-        serveSpaMiddleware
+        UsersController
       ],
       authValidator: AuthValidator,
       bodyValidator: ZodValidator,

@@ -24,15 +24,11 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
--- Enums used in the internal
-CREATE TYPE order_by_fields AS ENUM ('created_at', 'updated_at');
-CREATE TYPE order_directions AS ENUM ('ASC', 'DESC');
-
 
 /**
     Users Table
     -----------
-    Used to store user accounts that are required to access the application.
+    Used to store user accounts.
  */
 CREATE TABLE IF NOT EXISTS users (
     id UUID NOT NULL DEFAULT uuid_generate_v4(),
@@ -48,160 +44,20 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TRIGGER update_user_timestamps BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
 
 /**
-  Vaults Table
-  -----------
-  Used to store user vaults which then contain notes, tags, queries etc
+    Changes Table
+    -----------
+    Used to store all the changes that users make to their content.
  */
-CREATE TABLE IF NOT EXISTS vaults (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) NOT NULL,
-    description VARCHAR(255),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    owner UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT vault_owner FOREIGN KEY (owner) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT unique_user_vault_name UNIQUE(name, owner)
+CREATE TABLE IF NOT EXISTS changes (
+     id VARCHAR(100) NOT NULL UNIQUE,
+     data TEXT NOT NULL,
+     owner UUID NOT NULL,
+     CONSTRAINT change_owner FOREIGN KEY (owner) REFERENCES users(id) ON DELETE CASCADE,
+     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+     PRIMARY KEY (id)
 );
-CREATE TRIGGER update_vault_timestamps BEFORE UPDATE ON vaults FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
-
-/**
-  Folders Table
-  -----------
-  Used to store folders
- */
-CREATE TABLE IF NOT EXISTS folders (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    parent UUID,
-    vault UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT folder_vault FOREIGN KEY (vault) REFERENCES vaults(id) ON DELETE CASCADE,
-    CONSTRAINT folder_parent FOREIGN KEY (parent) REFERENCES folders(id) ON DELETE CASCADE
-);
-CREATE TRIGGER update_folder_timestamps BEFORE UPDATE ON folders FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
-
-/**
-  Notes Table
-  -----------
-  Used to store notes.
- */
-CREATE TABLE IF NOT EXISTS notes (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    title VARCHAR(100) NOT NULL,
-    description VARCHAR(255),
-    body TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vault UUID NOT NULL,
-    folder UUID,
-    PRIMARY KEY (id),
-    CONSTRAINT note_vault FOREIGN KEY (vault) REFERENCES vaults(id) ON DELETE CASCADE,
-    CONSTRAINT note_folder FOREIGN KEY (folder) REFERENCES folders(id) ON DELETE CASCADE
-);
-CREATE TRIGGER update_note_timestamps BEFORE UPDATE ON notes FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
-
-/**
-  Tags Table
-  -----------
-  Used to store tags which can be used to categorise notes.
- */
-CREATE TABLE IF NOT EXISTS tags (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) NOT NULL,
-    background_colour char(7),
-    text_colour char(7),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vault UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT tag_vault FOREIGN KEY (vault) REFERENCES vaults(id) ON DELETE CASCADE,
-    CONSTRAINT unique_vault_tag_name UNIQUE(name, vault)
-);
-CREATE TRIGGER update_tag_timestamps BEFORE UPDATE ON tags FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
-
-/**
-  Note Tags Table
-  -----------
-  Used to store tags that have been applied to notes
- */
-CREATE TABLE IF NOT EXISTS notes_tags (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    note UUID NOT NULL,
-    tag UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT note_tag_note FOREIGN KEY (note) REFERENCES notes(id) ON DELETE CASCADE,
-    CONSTRAINT note_tag_tag FOREIGN KEY (tag) REFERENCES tags(id) ON DELETE CASCADE
-);
-
-/**
-  Queries Table
-  -----------
-  Used to store tags which can be used to categorise notes.
- */
-CREATE TABLE IF NOT EXISTS queries (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) NOT NULL,
-    order_by order_by_fields NOT NULL,
-    order_direction order_directions NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vault UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT query_vault FOREIGN KEY (vault) REFERENCES vaults(id) ON DELETE CASCADE,
-    CONSTRAINT unique_vault_query_name UNIQUE(name, vault)
-);
-CREATE TRIGGER update_queries_timestamps BEFORE UPDATE ON queries FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
-
-/**
-  Query Tags Table
-  -----------
-  Used to store query tags which are used when filtering.
- */
-CREATE TABLE IF NOT EXISTS queries_tags (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    query UUID NOT NULL,
-    tag UUID NOT NULL,
-    or_group INT NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT query_tag_query FOREIGN KEY (query) REFERENCES queries(id) ON DELETE CASCADE,
-    CONSTRAINT query_tag_tag FOREIGN KEY (tag) REFERENCES tags(id) ON DELETE CASCADE
-);
-
-/**
-  Templates Table
-  -----------
-  Used to store note templates.
- */
-CREATE TABLE IF NOT EXISTS templates (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    title VARCHAR(100) NOT NULL,
-    description VARCHAR(255),
-    body TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    vault UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT template_vault FOREIGN KEY (vault) REFERENCES vaults(id) ON DELETE CASCADE,
-    CONSTRAINT unique_template_title UNIQUE(title, vault)
-);
-CREATE TRIGGER update_template_timestamps BEFORE UPDATE ON templates FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
-
-/**
-  Template Tags Table
-  -----------
-  Used to store tags that have been applied to templates
- */
-CREATE TABLE IF NOT EXISTS templates_tags (
-    id UUID NOT NULL DEFAULT uuid_generate_v4(),
-    template UUID NOT NULL,
-    tag UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT template_tag_template FOREIGN KEY (template) REFERENCES templates(id) ON DELETE CASCADE,
-    CONSTRAINT template_tag_tag FOREIGN KEY (tag) REFERENCES tags(id) ON DELETE CASCADE
-);
+CREATE TRIGGER update_change_timestamps BEFORE UPDATE ON changes FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
 
 -- Grant privileges to athena user after everything is created
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO athena;
