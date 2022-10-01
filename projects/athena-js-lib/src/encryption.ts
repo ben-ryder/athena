@@ -19,7 +19,7 @@ export class AthenaEncryption {
 
     // Basic Text Hashing
     static hashText(text: string): string {
-        return sha256(text).toString(utf8);
+        return sha256(text).toString();
     }
 
     // Basic Text Encryption
