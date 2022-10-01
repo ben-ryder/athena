@@ -1,4 +1,4 @@
-import {DatabaseUserDto, NoteDto} from "@ben-ryder/athena-js-lib";
+import {DatabaseUserDto} from "@ben-ryder/athena-js-lib";
 
 export interface TestUserDto extends DatabaseUserDto {
   password: string;
