@@ -1,6 +1,5 @@
-import {AthenaDecryptError} from "../errors";
 import {AthenaEncryption} from "../encryption";
-import {NoteContentDto} from "../schemas/notes/dtos/note-content.dto";
+
 
 test('encrypt and decrypt a string', () => {
     const secret = "ibiova86g9q438ogr8wofw4";
@@ -46,50 +45,4 @@ test('encrypt and decrypt an object', () => {
     const decryptedObject = AthenaEncryption.decryptData<InputObject>(secret, cipherText);
 
     expect(decryptedObject).toEqual(inputObject);
-})
-
-test('encrypt and decrypt a note', () => {
-    const secret = "aergihbwialefvwaeuygfuoysakgvjaw";
-
-    const note = <NoteContentDto> {
-        title: "Test Note",
-        body: "test note body"
-    };
-
-    const encryptedNote = AthenaEncryption.encryptNoteContent(secret, note);
-    const decryptedNote = AthenaEncryption.decryptNoteContent(secret, encryptedNote);
-
-    expect(decryptedNote).toEqual(note);
-})
-
-test('encrypt and decrypt a note with an empty body', () => {
-    const secret = "hifoutdcjgghcdkugjclutckh";
-
-    const note = <NoteContentDto> {
-        title: "Test Note",
-        body: ""
-    };
-
-    const encryptedNote = AthenaEncryption.encryptNoteContent(secret, note);
-    const decryptedNote = AthenaEncryption.decryptNoteContent(secret, encryptedNote);
-
-    expect(decryptedNote).toEqual(note);
-})
-
-test('attempting note decryption with wrong secret', () => {
-    const secret = "aergihbwialefvwaeuygfuoysakgvjaw";
-    const wrongSecret = "arfbglawvfuliaejvsuyfkvjarr";
-
-    const note = <NoteContentDto> {
-        title: "Test Note",
-        body: "test note body"
-    };
-
-    const encryptedNote = AthenaEncryption.encryptNoteContent(secret, note);
-
-    const errorFunction = () => {
-        AthenaEncryption.decryptNoteContent(wrongSecret, encryptedNote);
-    };
-
-    expect(errorFunction).toThrow(AthenaDecryptError);
 })

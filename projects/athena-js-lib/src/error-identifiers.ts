@@ -15,16 +15,6 @@ export enum AthenaErrorIdentifiers {
   AUTH_TOKEN_INVALID = "auth-token-invalid",
   AUTH_EMAIL_NOT_VERIFIED = "auth-email-not-verified",
 
-  // Vault Errors
-  VAULT_NAME_EXISTS = "vault-name-exists",
-  VAULT_NOT_FOUND = "vault-not-found",
-
-  // Note Errors
-  NOTE_NOT_FOUND = "note-not-found",
-
-  // Tags Error
-  TAG_NOT_FOUND = "tag-not-found",
-
   /**
    * Identifiers matching KangoJS identifiers below
    * @todo get from KangoJS instead?
