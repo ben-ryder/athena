@@ -20,10 +20,10 @@ export class TestConfigService extends ConfigService {
       }
     },
     database: {
-      url: process.env.TESTING_DATABASE_URL as string
+      url: process.env.E2E_TESTING_DATABASE_URL as string
     },
     cache: {
-      redisUrl: process.env.TESTING_REDIS_URL as string
+      redisUrl: process.env.E2E_TESTING_REDIS_URL as string
     },
     app: {
       registrationEnabled: testEnvironmentVars.APP_REGISTRATION_ENABLED

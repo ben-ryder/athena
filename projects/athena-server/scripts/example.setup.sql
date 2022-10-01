@@ -53,11 +53,8 @@ CREATE TABLE IF NOT EXISTS changes (
      data TEXT NOT NULL,
      owner UUID NOT NULL,
      CONSTRAINT change_owner FOREIGN KEY (owner) REFERENCES users(id) ON DELETE CASCADE,
-     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
      PRIMARY KEY (id)
 );
-CREATE TRIGGER update_change_timestamps BEFORE UPDATE ON changes FOR EACH ROW EXECUTE PROCEDURE update_table_timestamps();
 
 -- Grant privileges to athena user after everything is created
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO athena;

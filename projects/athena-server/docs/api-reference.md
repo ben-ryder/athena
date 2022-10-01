@@ -11,6 +11,7 @@
     - `/auth/logout` [POST]
     - `/auth/check` [POST]
   - `/changes` [GET, POST]
+    - `/changes/ids` [GET]
 
 ## Websockets
 - `change` - Event sent by client and server. The receiver should update their change storage with the supplied change.
