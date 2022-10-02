@@ -8,6 +8,7 @@ import {ZodValidator} from "@kangojs/zod-validation";
 import {InfoController} from "./modules/info/info.controller";
 import {TestingController} from "./modules/testing/testing.controller";
 import {ChangesController} from "./modules/changes/changes.controller";
+import {AuthWebsocketValidator} from "./modules/auth/auth.ws-validator";
 
 
 export async function createApp() {
@@ -25,5 +26,6 @@ export async function createApp() {
     bodyValidator: ZodValidator,
     queryValidator: ZodValidator,
     paramsValidator: ZodValidator,
+    webSocketAuthValidator: AuthWebsocketValidator
   });
 }

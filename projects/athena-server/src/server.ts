@@ -4,7 +4,7 @@ import {ConfigService} from "./services/config/config";
 
 async function startServer() {
     const kangoJS = await createApp();
-    const app = kangoJS.getApp();
+    const app = kangoJS.getExpressApp();
 
     const configService = kangoJS.dependencyContainer.useDependency<ConfigService>(ConfigService);
 
