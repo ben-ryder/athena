@@ -1,3 +1,0 @@
-*.sql
-!example.setup.sql
-!example.setup-e2e.sql

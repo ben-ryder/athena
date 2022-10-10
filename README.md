@@ -21,11 +21,9 @@ More documentation including usage instructions, development setup etc will come
 
 ## Project Structure
 This is a monorepo containing all projects related to Athena:
-- `athena-server` - The backend server and API responsible for user management, data storage & data sync.
-- `athena-web` - The web application for using Athena in a browser.
-- `athena-mobile` - The mobile application for using Athena on Android (PLANNED FOR AFTER `v1.0` RELEASE).
-- `athena-js-lib` - A library of generic functionality shared across other projects.
-- `athena-testing` - Contains hardcoded test data which can be used across projects for testing
+- `web` - The web application for using Athena in a browser.
+- `mobile` - The mobile application for using Athena on Android (POSSIBLY PLANNED FOR SOME POINT IN THE FUTURE).
+- `design` - Contains designs, wireframes etc
 
 ## Contributions
 This project is open source, not open contribution.  
