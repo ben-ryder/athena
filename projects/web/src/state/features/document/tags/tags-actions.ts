@@ -1,5 +1,5 @@
 import {createAction} from "@reduxjs/toolkit";
-import {DatabaseTag, Tag} from "./tags-interface";
+import {DatabaseTag, Tag} from "../document-interface";
 
 export enum TagsActions {
   CREATE = "tags/create",

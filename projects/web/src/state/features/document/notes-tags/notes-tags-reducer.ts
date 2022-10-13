@@ -1,12 +1,25 @@
-import {createReducer} from "@reduxjs/toolkit";
-import {deleteNote, updateNoteTags} from "../notes/notes-actions";
+import {createReducer, Draft} from "@reduxjs/toolkit";
+import {createNote, deleteNote, updateNoteTags} from "../notes/notes-actions";
 import {v4 as createUUID} from "uuid";
-import {NotesTagsState} from "./note-tags-interface";
+import {DocumentState} from "../document-interface";
+import A from "automerge";
 
-export const initialNotesTags: NotesTagsState = {
-  entities: {},
-  ids: []
-};
+export function updateNoteTagsReducer(state: Draft<DocumentState>, action: ReturnType<typeof updateNoteTags>) {
+  return A.change(state, doc => {
+
+  })
+}
+
+export function deleteNoteTagsReducer(state: Draft<DocumentState>, action: ReturnType<typeof deleteNote>) {
+  return A.change(state, doc => {
+    for (const [x, noteTag] of state.notesTags.entries()) {
+      if (noteTag.noteId === action.payload) {
+        state.notesTags.remove(noteTag.id);
+      }
+    }
+  })
+}
+
 
 export const notesTagsReducer = createReducer(
   initialNotesTags,
@@ -32,19 +45,6 @@ export const notesTagsReducer = createReducer(
           tagId: tagId
         }
       }
-    })
-
-
-    builder.addCase(deleteNote, (state, action) => {
-      state.ids = state.ids.filter(id => {
-        const entity = state.entities[id];
-
-        if (entity.noteId === action.payload) {
-          delete state.entities[id];
-          return false;
-        }
-        return true;
-      })
     })
   }
 );

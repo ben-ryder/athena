@@ -2,7 +2,7 @@ import {v4 as createUUID} from "uuid";
 
 import {createTag, updateTag} from "./tags-actions";
 import {AppThunkDispatch} from "../../../store";
-import {DatabaseTag, TagContent} from "./tags-interface";
+import {DatabaseTag, TagContent} from "../document-interface";
 
 
 export function createNewTag(tagContent: TagContent) {
