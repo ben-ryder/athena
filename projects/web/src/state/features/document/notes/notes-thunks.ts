@@ -1,16 +1,19 @@
 import {v4 as createUUID} from "uuid";
 
-import {createNote, updateNote, updateNoteTags} from "./notes-actions";
 import {openRenameContentModal} from "../../ui/modals/modals-actions";
 import {ContentType} from "../../ui/content/content-interface";
-import {AppThunk, ApplicationState, AppThunkDispatch} from "../../../store";
+import {AppThunk} from "../../../store";
+import {updateDocument} from "../document-reducer";
+import {createNoteChange, updateNoteChange} from "./notes-changes";
+import {updateNoteTagsChange} from "../notes-tags/notes-tags-changes";
 
 
-export function createNewNote(name: string, folderId: string | null) {
-  return (dispatch: AppThunkDispatch) => {
+export function createNewNote(name: string, folderId: string | null): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+
     const noteId = createUUID();
     const timestamp = new Date().toISOString();
-
     const note = {
       id: noteId,
       name: name,
@@ -19,61 +22,67 @@ export function createNewNote(name: string, folderId: string | null) {
       createdAt: timestamp,
       updatedAt: timestamp
     }
-    dispatch(createNote(note))
+
+    const updatedDoc = createNoteChange(state.document, note);
+    dispatch(updateDocument(updatedDoc));
   }
 }
 
-export function renameNote(noteId: string, newName: string) {
-  return (dispatch: AppThunkDispatch) => {
-    const timestamp = new Date().toISOString();
+export function renameNote(noteId: string, newName: string): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
 
-    dispatch(updateNote({
-      id: noteId,
-      changes: {
-        name: newName,
-        updatedAt: timestamp
-      }
-    }));
+    const timestamp = new Date().toISOString();
+    const changes = {
+      updatedAt: timestamp,
+      name: newName
+    }
+
+    const updatedDoc = updateNoteChange(state.document, noteId, changes);
+    dispatch(updateDocument(updatedDoc));
   }
 }
 
-export function moveNote(noteId: string, newFolder: string | null) {
-  return (dispatch: AppThunkDispatch) => {
-    const timestamp = new Date().toISOString();
+export function moveNote(noteId: string, newFolder: string | null): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
 
-    dispatch(updateNote({
-      id: noteId,
-      changes: {
-        folderId: newFolder,
-        updatedAt: timestamp
-      }
-    }));
+    const timestamp = new Date().toISOString();
+    const changes = {
+      updatedAt: timestamp,
+      folderId: newFolder
+    }
+
+    const updatedDoc = updateNoteChange(state.document, noteId, changes);
+    dispatch(updateDocument(updatedDoc));
   }
 }
 
-export function updateNoteBody(noteId: string, newBody: string) {
-  return (dispatch: AppThunkDispatch) => {
-    const timestamp = new Date().toISOString();
+export function updateNoteBody(noteId: string, newBody: string): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
 
-    dispatch(updateNote({
-      id: noteId,
-      changes: {
-        body: newBody,
-        updatedAt: timestamp
-      }
-    }));
+    const timestamp = new Date().toISOString();
+    const changes = {
+      updatedAt: timestamp,
+      body: newBody
+    }
+
+    const updatedDoc = updateNoteChange(state.document, noteId, changes);
+    dispatch(updateDocument(updatedDoc));
   }
 }
 
 export function createNoteFromTemplate(templateId: string): AppThunk {
-  return function createNoteUsingTemplate(dispatch: AppThunkDispatch, getState: () => ApplicationState) {
+  return (dispatch, getState) => {
     const state = getState();
-    const template = state.currentVault.noteTemplates.entities[templateId];
+
+    const template = state.document.noteTemplates.byId(templateId);
     let tagsToAdd: string[] = [];
 
     // todo: repeated logic in selectors, refactor to reduce repeated code
-    for (const templateTagId of state.currentVault.noteTemplatesTags.ids) {
-      const templateTag = state.currentVault.noteTemplatesTags.entities[templateTagId];
+    for (const templateTagId of state.document.noteTemplatesTags.ids) {
+      const templateTag = state.document.noteTemplatesTags.byId(templateTagId);
       if (templateTag.templateId === templateId) {
         tagsToAdd.push(templateTag.tagId);
       }
@@ -88,14 +97,11 @@ export function createNoteFromTemplate(templateId: string): AppThunk {
       folderId: template.targetFolderId,
       createdAt: timestamp,
       updatedAt: timestamp
-    }
+    };
 
-    // Dispatch the actions to create the new note
-    dispatch(createNote(note))
-    dispatch(updateNoteTags({
-      id: noteId,
-      tags: tagsToAdd
-    }))
+    let updatedDoc = createNoteChange(state.document, note);
+    updatedDoc = updateNoteTagsChange(state.document, noteId, tagsToAdd);
+    dispatch(updateDocument(updatedDoc));
 
     // Immediately open the content rename modal so users can edit the template name to suite the note
     dispatch(openRenameContentModal({

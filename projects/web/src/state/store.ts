@@ -1,54 +1,19 @@
 import {AnyAction, combineReducers, configureStore, ThunkAction, ThunkDispatch} from '@reduxjs/toolkit'
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
-import {uiReducer} from "./features/ui/ui-reducer";
-import {vaultsSlice} from "./features/vaults/vaults-slice";
-import {currentVaultReducer} from "./features/current-vault/current-vault-reducer";
-
-import {persistReducer, persistStore} from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import {deleteFolder} from "./features/current-vault/folders/folders-actions";
 import {UIState} from "./features/ui/ui-interface";
-import {VaultsState} from "./features/vaults/vaults-interfaces";
-import {CurrentVaultInterface} from "./features/current-vault/current-vault-interface";
-import {deleteFoldersReducer} from "./features/current-vault/folders/delete-folders-reducer";
 import {DocumentState} from "./features/document/document-interface";
 import {documentReducer} from "./features/document/document-reducer";
-
-const persistConfig = {
-  key: 'root',
-  storage,
-  whitelist: ['currentVault']
-}
-
-const combinedSliceReducers = combineReducers({
-  ui: uiReducer,
-  vaults: vaultsSlice,
-  currentVault: currentVaultReducer,
-  document: documentReducer
-})
+import {uiReducer} from "./features/ui/ui-reducer";
 
 export interface ApplicationState {
   ui: UIState,
-  vaults: VaultsState,
-  currentVault: CurrentVaultInterface,
   document: DocumentState
 }
 
-function globalReducers(state: ApplicationState, action: AnyAction) {
-  if (deleteFolder.match(action)) {
-   return deleteFoldersReducer(state, action.payload);
-  }
-  else {
-    return state;
-  }
-}
-
-function rootAppReducer(state: ApplicationState | undefined, action: AnyAction) {
-  const intermediateState = combinedSliceReducers(state, action);
-  return globalReducers(intermediateState, action);
-}
-
-const rootReducer = persistReducer(persistConfig, rootAppReducer);
+export const rootReducer = combineReducers({
+  ui: uiReducer,
+  document: documentReducer
+})
 
 export const store = configureStore({
   reducer: rootReducer
@@ -66,5 +31,3 @@ export type AppThunkDispatch = ThunkDispatch<ApplicationState, unknown, AnyActio
 
 export const useAppDispatch: () => AppDispatch = useDispatch
 export const useAppSelector: TypedUseSelectorHook<ApplicationState> = useSelector
-
-export const persistor = persistStore(store);

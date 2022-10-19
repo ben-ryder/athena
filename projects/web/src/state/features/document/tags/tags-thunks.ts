@@ -1,15 +1,17 @@
 import {v4 as createUUID} from "uuid";
 
-import {createTag, updateTag} from "./tags-actions";
-import {AppThunkDispatch} from "../../../store";
+import {AppThunk} from "../../../store";
 import {DatabaseTag, TagContent} from "../document-interface";
+import {createTagChange, deleteTagChange, updateTagChange} from "./tags-changes";
+import {updateDocument} from "../document-reducer";
 
 
-export function createNewTag(tagContent: TagContent) {
-  return (dispatch: AppThunkDispatch) => {
+export function createTag(tagContent: TagContent): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+
     const tagId = createUUID();
     const timestamp = new Date().toISOString();
-
     const tag: DatabaseTag = {
       id: tagId,
       name: tagContent.name,
@@ -18,20 +20,30 @@ export function createNewTag(tagContent: TagContent) {
       createdAt: timestamp,
       updatedAt: timestamp
     }
-    dispatch(createTag(tag));
+
+    const updatedDoc = createTagChange(state.document, tag);
+    dispatch(updateDocument(updatedDoc));
   }
 }
 
-export function updateExistingTag(tagId: string, changes: Partial<TagContent>) {
-  return (dispatch: AppThunkDispatch) => {
+export function updateTag(tagId: string, changes: Partial<TagContent>): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+
     const timestamp = new Date().toISOString();
 
-    dispatch(updateTag({
-      id: tagId,
-      changes: {
-        ...changes,
-        updatedAt: timestamp
-      }
-    }));
+    const updatedDoc = updateTagChange(state.document, tagId, {
+      ...changes,
+      updatedAt: timestamp
+    });
+    dispatch(updateDocument(updatedDoc));
+  }
+}
+
+export function deleteTag(tagId: string): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+    const updatedDoc = deleteTagChange(state.document, tagId);
+    dispatch(updateDocument(updatedDoc));
   }
 }
