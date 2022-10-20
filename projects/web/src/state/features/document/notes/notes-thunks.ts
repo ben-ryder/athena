@@ -4,7 +4,7 @@ import {openRenameContentModal} from "../../ui/modals/modals-actions";
 import {ContentType} from "../../ui/content/content-interface";
 import {AppThunk} from "../../../store";
 import {updateDocument} from "../document-reducer";
-import {createNoteChange, updateNoteChange} from "./notes-changes";
+import {createNoteChange, deleteNoteChange, updateNoteChange} from "./notes-changes";
 import {updateNoteTagsChange} from "../notes-tags/notes-tags-changes";
 
 
@@ -73,6 +73,14 @@ export function updateNoteBody(noteId: string, newBody: string): AppThunk {
   }
 }
 
+export function updateNoteTags(noteId: string, tags: string[]): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+    const updatedDoc = updateNoteTagsChange(state.document, noteId, tags);
+    dispatch(updateDocument(updatedDoc));
+  }
+}
+
 export function createNoteFromTemplate(templateId: string): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
@@ -108,5 +116,15 @@ export function createNoteFromTemplate(templateId: string): AppThunk {
       type: ContentType.NOTE,
       data: note
     }))
+  }
+}
+
+export function deleteNote(noteId: string): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+
+    let updatedDoc = deleteNoteChange(state.document, noteId);
+    updatedDoc = updateNoteTagsChange(state.document, noteId, []);
+    dispatch(updateDocument(updatedDoc));
   }
 }
