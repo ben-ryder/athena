@@ -1,5 +1,5 @@
 import {ContentData} from "../../ui/content/content-selctors";
-import {Folder} from "./folders-interface";
+import {Folder} from "../document-interface";
 import {createSelector} from "@reduxjs/toolkit";
 import {ApplicationState} from "../../../store";
 import {getChildFileSystemFolders, getChildFolderTrees, getFolderFiles} from "./file-system-helpers";
