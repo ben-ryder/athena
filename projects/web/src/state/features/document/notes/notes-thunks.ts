@@ -124,7 +124,7 @@ export function deleteNote(noteId: string): AppThunk {
     const state = getState();
 
     let updatedDoc = deleteNoteChange(state.document, noteId);
-    updatedDoc = updateNoteTagsChange(state.document, noteId, []);
+    updatedDoc = updateNoteTagsChange(updatedDoc, noteId, []);
     dispatch(updateDocument(updatedDoc));
   }
 }

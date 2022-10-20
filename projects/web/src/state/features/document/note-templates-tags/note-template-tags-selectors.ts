@@ -6,9 +6,8 @@ export const selectNoteTemplateTagsState = (state: ApplicationState) => state.do
 
 export const selectNoteTemplateId = (state: ApplicationState, noteTemplateId: string) => noteTemplateId;
 
-export const selectNoteTags = createSelector([selectTagsState, selectNoteTemplateTagsState, selectNoteTemplateId], (tags, noteTemplateTags, templateId) => {
+export const selectNoteTemplateTags = createSelector([selectTagsState, selectNoteTemplateTagsState, selectNoteTemplateId], (tags, noteTemplateTags, noteTemplateId) => {
   return noteTemplateTags.ids
     .map(noteTemplateTagId => noteTemplateTags.byId(noteTemplateTagId))
-    .filter(noteTemplateTag => noteTemplateTag.templateId === templateId)
-    .map(noteTemplateTag => tags.byId(noteTemplateTag.tagId))
+    .filter(noteTemplateTag => noteTemplateTag.templateId === noteTemplateId)
 })

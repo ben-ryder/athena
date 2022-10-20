@@ -27,7 +27,7 @@ export interface FolderTreeItem {
   folders: FolderTreeItem[]
 }
 
-export const selectFoldersState = (state: ApplicationState) => state.currentVault.folders;
+export const selectFoldersState = (state: ApplicationState) => state.document.folders;
 
 export const selectFolderTree = createSelector([selectFoldersState], (foldersState) => {
   const folderTree: FolderTree = {

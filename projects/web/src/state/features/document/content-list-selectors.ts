@@ -7,8 +7,8 @@ import {selectTaskListsState} from "./task-lists/task-lists-selectors";
 import {selectContentListFilters, selectContentListPage} from "../ui/view/view-selectors";
 import {ListingMetadata} from "../../common/listing-metadata";
 import {selectNotesTagsState} from "./notes-tags/notes-tags-selectors";
-import {selectNoteTemplatesTagsState} from "./note-templates-tags/note-template-tags-selectors";
-import {selectTaskListsTagsState} from "./task-lists-tags/task-lists-tags-selectors";
+import {selectNoteTemplateTags} from "./note-templates-tags/note-template-tags-selectors";
+import {selectTaskListTags} from "./task-list-tags/task-list-tags-selectors";
 import {OrderBy} from "../../common/order-by-enum";
 import {OrderDirection} from "../../common/order-direction-enum";
 
@@ -22,7 +22,7 @@ export interface ContentListData {
 export const selectContentList = createSelector([
   selectContentListPage, selectContentListFilters,
   selectNotesState, selectNoteTemplatesState, selectTaskListsState,
-  selectNotesTagsState, selectNoteTemplatesTagsState, selectTaskListsTagsState
+  selectNotesTagsState, selectNoteTemplateTags, selectTaskListTags
 ], (
   currentPage, filters,
   notes, templates, taskLists,
@@ -31,21 +31,21 @@ export const selectContentList = createSelector([
   const noteContent: ContentData[] = notes.ids.map(noteId => {
     return {
       type: ContentType.NOTE,
-      data: notes.entities[noteId],
+      data: notes.byId(noteId),
     }
   })
 
   const templateContent: ContentData[] = templates.ids.map(templateId => {
     return {
       type: ContentType.NOTE_TEMPLATE,
-      data: templates.entities[templateId],
+      data: templates.byId(templateId),
     }
   })
 
   const taskListContent: ContentData[] = taskLists.ids.map(taskListId => {
     return {
       type: ContentType.TASK_LIST,
-      data: taskLists.entities[taskListId],
+      data: taskLists.byId(taskListId),
     }
   })
 
@@ -69,19 +69,17 @@ export const selectContentList = createSelector([
       let contentTags: string[];
       if (content.type === ContentType.NOTE) {
         contentTags = notesTags.ids
-          .map(id => notesTags.entities[id])
+          .map(id => notesTags.byId(id))
           .filter(noteTag => noteTag.noteId === content.data.id)
           .map(noteTag => noteTag.tagId)
       }
       else if (content.type === ContentType.NOTE_TEMPLATE) {
-        contentTags = templatesTags.ids
-          .map(id => templatesTags.entities[id])
+        contentTags = templatesTags
           .filter(templateTag => templateTag.templateId === content.data.id)
           .map(templateTag => templateTag.tagId)
       }
       else {
-        contentTags = taskListTags.ids
-          .map(id => taskListTags.entities[id])
+        contentTags = taskListTags
           .filter(taskListTag => taskListTag.taskListId === content.data.id)
           .map(taskListTag => taskListTag.tagId)
       }

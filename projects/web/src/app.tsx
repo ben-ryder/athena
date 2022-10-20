@@ -24,8 +24,7 @@ import {AthenaSessionManager} from "./helpers/athena-session-manager";
 import {UserSettingsPage} from "./pages/user/settings";
 import {RequestVerificationPage} from "./pages/user/verify/request-verification";
 import {SubmitVerificationPage} from "./pages/user/verify/submit-verification";
-import {persistor, store} from "./state/store";
-import {PersistGate} from "redux-persist/integration/react";
+import {store} from "./state/store";
 import {Provider} from "react-redux";
 import {AthenaOnlineRoute} from "./helpers/athena-online-route";
 
@@ -53,47 +52,45 @@ export function Application() {
         setCurrentUser: processSetCurrentUser
     }}>
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <HelmetProvider>
-            <Helmet>
-              <meta charSet="utf-8" />
-              <title>Athena</title>
-            </Helmet>
-            <AthenaSessionManager>
-              <BrowserRouter>
-                <Routes>
-                  <Route element={<AthenaOnlineRoute />} >
-                    {/* Home Route */}
-                    <Route path={routes.home} element={<HomePage />} />
+        <HelmetProvider>
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Athena</title>
+          </Helmet>
+          <AthenaSessionManager>
+            <BrowserRouter>
+              <Routes>
+                <Route element={<AthenaOnlineRoute />} >
+                  {/* Home Route */}
+                  <Route path={routes.home} element={<HomePage />} />
 
-                    {/* Public User Routes */}
-                    <Route path={routes.users.login} element={<LoginPage />} />
-                    <Route path={routes.users.register} element={<RegisterPage />} />
-                    <Route path={routes.users.logout} element={<LogoutPage />} />
+                  {/* Public User Routes */}
+                  <Route path={routes.users.login} element={<LoginPage />} />
+                  <Route path={routes.users.register} element={<RegisterPage />} />
+                  <Route path={routes.users.logout} element={<LogoutPage />} />
 
-                    <Route path={routes.users.password.forgotten} element={<ForgottenPasswordPage />} />
-                    <Route path={routes.users.password.reset} element={<ResetPasswordPage />} />
+                  <Route path={routes.users.password.forgotten} element={<ForgottenPasswordPage />} />
+                  <Route path={routes.users.password.reset} element={<ResetPasswordPage />} />
 
-                    <Route path={routes.users.verification.request} element={<RequestVerificationPage />} />
-                    <Route path={routes.users.verification.submit} element={<SubmitVerificationPage />} />
-                  </Route>
+                  <Route path={routes.users.verification.request} element={<RequestVerificationPage />} />
+                  <Route path={routes.users.verification.submit} element={<SubmitVerificationPage />} />
+                </Route>
 
-                  {/* Main Application */}
-                  <Route path={routes.app.main} element={<MainPage />} />
+                {/* Main Application */}
+                <Route path={routes.app.main} element={<MainPage />} />
 
-                  {/* Restricted Routes (requiring online mode and valid user login) */}
-                  <Route element={<AthenaRestrictedRoute />} >
-                    {/* Private User Routes */}
-                    <Route path={routes.users.settings} element={<UserSettingsPage />} />
-                  </Route>
+                {/* Restricted Routes (requiring online mode and valid user login) */}
+                <Route element={<AthenaRestrictedRoute />} >
+                  {/* Private User Routes */}
+                  <Route path={routes.users.settings} element={<UserSettingsPage />} />
+                </Route>
 
-                  {/* 404 Route */}
-                  <Route path="*" element={<PageNotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </AthenaSessionManager>
-          </HelmetProvider>
-        </PersistGate>
+                {/* 404 Route */}
+                <Route path="*" element={<PageNotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AthenaSessionManager>
+        </HelmetProvider>
       </Provider>
     </AthenaContext.Provider>
   );

@@ -4,6 +4,7 @@ import {DatabaseTaskList} from "../document-interface";
 import {updateDocument} from "../document-reducer";
 import {createTaskListChange, deleteTaskListChange, updateTaskListChange} from "./task-list-changes";
 import {deleteTaskListTasksChange} from "./tasks/task-changes";
+import {updateTaskListTagsChange} from "../task-list-tags/task-list-tags-changes";
 
 export function createNewTaskList(name: string, folderId: string | null): AppThunk {
   return (dispatch, getState) => {
@@ -45,11 +46,20 @@ export function moveTaskList(taskListId: string, newFolder: string | null): AppT
   }
 }
 
+export function updateTaskListTags(taskListId: string, tags: string[]): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+    const updatedDoc = updateTaskListTagsChange(state.document, taskListId, tags);
+    dispatch(updateDocument(updatedDoc));
+  }
+}
+
 export function deleteTaskList(taskListId: string): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
     let updatedDoc = deleteTaskListChange(state.document, taskListId);
-    updatedDoc = deleteTaskListTasksChange(state.document, taskListId);
+    updatedDoc = deleteTaskListTasksChange(updatedDoc, taskListId);
+    updatedDoc = updateTaskListTagsChange(updatedDoc, taskListId, []);
     dispatch(updateDocument(updatedDoc));
   }
 }

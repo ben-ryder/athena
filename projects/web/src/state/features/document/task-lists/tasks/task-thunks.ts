@@ -62,7 +62,7 @@ export function reopenTask(taskId: string): AppThunk {
     const timestamp = new Date().toISOString();
 
     let updatedDoc = updateTaskChange(state.document, taskId, {updatedAt: timestamp, status: TaskStatus.OPEN});
-    updatedDoc = updateTaskListChange(state.document, task.taskListId, {updatedAt: timestamp});
+    updatedDoc = updateTaskListChange(updatedDoc, task.taskListId, {updatedAt: timestamp});
     dispatch(updateDocument(updatedDoc));
   }
 }

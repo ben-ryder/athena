@@ -1,10 +1,7 @@
-import {FoldersState} from "./folders-interface";
-import {FileSystemFolder, FolderTreeItem} from "./folders-selectors";
-import {NotesState} from "../notes/notes-interface";
-import {NoteTemplatesState} from "../note-templates/note-templates-interface";
-import {TaskListsState} from "../task-lists/task-lists-interface";
+import {FoldersTable, NotesTable, NoteTemplatesTable, TaskListsTable} from "../document-interface";
 import {ContentData} from "../../ui/content/content-selctors";
 import {ContentType} from "../../ui/content/content-interface";
+import {FileSystemFolder, FolderTreeItem} from "./folders-selectors";
 
 export enum FolderMoveValidationResult {
   VALID = "VALID",
@@ -12,8 +9,8 @@ export enum FolderMoveValidationResult {
   ERROR_SAME_PARENT = "ERROR_SAME_PARENT",
   ERROR_CHILD_FOLDER = "ERROR_CHILD_FOLDER",
 }
-export function validateFolderMove(foldersState: FoldersState, folderId: string, newParentId: string | null): FolderMoveValidationResult {
-  const currentFolder = foldersState.entities[folderId];
+export function validateFolderMove(folders: FoldersTable, folderId: string, newParentId: string | null): FolderMoveValidationResult {
+  const currentFolder = folders.byId(folderId);
 
   if (newParentId === folderId) {
     return FolderMoveValidationResult.ERROR_SELECTED_SELF;
@@ -26,7 +23,7 @@ export function validateFolderMove(foldersState: FoldersState, folderId: string,
     return FolderMoveValidationResult.VALID;
   }
 
-  const childFolders = getChildFolderIds(foldersState, folderId);
+  const childFolders = getChildFolderIds(folders, folderId);
   if (childFolders.includes(newParentId)) {
     return FolderMoveValidationResult.ERROR_CHILD_FOLDER;
   }
@@ -34,23 +31,23 @@ export function validateFolderMove(foldersState: FoldersState, folderId: string,
   return FolderMoveValidationResult.VALID;
 }
 
-export function getChildFolderTrees(foldersState: FoldersState, parentFolderId: string | null) {
-  const folders: FolderTreeItem[] = [];
+export function getChildFolderTrees(folders: FoldersTable, parentFolderId: string | null) {
+  const folderTree: FolderTreeItem[] = [];
 
-  for (const folderId of foldersState.ids) {
-    const folder = foldersState.entities[folderId];
+  for (const folderId of folders.ids) {
+    const folder = folders.byId(folderId);
 
     if (folder.parentId === parentFolderId) {
       const folderItem: FolderTreeItem = {
         details: folder,
-        folders: getChildFolderTrees(foldersState, folder.id)
+        folders: getChildFolderTrees(folders, folder.id)
       }
 
-      folders.push(folderItem);
+      folderTree.push(folderItem);
     }
   }
 
-  return folders;
+  return folderTree;
 }
 
 export function flattenFolderTree(folderTreeItem: FolderTreeItem) {
@@ -62,8 +59,8 @@ export function flattenFolderTree(folderTreeItem: FolderTreeItem) {
   return folderIds;
 }
 
-export function getChildFolderIds(foldersState: FoldersState, parentFolderId: string | null) {
-  const childFolderTrees = getChildFolderTrees(foldersState, parentFolderId);
+export function getChildFolderIds(folders: FoldersTable, parentFolderId: string | null) {
+  const childFolderTrees = getChildFolderTrees(folders, parentFolderId);
   const folderIds: string[] = [];
   for (const folderTree of childFolderTrees) {
     folderIds.push(...flattenFolderTree(folderTree))
@@ -73,12 +70,12 @@ export function getChildFolderIds(foldersState: FoldersState, parentFolderId: st
 }
 
 export function getFolderFiles(
-  folderId: string | null, notesState: NotesState, noteTemplatesState: NoteTemplatesState, taskListsState: TaskListsState
+  folderId: string | null, notes: NotesTable, noteTemplates: NoteTemplatesTable, taskLists: TaskListsTable
 ) {
   const files: ContentData[] = [];
 
-  for (const noteId of notesState.ids) {
-    const note = notesState.entities[noteId];
+  for (const noteId of notes.ids) {
+    const note = notes.byId(noteId);
     if (note.folderId === folderId) {
       files.push({
         type: ContentType.NOTE,
@@ -87,8 +84,8 @@ export function getFolderFiles(
     }
   }
 
-  for (const noteTemplateId of noteTemplatesState.ids) {
-    const noteTemplate = noteTemplatesState.entities[noteTemplateId];
+  for (const noteTemplateId of noteTemplates.ids) {
+    const noteTemplate = noteTemplates.byId(noteTemplateId);
     if (noteTemplate.folderId === folderId) {
       files.push({
         type: ContentType.NOTE_TEMPLATE,
@@ -97,8 +94,8 @@ export function getFolderFiles(
     }
   }
 
-  for (const taskListId of taskListsState.ids) {
-    const taskList = taskListsState.entities[taskListId];
+  for (const taskListId of taskLists.ids) {
+    const taskList = taskLists.byId(taskListId);
     if (taskList.folderId === folderId) {
       files.push({
         type: ContentType.TASK_LIST,
@@ -111,18 +108,18 @@ export function getFolderFiles(
 }
 
 export function getChildFileSystemFolders(
-  parentFolderId: string | null, foldersState: FoldersState, notesState: NotesState, noteTemplatesState: NoteTemplatesState, taskListsState: TaskListsState
+  parentFolderId: string | null, folders: FoldersTable, notes: NotesTable, noteTemplates: NoteTemplatesTable, taskLists: TaskListsTable
 ) {
   const fileSystemFolders: FileSystemFolder[] = [];
 
-  for (const folderId of foldersState.ids) {
-    const folder = foldersState.entities[folderId];
+  for (const folderId of folders.ids) {
+    const folder = folders.byId(folderId);
 
     if (folder.parentId === parentFolderId) {
       const fileSystemFolder: FileSystemFolder = {
         details: folder,
-        folders: getChildFileSystemFolders(folder.id, foldersState, notesState, noteTemplatesState, taskListsState),
-        files: getFolderFiles(folder.id, notesState, noteTemplatesState, taskListsState)
+        folders: getChildFileSystemFolders(folder.id, folders, notes, noteTemplates, taskLists),
+        files: getFolderFiles(folder.id, notes, noteTemplates, taskLists)
       }
 
       fileSystemFolders.push(fileSystemFolder);

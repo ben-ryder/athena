@@ -80,7 +80,7 @@ export function deleteNoteTemplate(templateId: string): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
     let updatedDoc = deleteNoteTemplateChange(state.document, templateId);
-    updatedDoc = updateNoteTemplateTagsChange(state.document, templateId, []);
+    updatedDoc = updateNoteTemplateTagsChange(updatedDoc, templateId, []);
     dispatch(updateDocument(updatedDoc));
   }
 }

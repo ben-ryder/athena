@@ -2,7 +2,7 @@ import {createSelector} from "@reduxjs/toolkit";
 import {selectTagsState} from "./tags/tags-selectors";
 import {selectTagsListFilters, selectTagsListPage} from "../ui/view/view-selectors";
 import {ListingMetadata} from "../../common/listing-metadata";
-import {Tag} from "./tags/tags-interface";
+import {Tag} from "./document-interface";
 import {OrderBy} from "../../common/order-by-enum";
 import {OrderDirection} from "../../common/order-direction-enum";
 
@@ -14,7 +14,7 @@ export interface TagsListData {
 }
 
 export const selectTagsList = createSelector([selectTagsState, selectTagsListPage, selectTagsListFilters],(tags, currentPage, filters) => {
-  let tagList = tags.ids.map(tagId => tags.entities[tagId]);
+  let tagList = tags.ids.map(tagId => tags.byId(tagId));
 
   tagList = tagList.filter(tag => {
     return tag.name.toLowerCase().includes(filters.search.toLowerCase());

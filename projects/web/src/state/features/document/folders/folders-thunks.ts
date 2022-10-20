@@ -1,14 +1,17 @@
 import {v4 as createUUID} from "uuid";
 
-import {ApplicationState, AppThunkDispatch} from "../../../store";
-import {FolderContent} from "./folders-interface";
-import {createFolder, updateFolder} from "./folders-actions";
+import {AppThunk} from "../../../store";
+import {FolderContent} from "../document-interface";
 import {FolderMoveValidationResult, validateFolderMove} from "./file-system-helpers";
 import {setApplicationError} from "../../ui/errors/errors-actions";
+import {updateDocument} from "../document-reducer";
+import {createFolderChange, updateFolderChange} from "./folders-changes";
 
 
-export function createNewFolder(folderContent: FolderContent) {
-  return (dispatch: AppThunkDispatch) => {
+export function createNewFolder(folderContent: FolderContent): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+
     const folderID = createUUID();
     const timestamp = new Date().toISOString();
 
@@ -19,39 +22,33 @@ export function createNewFolder(folderContent: FolderContent) {
       createdAt: timestamp,
       updatedAt: timestamp
     }
-    dispatch(createFolder(folder))
+
+    let updatedDoc = createFolderChange(state.document, folder);
+    dispatch(updateDocument(updatedDoc));
   }
 }
 
-export function renameFolder(folderId: string, newName: string) {
-  return (dispatch: AppThunkDispatch) => {
-    const timestamp = new Date().toISOString();
-
-    dispatch(updateFolder({
-      id: folderId,
-      changes: {
-        name: newName,
-        updatedAt: timestamp
-      }
-    }));
-  }
-}
-
-export function moveFolder(folderId: string, newParentId: string | null) {
-  return (dispatch: AppThunkDispatch, getState: () => ApplicationState) => {
+export function renameFolder(folderId: string, newName: string): AppThunk {
+  return (dispatch, getState) => {
     const state = getState();
 
-    const result = validateFolderMove(state.currentVault.folders, folderId, newParentId);
+    const timestamp = new Date().toISOString();
+
+    let updatedDoc = updateFolderChange(state.document, folderId, {updatedAt: timestamp, name: newName});
+    dispatch(updateDocument(updatedDoc));
+  }
+}
+
+export function moveFolder(folderId: string, newParentId: string | null): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+
+    const result = validateFolderMove(state.document.folders, folderId, newParentId);
 
     if (result === FolderMoveValidationResult.VALID) {
       const timestamp = new Date().toISOString();
-      dispatch(updateFolder({
-        id: folderId,
-        changes: {
-          parentId: newParentId,
-          updatedAt: timestamp
-        }
-      }));
+      let updatedDoc = updateFolderChange(state.document, folderId, {updatedAt: timestamp, parentId: newParentId});
+      dispatch(updateDocument(updatedDoc));
     }
     else if (result === FolderMoveValidationResult.ERROR_CHILD_FOLDER) {
       dispatch(setApplicationError({
