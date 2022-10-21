@@ -1,16 +1,20 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {Content, ContentType} from "./content-interface";
-import {DatabaseNote} from "../../current-vault/notes/notes-interface";
-import {DatabaseNoteTemplate} from "../../current-vault/note-templates/note-templates-interface";
-import {DatabaseTaskList} from "../../current-vault/task-lists/task-lists-interface";
 import {ApplicationState} from "../../../store";
+import {
+  DatabaseNote,
+  DatabaseNoteTemplate,
+  DatabaseTaskList,
+  NotesTable,
+  NoteTemplatesTable, TaskListsTable
+} from "../../document/document-interface";
 
 export const selectRawActiveContent = (state: ApplicationState) => state.ui.content.activeContent;
 export const selectRawOpenContent = (state: ApplicationState) => state.ui.content.openContent;
 
-export const selectNoteEntities = (state: ApplicationState) => state.currentVault.notes.entities;
-export const selectTemplateEntities = (state: ApplicationState) => state.currentVault.noteTemplates.entities;
-export const selectTaskListEntities = (state: ApplicationState) => state.currentVault.taskLists.entities;
+export const selectNoteEntities = (state: ApplicationState) => state.document.notes;
+export const selectTemplateEntities = (state: ApplicationState) => state.document.noteTemplates;
+export const selectTaskListEntities = (state: ApplicationState) => state.document.taskLists;
 
 export type ContentData = {
   type: ContentType.NOTE,
@@ -25,26 +29,26 @@ export type ContentData = {
 
 function parseContent(
   content: Content,
-  noteEntities: {[k: string]: DatabaseNote},
-  templateEntities: {[k: string]: DatabaseNoteTemplate},
-  taskListEntities: {[k: string]: DatabaseTaskList}
+  notes: NotesTable,
+  noteTemplates: NoteTemplatesTable,
+  taskLists: TaskListsTable
 ): ContentData {
   if (content.type === ContentType.NOTE) {
     return {
       type: ContentType.NOTE,
-      data: noteEntities[content.id]
+      data: notes.byId(content.id)
     }
   }
   else if (content.type === ContentType.NOTE_TEMPLATE) {
     return {
       type: ContentType.NOTE_TEMPLATE,
-      data: templateEntities[content.id]
+      data: noteTemplates.byId(content.id)
     }
   }
   else {
     return {
       type: ContentType.TASK_LIST,
-      data: taskListEntities[content.id]
+      data: taskLists.byId(content.id)
     }
   }
 }

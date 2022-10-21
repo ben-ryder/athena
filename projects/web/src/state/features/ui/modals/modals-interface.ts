@@ -1,8 +1,6 @@
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
-import {Tag} from "../../current-vault/tags/tags-interface";
-import {Folder} from "../../current-vault/folders/folders-interface";
-import {DatabaseNoteTemplate, NoteTemplate} from "../../current-vault/note-templates/note-templates-interface";
+import {Tag, Folder, DatabaseNoteTemplate} from "../../document/document-interface";
 
 export interface UIModalsState {
   // Content
