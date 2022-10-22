@@ -4,15 +4,14 @@ import {DatabaseTaskList} from "../document-interface";
 import {updateDocument} from "../document-reducer";
 import {createTaskListChange, deleteTaskListChange, updateTaskListChange} from "./task-list-changes";
 import {deleteTaskListTasksChange} from "./tasks/task-changes";
+import {updateTaskListTagsChange} from "../task-list-tags/task-list-tags-changes";
 
 export function createNewTaskList(name: string, folderId: string | null): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
 
-    const templateId = createUUID();
     const timestamp = new Date().toISOString();
-    const taskList: DatabaseTaskList = {
-      id: templateId,
+    const taskList = {
       name: name,
       folderId: folderId,
       createdAt: timestamp,
@@ -41,6 +40,14 @@ export function moveTaskList(taskListId: string, newFolder: string | null): AppT
     const timestamp = new Date().toISOString();
 
     const updatedDoc = updateTaskListChange(state.document, taskListId, {updatedAt: timestamp, folderId: newFolder});
+    dispatch(updateDocument(updatedDoc));
+  }
+}
+
+export function updateTaskListTags(taskListId: string, tags: string[]): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+    const updatedDoc = updateTaskListTagsChange(state.document, taskListId, tags);
     dispatch(updateDocument(updatedDoc));
   }
 }

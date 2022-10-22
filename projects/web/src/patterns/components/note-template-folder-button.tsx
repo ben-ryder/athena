@@ -1,10 +1,10 @@
 import {
   DatabaseNoteTemplate
-} from "../../state/features/current-vault/note-templates/note-templates-interface";
+} from "../../state/features/document/document-interface";
 import React from "react";
 import {useAppDispatch, useAppSelector} from "../../state/store";
-import {selectFoldersState} from "../../state/features/current-vault/folders/folders-selectors";
 import {openNoteTemplateFolderModal} from "../../state/features/ui/modals/modals-actions";
+import {selectFoldersState} from "../../state/features/document/folders/folders-selectors";
 
 export interface NoteTemplateFolderButtonProps {
   noteTemplate: DatabaseNoteTemplate
@@ -14,7 +14,7 @@ export function NoteTemplateFolderButton(props: NoteTemplateFolderButtonProps) {
   const dispatch = useAppDispatch();
   const folders = useAppSelector(selectFoldersState);
   const text = props.noteTemplate.targetFolderId !== null
-    ? folders.entities[props.noteTemplate.targetFolderId].name
+    ? folders.byId(props.noteTemplate.targetFolderId).name
     : "No Target Folder"
 
   return (

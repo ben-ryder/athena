@@ -32,8 +32,6 @@ import {CreateContentModal} from "../../patterns/components/modals/create-conten
 import {TagsView} from "../../patterns/components/tags-view";
 import {DeleteTagModal} from "../../patterns/components/modals/delete-tag-modal";
 import {ContentTagEditor} from '../../patterns/components/content-tag-editor';
-import {updateNoteBody} from "../../state/features/current-vault/notes/notes-thunks";
-import {updateNoteTemplateBody} from "../../state/features/current-vault/note-templates/note-templates-thunks";
 import {FolderView} from "../../patterns/components/folder-view";
 import {WelcomeMessage} from "../../patterns/components/welcome-message";
 import {MoveContentModal} from "../../patterns/components/modals/move-content-modal";
@@ -47,6 +45,8 @@ import {TableOfContents} from "../../patterns/components/table-of-contents";
 import {NoteTemplateFolderButton} from "../../patterns/components/note-template-folder-button";
 import {NoteTemplateFolderModal} from "../../patterns/components/modals/note-template-folder-modal";
 import {TaskListEditor} from "../../patterns/components/task-list-editor/task-list-editor";
+import {updateNoteBody} from "../../state/features/document/notes/notes-thunks";
+import {updateNoteTemplateBody} from "../../state/features/document/note-templates/note-templates-thunks";
 
 
 export function MainPage() {

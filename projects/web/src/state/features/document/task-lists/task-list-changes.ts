@@ -1,8 +1,9 @@
-import {DatabaseTaskList, DocumentState} from "../document-interface";
+import {DatabaseTaskList, DocumentState, EntityWithoutId} from "../document-interface";
 import A from "automerge";
 
-export function createTaskListChange(doc: DocumentState, taskList: DatabaseTaskList) {
+export function createTaskListChange(doc: DocumentState, taskList: EntityWithoutId<DatabaseTaskList>) {
   return A.change(doc, doc => {
+    // @ts-ignore
     doc.taskLists.add(taskList);
   })
 }

@@ -2,11 +2,12 @@ import React from "react";
 import {ContentData} from "../../../state/features/ui/content/content-selctors";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {ApplicationState, useAppSelector} from "../../../state/store";
-import {selectTasks} from "../../../state/features/current-vault/task-lists/tasks/task-selectors";
-import {DatabaseTask, TaskStatus} from "../../../state/features/current-vault/task-lists/tasks/task-interface";
-import {DatabaseTaskList} from "../../../state/features/current-vault/task-lists/task-lists-interface";
-import {DatabaseNote} from "../../../state/features/current-vault/notes/notes-interface";
-import {DatabaseNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-interface";
+import {
+  DatabaseNote,
+  DatabaseNoteTemplate, DatabaseTask,
+  DatabaseTaskList, TaskStatus
+} from "../../../state/features/document/document-interface";
+import {selectTasks} from "../../../state/features/document/task-lists/tasks/task-selectors";
 
 
 export interface ContentDetailsProps {

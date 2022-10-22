@@ -8,11 +8,9 @@ import {updateNoteTemplateTagsChange} from "../note-templates-tags/note-template
 export function createNoteTemplate(name: string, folderId: string | null): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
-    const templateId = createUUID();
     const timestamp = new Date().toISOString();
 
     const template = {
-      id: templateId,
       name: name,
       body: "",
       folderId: folderId,

@@ -1,4 +1,3 @@
-import {v4 as createUUID} from "uuid";
 import {DocumentState} from "../document-interface";
 import A from "automerge";
 
@@ -16,9 +15,8 @@ export function updateNoteTemplateTagsChange(doc: DocumentState, templateId: str
 
     // Add new tags
     for (const tagId of tags) {
-      const id = createUUID();
+      // @ts-ignore
       doc.noteTemplatesTags.add({
-        id,
         templateId,
         tagId
       })

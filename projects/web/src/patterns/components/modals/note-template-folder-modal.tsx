@@ -6,9 +6,7 @@ import {useAppDispatch} from "../../../state/store";
 import {closeNoteTemplateFolderModal} from "../../../state/features/ui/modals/modals-actions";
 import {Modal} from "./modal";
 import {MoveFolderView} from "../move-folder-view";
-import {
-  updateNoteTemplateTargetFolder
-} from "../../../state/features/current-vault/note-templates/note-templates-thunks";
+import {updateNoteTemplateTargetFolder} from "../../../state/features/document/note-templates/note-templates-thunks";
 
 
 export function NoteTemplateFolderModal() {

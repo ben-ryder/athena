@@ -1,9 +1,10 @@
-import {DatabaseFolder, DatabaseNote, DocumentState} from "../document-interface";
+import {DatabaseFolder, DatabaseNote, DocumentState, EntityWithoutId} from "../document-interface";
 import A from "automerge";
 import {getChildFolderIds} from "./file-system-helpers";
 
-export function createFolderChange(doc: DocumentState, folder: DatabaseFolder) {
+export function createFolderChange(doc: DocumentState, folder: EntityWithoutId<DatabaseFolder>) {
   return A.change(doc, doc => {
+    // @ts-ignore
     doc.folders.add(folder);
   })
 }

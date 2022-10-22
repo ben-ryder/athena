@@ -16,9 +16,8 @@ export function updateNoteTagsChange(doc: DocumentState, noteId: string, tags: s
 
     // Add new tags
     for (const tagId of tags) {
-      const id = createUUID();
+      // @ts-ignore
       doc.notesTags.add({
-        id,
         noteId,
         tagId
       })

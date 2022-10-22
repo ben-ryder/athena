@@ -16,9 +16,8 @@ export function updateTaskListTagsChange(doc: DocumentState, taskListId: string,
 
     // Add new tags
     for (const tagId of tags) {
-      const id = createUUID();
+      // @ts-ignore
       doc.taskListsTags.add({
-        id,
         taskListId,
         tagId
       })

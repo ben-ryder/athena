@@ -7,7 +7,6 @@ import {
   openNoteTemplateFolderModal,
   openRenameContentModal
 } from "../../../state/features/ui/modals/modals-actions";
-import {createNoteFromTemplate} from "../../../state/features/current-vault/notes/notes-thunks";
 import {MenuPopup} from "./menu-popup";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 

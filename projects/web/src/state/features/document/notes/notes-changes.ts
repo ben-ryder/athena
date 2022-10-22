@@ -1,8 +1,9 @@
-import {DatabaseNote, DocumentState} from "../document-interface";
+import {DatabaseNote, DocumentState, EntityWithoutId} from "../document-interface";
 import A from "automerge";
 
-export function createNoteChange(doc: DocumentState, note: DatabaseNote) {
+export function createNoteChange(doc: DocumentState, note: EntityWithoutId<DatabaseNote>) {
   return A.change(doc, doc => {
+    // @ts-ignore
     doc.notes.add(note);
   })
 }

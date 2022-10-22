@@ -6,6 +6,6 @@ export const updateDocument = createAction<DocumentState>("document/update");
 
 export const documentReducer = createReducer(createInitialDocument(), (builder) => {
   builder.addCase(updateDocument, (state, action) => {
-    state = action.payload;
+    return action.payload;
   })
 });

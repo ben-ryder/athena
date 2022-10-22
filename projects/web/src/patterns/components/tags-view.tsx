@@ -2,9 +2,7 @@ import {TagForm} from "./tag-form";
 import {Button, IconButton, iconColorClassNames, iconSizes, Tag} from "@ben-ryder/jigsaw";
 import React, {useState} from "react";
 import {useAppDispatch} from "../../state/store";
-import {createNewTag} from "../../state/features/current-vault/tags/tags-thunks";
 import {useSelector} from "react-redux";
-import {selectTagsList} from "../../state/features/current-vault/tags-list-selectors";
 import {TagsListFilterIconAndPopup} from "./popup-menus/tags-list-filter-icon-and-popup";
 import {ArrowLeft, ArrowRight} from "lucide-react";
 import {
@@ -12,6 +10,8 @@ import {
   incrementTagsList
 } from "../../state/features/ui/view/view-actions";
 import {TagCard} from "./tag-card";
+import {selectTagsList} from "../../state/features/document/tags-list-selectors";
+import {createTag} from "../../state/features/document/tags/tags-thunks";
 
 export function TagsView() {
   const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ export function TagsView() {
           <div className="bg-br-atom-700 p-4">
             <TagForm
               onSubmit={(tagFields) => {
-                dispatch(createNewTag({
+                dispatch(createTag({
                   name: tagFields.name,
                   backgroundColour: tagFields.backgroundColour,
                   textColour: tagFields.textColour

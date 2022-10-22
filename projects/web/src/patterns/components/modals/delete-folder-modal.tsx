@@ -1,14 +1,10 @@
 import {useSelector} from "react-redux";
-import {selectDeleteContentModal, selectDeleteFolderModal} from "../../../state/features/ui/modals/modals-selectors";
+import {selectDeleteFolderModal} from "../../../state/features/ui/modals/modals-selectors";
 import {useAppDispatch} from "../../../state/store";
-import {closeDeleteContentModal, closeDeleteFolderModal} from "../../../state/features/ui/modals/modals-actions";
+import {closeDeleteFolderModal} from "../../../state/features/ui/modals/modals-actions";
 import {Button} from "@ben-ryder/jigsaw";
-import {ContentType} from "../../../state/features/ui/content/content-interface";
-import {deleteNote} from "../../../state/features/current-vault/notes/notes-actions";
-import {deleteNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-actions";
 import {Modal} from "./modal";
-import {deleteTaskList} from "../../../state/features/current-vault/task-lists/task-lists-actions";
-import {deleteFolder} from "../../../state/features/current-vault/folders/folders-actions";
+import {deleteFolder} from "../../../state/features/document/folders/folders-thunks";
 
 
 export function DeleteFolderModal() {

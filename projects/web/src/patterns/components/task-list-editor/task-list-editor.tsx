@@ -1,7 +1,4 @@
-import {DatabaseTaskList} from "../../../state/features/current-vault/task-lists/task-lists-interface";
 import {ApplicationState, useAppDispatch, useAppSelector} from "../../../state/store";
-import {selectTasks} from "../../../state/features/current-vault/task-lists/tasks/task-selectors";
-import {DatabaseTask, TaskStatus} from "../../../state/features/current-vault/task-lists/tasks/task-interface";
 import classNames from "classnames";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {
@@ -12,14 +9,15 @@ import {
   X as ReopenIcon,
   X as CancelIcon
 } from "lucide-react";
-import {deleteTask} from "../../../state/features/current-vault/task-lists/tasks/task-actions";
+import {useRef, useState} from "react";
+import {DatabaseTask, DatabaseTaskList, TaskStatus} from "../../../state/features/document/document-interface";
+import {selectTasks} from "../../../state/features/document/task-lists/tasks/task-selectors";
 import {
-  completeTask,
-  createNewTask,
+  completeTask, createNewTask,
+  deleteTask,
   renameTask,
   reopenTask
-} from "../../../state/features/current-vault/task-lists/tasks/task-thunks";
-import {useRef, useState} from "react";
+} from "../../../state/features/document/task-lists/tasks/task-thunks";
 
 const wrapperClassName = "border-b border-br-atom-500 flex justify-between items-center";
 

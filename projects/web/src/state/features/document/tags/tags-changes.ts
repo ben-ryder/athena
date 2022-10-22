@@ -1,8 +1,9 @@
-import {DatabaseTag, DocumentState} from "../document-interface";
+import {DatabaseTag, DocumentState, EntityWithoutId} from "../document-interface";
 import A from "automerge";
 
-export function createTagChange(doc: DocumentState, tag: DatabaseTag) {
+export function createTagChange(doc: DocumentState, tag: EntityWithoutId<DatabaseTag>) {
   return A.change(doc, doc => {
+    // @ts-ignore
     doc.tags.add(tag);
   })
 }

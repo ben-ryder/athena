@@ -1,13 +1,10 @@
 import {useSelector} from "react-redux";
-import {
-  FolderTreeItem,
-  selectFolderTree
-} from "../../state/features/current-vault/folders/folders-selectors";
 import React, {useState} from "react";
 import classNames from "classnames";
-import {Folder} from "../../state/features/current-vault/folders/folders-interface";
 import {ChevronDown as FolderOpenIcon, ChevronRight as FolderClosedIcon, FolderInput as MoveIcon} from "lucide-react";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
+import {Folder} from "../../state/features/document/document-interface";
+import {FolderTreeItem, selectFolderTree} from "../../state/features/document/folders/folders-selectors";
 
 const indentSize = 15;
 

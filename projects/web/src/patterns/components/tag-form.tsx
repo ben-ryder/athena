@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Button, colourPalette, Input, Label, Tag as TagComponent} from "@ben-ryder/jigsaw";
-import {Tag} from "../../state/features/current-vault/tags/tags-interface";
+import {Tag} from "../../state/features/document/document-interface";
 
 export interface TagFormFields {
   name: string,

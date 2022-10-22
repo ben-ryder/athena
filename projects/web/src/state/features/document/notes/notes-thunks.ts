@@ -12,10 +12,8 @@ export function createNewNote(name: string, folderId: string | null): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
 
-    const noteId = createUUID();
     const timestamp = new Date().toISOString();
     const note = {
-      id: noteId,
       name: name,
       body: "",
       folderId: folderId,

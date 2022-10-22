@@ -10,10 +10,8 @@ export function createTag(tagContent: TagContent): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
 
-    const tagId = createUUID();
     const timestamp = new Date().toISOString();
-    const tag: DatabaseTag = {
-      id: tagId,
+    const tag = {
       name: tagContent.name,
       textColour: tagContent.textColour,
       backgroundColour: tagContent.backgroundColour,

@@ -7,8 +7,8 @@ import {selectTaskListsState} from "./task-lists/task-lists-selectors";
 import {selectContentListFilters, selectContentListPage} from "../ui/view/view-selectors";
 import {ListingMetadata} from "../../common/listing-metadata";
 import {selectNotesTagsState} from "./notes-tags/notes-tags-selectors";
-import {selectNoteTemplateTags} from "./note-templates-tags/note-template-tags-selectors";
-import {selectTaskListTags} from "./task-list-tags/task-list-tags-selectors";
+import {selectNoteTemplateTags, selectNoteTemplateTagsState} from "./note-templates-tags/note-template-tags-selectors";
+import {selectTaskListTags, selectTaskListTagsState} from "./task-list-tags/task-list-tags-selectors";
 import {OrderBy} from "../../common/order-by-enum";
 import {OrderDirection} from "../../common/order-direction-enum";
 
@@ -22,7 +22,7 @@ export interface ContentListData {
 export const selectContentList = createSelector([
   selectContentListPage, selectContentListFilters,
   selectNotesState, selectNoteTemplatesState, selectTaskListsState,
-  selectNotesTagsState, selectNoteTemplateTags, selectTaskListTags
+  selectNotesTagsState, selectNoteTemplateTagsState, selectTaskListTagsState
 ], (
   currentPage, filters,
   notes, templates, taskLists,

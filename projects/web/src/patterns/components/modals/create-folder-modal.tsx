@@ -5,7 +5,7 @@ import {closeCreateFolderModal} from "../../../state/features/ui/modals/modals-a
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
 import {Modal} from "./modal";
-import {createNewFolder} from "../../../state/features/current-vault/folders/folders-thunks";
+import {createFolder} from "../../../state/features/document/folders/folders-thunks";
 
 
 export function CreateFolderModal() {
@@ -22,7 +22,7 @@ export function CreateFolderModal() {
       content={
         <form
           onSubmit={() => {
-            dispatch(createNewFolder({
+            dispatch(createFolder({
               name: name,
               parentId: createModal.targetFolderId
             }))

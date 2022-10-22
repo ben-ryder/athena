@@ -6,9 +6,9 @@ import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {createNewNote} from "../../../state/features/current-vault/notes/notes-thunks";
-import {createNewNoteTemplate} from "../../../state/features/current-vault/note-templates/note-templates-thunks";
-import {createNewTaskList} from "../../../state/features/current-vault/task-lists/task-lists-thunks";
+import {createNewTaskList} from "../../../state/features/document/task-lists/task-lists-thunks";
+import {createNoteTemplate} from "../../../state/features/document/note-templates/note-templates-thunks";
+import {createNewNote} from "../../../state/features/document/notes/notes-thunks";
 
 
 export function CreateContentModal() {
@@ -40,7 +40,7 @@ export function CreateContentModal() {
               dispatch(createNewNote(name, createModal.targetFolderId));
             }
             else if (createModal.type === ContentType.NOTE_TEMPLATE) {
-              dispatch(createNewNoteTemplate(name, createModal.targetFolderId));
+              dispatch(createNoteTemplate(name, createModal.targetFolderId));
             }
             else if (createModal.type === ContentType.TASK_LIST) {
               dispatch(createNewTaskList(name, createModal.targetFolderId));

@@ -11,35 +11,35 @@ export const initialUIContentState: UIContentState = {
 export const uiContentReducer = createReducer(
   initialUIContentState,
   (builder) => {
-    builder.addCase(createNote, (state, action) => {
-      const content = {
-        type: ContentType.NOTE,
-        id: action.payload.id
-      };
-
-      state.openContent.push(content);
-      state.activeContent = content;
-    })
-
-    builder.addCase(createNoteTemplate, (state, action) => {
-      const content = {
-        type: ContentType.NOTE_TEMPLATE,
-        id: action.payload.id
-      };
-
-      state.openContent.push(content);
-      state.activeContent = content;
-    })
-
-    builder.addCase(createTaskList, (state, action) => {
-      const content = {
-        type: ContentType.TASK_LIST,
-        id: action.payload.id
-      };
-
-      state.openContent.push(content);
-      state.activeContent = content;
-    })
+    // builder.addCase(createNote, (state, action) => {
+    //   const content = {
+    //     type: ContentType.NOTE,
+    //     id: action.payload.id
+    //   };
+    //
+    //   state.openContent.push(content);
+    //   state.activeContent = content;
+    // })
+    //
+    // builder.addCase(createNoteTemplate, (state, action) => {
+    //   const content = {
+    //     type: ContentType.NOTE_TEMPLATE,
+    //     id: action.payload.id
+    //   };
+    //
+    //   state.openContent.push(content);
+    //   state.activeContent = content;
+    // })
+    //
+    // builder.addCase(createTaskList, (state, action) => {
+    //   const content = {
+    //     type: ContentType.TASK_LIST,
+    //     id: action.payload.id
+    //   };
+    //
+    //   state.openContent.push(content);
+    //   state.activeContent = content;
+    // })
 
     builder.addCase(openAndSwitchContent, (state, action) => {
       state.activeContent = action.payload;
@@ -67,34 +67,34 @@ export const uiContentReducer = createReducer(
       }
     })
 
-    builder.addCase(deleteNote, (state, action) => {
-      if (state.activeContent?.id === action.payload) {
-        state.activeContent = null;
-      }
-
-      state.openContent = state.openContent.filter(content => {
-        return content.id !== action.payload;
-      })
-    })
-
-    builder.addCase(deleteNoteTemplate, (state, action) => {
-      if (state.activeContent?.id === action.payload) {
-        state.activeContent = null;
-      }
-
-      state.openContent = state.openContent.filter(content => {
-        return content.id !== action.payload;
-      })
-    })
-
-    builder.addCase(deleteTaskList, (state, action) => {
-      if (state.activeContent?.id === action.payload) {
-        state.activeContent = null;
-      }
-
-      state.openContent = state.openContent.filter(content => {
-        return content.id !== action.payload;
-      })
-    })
+    // builder.addCase(deleteNote, (state, action) => {
+    //   if (state.activeContent?.id === action.payload) {
+    //     state.activeContent = null;
+    //   }
+    //
+    //   state.openContent = state.openContent.filter(content => {
+    //     return content.id !== action.payload;
+    //   })
+    // })
+    //
+    // builder.addCase(deleteNoteTemplate, (state, action) => {
+    //   if (state.activeContent?.id === action.payload) {
+    //     state.activeContent = null;
+    //   }
+    //
+    //   state.openContent = state.openContent.filter(content => {
+    //     return content.id !== action.payload;
+    //   })
+    // })
+    //
+    // builder.addCase(deleteTaskList, (state, action) => {
+    //   if (state.activeContent?.id === action.payload) {
+    //     state.activeContent = null;
+    //   }
+    //
+    //   state.openContent = state.openContent.filter(content => {
+    //     return content.id !== action.payload;
+    //   })
+    // })
   }
 );

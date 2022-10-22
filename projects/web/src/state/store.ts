@@ -16,7 +16,13 @@ export const rootReducer = combineReducers({
 })
 
 export const store = configureStore({
-  reducer: rootReducer
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ['document', 'payload'],
+      },
+    }),
 })
 
 export type AppDispatch = typeof store.dispatch;

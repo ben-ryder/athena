@@ -14,9 +14,9 @@ import {useAppDispatch} from "../../state/store";
 import {openAndSwitchContent} from "../../state/features/ui/content/content-actions";
 import {ContentActionMenu} from "./popup-menus/content-actions-menus";
 import {useSelector} from "react-redux";
-import {FileSystemFolder, selectFileSystemTree} from "../../state/features/current-vault/folders/folders-selectors";
 import {FolderActionsMenu, RootFolderActionsMenu} from "./popup-menus/folder-actions-menus";
-import {Folder} from "../../state/features/current-vault/folders/folders-interface";
+import {Folder} from "../../state/features/document/document-interface";
+import {FileSystemFolder, selectFileSystemTree} from "../../state/features/document/folders/folders-selectors";
 
 const indentSize = 15;
 

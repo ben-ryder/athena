@@ -39,7 +39,7 @@ export interface DatabaseNote extends BaseDatabaseEntity, NoteContent {}
 export interface Note extends DatabaseNote {
   tags: Tag[]
 }
-export type NotesTable = A.Table<DatabaseNoteTemplate>;
+export type NotesTable = A.Table<DatabaseNote>;
 
 export interface DatabaseNoteTag {
   id: string,
@@ -102,3 +102,5 @@ export interface Document {
 }
 
 export type DocumentState = A.FreezeObject<Document>;
+
+export type EntityWithoutId<T> = Omit<T, "id">

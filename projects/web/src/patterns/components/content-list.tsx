@@ -1,11 +1,11 @@
 import React from "react";
 import {ContentCard} from "./content-card/content-card";
 import {useSelector} from "react-redux";
-import {selectContentList} from "../../state/features/current-vault/content-list-selectors";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
 import {ArrowLeft, ArrowRight } from "lucide-react";
 import {useAppDispatch} from "../../state/store";
 import {decrementContentList, incrementContentList} from "../../state/features/ui/view/view-actions";
+import {selectContentList} from "../../state/features/document/content-list-selectors";
 
 
 export function ContentList() {

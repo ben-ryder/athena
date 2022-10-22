@@ -5,18 +5,15 @@ import {FolderContent} from "../document-interface";
 import {FolderMoveValidationResult, validateFolderMove} from "./file-system-helpers";
 import {setApplicationError} from "../../ui/errors/errors-actions";
 import {updateDocument} from "../document-reducer";
-import {createFolderChange, updateFolderChange} from "./folders-changes";
+import {createFolderChange, deleteFolderChange, updateFolderChange} from "./folders-changes";
 
 
-export function createNewFolder(folderContent: FolderContent): AppThunk {
+export function createFolder(folderContent: FolderContent): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
-
-    const folderID = createUUID();
     const timestamp = new Date().toISOString();
 
     const folder = {
-      id: folderID,
       name: folderContent.name,
       parentId: folderContent.parentId,
       createdAt: timestamp,
@@ -68,5 +65,13 @@ export function moveFolder(folderId: string, newParentId: string | null): AppThu
         text: "You can't move a folder into itself."
       }));
     }
+  }
+}
+
+export function deleteFolder(folderId: string): AppThunk {
+  return (dispatch, getState) => {
+    const state = getState();
+    let updatedDoc = deleteFolderChange(state.document, folderId);
+    dispatch(updateDocument(updatedDoc));
   }
 }

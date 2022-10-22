@@ -10,11 +10,8 @@ export function createNewTask(taskListId: string, name: string): AppThunk {
   return (dispatch, getState) => {
     const state = getState();
 
-    const taskId = createUUID();
     const timestamp = new Date().toISOString();
-
-    const task: DatabaseTask = {
-      id: taskId,
+    const task = {
       name: name,
       status: TaskStatus.OPEN,
       taskListId: taskListId,
@@ -23,7 +20,7 @@ export function createNewTask(taskListId: string, name: string): AppThunk {
     }
 
     let updatedDoc = createTaskChange(state.document, task);
-    updatedDoc = updateTaskListChange(state.document, taskId, {updatedAt: timestamp});
+    updatedDoc = updateTaskListChange(updatedDoc, taskListId, {updatedAt: timestamp});
     dispatch(updateDocument(updatedDoc));
   }
 }
@@ -36,7 +33,7 @@ export function renameTask(taskId: string, newName: string): AppThunk {
     const timestamp = new Date().toISOString();
 
     let updatedDoc = updateTaskChange(state.document, taskId, {updatedAt: timestamp, name: newName});
-    updatedDoc = updateTaskListChange(state.document, task.taskListId, {updatedAt: timestamp});
+    updatedDoc = updateTaskListChange(updatedDoc, task.taskListId, {updatedAt: timestamp});
     dispatch(updateDocument(updatedDoc));
   }
 }
@@ -49,7 +46,7 @@ export function completeTask(taskId: string): AppThunk {
     const timestamp = new Date().toISOString();
 
     let updatedDoc = updateTaskChange(state.document, taskId, {updatedAt: timestamp, status: TaskStatus.COMPLETED});
-    updatedDoc = updateTaskListChange(state.document, task.taskListId, {updatedAt: timestamp});
+    updatedDoc = updateTaskListChange(updatedDoc, task.taskListId, {updatedAt: timestamp});
     dispatch(updateDocument(updatedDoc));
   }
 }

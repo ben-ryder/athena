@@ -4,7 +4,7 @@ import {useAppDispatch} from "../../../state/store";
 import {closeMoveFolderModal} from "../../../state/features/ui/modals/modals-actions";
 import {Modal} from "./modal";
 import {MoveFolderView} from "../move-folder-view";
-import {moveFolder} from "../../../state/features/current-vault/folders/folders-thunks";
+import {moveFolder} from "../../../state/features/document/folders/folders-thunks";
 
 
 export function MoveFolderModal() {
@@ -14,7 +14,6 @@ export function MoveFolderModal() {
 
   function onFolderSelect(destinationFolderId: string | null) {
     if (moveModal.folder) {
-      // @ts-ignore
       dispatch(moveFolder(moveModal.folder.id, destinationFolderId));
     }
     closeModal();

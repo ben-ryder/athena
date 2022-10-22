@@ -1,9 +1,10 @@
-import {DatabaseTask, DocumentState} from "../../document-interface";
+import {DatabaseTask, DocumentState, EntityWithoutId} from "../../document-interface";
 import A from "automerge";
 
 
-export function createTaskChange(doc: DocumentState, task: DatabaseTask) {
+export function createTaskChange(doc: DocumentState, task: EntityWithoutId<DatabaseTask>) {
   return A.change(doc, doc => {
+    // @ts-ignore
     doc.tasks.add(task);
   })
 }

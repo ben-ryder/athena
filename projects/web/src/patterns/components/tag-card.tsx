@@ -2,10 +2,10 @@ import {colourPalette, IconButton, iconColorClassNames, iconSizes, Tag as TagCom
 import React, {useState} from "react";
 import {Pencil as EditIcon, Trash as DeleteIcon} from "lucide-react";
 import {TagForm} from "./tag-form";
-import {updateExistingTag} from "../../state/features/current-vault/tags/tags-thunks";
 import {useAppDispatch} from "../../state/store";
 import {openDeleteTagModal} from "../../state/features/ui/modals/modals-actions";
-import {Tag} from "../../state/features/current-vault/tags/tags-interface";
+import {Tag} from "../../state/features/document/document-interface";
+import {updateTag} from "../../state/features/document/tags/tags-thunks";
 
 export interface TagCardProps {
   tag: Tag
@@ -42,7 +42,7 @@ export function TagCard(props: TagCardProps) {
         <TagForm
             tag={props.tag}
             onSubmit={(tagFields => {
-              dispatch(updateExistingTag(props.tag.id, {
+              dispatch(updateTag(props.tag.id, {
                 name: tagFields.name,
                 backgroundColour: tagFields.backgroundColour,
                 textColour: tagFields.textColour,
