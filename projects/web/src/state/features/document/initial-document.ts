@@ -16,7 +16,4 @@ export const initialChange = Uint8Array.from(
 /**
  * Return an Automerge document containing the initial setup change.
  */
-export function createInitialDocument() {
-  const [initialDoc] = applyChanges<Document>(init(), [initialChange]);
-  return initialDoc;
-}
+export const [initialDocument] = applyChanges<Document>(init(), [initialChange]);

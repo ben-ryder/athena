@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@ben-ryder/jigsaw": "^0.7.0",
-    "@ben-ryder/lfb-common": "^0.1.0",
+    "@ben-ryder/lfb-common": "^0.2.0",
     "@ben-ryder/lfb-toolkit": "^0.1.1",
     "@codemirror/lang-markdown": "^6.0.1",
     "@codemirror/language-data": "^6.1.0",

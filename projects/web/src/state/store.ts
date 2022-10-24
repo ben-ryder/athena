@@ -2,8 +2,9 @@ import {AnyAction, combineReducers, configureStore, ThunkAction, ThunkDispatch} 
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import {UIState} from "./features/ui/ui-interface";
 import {DocumentState} from "./features/document/document-interface";
-import {documentReducer} from "./features/document/document-reducer";
+import {documentReducer, updateDocument} from "./features/document/document-reducer";
 import {uiReducer} from "./features/ui/ui-reducer";
+
 
 export interface ApplicationState {
   ui: UIState,
@@ -20,9 +21,10 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredPaths: ['document', 'payload'],
+        ignoredActionPaths: ["payload"],
+        ignoredPaths: ['document'],
       },
-    }),
+    })
 })
 
 export type AppDispatch = typeof store.dispatch;

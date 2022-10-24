@@ -1,5 +1,4 @@
 import {createAction, createReducer} from "@reduxjs/toolkit";
-import {createInitialDocument} from "./initial-document";
 import {DocumentState} from "./document-interface";
 
 export const updateDocument = createAction<DocumentState>("document/update");
