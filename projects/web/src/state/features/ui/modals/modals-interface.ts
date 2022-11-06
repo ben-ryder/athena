@@ -1,6 +1,6 @@
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
-import {Tag, Folder, DatabaseNoteTemplate} from "../../document/document-interface";
+import {Tag, Folder, DatabaseNoteTemplate} from "../../database/athena-database";
 
 export interface UIModalsState {
   // Content

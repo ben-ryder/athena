@@ -2,7 +2,7 @@ import React from "react";
 
 import {useAppDispatch} from "../../../state/store";
 import {MenuPopup} from "./menu-popup";
-import {Folder} from "../../../state/features/document/document-interface";
+import {Folder} from "../../../state/features/database/athena-database";
 import {
   openCreateContentModal,
   openCreateFolderModal,

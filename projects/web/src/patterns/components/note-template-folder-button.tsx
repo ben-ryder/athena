@@ -1,10 +1,10 @@
 import {
   DatabaseNoteTemplate
-} from "../../state/features/document/document-interface";
+} from "../../state/features/database/athena-database";
 import React from "react";
 import {useAppDispatch, useAppSelector} from "../../state/store";
 import {openNoteTemplateFolderModal} from "../../state/features/ui/modals/modals-actions";
-import {selectFoldersState} from "../../state/features/document/folders/folders-selectors";
+import {selectFoldersState} from "../../state/features/database/folders/folders-selectors";
 
 export interface NoteTemplateFolderButtonProps {
   noteTemplate: DatabaseNoteTemplate

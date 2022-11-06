@@ -1,24 +1,13 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 
 import {LinkButton} from "@ben-ryder/jigsaw";
 import {Link} from "../patterns/element/link";
 import {routes} from "../routes";
 import {Helmet} from "react-helmet-async";
 import {MessagePage} from "../patterns/pages/message-page";
-import {useAthena} from "../helpers/use-athena";
-import {useNavigate} from "react-router-dom";
 
 
 export function HomePage() {
-  const navigate = useNavigate();
-  const {currentUser} = useAthena();
-
-  useEffect(() => {
-    if (currentUser) {
-      navigate(routes.app.main);
-    }
-  }, []);
-
   return (
     <>
       <Helmet>

@@ -6,9 +6,9 @@ import {Button, Input} from "@ben-ryder/jigsaw";
 import {useEffect, useRef, useState} from "react";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {renameNote} from "../../../state/features/document/notes/notes-thunks";
-import {renameNoteTemplate} from "../../../state/features/document/note-templates/note-templates-thunks";
-import {renameTaskList} from "../../../state/features/document/task-lists/task-lists-thunks";
+import {renameNote} from "../../../state/features/database/notes/notes-thunks";
+import {renameNoteTemplate} from "../../../state/features/database/note-templates/note-templates-thunks";
+import {renameTaskList} from "../../../state/features/database/task-lists/task-lists-thunks";
 
 
 export function RenameContentModal() {

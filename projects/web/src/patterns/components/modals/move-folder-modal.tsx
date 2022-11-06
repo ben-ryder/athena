@@ -4,7 +4,7 @@ import {useAppDispatch} from "../../../state/store";
 import {closeMoveFolderModal} from "../../../state/features/ui/modals/modals-actions";
 import {Modal} from "./modal";
 import {MoveFolderView} from "../move-folder-view";
-import {moveFolder} from "../../../state/features/document/folders/folders-thunks";
+import {moveFolder} from "../../../state/features/database/folders/folders-thunks";
 
 
 export function MoveFolderModal() {

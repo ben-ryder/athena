@@ -6,8 +6,8 @@ import {
   DatabaseNote,
   DatabaseNoteTemplate, DatabaseTask,
   DatabaseTaskList, TaskStatus
-} from "../../../state/features/document/document-interface";
-import {selectTasks} from "../../../state/features/document/task-lists/tasks/task-selectors";
+} from "../../../state/features/database/athena-database";
+import {selectTasks} from "../../../state/features/database/task-lists/tasks/task-selectors";
 
 
 export interface ContentDetailsProps {

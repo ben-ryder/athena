@@ -3,12 +3,12 @@ import {useSelector} from "react-redux";
 import {Tag as TagElement} from "@ben-ryder/jigsaw";
 import {ContentData} from "../../../state/features/ui/content/content-selctors";
 import {ApplicationState} from "../../../state/store";
-import {selectNoteTags} from "../../../state/features/document/notes-tags/notes-tags-selectors";
+import {selectNoteTags} from "../../../state/features/database/notes-tags/notes-tags-selectors";
 import {
   selectNoteTemplateTags
-} from "../../../state/features/document/note-templates-tags/note-template-tags-selectors";
-import {selectTaskListTags} from "../../../state/features/document/task-list-tags/task-list-tags-selectors";
-import {Tag} from "../../../state/features/document/document-interface";
+} from "../../../state/features/database/note-templates-tags/note-template-tags-selectors";
+import {selectTaskListTags} from "../../../state/features/database/task-list-tags/task-list-tags-selectors";
+import {Tag} from "../../../state/features/database/athena-database";
 
 export interface ContentTagsProps {
   content: ContentData

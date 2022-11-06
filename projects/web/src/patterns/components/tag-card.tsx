@@ -4,8 +4,8 @@ import {Pencil as EditIcon, Trash as DeleteIcon} from "lucide-react";
 import {TagForm} from "./tag-form";
 import {useAppDispatch} from "../../state/store";
 import {openDeleteTagModal} from "../../state/features/ui/modals/modals-actions";
-import {Tag} from "../../state/features/document/document-interface";
-import {updateTag} from "../../state/features/document/tags/tags-thunks";
+import {Tag} from "../../state/features/database/athena-database";
+import {updateTag} from "../../state/features/database/tags/tags-thunks";
 
 export interface TagCardProps {
   tag: Tag

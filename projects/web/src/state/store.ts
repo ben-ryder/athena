@@ -1,19 +1,15 @@
 import {AnyAction, combineReducers, configureStore, ThunkAction, ThunkDispatch} from '@reduxjs/toolkit'
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import {UIState} from "./features/ui/ui-interface";
-import {DocumentState} from "./features/document/document-interface";
-import {documentReducer, updateDocument} from "./features/document/document-reducer";
 import {uiReducer} from "./features/ui/ui-reducer";
 
 
 export interface ApplicationState {
-  ui: UIState,
-  document: DocumentState
+  ui: UIState
 }
 
 export const rootReducer = combineReducers({
-  ui: uiReducer,
-  document: documentReducer
+  ui: uiReducer
 })
 
 export const store = configureStore({

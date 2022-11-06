@@ -5,14 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
 import {ErrorIdentifiers, LoginRequest} from "@ben-ryder/lfb-common";
 import {Helmet} from "react-helmet-async";
-import {useAthena} from "../../../helpers/use-athena";
+import {useApplication} from "../../../helpers/application-context";
 import {routes} from "../../../routes";
 import {FormPage} from "../../../patterns/pages/form-page";
 import {Link} from "../../../patterns/element/link";
 
 
 export function LoginPage() {
-  const { apiClient, setCurrentUser } = useAthena();
+  const { application } = useApplication();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
@@ -23,9 +23,7 @@ export function LoginPage() {
 
   const onSubmit: SubmitHandler<LoginRequest> = async function(values: LoginRequest) {
     try {
-      const data = await apiClient.login(values.username, values.password);
-
-      setCurrentUser(data.user);
+      await application.login(values.username, values.password);
       await navigate(routes.app.main);
     }
     catch (e: any) {

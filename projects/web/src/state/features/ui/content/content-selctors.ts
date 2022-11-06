@@ -7,7 +7,7 @@ import {
   DatabaseTaskList,
   NotesTable,
   NoteTemplatesTable, TaskListsTable
-} from "../../document/document-interface";
+} from "../../database/athena-database";
 
 export const selectRawActiveContent = (state: ApplicationState) => state.ui.content.activeContent;
 export const selectRawOpenContent = (state: ApplicationState) => state.ui.content.openContent;

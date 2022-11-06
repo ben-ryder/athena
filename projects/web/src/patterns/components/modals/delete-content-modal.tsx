@@ -5,9 +5,9 @@ import {closeDeleteContentModal} from "../../../state/features/ui/modals/modals-
 import {Button} from "@ben-ryder/jigsaw";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {deleteNote} from "../../../state/features/document/notes/notes-thunks";
-import {deleteNoteTemplate} from "../../../state/features/document/note-templates/note-templates-thunks";
-import {deleteTaskList} from "../../../state/features/document/task-lists/task-lists-thunks";
+import {deleteNote} from "../../../state/features/database/notes/notes-thunks";
+import {deleteNoteTemplate} from "../../../state/features/database/note-templates/note-templates-thunks";
+import {deleteTaskList} from "../../../state/features/database/task-lists/task-lists-thunks";
 
 
 export function DeleteContentModal() {

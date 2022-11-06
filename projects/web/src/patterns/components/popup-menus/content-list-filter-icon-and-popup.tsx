@@ -13,7 +13,7 @@ import {defaultContentListFilters} from "../../../state/features/ui/view/view-re
 import {OrderDirection} from "../../../state/common/order-direction-enum";
 import {OrderBy} from "../../../state/common/order-by-enum";
 import {PopupPanel} from "../popup-panel/popup-panel";
-import {selectTagOptions} from "../../../state/features/document/tags/tags-selectors";
+import {selectTagOptions} from "../../../state/features/database/tags/tags-selectors";
 
 const contentTypeOptions = [
   {

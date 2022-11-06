@@ -10,14 +10,14 @@ import {
   X as CancelIcon
 } from "lucide-react";
 import {useRef, useState} from "react";
-import {DatabaseTask, DatabaseTaskList, TaskStatus} from "../../../state/features/document/document-interface";
-import {selectTasks} from "../../../state/features/document/task-lists/tasks/task-selectors";
+import {DatabaseTask, DatabaseTaskList, TaskStatus} from "../../../state/features/database/athena-database";
+import {selectTasks} from "../../../state/features/database/task-lists/tasks/task-selectors";
 import {
   completeTask, createNewTask,
   deleteTask,
   renameTask,
   reopenTask
-} from "../../../state/features/document/task-lists/tasks/task-thunks";
+} from "../../../state/features/database/task-lists/tasks/task-thunks";
 
 const wrapperClassName = "border-b border-br-atom-500 flex justify-between items-center";
 

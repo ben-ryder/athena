@@ -3,8 +3,8 @@ import React, {useState} from "react";
 import classNames from "classnames";
 import {ChevronDown as FolderOpenIcon, ChevronRight as FolderClosedIcon, FolderInput as MoveIcon} from "lucide-react";
 import {IconButton, iconColorClassNames, iconSizes} from "@ben-ryder/jigsaw";
-import {Folder} from "../../state/features/document/document-interface";
-import {FolderTreeItem, selectFolderTree} from "../../state/features/document/folders/folders-selectors";
+import {Folder} from "../../state/features/database/athena-database";
+import {FolderTreeItem, selectFolderTree} from "../../state/features/database/folders/folders-selectors";
 
 const indentSize = 15;
 

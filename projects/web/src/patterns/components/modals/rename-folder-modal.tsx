@@ -5,7 +5,7 @@ import {closeRenameFolderModal} from "../../../state/features/ui/modals/modals-a
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useEffect, useRef, useState} from "react";
 import {Modal} from "./modal";
-import {renameFolder} from "../../../state/features/document/folders/folders-thunks";
+import {renameFolder} from "../../../state/features/database/folders/folders-thunks";
 
 
 export function RenameFolderModal() {

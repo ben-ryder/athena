@@ -5,9 +5,9 @@ import {closeMoveContentModal} from "../../../state/features/ui/modals/modals-ac
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
 import {MoveFolderView} from "../move-folder-view";
-import {moveTaskList} from "../../../state/features/document/task-lists/task-lists-thunks";
-import {moveNoteTemplate} from "../../../state/features/document/note-templates/note-templates-thunks";
-import {moveNote} from "../../../state/features/document/notes/notes-thunks";
+import {moveTaskList} from "../../../state/features/database/task-lists/task-lists-thunks";
+import {moveNoteTemplate} from "../../../state/features/database/note-templates/note-templates-thunks";
+import {moveNote} from "../../../state/features/database/notes/notes-thunks";
 
 
 export function MoveContentModal() {

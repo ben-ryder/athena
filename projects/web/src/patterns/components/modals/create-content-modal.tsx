@@ -6,9 +6,9 @@ import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
 import {ContentType} from "../../../state/features/ui/content/content-interface";
 import {Modal} from "./modal";
-import {createNewTaskList} from "../../../state/features/document/task-lists/task-lists-thunks";
-import {createNoteTemplate} from "../../../state/features/document/note-templates/note-templates-thunks";
-import {createNewNote} from "../../../state/features/document/notes/notes-thunks";
+import {createNewTaskList} from "../../../state/features/database/task-lists/task-lists-thunks";
+import {createNoteTemplate} from "../../../state/features/database/note-templates/note-templates-thunks";
+import {createNewNote} from "../../../state/features/database/notes/notes-thunks";
 
 
 export function CreateContentModal() {

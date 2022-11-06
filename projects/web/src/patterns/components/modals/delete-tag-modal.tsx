@@ -4,7 +4,7 @@ import {useAppDispatch} from "../../../state/store";
 import {closeDeleteTagModal} from "../../../state/features/ui/modals/modals-actions";
 import {Button} from "@ben-ryder/jigsaw";
 import {Modal} from "./modal";
-import {deleteTag} from "../../../state/features/document/tags/tags-thunks";
+import {deleteTag} from "../../../state/features/database/tags/tags-thunks";
 
 
 export function DeleteTagModal() {

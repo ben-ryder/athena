@@ -3,7 +3,6 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {Input, Button} from "@ben-ryder/jigsaw";
 import {z} from "zod";
-import {useAthena} from "../../../helpers/use-athena";
 import {FormPage} from "../../../patterns/pages/form-page";
 import {Helmet} from "react-helmet-async";
 
@@ -15,7 +14,6 @@ type ForgottenPasswordSchema = z.infer<typeof ForgottenPasswordSchema>;
 
 
 export function ForgottenPasswordPage() {
-  const { apiClient } = useAthena();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ForgottenPasswordSchema>({

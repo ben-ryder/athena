@@ -4,13 +4,13 @@ import {selectActiveContent} from "../../state/features/ui/content/content-selct
 import {ContentType} from "../../state/features/ui/content/content-interface";
 import {Option} from "@ben-ryder/jigsaw";
 import {ApplicationState, useAppDispatch} from "../../state/store";
-import {selectTagOptions} from "../../state/features/document/tags/tags-selectors";
-import {selectNoteTags} from "../../state/features/document/notes-tags/notes-tags-selectors";
-import {updateNoteTags} from "../../state/features/document/notes/notes-thunks";
-import {selectNoteTemplateTags} from "../../state/features/document/note-templates-tags/note-template-tags-selectors";
-import {updateNoteTemplateTags} from "../../state/features/document/note-templates/note-templates-thunks";
-import {selectTaskListTags} from "../../state/features/document/task-list-tags/task-list-tags-selectors";
-import {updateTaskListTags} from "../../state/features/document/task-lists/task-lists-thunks";
+import {selectTagOptions} from "../../state/features/database/tags/tags-selectors";
+import {selectNoteTags} from "../../state/features/database/notes-tags/notes-tags-selectors";
+import {updateNoteTags} from "../../state/features/database/notes/notes-thunks";
+import {selectNoteTemplateTags} from "../../state/features/database/note-templates-tags/note-template-tags-selectors";
+import {updateNoteTemplateTags} from "../../state/features/database/note-templates/note-templates-thunks";
+import {selectTaskListTags} from "../../state/features/database/task-list-tags/task-list-tags-selectors";
+import {updateTaskListTags} from "../../state/features/database/task-lists/task-lists-thunks";
 
 export interface TagsEditorProps {
   contentId: string,

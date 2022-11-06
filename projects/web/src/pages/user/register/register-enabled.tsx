@@ -7,7 +7,7 @@ import {z} from "zod";
 import {routes} from "../../../routes";
 import {FormPage} from "../../../patterns/pages/form-page";
 import {Link} from "../../../patterns/element/link";
-import {useAthena} from "../../../helpers/use-athena";
+import {useApplication} from "../../../helpers/application-context";
 import {useNavigate} from "react-router-dom";
 
 const UserRegister = z.object({
@@ -26,7 +26,7 @@ type UserRegister = z.infer<typeof UserRegister>;
 
 export function RegisterEnabledPage() {
   const navigate = useNavigate();
-  const {apiClient, setCurrentUser, storage} = useAthena();
+  const {application} = useApplication();
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm<UserRegister>({
@@ -36,13 +36,12 @@ export function RegisterEnabledPage() {
 
   const onSubmit: SubmitHandler<UserRegister> = async function(values: UserRegister) {
     try {
-      const data = await apiClient.register({
+      const data = await application.register({
         username: values.username,
         email: values.email,
         password: values.password
       });
 
-      setCurrentUser(data.user);
       await navigate(routes.app.main);
     }
     catch (e: any) {

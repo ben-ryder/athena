@@ -10,8 +10,8 @@ import {
   incrementTagsList
 } from "../../state/features/ui/view/view-actions";
 import {TagCard} from "./tag-card";
-import {selectTagsList} from "../../state/features/document/tags-list-selectors";
-import {createTag} from "../../state/features/document/tags/tags-thunks";
+import {selectTagsList} from "../../state/features/database/tags-list-selectors";
+import {createTag} from "../../state/features/database/tags/tags-thunks";
 
 export function TagsView() {
   const dispatch = useAppDispatch();

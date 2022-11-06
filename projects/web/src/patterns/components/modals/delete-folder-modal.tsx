@@ -4,7 +4,7 @@ import {useAppDispatch} from "../../../state/store";
 import {closeDeleteFolderModal} from "../../../state/features/ui/modals/modals-actions";
 import {Button} from "@ben-ryder/jigsaw";
 import {Modal} from "./modal";
-import {deleteFolder} from "../../../state/features/document/folders/folders-thunks";
+import {deleteFolder} from "../../../state/features/database/folders/folders-thunks";
 
 
 export function DeleteFolderModal() {

@@ -5,7 +5,7 @@ import {closeCreateFolderModal} from "../../../state/features/ui/modals/modals-a
 import {Button, Input} from "@ben-ryder/jigsaw";
 import {useState} from "react";
 import {Modal} from "./modal";
-import {createFolder} from "../../../state/features/document/folders/folders-thunks";
+import {createFolder} from "../../../state/features/database/folders/folders-thunks";
 
 
 export function CreateFolderModal() {

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {RegisterEnabledPage} from "./register-enabled";
 import {RegisterDisabledPage} from "./register-disabled";
 import {LoadingPage} from "../../../patterns/pages/loading-page";
-import {useAthena} from "../../../helpers/use-athena";
+import {useApplication} from "../../../helpers/application-context";
 import {Helmet} from "react-helmet-async";
 import {GeneralQueryStatus} from "../../../types/general-query-status";
 
@@ -14,13 +14,13 @@ export enum RegistrationStatus {
 }
 
 export function RegisterPage() {
-  const {apiClient} = useAthena();
+  const {application} = useApplication();
   const [status, setStatus] = useState<RegistrationStatus>(RegistrationStatus.CHECK_IN_PROGRESS);
 
   useEffect(() => {
     async function checkEnabled() {
       try {
-        const info = await apiClient.getInfo();
+        const info = await application.getInfo();
 
         if (info.registrationEnabled) {
           setStatus(RegistrationStatus.ENABLED);

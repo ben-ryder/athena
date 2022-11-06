@@ -15,8 +15,8 @@ import {openAndSwitchContent} from "../../state/features/ui/content/content-acti
 import {ContentActionMenu} from "./popup-menus/content-actions-menus";
 import {useSelector} from "react-redux";
 import {FolderActionsMenu, RootFolderActionsMenu} from "./popup-menus/folder-actions-menus";
-import {Folder} from "../../state/features/document/document-interface";
-import {FileSystemFolder, selectFileSystemTree} from "../../state/features/document/folders/folders-selectors";
+import {Folder} from "../../state/features/database/athena-database";
+import {FileSystemFolder, selectFileSystemTree} from "../../state/features/database/folders/folders-selectors";
 
 const indentSize = 15;
 

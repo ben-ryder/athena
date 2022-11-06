@@ -1,7 +1,7 @@
 import {createAction} from "@reduxjs/toolkit";
 import {ContentData} from "../content/content-selctors";
 import {ContentType} from "../content/content-interface";
-import {DatabaseNoteTemplate, Folder, Tag} from "../../document/document-interface";
+import {DatabaseNoteTemplate, Folder, Tag} from "../../database/athena-database";
 
 
 export enum UIModalsActions {
