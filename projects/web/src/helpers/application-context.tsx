@@ -1,29 +1,30 @@
 import { createContext, useContext } from "react";
 import { UserDto } from "@ben-ryder/lfb-common";
 import { LFBApplication } from "@ben-ryder/lfb-toolkit";
-import {Document} from "../state/features/database/athena-database";
+import {AthenaDatabase} from "../state/features/database/athena-database";
 import {initialDocument} from "../state/features/database/initial-document";
 
 export type CurrentUserContext = UserDto | null;
 
 export interface ApplicationContext {
-  application: LFBApplication<Document>,
+  application: LFBApplication<AthenaDatabase>,
 }
 
 export interface DocumentContext {
-  document: Document,
-  setDocument: (doc: Document) => void
+  document: AthenaDatabase,
+  setDocument: (doc: AthenaDatabase) => void
 }
 
 
-export const lfbApplication = new LFBApplication<Document>(initialDocument);
+export const lfbApplication = new LFBApplication<AthenaDatabase>(initialDocument);
+
 export const AthenaApplicationContext = createContext<ApplicationContext>({
   application: lfbApplication
 });
 
 export const DocumentContext = createContext<DocumentContext>({
   document: initialDocument,
-  setDocument: (doc: Document) => {}
+  setDocument: (doc: AthenaDatabase) => {}
 })
 
 export const useApplication = () => useContext(AthenaApplicationContext);

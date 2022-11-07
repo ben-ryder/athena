@@ -1,8 +1,8 @@
-import {useApplication} from "./application-context";
+import {lfbApplication, useApplication} from "./application-context";
 import {useEffect, useState} from 'react';
 import {StrictReactNode} from "../types/strict-react-node";
 import {initialDocument} from "../state/features/database/initial-document";
-import {Document} from "../state/features/database/athena-database";
+import {AthenaDatabase} from "../state/features/database/athena-database";
 
 export interface AthenaSessionManagerProps {
   children: StrictReactNode
@@ -14,13 +14,15 @@ export interface AthenaSessionManagerProps {
  */
 export function ApplicationManager(props: AthenaSessionManagerProps) {
   let { application } = useApplication();
-  let [document, setDocument] = useState<Document>(initialDocument);
+  let [document, setDocument] = useState<AthenaDatabase>(initialDocument);
 
   useEffect(() => {
     async function init() {
       await application.init();
+      await application.setupServer(import.meta.env.VITE_LFB_SERVER_URL);
       application.addUpdateListener(setDocument);
     }
+    init()
   }, [application]);
 
   return (

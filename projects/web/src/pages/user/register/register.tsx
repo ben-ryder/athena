@@ -5,6 +5,7 @@ import {LoadingPage} from "../../../patterns/pages/loading-page";
 import {useApplication} from "../../../helpers/application-context";
 import {Helmet} from "react-helmet-async";
 import {GeneralQueryStatus} from "../../../types/general-query-status";
+import {NoServerError} from "@ben-ryder/lfb-toolkit";
 
 
 export enum RegistrationStatus {
@@ -30,7 +31,12 @@ export function RegisterPage() {
         }
       }
       catch (e) {
-        console.log(e);
+        if (e instanceof NoServerError) {
+          setStatus(RegistrationStatus.DISABLED);
+        }
+        else {
+          console.log(e);
+        }
       }
     }
     checkEnabled();

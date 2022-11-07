@@ -1,0 +1,3 @@
+[submodule "projects/lfb-server"]
+	path = projects/lfb-server
+	url = git@github.com:Ben-Ryder/lfb-server.git

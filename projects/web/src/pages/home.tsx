@@ -15,7 +15,7 @@ export function HomePage() {
       </Helmet>
       <MessagePage
         heading="Athena"
-        text={<>A place for encrypted notes, list and reminders. Learn more on <Link href={routes.external.github}>GitHub</Link>.</>}
+        text={<>A place for encrypted notes and task lists. Learn more on <Link href={routes.external.github}>GitHub</Link>.</>}
         extraContent={
           <>
             <div className="flex">
