@@ -16,15 +16,8 @@ export default defineConfig({
     wasm()
   ],
   optimizeDeps: {
-    include: ["@ben-ryder/lfb-toolkit"],
-    // This is necessary because otherwise `vite dev` includes two separate
-    // versions of the JS wrapper. This causes problems because the JS
-    // wrapper has a module level variable to track JS side heap
-    // allocations, initializing this twice causes horrible breakage
     exclude: ["@automerge/automerge-wasm"]
   },
-  // This is only necessary if you are using `SharedWorker` or `WebWorker`, as
-  // documented in https://vitejs.dev/guide/features.html#import-with-constructors
   worker: {
     format: "es",
     plugins: [topLevelAwait(), wasm()]
