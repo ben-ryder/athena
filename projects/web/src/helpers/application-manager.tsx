@@ -1,4 +1,4 @@
-import {lfbApplication, useApplication} from "./application-context";
+import {useApplication} from "./application-context";
 import {useEffect, useState} from 'react';
 import {StrictReactNode} from "../types/strict-react-node";
 import {initialDocument} from "../state/features/database/initial-document";
