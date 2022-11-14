@@ -20,8 +20,8 @@ export type EntityWithoutId<T> = Omit<T, "id">
  * Notes
  */
 export interface NoteContent {
-  name: A.Text,
-  body: A.Text,
+  name: string,
+  body: string,
   tags: string[]
 }
 export interface NoteEntity extends BaseEntity, NoteContent {}

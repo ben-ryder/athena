@@ -1,6 +1,6 @@
 import { useHandleSignInCallback } from '@logto/react';
 import {useNavigate} from "react-router-dom";
-import {routes} from "../routes";
+import {routes} from "../../routes";
 
 export function Callback() {
   const navigate = useNavigate();

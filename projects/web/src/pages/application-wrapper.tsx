@@ -9,7 +9,7 @@ export interface ApplicationProps {
   children: StrictReactNode
 }
 
-export function Application(props: ApplicationProps) {
+export function ApplicationWrapper(props: ApplicationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
 
   return (
@@ -44,6 +44,8 @@ export function Application(props: ApplicationProps) {
               }
             )}
           >
+            <ContentMenu />
+
             {/** Account Menu **/}
             <div className="bg-br-atom-900 w-full h-[50px]">
               <AccountMenu />
@@ -69,7 +71,6 @@ export function AccountMenu() {
       if (isAuthenticated) {
         const claims = await getIdTokenClaims();
         const name = claims?.name || claims?.username || null;
-        console.log(claims);
         setUsername(name);
       }
     }
@@ -93,4 +94,13 @@ export function AccountMenu() {
       Sign In
     </button>
   );
+}
+
+export function ContentMenu() {
+  return (
+    <div >
+      <h2>Content</h2>
+      <a href={routes.content.notes.list}>Notes</a>
+    </div >
+  )
 }

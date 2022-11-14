@@ -16,16 +16,14 @@ export interface DocumentContext {
 }
 
 
-export const lfbApplication = new LFBApplication<AthenaDatabase>(initialDocument);
-
-export const AthenaApplicationContext = createContext<ApplicationContext>({
-  application: lfbApplication
-});
+export const application = new LFBApplication<AthenaDatabase>(
+  import.meta.env.VITE_LFB_SERVER_URL,
+  initialDocument
+);
 
 export const DocumentContext = createContext<DocumentContext>({
   document: initialDocument,
   setDocument: (doc: AthenaDatabase) => {}
 })
 
-export const useApplication = () => useContext(AthenaApplicationContext);
 export const useDocument = () => useContext(DocumentContext);

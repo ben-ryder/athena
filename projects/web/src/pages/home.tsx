@@ -10,7 +10,7 @@ export function HomePage() {
   return (
     <>
       <Helmet>
-        <title>Home | Athena</title>
+        <title>Welcome | Athena</title>
       </Helmet>
       <MessagePage
         heading="Athena"

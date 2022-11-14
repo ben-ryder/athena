@@ -10,8 +10,11 @@ import {ApplicationManager} from "./helpers/application-manager";
 import {store} from "./state/store";
 import {Provider as ReduxProvider} from "react-redux";
 import { LogtoProvider, LogtoConfig } from '@logto/react';
-import {Application} from "./pages/application";
-import {Callback} from "./pages/callback";
+import {ApplicationWrapper} from "./pages/application-wrapper";
+import {Callback} from "./pages/user/callback";
+import {NotesPage} from "./pages/notes/notes-page";
+import {NotesCreatePage} from "./pages/notes/notes-create-page";
+import {NotesEditPage} from "./pages/notes/notes-edit-page";
 
 const config: LogtoConfig = {
   endpoint: import.meta.env.VITE_LOGTO_ENDPOINT,
@@ -29,20 +32,25 @@ export function Index() {
               <meta charSet="utf-8" />
               <title>Athena</title>
             </Helmet>
-            <Application>
+            <ApplicationWrapper>
               <BrowserRouter>
                 <Routes>
                   {/* Home Route */}
                   <Route path={routes.home} element={<HomePage />} />
 
-                  {/* 404 Route */}
+                  {/* Notes Routes */}
+                  <Route path={routes.content.notes.list} element={<NotesPage />} />
+                  <Route path={routes.content.notes.create} element={<NotesCreatePage />} />
+                  <Route path={routes.content.notes.edit} element={<NotesEditPage />} />
+
+                  {/* User Login Callback Route */}
                   <Route path={routes.user.callback} element={<Callback />} />
 
                   {/* 404 Route */}
                   <Route path="*" element={<PageNotFound />} />
                 </Routes>
               </BrowserRouter>
-            </Application>
+            </ApplicationWrapper>
           </HelmetProvider>
         </ApplicationManager>
       </ReduxProvider>

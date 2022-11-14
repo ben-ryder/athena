@@ -9,13 +9,13 @@ export function PageNotFound() {
   return (
     <>
       <Helmet>
-        <title>Page Not Found | Athena</title>
+        <title>Route Not Found | Athena</title>
       </Helmet>
       <MessagePage
-        heading="Page Not Found"
-        text="The page you requested could not be found."
+        heading="Not Found"
+        text="The route requested could not be found."
         extraContent={
-          <Link href={routes.home}>Go to Homepage</Link>
+          <Link href={routes.home}>Go to Home</Link>
         }
       />
     </>

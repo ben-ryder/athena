@@ -2,7 +2,7 @@ import {createAction} from "@reduxjs/toolkit";
 import {ApplicationError} from "./errors-interface";
 
 export enum UIErrorsActions {
-  // Application Error
+  // ApplicationWrapper Error
   SET_APPLICATION_ERROR = "errors/application/set",
   CLEAR_APPLICATION_ERROR = "errors/application/clear",
 }
