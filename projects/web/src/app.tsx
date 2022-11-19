@@ -6,7 +6,7 @@ import { HomePage } from './pages/home';
 import {PageNotFound} from "./pages/page-not-found";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import {routes} from "./routes";
-import {ApplicationManager} from "./helpers/application-manager";
+import {ApplicationProvider} from "./helpers/application-context";
 import {store} from "./state/store";
 import {Provider as ReduxProvider} from "react-redux";
 import { LogtoProvider, LogtoConfig } from '@logto/react';
@@ -26,7 +26,7 @@ export function Index() {
   return (
     <LogtoProvider config={config}>
       <ReduxProvider store={store}>
-        <ApplicationManager>
+        <ApplicationProvider>
           <HelmetProvider>
             <Helmet>
               <meta charSet="utf-8" />
@@ -52,7 +52,7 @@ export function Index() {
               </BrowserRouter>
             </ApplicationWrapper>
           </HelmetProvider>
-        </ApplicationManager>
+        </ApplicationProvider>
       </ReduxProvider>
     </LogtoProvider>
   );

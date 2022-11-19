@@ -4,6 +4,7 @@ import classNames from "classnames";
 import {StrictReactNode} from "@ben-ryder/jigsaw";
 import {useLogto} from "@logto/react";
 import {routes} from "../routes";
+import {useApplication} from "../helpers/application-context";
 
 export interface ApplicationProps {
   children: StrictReactNode
@@ -63,25 +64,13 @@ export function ApplicationWrapper(props: ApplicationProps) {
 }
 
 export function AccountMenu() {
-  const [username, setUsername] = useState<string|null>(null);
-  const { signIn, isAuthenticated, signOut, getIdTokenClaims } = useLogto();
+  const { userDetails } = useApplication();
+  const {signOut, signIn} = useLogto();
 
-  useEffect(() => {
-    async function getUsername() {
-      if (isAuthenticated) {
-        const claims = await getIdTokenClaims();
-        const name = claims?.name || claims?.username || null;
-        setUsername(name);
-      }
-    }
-    getUsername();
-  }, [isAuthenticated, getIdTokenClaims])
-
-  if (isAuthenticated) {
-
+  if (userDetails) {
     return (
       <>
-        <p className="text-br-whiteGrey-100">{username ? username : "Signed In"}</p>
+        <p className="text-br-whiteGrey-100">{userDetails.name}</p>
         <button className="text-br-whiteGrey-100" onClick={() => signOut(window.location.origin)}>
           Sign out
         </button>

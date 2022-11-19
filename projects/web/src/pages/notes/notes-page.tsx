@@ -1,11 +1,11 @@
-import {useDocument} from "../../helpers/application-context";
+import {useApplication} from "../../helpers/application-context";
 import {useMemo} from "react";
 import {replaceParam, routes} from "../../routes";
 import {LinkButton} from "@ben-ryder/jigsaw";
 
 
 export function NotesPage() {
-  const {document} = useDocument();
+  const {document} = useApplication();
 
   const notes = useMemo(() => {
     return document.notes.ids.map(id => document.notes.entities[id])

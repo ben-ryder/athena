@@ -1,6 +1,6 @@
 import {NoteEditor} from "./note-editor";
 import {NoteContent, NoteEntity} from "../../state/features/database/athena-database";
-import {application, useDocument} from "../../helpers/application-context";
+import {useApplication} from "../../helpers/application-context";
 import {useNavigate, useParams} from "react-router-dom";
 import {routes} from "../../routes";
 import {useEffect, useState} from "react";
@@ -10,13 +10,16 @@ import {Button} from "@ben-ryder/jigsaw";
 export function NotesEditPage() {
   const navigate = useNavigate();
   const params = useParams();
+  const {makeChange, document} = useApplication();
 
-  const {document} = useDocument();
   const [note, setNote] = useState<NoteEntity|null>();
   const [error, setError] = useState<string|null>();
 
 
   useEffect(() => {
+    // Reset error
+    setError(null);
+
     if (!params.noteId) {
       return navigate(routes.content.notes.list);
     }
@@ -24,9 +27,11 @@ export function NotesEditPage() {
     const note = document.notes.entities[params.noteId];
     if (!note) {
       setError("The note could not be found");
+      setNote(null);
     }
-
-    setNote(note);
+    else {
+      setNote(note);
+    }
   }, [document, setNote]);
 
   async function onSave(updatedNote: NoteContent) {
@@ -34,7 +39,7 @@ export function NotesEditPage() {
       return setError("Tried to save a note that isn't loaded yet.")
     }
 
-    await application.makeChange((doc) => {
+    await makeChange((doc) => {
       // check old values so we only change what's needed
       // todo: assumption that automerge will register change even if new value is the same?
       if (doc.notes.entities[note.id].name !== updatedNote.name) {
@@ -58,7 +63,7 @@ export function NotesEditPage() {
       return setError("Tried to delete a note that isn't loaded yet.")
     }
 
-    await application.makeChange((doc) => {
+    await makeChange((doc) => {
       doc.notes.ids = doc.notes.ids.filter(id => id !== note.id);
       delete doc.notes.entities[note.id];
     });
