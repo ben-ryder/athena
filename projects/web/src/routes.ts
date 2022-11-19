@@ -2,14 +2,23 @@ export const routes = {
   home: "/",
   content: {
     notes: {
-      list: "/notes",
       create: "/notes/new",
+      list: "/notes",
       edit: "/notes/:noteId",
+    },
+    tasks: {
+      create: "/tasks/new",
+      list: "/tasks",
+      edit: "/tasks/:taskId",
+    },
+    views: {
+      create: "/views/new",
+      view: "/views/:viewId",
+      edit: "/views/:viewId/edit",
     }
   },
   user: {
-    callback: "/user/callback",
-    logout: "/user/logout"
+    callback: "/user/callback"
   },
   external: {
     github: "https://github.com/Ben-Ryder/athena",

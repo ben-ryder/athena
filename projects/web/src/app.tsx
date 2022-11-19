@@ -10,7 +10,7 @@ import {ApplicationProvider} from "./helpers/application-context";
 import {store} from "./state/store";
 import {Provider as ReduxProvider} from "react-redux";
 import { LogtoProvider, LogtoConfig } from '@logto/react';
-import {ApplicationWrapper} from "./pages/application-wrapper";
+import {GlobalLayout} from "./pages/global-layout";
 import {Callback} from "./pages/user/callback";
 import {NotesPage} from "./pages/notes/notes-page";
 import {NotesCreatePage} from "./pages/notes/notes-create-page";
@@ -26,33 +26,33 @@ export function Index() {
   return (
     <LogtoProvider config={config}>
       <ReduxProvider store={store}>
-        <ApplicationProvider>
+        <BrowserRouter>
+          <ApplicationProvider>
           <HelmetProvider>
             <Helmet>
               <meta charSet="utf-8" />
               <title>Athena</title>
             </Helmet>
-            <ApplicationWrapper>
-              <BrowserRouter>
-                <Routes>
-                  {/* Home Route */}
-                  <Route path={routes.home} element={<HomePage />} />
+            <GlobalLayout>
+              <Routes>
+                {/* Home Route */}
+                <Route path={routes.home} element={<HomePage />} />
 
-                  {/* Notes Routes */}
-                  <Route path={routes.content.notes.list} element={<NotesPage />} />
-                  <Route path={routes.content.notes.create} element={<NotesCreatePage />} />
-                  <Route path={routes.content.notes.edit} element={<NotesEditPage />} />
+                {/* Notes Routes */}
+                <Route path={routes.content.notes.list} element={<NotesPage />} />
+                <Route path={routes.content.notes.create} element={<NotesCreatePage />} />
+                <Route path={routes.content.notes.edit} element={<NotesEditPage />} />
 
-                  {/* User Login Callback Route */}
-                  <Route path={routes.user.callback} element={<Callback />} />
+                {/* User Login Callback Route */}
+                <Route path={routes.user.callback} element={<Callback />} />
 
-                  {/* 404 Route */}
-                  <Route path="*" element={<PageNotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </ApplicationWrapper>
+                {/* 404 Route */}
+                <Route path="*" element={<PageNotFound />} />
+              </Routes>
+            </GlobalLayout>
           </HelmetProvider>
         </ApplicationProvider>
+        </BrowserRouter>
       </ReduxProvider>
     </LogtoProvider>
   );

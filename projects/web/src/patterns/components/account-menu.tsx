@@ -1,35 +1,24 @@
-import {UserDto} from "@ben-ryder/lfb-common";
 import { Popover } from "@headlessui/react";
 import {User as AccountIcon} from "lucide-react";
 import React from "react";
 import {routes} from "../../routes";
-
-export interface AccountIndicatorProps {
-  user: UserDto
-}
+import {useApplication} from "../../helpers/application-context";
+import {useLogto} from "@logto/react";
 
 
-export function AccountMenu(props: AccountIndicatorProps) {
-  const links = [
-    {
-      text: "Settings",
-      href: routes.users.settings,
-    },
-    {
-      text: "Log Out",
-      href: routes.users.logout,
-    }
-  ];
+export function AccountMenu() {
+  const {userDetails} = useApplication();
+  const {signOut, signIn} = useLogto();
 
   return (
-    <Popover>
+    <Popover className="h-full">
       <Popover.Button
-        className="flex text-br-whiteGrey-100 hover:bg-br-atom-900 focus:bg-br-atom-900 focus:outline-none p-4"
+        className="w-full h-full flex justify-center items-center text-br-whiteGrey-100 hover:bg-br-atom-700 focus:bg-br-atom-700 focus:outline-none"
       >
-        <p className="font-bold">{props.user.username}</p>
-        <div className="flex items-center border-2 rounded-[50%] ml-2">
+        <div className="flex items-center border-2 rounded-[50%] mr-3">
           <AccountIcon size={20} />
         </div>
+        <p className="font-bold">{userDetails?.name || "My Account"}</p>
       </Popover.Button>
 
       <Popover.Panel
@@ -37,9 +26,22 @@ export function AccountMenu(props: AccountIndicatorProps) {
       >
         <nav className="text-br-whiteGrey-100 text-sm">
           <ul>
-            {links.map(link =>
-              <li key={link.href}><a className="block w-full p-2 text-center bg-br-atom-600 hover:bg-br-atom-500" href={link.href}>{link.text}</a></li>
-            )}
+            <li>
+              <button
+                className="block w-full p-2 text-center bg-br-atom-600 hover:bg-br-atom-500"
+                onClick={() => signOut(window.location.origin)}
+              >
+                Sign Out
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full p-2 text-center bg-br-atom-600 hover:bg-br-atom-500"
+                onClick={() => signIn(window.location.origin + routes.user.callback)}
+              >
+                Sign In
+              </button>
+            </li>
           </ul>
         </nav>
       </Popover.Panel>
