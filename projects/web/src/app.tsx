@@ -13,8 +13,12 @@ import { LogtoProvider, LogtoConfig } from '@logto/react';
 import {GlobalLayout} from "./pages/global-layout";
 import {Callback} from "./pages/user/callback";
 import {NotesPage} from "./pages/notes/notes-page";
-import {NotesCreatePage} from "./pages/notes/notes-create-page";
-import {NotesEditPage} from "./pages/notes/notes-edit-page";
+import {CreateNotePage} from "./pages/notes/create-note-page";
+import {EditNotePage} from "./pages/notes/edit-note-page";
+import {TasksPage} from "./pages/tasks/tasks-page";
+import {CreateTaskListPage} from "./pages/tasks/create-task-page";
+import {EditTaskListPage} from "./pages/tasks/edit-task-page";
+import {ViewTaskListPage} from "./pages/tasks/view-task-page";
 
 const config: LogtoConfig = {
   endpoint: import.meta.env.VITE_LOGTO_ENDPOINT,
@@ -40,8 +44,14 @@ export function Index() {
 
                 {/* Notes Routes */}
                 <Route path={routes.content.notes.list} element={<NotesPage />} />
-                <Route path={routes.content.notes.create} element={<NotesCreatePage />} />
-                <Route path={routes.content.notes.edit} element={<NotesEditPage />} />
+                <Route path={routes.content.notes.create} element={<CreateNotePage />} />
+                <Route path={routes.content.notes.edit} element={<EditNotePage />} />
+
+                {/* Task List Routes */}
+                <Route path={routes.content.tasks.list} element={<TasksPage />} />
+                <Route path={routes.content.tasks.create} element={<CreateTaskListPage />} />
+                <Route path={routes.content.tasks.edit} element={<EditTaskListPage />} />
+                <Route path={routes.content.tasks.view} element={<ViewTaskListPage />} />
 
                 {/* User Login Callback Route */}
                 <Route path={routes.user.callback} element={<Callback />} />

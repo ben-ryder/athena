@@ -3,11 +3,11 @@ import {NoteContent, NoteEntity} from "../../state/features/database/athena-data
 import {useApplication} from "../../helpers/application-context";
 import {useNavigate, useParams} from "react-router-dom";
 import {routes} from "../../routes";
-import {useEffect, useState} from "react";
-import {Button} from "@ben-ryder/jigsaw";
+import React, {useEffect, useState} from "react";
+import {Helmet} from "react-helmet-async";
 
 
-export function NotesEditPage() {
+export function EditNotePage() {
   const navigate = useNavigate();
   const params = useParams();
   const {makeChange, document} = useApplication();
@@ -40,6 +40,8 @@ export function NotesEditPage() {
     }
 
     await makeChange((doc) => {
+      const timestamp = new Date().toISOString();
+
       // check old values so we only change what's needed
       // todo: assumption that automerge will register change even if new value is the same?
       if (doc.notes.entities[note.id].name !== updatedNote.name) {
@@ -53,6 +55,8 @@ export function NotesEditPage() {
       if (doc.notes.entities[note.id].tags !== updatedNote.tags) {
         doc.notes.entities[note.id].tags = updatedNote.tags;
       }
+
+      doc.notes.entities[note.id].updatedAt = timestamp;
     });
 
     navigate(routes.content.notes.list);
@@ -72,12 +76,15 @@ export function NotesEditPage() {
   }
 
   if (error) {
-    return <p className="text-br-red-500">{error}</p>
+    return <p className="text-br-red-500 text-center">{error}</p>
   }
 
   if (note) {
     return (
-      <div>
+      <>
+        <Helmet>
+          <title>{`${note.name} | Notes | Athena`}</title>
+        </Helmet>
         <NoteEditor
           noteContent={{
             name: note.name,
@@ -87,7 +94,7 @@ export function NotesEditPage() {
           onSave={onSave}
           onDelete={onDelete}
         />
-      </div>
+      </>
     )
   }
 

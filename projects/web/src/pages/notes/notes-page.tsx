@@ -1,8 +1,9 @@
 import {useApplication} from "../../helpers/application-context";
-import {useMemo} from "react";
+import React, {useMemo} from "react";
 import {replaceParam, routes} from "../../routes";
 import {LinkButton} from "@ben-ryder/jigsaw";
 import {Link} from "react-router-dom";
+import {Helmet} from "react-helmet-async";
 
 
 export function NotesPage() {
@@ -14,12 +15,15 @@ export function NotesPage() {
 
   return (
     <>
+      <Helmet>
+        <title>Notes | Athena</title>
+      </Helmet>
       <div className="max-w-4xl mx-auto px-4 m-3 flex items-center justify-between">
-        <h1 className="text-3xl text-br-whiteGrey-100 text-br-teal-600 font-bold">All Notes</h1>
+        <h1 className="text-3xl text-br-whiteGrey-100 text-br-teal-600 font-bold">Notes</h1>
         <LinkButton className="inline-block" href={routes.content.notes.create}>New Note</LinkButton>
       </div>
 
-      {notes.length === 0 && <p>no notes found</p>}
+      {notes.length === 0 && <p className="text-center text-br-whiteGrey-100 mt-4">no notes found</p>}
 
       <div className="max-w-4xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {notes.map(note =>

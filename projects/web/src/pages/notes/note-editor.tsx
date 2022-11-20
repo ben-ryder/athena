@@ -12,7 +12,6 @@ export interface NoteEditorProps {
   onDelete?: () => void
 }
 
-
 export function NoteEditor(props: NoteEditorProps) {
   const [error, setError] = useState<string|null>(null);
   const [name, setName] = useState<string>(props.noteContent.name);

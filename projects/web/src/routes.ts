@@ -9,15 +9,24 @@ export const routes = {
     tasks: {
       create: "/tasks/new",
       list: "/tasks",
-      edit: "/tasks/:id",
+      edit: "/tasks/:id/edit",
+      view: "/tasks/:id"
     },
     reminders: {
       create: "/reminders/new",
       list: "/reminders",
       edit: "/reminders/:id",
+    }
+  },
+  organisation: {
+    tags: {
+      create: "/tags/new",
+      list: "/tags",
+      edit: "/tags/:id/edit",
     },
     views: {
       create: "/views/new",
+      list: "/views",
       view: "/views/:id",
       edit: "/views/:id/edit",
     }

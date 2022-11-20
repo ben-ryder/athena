@@ -4,14 +4,18 @@ import {v4 as createUUID} from "uuid";
 import {useApplication} from "../../helpers/application-context";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../routes";
+import {Helmet} from "react-helmet-async";
+import React from "react";
 
 
-export function NotesCreatePage() {
+export function CreateNotePage() {
   const navigate = useNavigate();
   const {makeChange} = useApplication();
 
   async function onSave(newNote: NoteContent) {
     const id = createUUID();
+    const timestamp = new Date().toISOString();
+
     await makeChange((doc) => {
       doc.notes.ids.push(id);
       doc.notes.entities[id] = {
@@ -19,8 +23,8 @@ export function NotesCreatePage() {
         name: newNote.name,
         body: newNote.body,
         tags: newNote.tags,
-        createdAt: Date.now().toString(),
-        updatedAt: Date.now().toString()
+        createdAt: timestamp,
+        updatedAt: timestamp
       }
     });
 
@@ -28,9 +32,14 @@ export function NotesCreatePage() {
   }
 
   return (
-    <NoteEditor
-      noteContent={{name: "", body: "", tags: []}}
-      onSave={onSave}
-    />
+    <>
+      <Helmet>
+        <title>Create Note | Athena</title>
+      </Helmet>
+      <NoteEditor
+        noteContent={{name: "", body: "", tags: []}}
+        onSave={onSave}
+      />
+    </>
   )
 }

@@ -11,10 +11,11 @@ import {
   Github as GitHubIcon,
   File as NotesIcon,
   ListChecks as TasksIcon,
-  LayoutGrid as ContentIcon,
-  Plus as AddViewIcon,
+  HelpCircle as HelpIcon,
+  Home as HomeIcon,
   AlarmClock as RemindersIcon,
-  Calendar as CalendarIcon
+  Tag as TagsIcon,
+  Filter as ViewsIcon
 } from "lucide-react";
 
 export interface ApplicationProps {
@@ -124,23 +125,22 @@ export function ContentMenu() {
   return (
     <div className="p-4">
       <div className="mb-6">
+        <ContentMenuLink icon={<HomeIcon />} link={routes.home} label="Home" />
+      </div>
+
+      <div className="mb-6">
         <h2 className="font-bold border-b-2 border-br-blueGrey-700 py-1 text-br-whiteGrey-100">Content</h2>
         <div className="mt-1">
-          <ContentMenuLink icon={<ContentIcon />} link={routes.home} label="All" />
           <ContentMenuLink icon={<NotesIcon />} link={routes.content.notes.list} label="Notes" />
           <ContentMenuLink icon={<TasksIcon />} link={routes.content.tasks.list} label="Task Lists" />
           <ContentMenuLink icon={<RemindersIcon />} link={routes.content.reminders.list} label="Reminders" />
         </div>
       </div>
       <div className="mb-6">
-        <div className="flex items-center justify-between border-b-2 border-br-blueGrey-700">
-          <h2 className="font-bold text-br-whiteGrey-100 py-1">Views</h2>
-          <Link to={routes.content.views.create} aria-label="Add New View">
-            <AddViewIcon className={iconColorClassNames.secondary} size={iconSizes.small} />
-          </Link>
-        </div>
+        <h2 className="font-bold border-b-2 border-br-blueGrey-700 py-1 text-br-whiteGrey-100">Organisation</h2>
         <div className="mt-1">
-          <p className="text-br-red-500">views go here...</p>
+          <ContentMenuLink icon={<ViewsIcon />} link={routes.organisation.views.list} label="Views" />
+          <ContentMenuLink icon={<TagsIcon />} link={routes.organisation.tags.list} label="Tags" />
         </div>
       </div>
       <div className="mb-6">
@@ -151,8 +151,9 @@ export function ContentMenu() {
         </div>
       </div>
       <div className="mb-6">
-        <h2 className="font-bold text-br-whiteGrey-100 border-b-2 border-br-blueGrey-700 py-1">Links</h2>
+        <h2 className="font-bold text-br-whiteGrey-100 border-b-2 border-br-blueGrey-700 py-1">Other</h2>
         <div className="mt-1">
+          <ContentMenuLink icon={<HelpIcon />} link={routes.external.github} label="Help" />
           <ContentMenuLink icon={<GitHubIcon />} link={routes.external.github} label="GitHub" />
         </div>
       </div>
