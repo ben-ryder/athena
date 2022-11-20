@@ -78,7 +78,6 @@ export function NotesEditPage() {
   if (note) {
     return (
       <div>
-        <Button styling="destructive" onClick={onDelete}>Delete</Button>
         <NoteEditor
           noteContent={{
             name: note.name,
@@ -86,6 +85,7 @@ export function NotesEditPage() {
             tags: note.tags
           }}
           onSave={onSave}
+          onDelete={onDelete}
         />
       </div>
     )

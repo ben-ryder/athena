@@ -62,7 +62,7 @@ export function GlobalLayout(props: ApplicationProps) {
         </div>
 
         {/** SECTION - Main Area **/}
-        <div className="bg-br-atom-700 w-[100vw] h-[100vh] md:w-[calc(100vw-300px)]">
+        <div className="bg-br-atom-700 w-[100vw] h-[100vh] md:w-[calc(100vw-300px)] pt-[50px] md:pt-0">
           {props.children}
         </div>
       </main>
@@ -79,10 +79,13 @@ export interface ContentMenuLinkProps {
 export function ContentMenuLink(props: ContentMenuLinkProps) {
   const {pathname} = useLocation();
 
+  // Specially handle the root path as it should only be active when matched exactly.
+  const isActive = (props.link === "/" && pathname === "/") || (props.link !== "/" && pathname.startsWith(props.link));
+
   const icon = cloneElement(props.icon, {
     className: classNames("mr-3", {
-      "text-br-whiteGrey-100": pathname === props.link,
-      "text-br-teal-600": pathname !== props.link
+      "text-br-whiteGrey-100": isActive,
+      "text-br-teal-600": !isActive
     }),
     size: iconSizes.small}
   );
@@ -90,8 +93,8 @@ export function ContentMenuLink(props: ContentMenuLinkProps) {
   const className = classNames(
     "flex items-center text-br-whiteGrey-100 py-2 px-4",
     {
-      "bg-br-teal-700 font-bold": pathname === props.link,
-      "hover:bg-br-atom-600": pathname !== props.link
+      "bg-br-teal-700 font-bold": isActive,
+      "hover:bg-br-atom-600": !isActive
     }
   );
 
@@ -107,24 +110,23 @@ export function ContentMenuLink(props: ContentMenuLinkProps) {
       </a>
     )
   }
-  else {
-    return (
-      <Link
-        to={props.link}
-        className={className}
-      >
-        {icon}
-        {props.label}
-      </Link>
-    )
-  }
+
+  return (
+    <Link
+      to={props.link}
+      className={className}
+    >
+      {icon}
+      {props.label}
+    </Link>
+  )
 }
 
 export function ContentMenu() {
   return (
     <div className="p-4">
       <div className="mb-6">
-        <h2 className="font-bold border-b-2 border-br-blueGrey-700 py-1 text-br-whiteGrey-100">All Content</h2>
+        <h2 className="font-bold border-b-2 border-br-blueGrey-700 py-1 text-br-whiteGrey-100">Content</h2>
         <div className="mt-1">
           <ContentMenuLink icon={<ContentIcon />} link={routes.home} label="All" />
           <ContentMenuLink icon={<NotesIcon />} link={routes.content.notes.list} label="Notes" />

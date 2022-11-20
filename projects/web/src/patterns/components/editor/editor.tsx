@@ -14,7 +14,7 @@ export interface EditorProps {
 
 export function Editor(props: EditorProps) {
   return (
-    <div className="max-h-full p-4 overflow-y-scroll">
+    <div className="max-h-full py-4 overflow-y-scroll">
       <CodeMirror
         value={props.value}
         onChange={(value) => {
