@@ -12,7 +12,9 @@ import {
   File as NotesIcon,
   ListChecks as TasksIcon,
   LayoutGrid as ContentIcon,
-  Plus as AddViewIcon
+  Plus as AddViewIcon,
+  AlarmClock as RemindersIcon,
+  Calendar as CalendarIcon
 } from "lucide-react";
 
 export interface ApplicationProps {
@@ -83,18 +85,14 @@ export function ContentMenuLink(props: ContentMenuLinkProps) {
   const isActive = (props.link === "/" && pathname === "/") || (props.link !== "/" && pathname.startsWith(props.link));
 
   const icon = cloneElement(props.icon, {
-    className: classNames("mr-3", {
-      "text-br-whiteGrey-100": isActive,
-      "text-br-teal-600": !isActive
-    }),
-    size: iconSizes.small}
-  );
+    className: "mr-3 text-br-teal-600 ",
+    size: iconSizes.small
+  });
 
   const className = classNames(
-    "flex items-center text-br-whiteGrey-100 py-2 px-4",
+    "flex items-center text-br-whiteGrey-100 py-2 px-4 hover:bg-br-atom-600",
     {
-      "bg-br-teal-700 font-bold": isActive,
-      "hover:bg-br-atom-600": !isActive
+      "bg-br-atom-700  font-bold": isActive
     }
   );
 
@@ -130,7 +128,8 @@ export function ContentMenu() {
         <div className="mt-1">
           <ContentMenuLink icon={<ContentIcon />} link={routes.home} label="All" />
           <ContentMenuLink icon={<NotesIcon />} link={routes.content.notes.list} label="Notes" />
-          <ContentMenuLink icon={<TasksIcon />} link={routes.content.tasks.list} label="Tasks" />
+          <ContentMenuLink icon={<TasksIcon />} link={routes.content.tasks.list} label="Task Lists" />
+          <ContentMenuLink icon={<RemindersIcon />} link={routes.content.reminders.list} label="Reminders" />
         </div>
       </div>
       <div className="mb-6">
@@ -142,6 +141,13 @@ export function ContentMenu() {
         </div>
         <div className="mt-1">
           <p className="text-br-red-500">views go here...</p>
+        </div>
+      </div>
+      <div className="mb-6">
+        <h2 className="font-bold border-b-2 border-br-blueGrey-700 py-1 text-br-whiteGrey-100">Templates</h2>
+        <div className="mt-1">
+          <ContentMenuLink icon={<NotesIcon />} link={routes.templates.notes.list} label="Note Templates" />
+          <ContentMenuLink icon={<TasksIcon />} link={routes.templates.tasks.list} label="Task List Templates" />
         </div>
       </div>
       <div className="mb-6">

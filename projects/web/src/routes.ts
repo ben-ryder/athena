@@ -4,17 +4,34 @@ export const routes = {
     notes: {
       create: "/notes/new",
       list: "/notes",
-      edit: "/notes/:noteId",
+      edit: "/notes/:id",
     },
     tasks: {
       create: "/tasks/new",
       list: "/tasks",
-      edit: "/tasks/:taskId",
+      edit: "/tasks/:id",
+    },
+    reminders: {
+      create: "/reminders/new",
+      list: "/reminders",
+      edit: "/reminders/:id",
     },
     views: {
       create: "/views/new",
-      view: "/views/:viewId",
-      edit: "/views/:viewId/edit",
+      view: "/views/:id",
+      edit: "/views/:id/edit",
+    }
+  },
+  templates: {
+    notes: {
+      create: "/templates/notes/new",
+      list: "/templates/notes",
+      edit: "/templates/notes/:id",
+    },
+    tasks: {
+      create: "/templates/tasks/new",
+      list: "/templates/tasks",
+      edit: "/templates/tasks/:id",
     }
   },
   user: {

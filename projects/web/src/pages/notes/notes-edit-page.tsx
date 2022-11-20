@@ -20,11 +20,11 @@ export function NotesEditPage() {
     // Reset error
     setError(null);
 
-    if (!params.noteId) {
+    if (!params.id) {
       return navigate(routes.content.notes.list);
     }
 
-    const note = document.notes.entities[params.noteId];
+    const note = document.notes.entities[params.id];
     if (!note) {
       setError("The note could not be found");
       setNote(null);
