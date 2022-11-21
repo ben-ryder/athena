@@ -29,7 +29,7 @@ export function TaskListForm(props: TaskListFormProps) {
 
   return (
     <div className="max-w-4xl mx-auto mt-4 px-4">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-6 mb-10">
         <ArrowLink direction="left" link={routes.content.tasks.list}>Task Lists</ArrowLink>
       </div>
 

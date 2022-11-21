@@ -45,15 +45,15 @@ export function ViewTaskListPage() {
         <Helmet>
           <title>{taskList.name} | Task List | Athena</title>
         </Helmet>
-        <div className="max-w-4xl mx-auto mt-4 px-4">
+        <div className="max-w-4xl mx-auto mt-6 mb-10 px-4">
           <div className="flex justify-between items-center">
             <ArrowLink direction="left" link={routes.content.tasks.list}>Task Lists</ArrowLink>
             <LinkButton className="inline-block" href={replaceParam(routes.content.tasks.edit, ":id", taskList.id)}>Edit Task List</LinkButton>
           </div>
         </div>
-        <div className="mt-6">
-          <h1 className="text-center text-3xl text-br-whiteGrey-100 text-br-teal-600 font-bold">{taskList.name}</h1>
-          <div className="mt-2">
+        <div className="max-w-2xl mx-auto mt-6 px-4">
+          <h1 className="text-3xl text-br-whiteGrey-100 text-br-teal-600 font-bold">{taskList.name}</h1>
+          <div className="mt-4g">
             <TaskListEditor taskList={taskList} />
           </div>
         </div>

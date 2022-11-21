@@ -91,7 +91,7 @@ export function TaskListEditor(props: TaskListEditorProps) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4">
+    <div className="max-w-2xl mx-auto">
       <div className="my-2">
         <NewTaskForm taskList={props.taskList} />
       </div>

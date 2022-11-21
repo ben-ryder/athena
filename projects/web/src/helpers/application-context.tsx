@@ -89,7 +89,7 @@ export function ApplicationProvider(props: ApplicationProviderProps) {
       const claims = await getIdTokenClaims();
       if (claims) {
         const id = claims.sub;
-        const name = claims.name || claims.username || "Logged In";
+        const name = claims.name || claims.username || claims.email || "Logged In";
         setUserDetails({id, name});
       }
     }
@@ -146,7 +146,7 @@ export function ApplicationProvider(props: ApplicationProviderProps) {
     const accessToken = await getAccessToken();
 
     const localIds = await localStore.loadAllChangeIds();
-    const serverIds = await axios({
+    const serverIds = await axios<string[]>({
       method: "GET",
       url: `${SERVER_URL}/v1/${userDetails.id}/changes/ids`,
       headers: {

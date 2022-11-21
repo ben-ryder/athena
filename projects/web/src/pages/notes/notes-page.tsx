@@ -18,7 +18,7 @@ export function NotesPage() {
       <Helmet>
         <title>Notes | Athena</title>
       </Helmet>
-      <div className="max-w-4xl mx-auto px-4 m-3 flex items-center justify-between">
+      <div className="max-w-4xl mx-auto px-4 mt-6 mb-10 flex items-center justify-between">
         <h1 className="text-3xl text-br-whiteGrey-100 text-br-teal-600 font-bold">Notes</h1>
         <LinkButton className="inline-block" href={routes.content.notes.create}>New Note</LinkButton>
       </div>
