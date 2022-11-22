@@ -1,12 +1,11 @@
 # Athena
-A local-first app for notes, tasks and reminders.  
+Your encrypted and local-first second brain.
 
 - Core Features:
-  - Create notes, tasks lists and reminders.
-  - Create note templates to easily reuse common note structures.
-  - Organise your content with folders and tags.
+  - Create notes, tasks lists, drawings and reminders.
+  - Create templates to easily reuse common content structures.
+  - Organise your content with tags and create 'views' to save 
   - Markdown based notes.
-  - Use vaults to organise your data where each vault is its own collection of notes, tasks, folders etc.
 - Online Features:
   - **Cloud Storage** - Sync your data to the cloud so you have access from anywhere.
   - **Cross Device Sync** - Sync your data across unlimited devices. The app will automatically fix conflicts if multiple devices edit the same file simultaneously too!
@@ -27,7 +26,7 @@ This is a monorepo containing all projects related to Athena:
 
 ## Contributions
 This project is open source, not open contribution.  
-This is a personal project currently so while your more than welcome to try it out and even raise bug reports and similar
+This is a personal project currently so while your more than welcome to try it out and raise bug reports and similar
 I'm not interested in external code contributions or feature requests right now.
 
 ## License

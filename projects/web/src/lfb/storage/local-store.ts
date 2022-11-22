@@ -1,6 +1,6 @@
 import {db} from "./db";
-import {ChangeDto} from "@ben-ryder/lfb-common";
-import {UserProfile} from "../common/user-profile";
+import {ChangeDto, ProfileDto} from "@ben-ryder/lfb-common";
+
 
 export class LocalStore {
     USER_PROFILE_STORAGE_KEY = 'userProfile';
@@ -50,14 +50,14 @@ export class LocalStore {
         return localStorage.removeItem(this.USER_ID_STORAGE_KEY);
     }
 
-    async loadUserProfile(): Promise<UserProfile|null> {
+    async loadUserProfile(): Promise<ProfileDto<any>|null> {
         const raw = localStorage.getItem(this.USER_PROFILE_STORAGE_KEY);
         if (raw) {
             try {
                 const loaded = JSON.parse(raw);
 
                 if (loaded.encryptionSecret !== null) {
-                    return loaded as UserProfile;
+                    return loaded as ProfileDto<any>;
                 }
             }
             catch (e) {}
@@ -67,7 +67,7 @@ export class LocalStore {
         await this.deleteUserProfile();
         return null;
     }
-    async saveUserProfile(userProfile: UserProfile) {
+    async saveUserProfile(userProfile: ProfileDto<any>) {
         localStorage.setItem(this.USER_PROFILE_STORAGE_KEY, JSON.stringify(userProfile));
     }
     async deleteUserProfile() {
