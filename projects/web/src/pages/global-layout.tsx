@@ -18,6 +18,7 @@ import {
   Filter as ViewsIcon,
   Pencil as DrawingIcon
 } from "lucide-react";
+import {useApplication} from "../helpers/application-context";
 
 export interface ApplicationProps {
   children: StrictReactNode
@@ -123,9 +124,19 @@ export function ContentMenuLink(props: ContentMenuLinkProps) {
 }
 
 export function ContentMenu() {
+  const {online, setOnline} = useApplication();
+
   return (
     <div className="p-4">
       <div className="mb-6">
+        <button
+          className={classNames("w-full font-bold py-1 text-center", {
+            "text-br-green-700": online,
+            "text-br-red-600": !online
+          })}
+          onClick={() => {setOnline(!online)}}>
+          {online ? "Online" : "Offline"}
+        </button>
         <ContentMenuLink icon={<HomeIcon />} link={routes.home} label="Home" />
       </div>
 
@@ -171,7 +182,7 @@ export interface SidebarHeaderProps {
 
 export function SidebarHeader(props: SidebarHeaderProps) {
   return (
-    <div className="flex justify-between items-center h-full px-2">
+    <div className="flex justify-between items-center h-full px-3">
       <Link to={routes.home} className="flex items-center">
         <i className="block w-7 h-7 rounded-full bg-br-teal-600"></i>
         <p className="ml-2 font-bold text-br-whiteGrey-100">Athena</p>

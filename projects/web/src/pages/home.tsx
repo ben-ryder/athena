@@ -14,7 +14,7 @@ export function HomePage() {
       </Helmet>
       <MessagePage
         heading="Athena"
-        text={<>A place for encrypted notes and task lists. Learn more on <Link href={routes.external.github}>GitHub</Link>.</>}
+        text={<>Your encrypted and local-first second brain. Learn more on <Link href={routes.external.github}>GitHub</Link>.</>}
         extraContent={<></>}
       />
     </>
