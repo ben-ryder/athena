@@ -36,7 +36,7 @@ export function Editor(props: EditorProps) {
           highlightSelectionMatches: false
         }}
         className="h-full overflow-y-scroll text-base"
-        placeholder="start typing your note..."
+        placeholder="start typing your markdown note..."
       />
     </div>
   );

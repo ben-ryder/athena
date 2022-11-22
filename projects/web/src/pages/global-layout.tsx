@@ -15,7 +15,8 @@ import {
   Home as HomeIcon,
   AlarmClock as RemindersIcon,
   Tag as TagsIcon,
-  Filter as ViewsIcon
+  Filter as ViewsIcon,
+  Pencil as DrawingIcon
 } from "lucide-react";
 
 export interface ApplicationProps {
@@ -87,11 +88,11 @@ export function ContentMenuLink(props: ContentMenuLinkProps) {
 
   const icon = cloneElement(props.icon, {
     className: "mr-3 text-br-teal-600 ",
-    size: iconSizes.small
+    size: iconSizes.extraSmall
   });
 
   const className = classNames(
-    "flex items-center text-br-whiteGrey-100 py-2 px-4 hover:bg-br-atom-600",
+    "text-sm flex items-center text-br-whiteGrey-100 py-1.5 px-4 hover:bg-br-atom-600",
     {
       "bg-br-atom-700  font-bold": isActive
     }
@@ -133,6 +134,7 @@ export function ContentMenu() {
         <div className="mt-1">
           <ContentMenuLink icon={<NotesIcon />} link={routes.content.notes.list} label="Notes" />
           <ContentMenuLink icon={<TasksIcon />} link={routes.content.tasks.list} label="Task Lists" />
+          <ContentMenuLink icon={<DrawingIcon />} link={routes.content.drawings.list} label="Drawings" />
           <ContentMenuLink icon={<RemindersIcon />} link={routes.content.reminders.list} label="Reminders" />
         </div>
       </div>
@@ -148,6 +150,7 @@ export function ContentMenu() {
         <div className="mt-1">
           <ContentMenuLink icon={<NotesIcon />} link={routes.templates.notes.list} label="Note Templates" />
           <ContentMenuLink icon={<TasksIcon />} link={routes.templates.tasks.list} label="Task List Templates" />
+          <ContentMenuLink icon={<DrawingIcon />} link={routes.templates.drawings.list} label="Drawing Templates" />
         </div>
       </div>
       <div className="mb-6">
