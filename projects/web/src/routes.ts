@@ -16,6 +16,11 @@ export const routes = {
       create: "/reminders/new",
       list: "/reminders",
       edit: "/reminders/:id",
+    },
+    drawings: {
+      create: "/drawings/new",
+      list: "/drawings",
+      edit: "/drawings/:id",
     }
   },
   organisation: {
@@ -41,6 +46,11 @@ export const routes = {
       create: "/templates/tasks/new",
       list: "/templates/tasks",
       edit: "/templates/tasks/:id",
+    },
+    drawings: {
+      create: "/templates/drawings/new",
+      list: "/templates/drawings",
+      edit: "/templates/drawings/:id",
     }
   },
   user: {
