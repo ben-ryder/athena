@@ -1,10 +1,10 @@
 import {useState} from "react";
 import {Editor} from "../../patterns/components/editor/editor";
-import {Button} from "@ben-ryder/jigsaw";
+import {Button, ArrowLink} from "@ben-ryder/jigsaw";
 import {NoteContent} from "../../state/features/database/athena-database";
 import {routes} from "../../routes";
 import classNames from "classnames";
-import {ArrowLink} from "../../patterns/element/arrow-link";
+import {InternalLink} from "../../helpers/internal-link";
 
 export interface NoteEditorProps {
   noteContent: NoteContent,
@@ -30,7 +30,7 @@ export function NoteEditor(props: NoteEditorProps) {
   return (
     <div className="max-w-4xl mx-auto mt-4 px-4">
       <div className="flex justify-between items-center mt-6 mb-10">
-        <ArrowLink direction="left" link={routes.content.notes.list}>Notes</ArrowLink>
+        <ArrowLink as={InternalLink} direction="left" href={routes.content.notes.list}>Notes</ArrowLink>
 
         <div className="flex items-center justify-center">
           {props.onDelete &&
