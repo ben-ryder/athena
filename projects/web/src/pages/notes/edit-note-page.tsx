@@ -98,5 +98,5 @@ export function EditNotePage() {
     )
   }
 
-  return <p>Loading...</p>
+  return null;
 }

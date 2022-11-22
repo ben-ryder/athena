@@ -1,9 +1,9 @@
-import {Button, Input, MultiSelect} from "@ben-ryder/jigsaw";
+import {Button, Input, MultiSelect, ArrowLink} from "@ben-ryder/jigsaw";
 import {routes} from "../../routes";
-import {ArrowLink} from "../../patterns/element/arrow-link";
 import {z} from "zod";
 import {SubmitHandler, useForm, Controller} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {InternalLink} from "../../helpers/internal-link";
 
 export const TaskFormData = z.object({
   name: z.string().min(1, "Must be at least 1 character long"),
@@ -30,7 +30,7 @@ export function TaskListForm(props: TaskListFormProps) {
   return (
     <div className="max-w-4xl mx-auto mt-4 px-4">
       <div className="flex justify-between items-center mt-6 mb-10">
-        <ArrowLink direction="left" link={routes.content.tasks.list}>Task Lists</ArrowLink>
+        <ArrowLink as={InternalLink} direction="left" href={routes.content.tasks.list}>Task Lists</ArrowLink>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4">

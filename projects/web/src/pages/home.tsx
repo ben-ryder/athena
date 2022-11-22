@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Link} from "../patterns/element/link";
+import {Link} from "@ben-ryder/jigsaw";
 import {routes} from "../routes";
 import {Helmet} from "react-helmet-async";
 import {MessagePage} from "../patterns/pages/message-page";

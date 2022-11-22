@@ -5,8 +5,8 @@ import {Helmet} from "react-helmet-async";
 import React, {useEffect, useState} from "react";
 import {TaskListEntity} from "../../state/features/database/athena-database";
 import {TaskListEditor} from "./task-list-editor";
-import {ArrowLink} from "../../patterns/element/arrow-link";
-import {LinkButton} from "@ben-ryder/jigsaw";
+import {LinkButton, ArrowLink} from "@ben-ryder/jigsaw";
+import {InternalLink} from "../../helpers/internal-link";
 
 
 export function ViewTaskListPage() {
@@ -47,8 +47,8 @@ export function ViewTaskListPage() {
         </Helmet>
         <div className="max-w-4xl mx-auto mt-6 mb-10 px-4">
           <div className="flex justify-between items-center">
-            <ArrowLink direction="left" link={routes.content.tasks.list}>Task Lists</ArrowLink>
-            <LinkButton className="inline-block" href={replaceParam(routes.content.tasks.edit, ":id", taskList.id)}>Edit Task List</LinkButton>
+            <ArrowLink as={InternalLink} direction="left" href={routes.content.tasks.list}>Task Lists</ArrowLink>
+            <LinkButton as={InternalLink} className="inline-block" href={replaceParam(routes.content.tasks.edit, ":id", taskList.id)}>Edit Task List</LinkButton>
           </div>
         </div>
         <div className="max-w-2xl mx-auto mt-6 px-4">
@@ -61,5 +61,5 @@ export function ViewTaskListPage() {
     )
   }
 
-  return <p>Loading...</p>
+  return null;
 }
