@@ -2,15 +2,15 @@ import { Popover } from "@headlessui/react";
 import {User as AccountIcon} from "lucide-react";
 import React from "react";
 import {routes} from "../../routes";
-import {useApplication} from "../../helpers/application-context";
-import {useLogto} from "@logto/react";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import { Float } from "@headlessui-float/react";
+import {Link} from "@ben-ryder/jigsaw";
+import {InternalLink} from "../../helpers/internal-link";
 
 
 export function AccountMenu() {
-  const {isAuthenticated} = useLogto();
-  const {userDetails} = useApplication();
-  const {signOut, signIn} = useLogto();
+  const {userDetails} = useLFBApplication();
+  const isLoggedIn = false;
 
   return (
     <Popover className="h-full">
@@ -33,21 +33,25 @@ export function AccountMenu() {
         <Popover.Panel
           className="w-full shadow-t-md border-t border-br-blueGrey-700 text-br-whiteGrey-100"
         >
-          {isAuthenticated &&
-            <button
+          {isLoggedIn
+            ? (
+              <Link
+                as={InternalLink}
                 className="block w-full p-2 text-center bg-br-atom-700 hover:bg-br-atom-600"
-                onClick={() => signOut(window.location.origin)}
-            >
+                href={routes.users.logout}
+              >
                 Sign Out
-            </button>
-          }
-          {!isAuthenticated &&
-            <button
+              </Link>
+            )
+            : (
+              <Link
+                as={InternalLink}
                 className="block w-full p-2 text-center bg-br-atom-700 hover:bg-br-atom-600"
-                onClick={() => signIn(window.location.origin + routes.user.callback)}
-            >
+                href={routes.users.login}
+              >
                 Sign In
-            </button>
+              </Link>
+            )
           }
         </Popover.Panel>
       </Float>

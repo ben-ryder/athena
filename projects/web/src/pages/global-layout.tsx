@@ -16,9 +16,10 @@ import {
   AlarmClock as RemindersIcon,
   Tag as TagsIcon,
   Filter as ViewsIcon,
-  Pencil as DrawingIcon
+  Pencil as DrawingIcon,
+  Book as JournalIcon
 } from "lucide-react";
-import {useApplication} from "../helpers/application-context";
+import {useLFBApplication} from "../helpers/lfb-context";
 
 export interface ApplicationProps {
   children: StrictReactNode
@@ -124,7 +125,7 @@ export function ContentMenuLink(props: ContentMenuLinkProps) {
 }
 
 export function ContentMenu() {
-  const {online, setOnline} = useApplication();
+  const {online, setOnline} = useLFBApplication();
 
   return (
     <div className="p-4">
@@ -145,7 +146,7 @@ export function ContentMenu() {
         <div className="mt-1">
           <ContentMenuLink icon={<NotesIcon />} link={routes.content.notes.list} label="Notes" />
           <ContentMenuLink icon={<TasksIcon />} link={routes.content.tasks.list} label="Task Lists" />
-          <ContentMenuLink icon={<DrawingIcon />} link={routes.content.drawings.list} label="Drawings" />
+          <ContentMenuLink icon={<JournalIcon />} link={routes.content.journal.list} label="Journal" />
           <ContentMenuLink icon={<RemindersIcon />} link={routes.content.reminders.list} label="Reminders" />
         </div>
       </div>
@@ -161,7 +162,7 @@ export function ContentMenu() {
         <div className="mt-1">
           <ContentMenuLink icon={<NotesIcon />} link={routes.templates.notes.list} label="Note Templates" />
           <ContentMenuLink icon={<TasksIcon />} link={routes.templates.tasks.list} label="Task List Templates" />
-          <ContentMenuLink icon={<DrawingIcon />} link={routes.templates.drawings.list} label="Drawing Templates" />
+          <ContentMenuLink icon={<JournalIcon />} link={routes.templates.journal.list} label="Journal Template" />
         </div>
       </div>
       <div className="mb-6">

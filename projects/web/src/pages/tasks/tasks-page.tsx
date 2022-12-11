@@ -1,4 +1,4 @@
-import {useApplication} from "../../helpers/application-context";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import React, {useMemo} from "react";
 import {replaceParam, routes} from "../../routes";
 import {LinkButton} from "@ben-ryder/jigsaw";
@@ -8,7 +8,7 @@ import {InternalLink} from "../../helpers/internal-link";
 
 
 export function TasksPage() {
-  const {document} = useApplication();
+  const {document} = useLFBApplication();
 
   const taskLists = useMemo(() => {
     return document.taskLists.ids.map(id => document.taskLists.entities[id]);

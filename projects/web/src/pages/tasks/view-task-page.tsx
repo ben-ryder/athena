@@ -1,4 +1,4 @@
-import {useApplication} from "../../helpers/application-context";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import {useNavigate, useParams} from "react-router-dom";
 import {replaceParam, routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
@@ -12,7 +12,7 @@ import {InternalLink} from "../../helpers/internal-link";
 export function ViewTaskListPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const {document} = useApplication();
+  const {document} = useLFBApplication();
 
   const [taskList, setTaskList] = useState<TaskListEntity|null>();
   const [error, setError] = useState<string|null>();

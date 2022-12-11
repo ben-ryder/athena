@@ -17,7 +17,7 @@ import {
   TaskListEntity,
   TaskStatus
 } from "../../state/features/database/athena-database";
-import {useApplication} from "../../helpers/application-context";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import {ChangeFn} from "@automerge/automerge";
 
 // todo: dont define type here?
@@ -70,7 +70,7 @@ export interface TaskListEditorProps {
   taskList: TaskListEntity
 }
 export function TaskListEditor(props: TaskListEditorProps) {
-  const {document} = useApplication();
+  const {document} = useLFBApplication();
 
   const tasks = document.tasks.ids
     .filter(id => {
@@ -117,7 +117,7 @@ export interface TaskProps {
   task: TaskEntity
 }
 export function Task(props: TaskProps) {
-  const {makeChange} = useApplication();
+  const {makeChange} = useLFBApplication();
   const [isEditActive, setIsEditActive] = useState<boolean>(false);
   const [nameEdit, setNameEdit] = useState<string>(props.task.name);
   const nameEditRef = useRef<HTMLInputElement>(null);
@@ -212,7 +212,7 @@ export interface NewTaskFormProps {
   taskList: TaskListEntity
 }
 export function NewTaskForm(props: NewTaskFormProps) {
-  const {makeChange} = useApplication();
+  const {makeChange} = useLFBApplication();
   const [name, setName] = useState<string>("");
 
   return (

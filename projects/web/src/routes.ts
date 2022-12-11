@@ -1,5 +1,23 @@
 export const routes = {
   home: "/",
+  users: {
+    login: "/user/login",
+    register: "/user/register",
+    password: {
+      forgotten: "/user/forgotten-password",
+      reset: "/user/reset-password"
+    },
+    verification: {
+      request: "/user/verify",
+      submit: "/user/verify/submit"
+    },
+    logout: "/user/logout",
+    settings: "/user/settings"
+  },
+  external: {
+    github: "https://github.com/Ben-Ryder/athena",
+    creator: "https://www.benryder.me"
+  },
   content: {
     notes: {
       create: "/notes/new",
@@ -12,15 +30,16 @@ export const routes = {
       edit: "/tasks/:id/edit",
       view: "/tasks/:id"
     },
+    journal: {
+      create: "/journal/new",
+      list: "/journal",
+      edit: "/journal/:id/edit",
+      view: "/journal/:id"
+    },
     reminders: {
       create: "/reminders/new",
       list: "/reminders",
       edit: "/reminders/:id",
-    },
-    drawings: {
-      create: "/drawings/new",
-      list: "/drawings",
-      edit: "/drawings/:id",
     }
   },
   organisation: {
@@ -47,18 +66,11 @@ export const routes = {
       list: "/templates/tasks",
       edit: "/templates/tasks/:id",
     },
-    drawings: {
-      create: "/templates/drawings/new",
-      list: "/templates/drawings",
-      edit: "/templates/drawings/:id",
+    journal: {
+      create: "/templates/journal/new",
+      list: "/templates/journal",
+      edit: "/templates/journal/:id",
     }
-  },
-  user: {
-    callback: "/user/callback"
-  },
-  external: {
-    github: "https://github.com/Ben-Ryder/athena",
-    creator: "https://www.benryder.me"
   }
 }
 

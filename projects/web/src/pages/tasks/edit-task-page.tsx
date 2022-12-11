@@ -1,4 +1,4 @@
-import {useApplication} from "../../helpers/application-context";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import {useNavigate, useParams} from "react-router-dom";
 import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
@@ -10,7 +10,7 @@ import {TaskListContent, TaskListEntity} from "../../state/features/database/ath
 export function EditTaskListPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const {makeChange, document} = useApplication();
+  const {makeChange, document} = useLFBApplication();
 
   const [taskList, setTaskList] = useState<TaskListEntity|null>();
   const [error, setError] = useState<string|null>();

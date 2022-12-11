@@ -1,7 +1,7 @@
 import {NoteEditor} from "./note-editor";
 import {NoteContent} from "../../state/features/database/athena-database";
 import {v4 as createUUID} from "uuid";
-import {useApplication} from "../../helpers/application-context";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
@@ -10,7 +10,7 @@ import React from "react";
 
 export function CreateNotePage() {
   const navigate = useNavigate();
-  const {makeChange} = useApplication();
+  const {makeChange} = useLFBApplication();
 
   async function onSave(newNote: NoteContent) {
     const id = createUUID();

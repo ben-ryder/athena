@@ -1,4 +1,4 @@
-import {useApplication} from "../../helpers/application-context";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import React, {useMemo} from "react";
 import {replaceParam, routes} from "../../routes";
 import {LinkButton} from "@ben-ryder/jigsaw";
@@ -8,7 +8,7 @@ import {InternalLink} from "../../helpers/internal-link";
 
 
 export function NotesPage() {
-  const {document} = useApplication();
+  const {document} = useLFBApplication();
 
   const notes = useMemo(() => {
     return document.notes.ids.map(id => document.notes.entities[id])

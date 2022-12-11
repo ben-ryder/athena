@@ -1,5 +1,5 @@
 import {v4 as createUUID} from "uuid";
-import {useApplication} from "../../helpers/application-context";
+import {useLFBApplication} from "../../helpers/lfb-context";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
@@ -9,7 +9,7 @@ import {TaskFormData, TaskListForm} from "./task-form";
 
 export function CreateTaskListPage() {
   const navigate = useNavigate();
-  const {makeChange} = useApplication();
+  const {makeChange} = useLFBApplication();
 
   async function onSave(values: TaskFormData) {
     const id = createUUID();
