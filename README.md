@@ -1,16 +1,20 @@
 # Athena
-Your encrypted and local-first second brain.
+Your local-first second brain for note-taking, task lists, journaling, habit tracking and reminders.
 
 - Core Features:
-  - Create notes, tasks lists, drawings and reminders.
-  - Create templates to easily reuse common content structures.
-  - Organise your content with tags and create 'views' to save 
-  - Markdown based notes.
-- Online Features:
-  - **Cloud Storage** - Sync your data to the cloud so you have access from anywhere.
-  - **Cross Device Sync** - Sync your data across unlimited devices. The app will automatically fix conflicts if multiple devices edit the same file simultaneously too!
-  - **Offline Support** - Make changes offline and they will be synced when your back online.
-  - **Client Side Encryption** - All your data is encrypted client side meaning only you will ever have access to your data.
+  - 📝 Markdown-based note taking
+  - ✅ Create task lists to manage your tasks
+  - 📚 Keep a journal and track your habits
+  - ⏰ Set reminders
+  - 🏷 Organise your content with tags and "views"
+  - 📋 Create templates to easily reuse common content structures
+  - 💻 Your data is stored on your own device
+- Server Features:
+  - ☁ Backup your data so you have access to it from anywhere
+  - 📱 Sync your data across unlimited devices, with automatic conflicts resolution
+  - ⛰ Make changes offline and they will be synced when you're back online
+  - 🔐 Client-side encryption so the server will never have access to your data
+  - 🧑‍💻 Self-hosted so you can run it however and wherever you want
 
 ## About
 **This project is very early in development and is not complete, stable or in an MVP release state yet.**  
