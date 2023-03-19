@@ -1,17 +1,17 @@
 # Athena
-Your local-first second brain for note-taking, task lists, journaling, habit tracking and reminders.
+A local-first web app for notes, tasks, journaling, habit tracking and reminders.
 
 - Core Features:
-  - 📝 Markdown-based note taking
-  - ✅ Create task lists to manage your tasks
-  - 📚 Keep a journal and track your habits
-  - ⏰ Set reminders
-  - 🏷 Organise your content with tags and "views"
-  - 📋 Create templates to easily reuse common content structures
+  - 📝 Markdown Notes
+  - ✅ Task Management
+  - 📚 Journaling and Habit Tracking
+  - ⏰ Reminders
+  - 🏷 Organise your content with tags
+  - 📋 Create note & journal templates
   - 💻 Your data is stored on your own device
 - Server Features:
   - ☁ Backup your data so you have access to it from anywhere
-  - 📱 Sync your data across unlimited devices, with automatic conflicts resolution
+  - 📱 Sync your data across unlimited devices, with automatic conflict resolution
   - ⛰ Make changes offline and they will be synced when you're back online
   - 🔐 Client-side encryption so the server will never have access to your data
   - 🧑‍💻 Self-hosted so you can run it however and wherever you want
@@ -24,8 +24,7 @@ More documentation including usage instructions, development setup etc will come
 
 ## Project Structure
 This is a monorepo containing all projects related to Athena:
-- `web` - The web application for using Athena in a browser.
-- `mobile` - The mobile application for using Athena on Android (POSSIBLY PLANNED FOR SOME POINT IN THE FUTURE).
+- `web` - The web app for using Athena in a browser.
 - `design` - Contains designs, wireframes etc
 
 ## Contributions

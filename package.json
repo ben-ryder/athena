@@ -2,7 +2,7 @@
   "name": "@ben-ryder/athena",
   "version": "0.1.0",
   "private": true,
-  "description": "A place for notes, lists and reminders.",
+  "description": "A local-first web app for notes, tasks, journaling, habit tracking and reminders.",
   "main": "index.js",
   "directories": {
     "doc": "docs"
