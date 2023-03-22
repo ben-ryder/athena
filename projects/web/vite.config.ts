@@ -1,11 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import topLevelAwait from "vite-plugin-top-level-await";
+import wasm from "vite-plugin-wasm";
+
 
 // https://vitejs.dev/config/
+// Config for automerge is described at https://automerge.org/docs/quickstart/.
 export default defineConfig({
   plugins: [
     react(),
+    topLevelAwait(),
+    wasm(),
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
@@ -34,4 +40,13 @@ export default defineConfig({
       }
     })
   ],
+
+  worker: {
+    format: "es",
+    plugins: [topLevelAwait(), wasm()]
+  },
+
+  optimizeDeps: {
+    exclude: ["@automerge/automerge-wasm"]
+  }
 })
