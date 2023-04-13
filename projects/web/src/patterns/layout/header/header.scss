@@ -1,0 +1,15 @@
+
+.ath-header {
+  &__container {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__nav-menu {
+  }
+
+  &__command-bar {
+    width: 100%;
+    max-width: 400px;
+  }
+}

@@ -8,6 +8,12 @@ import wasm from "vite-plugin-wasm";
 // https://vitejs.dev/config/
 // Config for automerge is described at https://automerge.org/docs/quickstart/.
 export default defineConfig({
+  server: {
+    port: 3000
+  },
+  preview: {
+    port: 3000
+  },
   plugins: [
     react(),
     topLevelAwait(),
@@ -40,12 +46,10 @@ export default defineConfig({
       }
     })
   ],
-
   worker: {
     format: "es",
     plugins: [topLevelAwait(), wasm()]
   },
-
   optimizeDeps: {
     exclude: ["@automerge/automerge-wasm"]
   }
