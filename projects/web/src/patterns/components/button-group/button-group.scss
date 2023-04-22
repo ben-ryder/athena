@@ -1,0 +1,20 @@
+
+.j-button-group {
+  &:not(.j-button-group--left) {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .j-button,
+  .j-button-link {
+    margin-left: var(--j-space-4);
+  }
+
+  &--left {
+    .j-button,
+    .j-button-link {
+      margin-right: var(--j-space-4);
+    }
+  }
+}

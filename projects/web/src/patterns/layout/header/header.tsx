@@ -22,7 +22,7 @@ export function Header() {
 						id="commnad-bar"
 						type="text"
 						hideLabel={true}
-						placeholder="\command, #tags, @type, $field=value or just search... "
+						placeholder="Type a command or search and filter for content... "
 					/>
 				</div>
 				<div className="ath-header__account-menu">
