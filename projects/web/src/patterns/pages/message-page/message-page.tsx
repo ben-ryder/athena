@@ -2,7 +2,7 @@ import React, {ReactNode} from 'react';
 
 export interface MessagePageProps {
   heading: string,
-  text: ReactNode,
+  content: ReactNode,
   extraContent?: ReactNode
 }
 
@@ -13,7 +13,7 @@ export function MessagePage(props: MessagePageProps) {
           <h1 className="ath-message-page__panel-heading">{props.heading}</h1>
           <div className="ath-message-page__panel-text">
             <div className="j-prose">
-              <p>{props.text}</p>
+              {props.content}
             </div>
           </div>
           <div className="ath-message-page__panel-extra-content">
