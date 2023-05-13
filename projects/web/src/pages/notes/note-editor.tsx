@@ -1,9 +1,9 @@
 import {useState} from "react";
 import {Editor} from "../../patterns/components/editor/editor";
-import {JButton, JArrowLink} from "@ben-ryder/jigsaw-react";
+import {JButton, JArrowLink, JInputControl} from "@ben-ryder/jigsaw-react";
 import {NoteContent} from "../../state/features/database/athena-database";
 import {routes} from "../../routes";
-import classNames from "classnames";
+import {InternalLink} from "../../patterns/components/internal-link";
 
 export interface NoteEditorProps {
   noteContent: NoteContent,
@@ -22,14 +22,14 @@ export function NoteEditor(props: NoteEditorProps) {
     }
     else {
       setError(null);
-      props.onSave({name, body, tags: []});
+      props.onSave({name, body, tags: [], customFields: []});
     }
   }
 
   return (
     <div className="max-w-4xl mx-auto mt-4 px-4">
       <div className="flex justify-between items-center mt-6 mb-10">
-        <JArrowLink direction="left" link={routes.content.notes.list}>Notes</JArrowLink>
+        <JArrowLink as={InternalLink} direction="left" href={routes.content.notes.list}>Notes</JArrowLink>
 
         <div className="flex items-center justify-center">
           {props.onDelete &&
@@ -47,16 +47,13 @@ export function NoteEditor(props: NoteEditorProps) {
       </div>
       {error && <p className="text-br-red-600">{error}</p>}
       <div className="mt-4">
-        <input
+        <JInputControl
+          id="name"
+          label="Name"
           type="text"
           value={name}
           onChange={e => {setName(e.target.value)}}
           placeholder="a note title..."
-          className={classNames(
-            "w-full py-1 px-0 bg-transparent text-4xl font-bold border-0 border-b-2",
-            "text-br-whiteGrey-100 border-br-atom-700",
-            "focus:ring-0 focus:border-br-teal-600"
-          )}
         />
         <Editor
           value={body}

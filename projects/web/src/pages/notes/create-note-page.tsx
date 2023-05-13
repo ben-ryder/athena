@@ -1,5 +1,5 @@
 import {NoteEditor} from "./note-editor";
-import {NoteContent} from "../../state/features/database/athena-database";
+import {AthenaDatabase, ContentTypes, NoteContent} from "../../state/features/database/athena-database";
 import {v4 as createUUID} from "uuid";
 import {useLFBApplication} from "../../utils/lfb-context";
 import {useNavigate} from "react-router-dom";
@@ -15,7 +15,7 @@ export function CreateNotePage() {
     const id = createUUID();
     const timestamp = new Date().toISOString();
 
-    await makeChange((doc) => {
+    await makeChange((doc: AthenaDatabase) => {
       doc.notes.content.ids.push(id);
       doc.notes.content.entities[id] = {
         id: id,
@@ -23,7 +23,8 @@ export function CreateNotePage() {
         body: newNote.body,
         tags: newNote.tags,
         createdAt: timestamp,
-        updatedAt: timestamp
+        updatedAt: timestamp,
+        customFields: []
       }
     });
 
@@ -36,7 +37,7 @@ export function CreateNotePage() {
         <title>Create Note | Athena</title>
       </Helmet>
       <NoteEditor
-        noteContent={{name: "", body: "", tags: []}}
+        noteContent={{name: "", body: "", tags: [], customFields: []}}
         onSave={onSave}
       />
     </>

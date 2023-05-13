@@ -3,6 +3,7 @@ import {routes} from "../routes";
 import {MessagePage} from "../patterns/pages/message-page/message-page";
 import {Helmet} from "react-helmet-async";
 import {JArrowLink} from "@ben-ryder/jigsaw-react";
+import {InternalLink} from "../patterns/components/internal-link";
 
 export function PageNotFound() {
   return (
@@ -12,9 +13,9 @@ export function PageNotFound() {
       </Helmet>
       <MessagePage
         heading="Not Found"
-        text="The page you requested could not be found."
+        content={<p>The page you requested could not be found.</p>}
         extraContent={
-          <JArrowLink link={routes.home} direction="left">Back to Home Page</JArrowLink>
+          <JArrowLink href={routes.home} direction="left" as={InternalLink}>Back to Home Page</JArrowLink>
         }
       />
     </>

@@ -4,6 +4,7 @@ import {replaceParam, routes} from "../../routes";
 import {JButtonLink} from "@ben-ryder/jigsaw-react";
 import {Link} from "react-router-dom";
 import {Helmet} from "react-helmet-async";
+import {InternalLink} from "../../patterns/components/internal-link";
 
 export function NotesPage() {
   const {document} = useLFBApplication();
@@ -19,7 +20,7 @@ export function NotesPage() {
       </Helmet>
       <div className="max-w-4xl mx-auto px-4 mt-6 mb-10 flex items-center justify-between">
         <h1 className="text-3xl text-br-whiteGrey-100 text-br-teal-600 font-bold">Notes</h1>
-        <JButtonLink href={routes.content.notes.create}>New Note</JButtonLink>
+        <JButtonLink href={routes.content.notes.create} as={InternalLink}>New Note</JButtonLink>
       </div>
 
       {notes.length === 0 && <p className="text-center text-br-whiteGrey-100 mt-4">no notes found</p>}

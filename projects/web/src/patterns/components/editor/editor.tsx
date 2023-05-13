@@ -4,6 +4,8 @@ import { languages } from '@codemirror/language-data';
 import {jigsawTheme} from "./jigsaw-theme";
 import { EditorView } from "@codemirror/view";
 import { hyperLink } from '@uiw/codemirror-extensions-hyper-link';
+import {LegacyRef, useEffect, useRef, useState} from "react";
+import {fromTextArea} from "hypermd";
 
 export interface EditorProps {
   value: string,
@@ -11,31 +13,45 @@ export interface EditorProps {
 }
 
 export function Editor(props: EditorProps) {
+  let initialized = false
+  const textAreaRef: LegacyRef<HTMLTextAreaElement> = useRef(null);
+
+  useEffect(() => {
+    if (textAreaRef?.current && !initialized) {
+      console.log("setup");
+      fromTextArea(textAreaRef.current);
+      initialized = true;
+    }
+  }, [textAreaRef]);
+
   return (
-    <div className="max-h-full py-4 overflow-y-scroll">
-      <CodeMirror
+    <div>
+      <textarea
+        ref={textAreaRef}
         value={props.value}
-        onChange={(value) => {
-          // onChange is triggered even for external value changes, so this checks if there really was an update
-          if (value !== props.value) {
-            props.onChange(value);
-          }
-        }}
-        extensions={[
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
-          EditorView.lineWrapping,
-          hyperLink
-        ]}
-        theme={jigsawTheme}
-        basicSetup={{
-          lineNumbers: false,
-          foldGutter: false,
-          highlightActiveLine: false,
-          highlightSelectionMatches: false
-        }}
-        className="h-full overflow-y-scroll text-base"
-        placeholder="start typing your markdown note..."
-      />
+      ></textarea>
+        {/*<CodeMirror*/}
+        {/*  value={props.value}*/}
+        {/*  onChange={(value) => {*/}
+        {/*    // onChange is triggered even for external value changes, so this checks if there really was an update*/}
+        {/*    if (value !== props.value) {*/}
+        {/*      props.onChange(value);*/}
+        {/*    }*/}
+        {/*  }}*/}
+        {/*  extensions={[*/}
+        {/*    markdown({ base: markdownLanguage, codeLanguages: languages }),*/}
+        {/*    EditorView.lineWrapping,*/}
+        {/*    hyperLink*/}
+        {/*  ]}*/}
+        {/*  theme={jigsawTheme}*/}
+        {/*  basicSetup={{*/}
+        {/*    lineNumbers: false,*/}
+        {/*    foldGutter: false,*/}
+        {/*    highlightActiveLine: false,*/}
+        {/*    highlightSelectionMatches: false*/}
+        {/*  }}*/}
+        {/*  placeholder="start typing your markdown note..."*/}
+        {/*/>*/}
     </div>
   );
 }

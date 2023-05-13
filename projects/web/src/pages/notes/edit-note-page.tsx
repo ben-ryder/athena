@@ -1,5 +1,5 @@
 import {NoteEditor} from "./note-editor";
-import {NoteContent, NoteEntity} from "../../state/features/database/athena-database";
+import {AthenaDatabase, NoteContent, NoteEntity} from "../../state/features/database/athena-database";
 import {useLFBApplication} from "../../utils/lfb-context";
 import {useNavigate, useParams} from "react-router-dom";
 import {routes} from "../../routes";
@@ -38,7 +38,7 @@ export function EditNotePage() {
       return setError("Tried to save a note that isn't loaded yet.")
     }
 
-    await makeChange((doc) => {
+    await makeChange((doc: AthenaDatabase) => {
       const timestamp = new Date().toISOString();
 
       // check old values so we only change what's needed
@@ -66,7 +66,7 @@ export function EditNotePage() {
       return setError("Tried to delete a note that isn't loaded yet.")
     }
 
-    await makeChange((doc) => {
+    await makeChange((doc: AthenaDatabase) => {
       doc.notes.content.ids = doc.notes.content.ids.filter(id => id !== note.id);
       delete doc.notes.content.entities[note.id];
     });
@@ -88,7 +88,8 @@ export function EditNotePage() {
           noteContent={{
             name: note.name,
             body: note.body,
-            tags: note.tags
+            tags: note.tags,
+            customFields: []
           }}
           onSave={onSave}
           onDelete={onDelete}
