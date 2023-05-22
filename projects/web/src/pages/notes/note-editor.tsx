@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {Editor} from "../../patterns/components/editor/editor";
-import {JButton, JArrowLink, JInputControl} from "@ben-ryder/jigsaw-react";
+import {JButton, JArrowLink, JInputControl, JLabel} from "@ben-ryder/jigsaw-react";
 import {NoteContent} from "../../state/features/database/athena-database";
 import {routes} from "../../routes";
 import {InternalLink} from "../../patterns/components/internal-link";
@@ -55,7 +55,10 @@ export function NoteEditor(props: NoteEditorProps) {
           onChange={e => {setName(e.target.value)}}
           placeholder="a note title..."
         />
+
+        <JLabel htmlFor="note-body">Body</JLabel>
         <Editor
+          id="note-body"
           value={body}
           onChange={updatedBody => setBody(updatedBody)}
         />

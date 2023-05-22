@@ -15,6 +15,7 @@ import {PageNotFound} from "./pages/page-not-found";
 import {NotesPage} from "./pages/notes/notes-page";
 import {CreateNotePage} from "./pages/notes/create-note-page";
 import {EditNotePage} from "./pages/notes/edit-note-page";
+import {WelcomePage} from "./pages/welcome";
 
 export function App() {
   return (
@@ -30,6 +31,9 @@ export function App() {
               <Routes>
                 {/* Home Route */}
                 <Route path={routes.home} element={<HomePage />} />
+
+                {/* Home Route */}
+                <Route path={routes.welcome} element={<WelcomePage />} />
 
                 {/* Notes Routes */}
                 <Route path={routes.content.notes.list} element={<NotesPage />} />
