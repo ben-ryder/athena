@@ -16,6 +16,7 @@ import {NotesPage} from "./pages/notes/notes-page";
 import {CreateNotePage} from "./pages/notes/create-note-page";
 import {EditNotePage} from "./pages/notes/edit-note-page";
 import {WelcomePage} from "./pages/welcome";
+import {TasksPage} from "./pages/tasks/tasks-page";
 
 export function App() {
   return (
@@ -39,6 +40,9 @@ export function App() {
                 <Route path={routes.content.notes.list} element={<NotesPage />} />
                 <Route path={routes.content.notes.create} element={<CreateNotePage />} />
                 <Route path={routes.content.notes.edit} element={<EditNotePage />} />
+
+                {/* Tasks Routes */}
+                <Route path={routes.content.tasks.list} element={<TasksPage />} />
 
                 {/* 404 Route */}
                 <Route path="*" element={<PageNotFound />} />
