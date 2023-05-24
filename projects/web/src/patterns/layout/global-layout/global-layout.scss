@@ -4,14 +4,45 @@ body,
   min-height: 100vh;
 }
 
-.ath-root {
+.ath-root ,
+.ath-layout {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
 
   .ath-main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+  }
+}
+
+.ath-menu-bar {
+  background: var(--j-c-background-f2);
+  height: 50px;
+
+  &__logo {
+    display: none;
+  }
+
+  &__menu {
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    &-link {
+      flex-grow: 1;
+      height: 100%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      color: var(--j-c-text);
+
+      &--account {
+        margin-top: auto;
+      }
+    }
   }
 }
