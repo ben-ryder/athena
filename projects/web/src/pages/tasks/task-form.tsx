@@ -54,13 +54,13 @@ export function TaskForm(props: TaskFormProps) {
 					label="Name"
 					type="text"
 					value={taskContent.name}
-					onChange={updateName}
+					onChange={(e) => {updateName(e.target.value)}}
 				/>
 				<JTextAreaControl
 					id="description"
 					label="Description"
-					value={taskContent.description}
-					onChange={updateDescription}
+					value={taskContent.description || ""}
+					onChange={(e) => {updateDescription(e.target.value)}}
 				/>
 				<JButton type="submit">{props.submitText}</JButton>
 			</form>
