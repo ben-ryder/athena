@@ -37,11 +37,18 @@ body,
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      text-decoration: none;
 
       color: var(--j-c-text);
 
-      &--account {
-        margin-top: auto;
+      span {
+        margin-top: var(--j-space-1);
+        font-size: var(--j-text-size-sm);
+      }
+
+      &--active {
+        background: var(--j-c-primary);
       }
     }
   }

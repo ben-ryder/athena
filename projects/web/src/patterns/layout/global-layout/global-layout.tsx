@@ -1,11 +1,11 @@
 import React, {ReactNode} from 'react';
 import {Helmet} from "react-helmet-async";
 import {
-  File as NotesIcon,
+  FileText as NotesIcon,
   ListChecks as TasksIcon,
   Tag as TagsIcon,
   CalendarRange as JournalIcon,
-  MoreHorizontal as MobileMenuIcon
+  MoreHorizontal as MobileMenuIcon, MoreHorizontal
 } from "lucide-react";
 import {routes} from "../../../routes";
 
@@ -40,24 +40,26 @@ export function GlobalLayout(props: GlobalLayoutProps) {
             <p>Athena</p>
           </div>
           <div className="ath-menu-bar__menu">
-            <a href={routes.content.notes.list} className="ath-menu-bar__menu-link">
+            <a href={routes.content.notes.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--active">
               <NotesIcon />
+              <span>Notes</span>
             </a>
             <a href={routes.content.tasks.list} className="ath-menu-bar__menu-link">
               <TasksIcon />
+              <span>Tasks</span>
             </a>
             <a href={routes.content.journal.list} className="ath-menu-bar__menu-link">
               <JournalIcon />
+              <span>Journal</span>
             </a>
-            <a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link">
-              <MobileMenuIcon />
+            <a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--more">
+              <MoreHorizontal />
+              <span>More</span>
             </a>
-            {/*<a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link">*/}
-            {/*  <TagsIcon />*/}
-            {/*</a>*/}
-            {/*<a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--account">*/}
-            {/*  <AccountIcon />*/}
-            {/*</a>*/}
+            <a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--account">
+              <AccountIcon />
+              <span>Account</span>
+            </a>
           </div>
         </div>
         <main className="ath-main">
