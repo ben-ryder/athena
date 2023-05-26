@@ -3,9 +3,10 @@ import {Helmet} from "react-helmet-async";
 import {
   FileText as NotesIcon,
   ListChecks as TasksIcon,
-  Tag as TagsIcon,
   CalendarRange as JournalIcon,
-  MoreHorizontal as MobileMenuIcon, MoreHorizontal
+  MoreHorizontal as MobileMenuIcon,
+  Tag as TagsIcon,
+  Settings as SettingsIcon
 } from "lucide-react";
 import {routes} from "../../../routes";
 
@@ -53,12 +54,16 @@ export function GlobalLayout(props: GlobalLayoutProps) {
               <span>Journal</span>
             </a>
             <a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--more">
-              <MoreHorizontal />
+              <MobileMenuIcon />
               <span>More</span>
             </a>
-            <a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--account">
-              <AccountIcon />
-              <span>Account</span>
+            <a href={routes.content.journal.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--tags">
+              <TagsIcon />
+              <span>Tags</span>
+            </a>
+            <a href={routes.content.journal.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--settings">
+              <SettingsIcon />
+              <span>Settings</span>
             </a>
           </div>
         </div>
