@@ -1,5 +1,5 @@
 import {TaskContent} from "../../state/features/database/athena-database";
-import {useState} from "react";
+import {FormEvent, FormEventHandler, useState} from "react";
 import {JButton, JInputControl, JTextAreaControl} from "@ben-ryder/jigsaw-react";
 
 export interface TaskFormProps {
@@ -38,7 +38,7 @@ export function TaskForm(props: TaskFormProps) {
 		})
 	}
 
-	function onSubmit(e: SubmitEvent) {
+	function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
 		props.onSubmit(taskContent);

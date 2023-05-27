@@ -6,6 +6,7 @@ import { EditorView } from "@codemirror/view";
 import { hyperLink } from '@uiw/codemirror-extensions-hyper-link';
 
 export interface EditorProps {
+  id: string, // todo: add ID to CodeMirror
   value: string,
   onChange: (value: string) => void
 }

@@ -1,6 +1,6 @@
-import { createTheme } from '@uiw/codemirror-themes';
+import {createTheme, CreateThemeOptions} from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
-export const themeOptions = {
+export const themeOptions: CreateThemeOptions = {
   theme: 'dark',
   settings: {
     background: '#242830',

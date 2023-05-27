@@ -1,23 +1,12 @@
 export const routes = {
   home: "/",
   welcome: "/welcome",
-  users: {
-    login: "/user/login",
-    register: "/user/register",
-    password: {
-      forgotten: "/user/forgotten-password",
-      reset: "/user/reset-password"
-    },
-    verification: {
-      request: "/user/verify",
-      submit: "/user/verify/submit"
-    },
-    logout: "/user/logout",
-    settings: "/user/settings"
-  },
+  menu: "/menu",
+  settings: "/settings",
   external: {
     github: "https://github.com/ben-ryder/athena",
-    creator: "https://www.benryder.me"
+    creator: "https://www.benryder.me",
+    docs: "https://github.com/ben-ryder/athena",
   },
   content: {
     notes: {

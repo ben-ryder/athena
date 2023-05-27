@@ -17,6 +17,7 @@ import {CreateNotePage} from "./pages/notes/create-note-page";
 import {EditNotePage} from "./pages/notes/edit-note-page";
 import {WelcomePage} from "./pages/welcome";
 import {TasksPage} from "./pages/tasks/tasks-page";
+import {MenuPage} from "./pages/menu";
 
 export function App() {
   return (
@@ -30,11 +31,10 @@ export function App() {
             </Helmet>
             <GlobalLayout>
               <Routes>
-                {/* Home Route */}
+                {/* Basic Pages */}
                 <Route path={routes.home} element={<HomePage />} />
-
-                {/* Home Route */}
                 <Route path={routes.welcome} element={<WelcomePage />} />
+                <Route path={routes.menu} element={<MenuPage />} />
 
                 {/* Notes Routes */}
                 <Route path={routes.content.notes.list} element={<NotesPage />} />
