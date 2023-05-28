@@ -57,7 +57,8 @@ body,
       }
 
       &--tags,
-      &--settings {
+      &--settings,
+      &--help {
         display: none;
       }
 
@@ -95,7 +96,8 @@ body,
         }
 
         &--tags,
-        &--settings {
+        &--settings,
+        &--help {
           display: flex;
         }
       }
