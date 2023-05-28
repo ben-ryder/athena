@@ -7,12 +7,12 @@ import {
   MoreHorizontal as MobileMenuIcon,
   Tag as TagsIcon,
   Settings as SettingsIcon,
-  Triangle as LogoIcon, LucideIcon
+  Triangle as LogoIcon, LucideIcon,
+  HelpCircle as HelpIcon
 } from "lucide-react";
 import {routes} from "../../../routes";
 import {Link, useMatch, useResolvedPath} from "react-router-dom";
 import classNames from "classnames";
-import {f} from "@storybook/theming/dist/create-c2b2ce6d";
 
 export interface GlobalLayoutProps {
   children: ReactNode
@@ -34,7 +34,8 @@ export interface MainMenuLinkProps {
   Icon: LucideIcon,
   label: string,
   href: string,
-  modifier?: string
+  modifier?: stringm
+  target?: "_self" | "_blank" | "_parent" | "_top" | string
 }
 export function MainMenuLink(props: MainMenuLinkProps) {
   let resolved = useResolvedPath(props.href);
@@ -49,7 +50,7 @@ export function MainMenuLink(props: MainMenuLinkProps) {
   )
 
   return (
-    <Link to={props.href} className={className}>
+    <Link to={props.href} className={className} target={props.target}>
       <props.Icon />
       <span>{props.label}</span>
     </Link>
@@ -107,6 +108,13 @@ export function GlobalLayout(props: GlobalLayoutProps) {
               href="/settings"
               Icon={SettingsIcon}
               modifier="settings"
+            />
+            <MainMenuLink
+              label="Help"
+              href={routes.external.docs}
+              Icon={HelpIcon}
+              modifier="help"
+              target="_blank"
             />
           </div>
         </div>
