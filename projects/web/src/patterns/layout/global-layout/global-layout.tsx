@@ -34,7 +34,7 @@ export interface MainMenuLinkProps {
   Icon: LucideIcon,
   label: string,
   href: string,
-  modifier?: stringm
+  modifier?: string,
   target?: "_self" | "_blank" | "_parent" | "_top" | string
 }
 export function MainMenuLink(props: MainMenuLinkProps) {
