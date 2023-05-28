@@ -50,6 +50,15 @@ body,
 
       &--active {
         background: var(--j-c-primary);
+
+        &:hover {
+          background: var(--j-c-primary);
+        }
+      }
+
+      &--tags,
+      &--settings {
+        display: none;
       }
 
       &--tags {
@@ -68,14 +77,47 @@ body,
   .ath-menu-bar {
     height: 100vh;
     width: 70px;
+    display: flex;
+    flex-direction: column;
 
     &__menu {
       flex-direction: column;
+      height: auto;
+      flex-grow: 1;
 
       &-link {
         flex-grow: 0;
         height: 70px;
         width: 100%;
+
+        &--more {
+          display: none;
+        }
+
+        &--tags,
+        &--settings {
+          display: flex;
+        }
+      }
+    }
+
+    &__logo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 70px;
+      margin-bottom: 35px;
+      color: var(--j-c-mono-50);
+      text-decoration: none;
+      font-weight: bold;
+
+      &:hover {
+        background: var(--j-c-blueGrey-800);
+      }
+
+      .logo {
+        color: var(--j-c-primary);
       }
     }
   }

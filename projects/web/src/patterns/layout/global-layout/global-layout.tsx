@@ -6,9 +6,13 @@ import {
   CalendarRange as JournalIcon,
   MoreHorizontal as MobileMenuIcon,
   Tag as TagsIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Triangle as LogoIcon, LucideIcon
 } from "lucide-react";
 import {routes} from "../../../routes";
+import {Link, useMatch, useResolvedPath} from "react-router-dom";
+import classNames from "classnames";
+import {f} from "@storybook/theming/dist/create-c2b2ce6d";
 
 export interface GlobalLayoutProps {
   children: ReactNode
@@ -26,6 +30,32 @@ export function AccountIcon() {
   )
 }
 
+export interface MainMenuLinkProps {
+  Icon: LucideIcon,
+  label: string,
+  href: string,
+  modifier?: string
+}
+export function MainMenuLink(props: MainMenuLinkProps) {
+  let resolved = useResolvedPath(props.href);
+  let match = useMatch({path: resolved.pathname, end: false});
+
+  const className = classNames(
+    "ath-menu-bar__menu-link",
+    props.modifier ? `ath-menu-bar__menu-link--${props.modifier}` : "",
+    {
+      "ath-menu-bar__menu-link--active": match
+    }
+  )
+
+  return (
+    <Link to={props.href} className={className}>
+      <props.Icon />
+      <span>{props.label}</span>
+    </Link>
+  )
+}
+
 export function GlobalLayout(props: GlobalLayoutProps) {
 
   return (
@@ -36,35 +66,48 @@ export function GlobalLayout(props: GlobalLayoutProps) {
 
       <div className="ath-layout">
         <div className="ath-menu-bar">
-          <div className="ath-menu-bar__logo">
-            <span className="logo"></span>
+          <Link to="/" className="ath-menu-bar__logo">
+            <span className="logo">
+              <LogoIcon size={32}/>
+            </span>
             <p>Athena</p>
-          </div>
+          </Link>
           <div className="ath-menu-bar__menu">
-            <a href={routes.content.notes.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--active">
-              <NotesIcon />
-              <span>Notes</span>
-            </a>
-            <a href={routes.content.tasks.list} className="ath-menu-bar__menu-link">
-              <TasksIcon />
-              <span>Tasks</span>
-            </a>
-            <a href={routes.content.journal.list} className="ath-menu-bar__menu-link">
-              <JournalIcon />
-              <span>Journal</span>
-            </a>
-            <a href={routes.organisation.tags.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--more">
-              <MobileMenuIcon />
-              <span>More</span>
-            </a>
-            <a href={routes.content.journal.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--tags">
-              <TagsIcon />
-              <span>Tags</span>
-            </a>
-            <a href={routes.content.journal.list} className="ath-menu-bar__menu-link ath-menu-bar__menu-link--settings">
-              <SettingsIcon />
-              <span>Settings</span>
-            </a>
+            <MainMenuLink
+              label="Notes"
+              href={routes.content.notes.list}
+              Icon={NotesIcon}
+            />
+            <MainMenuLink
+              label="Tasks"
+              href={routes.content.tasks.list}
+              Icon={TasksIcon}
+            />
+            <MainMenuLink
+              label="Journal"
+              href={routes.content.journal.list}
+              Icon={JournalIcon}
+            />
+
+
+            <MainMenuLink
+              label="More"
+              href="/menu"
+              Icon={MobileMenuIcon}
+              modifier="more"
+            />
+            <MainMenuLink
+              label="Tags"
+              href={routes.organisation.tags.list}
+              Icon={TagsIcon}
+              modifier="tags"
+            />
+            <MainMenuLink
+              label="Settings"
+              href="/settings"
+              Icon={SettingsIcon}
+              modifier="settings"
+            />
           </div>
         </div>
         <main className="ath-main">

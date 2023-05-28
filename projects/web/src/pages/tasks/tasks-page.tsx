@@ -23,12 +23,11 @@ export function TasksPage() {
         <title>Tasks | Athena</title>
       </Helmet>
       <div className="">
-        <h1 className="">Notes</h1>
-        <JButtonLink href={routes.content.tasks.create} as={InternalLink}>New Task</JButtonLink>
+        <h1 className="">Tasks</h1>
       </div>
 
       <TaskForm
-        submitText="Add Note"
+        submitText="Add Task"
         onSubmit={async (taskContent) => {
           const id = createUUID();
           const timestamp = new Date().toISOString();
