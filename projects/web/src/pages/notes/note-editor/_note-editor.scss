@@ -1,0 +1,24 @@
+
+.ath-note-editor {
+  &__menu {
+    margin-top: var(--j-space-12);
+    display: flex;
+    align-items: center;
+  }
+
+  &__actions {
+    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--j-space-4);
+  }
+
+  &__content {
+    margin-top: var(--j-space-12);
+  }
+
+  &__body {
+    margin-top: var(--j-space-12);
+  }
+}

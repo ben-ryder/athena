@@ -1,4 +1,4 @@
-import {NoteEditor} from "./note-editor";
+import {NoteEditor} from "./note-editor/note-editor";
 import {AthenaDatabase, ContentTypes, NoteContent} from "../../state/features/database/athena-database";
 import {v4 as createUUID} from "uuid";
 import {useLFBApplication} from "../../utils/lfb-context";

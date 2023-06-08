@@ -14,7 +14,7 @@ import {HomePage} from './pages/home';
 import {PageNotFound} from "./pages/page-not-found";
 import {NotesPage} from "./pages/notes/notes-page";
 import {CreateNotePage} from "./pages/notes/create-note-page";
-import {EditNotePage} from "./pages/notes/edit-note-page";
+import {EditNotePage} from "./pages/notes/edit-note-page/edit-note-page";
 import {WelcomePage} from "./pages/welcome";
 import {TasksPage} from "./pages/tasks/tasks-page";
 import {MenuPage} from "./pages/menu";

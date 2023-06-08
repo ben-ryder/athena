@@ -10,7 +10,6 @@ export interface TaskFormProps {
 
 const INITIAL_TASK_CONTENT: TaskContent = {
 	name: "",
-	description: "",
 	tags: []
 }
 
@@ -55,12 +54,6 @@ export function TaskForm(props: TaskFormProps) {
 					type="text"
 					value={taskContent.name}
 					onChange={(e) => {updateName(e.target.value)}}
-				/>
-				<JTextAreaControl
-					id="description"
-					label="Description"
-					value={taskContent.description || ""}
-					onChange={(e) => {updateDescription(e.target.value)}}
 				/>
 				<JButton type="submit">{props.submitText}</JButton>
 			</form>

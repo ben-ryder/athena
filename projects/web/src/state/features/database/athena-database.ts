@@ -10,11 +10,6 @@ export enum ContentTypes {
   VIEW = "VIEW"
 }
 
-export interface EntityContent {
-  name: string,
-  description?: string,
-}
-
 export interface Entity {
   id: string,
   createdAt: string,
@@ -96,7 +91,8 @@ export type CustomField =
  * Notes & Note Templates
  * ========================
  */
-export interface NoteContent extends EntityContent {
+export interface NoteContent {
+  name: string,
   body: string,
   tags: string[],
   customFields: CustomField[]
@@ -113,7 +109,8 @@ export type NoteTemplatesTable = EntityTable<NoteTemplateEntity>;
  * Tags
  * ========================
  */
-export interface TagContent extends EntityContent {
+export interface TagContent {
+  name: string,
   textColour: string,
   backgroundColour: string,
 }
@@ -125,7 +122,8 @@ export type TagsTable = EntityTable<TagEntity>;
  * Tasks
  * ========================
  */
-export interface TaskContent extends EntityContent {
+export interface TaskContent {
+  name: string,
   tags: string[],
   reminderRRULE?: string
 }
@@ -147,7 +145,8 @@ export enum ViewOrderDirection {
   DESC = "desc",
 }
 
-export interface ViewContent extends EntityContent {
+export interface ViewContent {
+  name: string,
   tags: string[],
   orderBy: ViewOrderByFields,
   orderDirection: ViewOrderDirection,
