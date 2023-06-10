@@ -1,10 +1,16 @@
 import {useState} from "react";
 import {Editor} from "../../../patterns/components/editor/editor";
-import {JButton, JArrowLink, JInputControl, JLabel, JContentSection, JErrorText} from "@ben-ryder/jigsaw-react";
+import {JInputControl, JLabel, JContentSection, JErrorText} from "@ben-ryder/jigsaw-react";
 import {NoteContent} from "../../../state/features/database/athena-database";
 import {routes} from "../../../routes";
-import {InternalLink} from "../../../patterns/components/internal-link";
-import "./_note-editor.scss";
+import "./note-editor.scss";
+import {
+  ContentPage,
+  ContentPageContent,
+  ContentPageField,
+  ContentPageMenu
+} from "../../../patterns/layout/content-page/content-page";
+
 
 export interface NoteEditorProps {
   noteContent: NoteContent,
@@ -29,35 +35,22 @@ export function NoteEditor(props: NoteEditorProps) {
 
   return (
     <JContentSection>
-      <div className="ath-note-editor">
+      <ContentPage>
 
-        <div className="ath-note-editor__menu">
-          <JArrowLink as={InternalLink} direction="left" href={routes.content.notes.list}>Notes</JArrowLink>
-
-          <div className="ath-note-editor__actions">
-            {props.onDelete &&
-              <JButton
-                variant="destructive"
-                onClick={() => {
-                  if (props.onDelete) {
-                    props.onDelete();
-                  }
-                }}
-              >Delete</JButton>
-            }
-            <JButton onClick={() => onSave()}>Save</JButton>
-          </div>
-        </div>
+        <ContentPageMenu
+          backUrl={routes.content.notes.list}
+          backText="Notes"
+          onSave={onSave}
+          onDelete={props.onDelete}
+        />
 
         {error &&
-          <div className="ath-note-editor__errors">
             <JErrorText>{error}</JErrorText>
-          </div>
         }
 
-        <div className="ath-note-editor__content">
+        <ContentPageContent>
 
-          <div className="ath-note-editor__name">
+          <ContentPageField modifier="name">
             <JInputControl
               label="Name"
               id="name"
@@ -66,19 +59,19 @@ export function NoteEditor(props: NoteEditorProps) {
               onChange={e => {setName(e.target.value)}}
               placeholder="a note title..."
             />
-          </div>
+          </ContentPageField>
 
-          <div className="ath-note-editor__body">
+          <ContentPageField modifier="body">
             <JLabel htmlFor="note-body">Body</JLabel>
             <Editor
               id="note-body"
               value={body}
               onChange={updatedBody => setBody(updatedBody)}
             />
-          </div>
-        </div>
+          </ContentPageField>
+        </ContentPageContent>
 
-      </div>
+      </ContentPage>
     </JContentSection>
   )
 }

@@ -5,7 +5,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import {routes} from "../../../routes";
 import React, {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
-import "./_edit-note-page.scss"
 
 export function EditNotePage() {
   const navigate = useNavigate();
@@ -73,10 +72,6 @@ export function EditNotePage() {
     });
 
     navigate(routes.content.notes.list);
-  }
-
-  if (error) {
-    return <p className="text-br-red-500 text-center">{error}</p>
   }
 
   if (note) {
