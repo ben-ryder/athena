@@ -30,7 +30,7 @@ export function Editor(props: EditorProps) {
           theme={jigsawTheme}
           basicSetup={{
             lineNumbers: false,
-            foldGutter: true,
+            foldGutter: false,
             highlightActiveLine: false,
             highlightSelectionMatches: false
           }}

@@ -3,7 +3,6 @@ import {Editor} from "../../../patterns/components/editor/editor";
 import {JInputControl, JLabel, JContentSection, JErrorText} from "@ben-ryder/jigsaw-react";
 import {NoteContent} from "../../../state/features/database/athena-database";
 import {routes} from "../../../routes";
-import "./note-editor.scss";
 import {
   ContentPage,
   ContentPageContent,

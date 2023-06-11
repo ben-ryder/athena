@@ -9,6 +9,11 @@ Jigsaw styling for the editor (currently Codemirror 6)
   line-height: 2;
   margin-top: var(--j-space-4);
 
+  // Editor lines have 6px left-padding so this balances that out on the right
+  .cm-editor {
+    margin-right: 16px;
+  }
+
   .cm-scroller {
     font-family: var(--j-text-font-primary);
     line-height: 2;
