@@ -3,7 +3,7 @@ import React, {useMemo} from "react";
 import {replaceParam, routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
 import {ContentList} from "../../patterns/layout/content-list/content-list";
-import {ContentItem} from "../../patterns/layout/content-list/content-card";
+import {ContentItem} from "../../patterns/layout/content-card/content-card";
 
 export function NotesPage() {
   const {document} = useLFBApplication();
@@ -16,7 +16,7 @@ export function NotesPage() {
         id: note.id,
         name: note.name,
         teaser: note.body.substring(0, 100),
-        url: replaceParam(routes.content.notes.edit, "noteId", note.id)
+        url: replaceParam(routes.content.notes.edit, ":id", note.id)
       }
     })
   }, [document]);

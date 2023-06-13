@@ -1,8 +1,8 @@
 import {JButtonLink, JContentSection, JIcon} from "@ben-ryder/jigsaw-react";
 import {FrownIcon as NoContentIcon} from "lucide-react";
 import {InternalLink} from "../../components/internal-link";
-import {ContentItem} from "./content-card";
-
+import {ContentCard, ContentItem} from "../content-card/content-card";
+import "./content-list.scss"
 
 export interface ContentListProps {
 	items: ContentItem[],
@@ -20,7 +20,9 @@ export function ContentList(props: ContentListProps) {
 			<div className="ath-content-list">
 				<div className="ath-content-list__header">
 					<h2 className="ath-content-list__heading">{props.title}</h2>
-					<JButtonLink as={InternalLink} href={props.newUrl}>{props.newText}</JButtonLink>
+					<div className="ath-content-list__actions">
+						<JButtonLink as={InternalLink} href={props.newUrl}>{props.newText}</JButtonLink>
+					</div>
 				</div>
 				<div className="ath-content-list__list">
 					{props.items.length === 0 &&
@@ -30,13 +32,7 @@ export function ContentList(props: ContentListProps) {
               </div>
 					}
 					{props.items.map(item =>
-						<div className="ath-content-card">
-							<h3 className="ath-content-card__name">{item.name}</h3>
-							{item.teaser &&
-                  <p className="ath-content-card__teaser">{item.teaser}</p>
-							}
-							<a className="ath-content-card__link" href={item.url}>{`go to ${item.name}`}</a>
-						</div>
+						<ContentCard item={item} />
 					)}
 				</div>
 			</div>
