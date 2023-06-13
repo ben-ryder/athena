@@ -1,10 +1,11 @@
-import {NoteEditor} from "../note-editor/note-editor";
-import {AthenaDatabase, NoteContent, NoteEntity} from "../../../state/features/database/athena-database";
+import {NoteForm} from "../note-form/note-form";
+import {AthenaDatabase} from "../../../state/features/database/athena-database";
 import {useLFBApplication} from "../../../utils/lfb-context";
 import {useNavigate, useParams} from "react-router-dom";
 import {routes} from "../../../routes";
 import React, {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
+import {NoteContent, NoteEntity} from "../../../state/features/database/notes";
 
 export function EditNotePage() {
   const navigate = useNavigate();
@@ -80,7 +81,7 @@ export function EditNotePage() {
         <Helmet>
           <title>{`${note.name} | Notes | Athena`}</title>
         </Helmet>
-        <NoteEditor
+        <NoteForm
           noteContent={{
             name: note.name,
             body: note.body,

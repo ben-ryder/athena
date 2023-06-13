@@ -1,6 +1,6 @@
-import {TaskContent} from "../../state/features/database/athena-database";
-import {FormEvent, FormEventHandler, useState} from "react";
+import {FormEvent, useState} from "react";
 import {JButton, JInputControl, JTextAreaControl} from "@ben-ryder/jigsaw-react";
+import {TaskContent} from "../../state/features/database/tasks";
 
 export interface TaskFormProps {
 	taskContent?: TaskContent,
@@ -20,13 +20,6 @@ export function TaskForm(props: TaskFormProps) {
 		setTaskContent({
 			...taskContent,
 			name: name
-		})
-	}
-
-	function updateDescription(description: string) {
-		setTaskContent({
-			...taskContent,
-			description: description
 		})
 	}
 

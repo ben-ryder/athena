@@ -1,7 +1,6 @@
 import {useState} from "react";
 import {Editor} from "../../../patterns/components/editor/editor";
 import {JInputControl, JLabel, JContentSection, JErrorText} from "@ben-ryder/jigsaw-react";
-import {NoteContent} from "../../../state/features/database/athena-database";
 import {routes} from "../../../routes";
 import {
   ContentPage,
@@ -9,15 +8,16 @@ import {
   ContentPageField,
   ContentPageMenu
 } from "../../../patterns/layout/content-page/content-page";
+import {NoteContent} from "../../../state/features/database/notes";
 
 
-export interface NoteEditorProps {
+export interface NoteFormProps {
   noteContent: NoteContent,
   onSave: (noteContent: NoteContent) => void,
   onDelete?: () => void
 }
 
-export function NoteEditor(props: NoteEditorProps) {
+export function NoteForm(props: NoteFormProps) {
   const [error, setError] = useState<string|null>(null);
   const [name, setName] = useState<string>(props.noteContent.name);
   const [body, setBody] = useState<string>(props.noteContent.body);

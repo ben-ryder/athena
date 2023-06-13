@@ -1,11 +1,9 @@
 import {useLFBApplication} from "../../utils/lfb-context";
 import React, {useMemo} from "react";
 import {replaceParam, routes} from "../../routes";
-import {JButtonLink} from "@ben-ryder/jigsaw-react";
-import {Link} from "react-router-dom";
 import {Helmet} from "react-helmet-async";
-import {InternalLink} from "../../patterns/components/internal-link";
-import {ContentItem, ContentList} from "../../patterns/layout/content-list/content-list";
+import {ContentList} from "../../patterns/layout/content-list/content-list";
+import {ContentItem} from "../../patterns/layout/content-list/content-card";
 
 export function NotesPage() {
   const {document} = useLFBApplication();

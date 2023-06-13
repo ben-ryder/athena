@@ -1,11 +1,12 @@
-import {NoteEditor} from "./note-editor/note-editor";
-import {AthenaDatabase, ContentTypes, NoteContent} from "../../state/features/database/athena-database";
+import {NoteForm} from "./note-form/note-form";
+import {AthenaDatabase} from "../../state/features/database/athena-database";
 import {v4 as createUUID} from "uuid";
 import {useLFBApplication} from "../../utils/lfb-context";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
 import React from "react";
+import {NoteContent} from "../../state/features/database/notes";
 
 export function CreateNotePage() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export function CreateNotePage() {
       <Helmet>
         <title>Create Note | Athena</title>
       </Helmet>
-      <NoteEditor
+      <NoteForm
         noteContent={{name: "", body: "", tags: [], customFields: []}}
         onSave={onSave}
       />
