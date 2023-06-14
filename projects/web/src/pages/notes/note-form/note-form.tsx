@@ -33,44 +33,42 @@ export function NoteForm(props: NoteFormProps) {
   }
 
   return (
-    <JContentSection>
-      <ContentPage>
+    <ContentPage>
 
-        <ContentPageMenu
-          backUrl={routes.content.notes.list}
-          backText="Notes"
-          onSave={onSave}
-          onDelete={props.onDelete}
-        />
+      <ContentPageMenu
+        backUrl={routes.content.notes.list}
+        backText="Notes"
+        onSave={onSave}
+        onDelete={props.onDelete}
+      />
 
-        {error &&
-            <JErrorText>{error}</JErrorText>
-        }
+      {error &&
+          <JErrorText>{error}</JErrorText>
+      }
 
-        <ContentPageContent>
+      <ContentPageContent>
 
-          <ContentPageField modifier="name">
-            <JInputControl
-              label="Name"
-              id="name"
-              type="text"
-              value={name}
-              onChange={e => {setName(e.target.value)}}
-              placeholder="a note title..."
-            />
-          </ContentPageField>
+        <ContentPageField modifier="name">
+          <JInputControl
+            label="Name"
+            id="name"
+            type="text"
+            value={name}
+            onChange={e => {setName(e.target.value)}}
+            placeholder="a note title..."
+          />
+        </ContentPageField>
 
-          <ContentPageField modifier="body">
-            <JLabel htmlFor="note-body">Body</JLabel>
-            <Editor
-              id="note-body"
-              value={body}
-              onChange={updatedBody => setBody(updatedBody)}
-            />
-          </ContentPageField>
-        </ContentPageContent>
+        <ContentPageField modifier="body">
+          <JLabel htmlFor="note-body">Body</JLabel>
+          <Editor
+            id="note-body"
+            value={body}
+            onChange={updatedBody => setBody(updatedBody)}
+          />
+        </ContentPageField>
+      </ContentPageContent>
 
-      </ContentPage>
-    </JContentSection>
+    </ContentPage>
   )
 }

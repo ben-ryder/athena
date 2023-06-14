@@ -4,6 +4,11 @@
     margin-top: var(--j-space-12);
     display: flex;
     align-items: center;
+    background: var(--j-c-background-f1);
+    padding: var(--j-space-6);
+    border-top-left-radius: var(--j-border-radius-md);
+    border-top-right-radius: var(--j-border-radius-md);
+    border-bottom: var(--j-border-width-sm) solid var(--j-c-blueGrey-800);
   }
 
   &__actions {

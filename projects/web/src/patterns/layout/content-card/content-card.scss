@@ -21,11 +21,12 @@
   }
 
   &__name {
-    font-size: var(--j-text-size-lg);
+    font-size: var(--j-text-size-md);
     font-weight: bold;
+    color: var(--j-c-text-heading);
   }
 
   &__teaser {
-    margin-top: var(--j-space-2);
+    margin-top: var(--j-space-4);
   }
 }
