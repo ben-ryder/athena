@@ -10,7 +10,8 @@ export interface ContentListProps {
 	newUrl: string,
 	newText: string,
 	// onView: (id: string) => void,
-	onDelete: (ids: string[]) => void
+	onDelete: (ids: string[]) => void,
+	hideListInfo?: boolean
 }
 
 export function ContentList(props: ContentListProps) {
@@ -35,6 +36,11 @@ export function ContentList(props: ContentListProps) {
 						<ContentCard item={item} />
 					)}
 				</div>
+				{!props.hideListInfo &&
+            <div className="ath-content-list__list-info">
+                <p>page 1/1 | 22-42/123 items</p>
+            </div>
+				}
 			</div>
 		</JContentSection>
 	)
