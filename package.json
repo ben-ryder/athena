@@ -48,7 +48,5 @@
     "concurrently": "^7.0.0",
     "husky": "^7.0.4"
   },
-  "dependencies": {
-    "lucide-react": "^0.220.0"
-  }
+  "dependencies": {}
 }
