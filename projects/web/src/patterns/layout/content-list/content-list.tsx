@@ -28,7 +28,7 @@ export function ContentList(props: ContentListProps) {
 				<div className="ath-content-list__list">
 					{props.items.length === 0 &&
               <div className="ath-content-list__emtpy-content">
-                  <JIcon><NoContentIcon/></JIcon>
+                  <JIcon variant="teal" size="xl"><NoContentIcon/></JIcon>
                   <p>No Content Found</p>
               </div>
 					}

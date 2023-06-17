@@ -30,4 +30,15 @@
       margin-left: var(--j-space-4);
     }
   }
+
+  &__emtpy-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--j-space-12);
+
+    .j-icon {
+      margin-bottom: var(--j-space-4);
+    }
+  }
 }
