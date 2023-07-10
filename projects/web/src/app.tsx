@@ -14,10 +14,13 @@ import {HomePage} from './pages/home';
 import {PageNotFound} from "./pages/page-not-found";
 import {NotesPage} from "./pages/notes/notes-page";
 import {CreateNotePage} from "./pages/notes/create-note-page";
-import {EditNotePage} from "./pages/notes/edit-note-page/edit-note-page";
+import {EditNotePage} from "./pages/notes/edit-note-page";
 import {WelcomePage} from "./pages/welcome";
 import {TasksPage} from "./pages/tasks/tasks-page";
 import {MenuPage} from "./pages/menu";
+import {TagsPage} from "./pages/tags/tags-page";
+import {CreateTagPage} from "./pages/tags/create-tag-page";
+import {EditTagPage} from "./pages/tags/edit-tag-page";
 
 export function App() {
   return (
@@ -40,6 +43,11 @@ export function App() {
                 <Route path={routes.content.notes.list} element={<NotesPage />} />
                 <Route path={routes.content.notes.create} element={<CreateNotePage />} />
                 <Route path={routes.content.notes.edit} element={<EditNotePage />} />
+
+                {/* Tags Routes */}
+                <Route path={routes.organisation.tags.list} element={<TagsPage />} />
+                <Route path={routes.organisation.tags.create} element={<CreateTagPage />} />
+                <Route path={routes.organisation.tags.edit} element={<EditTagPage />} />
 
                 {/* Tasks Routes */}
                 <Route path={routes.content.tasks.list} element={<TasksPage />} />

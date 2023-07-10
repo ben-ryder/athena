@@ -1,14 +1,14 @@
 import {useState} from "react";
-import {Editor} from "../../../patterns/components/editor/editor";
+import {Editor} from "../../patterns/components/editor/editor";
 import {JInputControl, JLabel, JContentSection, JErrorText} from "@ben-ryder/jigsaw-react";
-import {routes} from "../../../routes";
+import {routes} from "../../routes";
 import {
   ContentPage,
   ContentPageContent,
   ContentPageField,
   ContentPageMenu
-} from "../../../patterns/layout/content-page/content-page";
-import {NoteContent} from "../../../state/features/database/notes";
+} from "../../patterns/layout/content-page/content-page";
+import {NoteContent} from "../../state/features/database/notes";
 
 
 export interface NoteFormProps {

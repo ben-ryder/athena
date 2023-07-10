@@ -1,11 +1,11 @@
-import {NoteForm} from "../note-form/note-form";
-import {AthenaDatabase} from "../../../state/features/database/athena-database";
-import {useLFBApplication} from "../../../utils/lfb-context";
+import {NoteForm} from "./note-form";
+import {AthenaDatabase} from "../../state/features/database/athena-database";
+import {useLFBApplication} from "../../utils/lfb-context";
 import {useNavigate, useParams} from "react-router-dom";
-import {routes} from "../../../routes";
+import {routes} from "../../routes";
 import React, {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
-import {NoteContent, NoteEntity} from "../../../state/features/database/notes";
+import {NoteContent, NoteEntity} from "../../state/features/database/notes";
 
 export function EditNotePage() {
   const navigate = useNavigate();
