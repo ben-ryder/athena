@@ -1,32 +1,31 @@
-
 .ath-content-card {
-  position: relative;
-  border-bottom: var(--j-border-width-sm) solid var(--j-c-blueGrey-800);
+	position: relative;
+	border-bottom: var(--j-border-width-sm) solid var(--j-c-blueGrey-800);
 
-  &:hover {
-    cursor: pointer;
-    background: var(--j-c-background-b0);
-  }
+	&:hover {
+		cursor: pointer;
+		background: var(--j-c-background-b0);
+	}
 
-  &__link {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%
-  }
+	&__link {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
 
-  &__content {
-    padding: var(--j-space-6);
-  }
+	&__content {
+		padding: var(--j-space-6);
+	}
 
-  &__name {
-    font-size: var(--j-text-size-md);
-    font-weight: bold;
-    color: var(--j-c-text-heading);
-  }
+	&__name {
+		font-size: var(--j-text-size-md);
+		font-weight: bold;
+		color: var(--j-c-text-heading);
+	}
 
-  &__teaser {
-    margin-top: var(--j-space-4);
-  }
+	&__teaser {
+		margin-top: var(--j-space-4);
+	}
 }

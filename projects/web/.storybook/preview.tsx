@@ -1,4 +1,3 @@
-
 export const parameters = {
 	actions: { argTypesRegex: "^on[A-Z].*" },
 	controls: {
@@ -10,16 +9,16 @@ export const parameters = {
 	options: {
 		showPanel: false,
 		storySort: {
-			order: []
-		}
+			order: [],
+		},
 	},
 	backgrounds: {
 		default: "jigsaw",
 		values: [
 			{
 				name: "jigsaw",
-				value: "#242830"
-			}
-		]
-	}
-}
+				value: "#242830",
+			},
+		],
+	},
+};

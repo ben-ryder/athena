@@ -1,5 +1,5 @@
 export interface ListingMetadata {
-  currentPage: number,
-  pageSize: number,
-  total: number
+	currentPage: number;
+	pageSize: number;
+	total: number;
 }

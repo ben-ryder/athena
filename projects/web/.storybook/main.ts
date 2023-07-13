@@ -1,4 +1,4 @@
-import { StorybookConfig } from '@storybook/react-vite';
+import { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
 	stories: [
@@ -8,18 +8,18 @@ const config: StorybookConfig = {
 	addons: [
 		"@storybook/addon-links",
 		"@storybook/addon-essentials",
-		"@storybook/addon-interactions"
+		"@storybook/addon-interactions",
 	],
 	framework: {
-		"name": "@storybook/react-vite",
-		"options": {}
+		name: "@storybook/react-vite",
+		options: {},
 	},
 	core: {
-		"disableTelemetry": true
+		disableTelemetry: true,
 	},
 	docs: {
-		"autodocs": "tag"
+		autodocs: "tag",
 	},
-	staticDirs: ['../public']
+	staticDirs: ["../public"],
 };
 export default config;

@@ -1,33 +1,39 @@
-import {FormEvent, useState} from "react";
-import {JButton, JInputControl, JTextAreaControl} from "@ben-ryder/jigsaw-react";
-import {TaskContent} from "../../state/features/database/tasks";
+import { FormEvent, useState } from "react";
+import {
+	JButton,
+	JInputControl,
+	JTextAreaControl,
+} from "@ben-ryder/jigsaw-react";
+import { TaskContent } from "../../state/features/database/tasks";
 
 export interface TaskFormProps {
-	taskContent?: TaskContent,
-	onSubmit: (taskContent: TaskContent) => void,
-	submitText: string
+	taskContent?: TaskContent;
+	onSubmit: (taskContent: TaskContent) => void;
+	submitText: string;
 }
 
 const INITIAL_TASK_CONTENT: TaskContent = {
 	name: "",
-	tags: []
-}
+	tags: [],
+};
 
 export function TaskForm(props: TaskFormProps) {
-	const [taskContent, setTaskContent] = useState<TaskContent>(props.taskContent || INITIAL_TASK_CONTENT);
+	const [taskContent, setTaskContent] = useState<TaskContent>(
+		props.taskContent || INITIAL_TASK_CONTENT,
+	);
 
 	function updateName(name: string) {
 		setTaskContent({
 			...taskContent,
-			name: name
-		})
+			name: name,
+		});
 	}
 
 	function updateTags(tags: string[]) {
 		setTaskContent({
 			...taskContent,
-			tags: tags
-		})
+			tags: tags,
+		});
 	}
 
 	function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -46,10 +52,12 @@ export function TaskForm(props: TaskFormProps) {
 					label="Name"
 					type="text"
 					value={taskContent.name}
-					onChange={(e) => {updateName(e.target.value)}}
+					onChange={(e) => {
+						updateName(e.target.value);
+					}}
 				/>
 				<JButton type="submit">{props.submitText}</JButton>
 			</form>
 		</div>
-	)
+	);
 }

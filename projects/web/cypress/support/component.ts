@@ -14,9 +14,9 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import "./commands";
 
-import { mount } from 'cypress/react18'
+import { mount } from "cypress/react18";
 
 import { setGlobalConfig } from "@storybook/testing-react";
 import * as sbPreview from "../../.storybook/preview";
@@ -27,14 +27,14 @@ setGlobalConfig(sbPreview);
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
 declare global {
-  namespace Cypress {
-    interface Chainable {
-      mount: typeof mount
-    }
-  }
+	namespace Cypress {
+		interface Chainable {
+			mount: typeof mount;
+		}
+	}
 }
 
-Cypress.Commands.add('mount', mount)
+Cypress.Commands.add("mount", mount);
 
 // Example use:
 // cy.mount(<MyComponent />)

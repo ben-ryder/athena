@@ -1,15 +1,15 @@
-import {CustomField} from "./custom-fields";
-import {Entity, EntityTable} from "./entity";
+import { CustomField } from "./custom-fields";
+import { Entity, EntityTable } from "./entity";
 
 /**
  * Notes & Note Templates
  * ========================
  */
 export interface NoteContent {
-  name: string,
-  body: string,
-  tags: string[],
-  customFields: CustomField[]
+	name: string;
+	body: string;
+	tags: string[];
+	customFields: CustomField[];
 }
 export interface NoteEntity extends Entity, NoteContent {}
 export type NotesTable = EntityTable<NoteEntity>;
