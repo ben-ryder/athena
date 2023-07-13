@@ -1,4 +1,4 @@
-import {TagForm} from "./tag-form";
+import {TagForm} from "./tag-form/tag-form";
 import {AthenaDatabase} from "../../state/features/database/athena-database";
 import {v4 as createUUID} from "uuid";
 import {useLFBApplication} from "../../utils/lfb-context";
@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {routes} from "../../routes";
 import {Helmet} from "react-helmet-async";
 import React from "react";
-import { TagContent } from "../../state/features/database/tag";
+import {TagContent, TagEntity} from "../../state/features/database/tag";
 
 export function CreateTagPage() {
   const navigate = useNavigate();
@@ -18,13 +18,19 @@ export function CreateTagPage() {
 
     await makeChange((doc: AthenaDatabase) => {
       doc.tags.content.ids.push(id);
-      doc.tags.content.entities[id] = {
+      const entity: TagEntity = {
         id: id,
         name: content.name,
-        variant: content.variant,
         createdAt: timestamp,
         updatedAt: timestamp
       }
+
+      // automerge doesn't support explicit undefined values, so only include the data if required
+      if (content.variant) {
+        entity.variant = content.variant
+      }
+
+      doc.tags.content.entities[id] = entity;
     });
 
     navigate(routes.organisation.tags.list);

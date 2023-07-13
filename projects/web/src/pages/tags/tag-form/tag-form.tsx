@@ -2,18 +2,18 @@ import {useMemo, useState} from "react";
 import {
   JInputControl,
   JErrorText,
-  JSelectControl
+  JSelectControl, JBadge, JLabel
 } from "@ben-ryder/jigsaw-react";
-import {routes} from "../../routes";
+import {routes} from "../../../routes";
 import {
   ContentPage,
   ContentPageContent,
   ContentPageField,
   ContentPageMenu
-} from "../../patterns/layout/content-page/content-page";
-import {TagContent} from "../../state/features/database/tag";
-import {JColourVariants} from "@ben-ryder/jigsaw-react/dist/00-foundations/colours/variants/colour-variants";
-
+} from "../../../patterns/layout/content-page/content-page";
+import {TagContent} from "../../../state/features/database/tag";
+import {JColourVariants} from "@ben-ryder/jigsaw-react";
+import "./tag-form.scss";
 
 export interface TagFormProps {
   content: TagContent,
@@ -90,6 +90,13 @@ export function TagForm(props: TagFormProps) {
             onChange={setVariant}
           />
         </ContentPageField>
+
+        {name.length > 0 &&
+          <ContentPageField modifier="preview">
+            <JLabel>Preview</JLabel>
+            <JBadge text={name} variant={variant} />
+          </ContentPageField>
+        }
 
       </ContentPageContent>
 

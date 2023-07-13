@@ -1,5 +1,5 @@
 import {Entity, EntityTable} from "./entity";
-import {JColourVariants} from "@ben-ryder/jigsaw-react/dist/00-foundations/colours/variants/colour-variants";
+import {JColourVariants} from "@ben-ryder/jigsaw-react";
 
 /**
  * Tags

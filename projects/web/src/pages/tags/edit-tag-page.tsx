@@ -5,7 +5,7 @@ import {routes} from "../../routes";
 import React, {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
 import {TagContent, TagEntity } from "../../state/features/database/tag";
-import { TagForm } from "./tag-form";
+import { TagForm } from "./tag-form/tag-form";
 
 export function EditTagPage() {
   const navigate = useNavigate();
