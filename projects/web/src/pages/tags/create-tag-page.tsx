@@ -21,8 +21,7 @@ export function CreateTagPage() {
       doc.tags.content.entities[id] = {
         id: id,
         name: content.name,
-        backgroundColour: content.backgroundColour,
-        textColour: content.textColour,
+        variant: content.variant,
         createdAt: timestamp,
         updatedAt: timestamp
       }
@@ -37,7 +36,7 @@ export function CreateTagPage() {
         <title>Create Note | Athena</title>
       </Helmet>
       <TagForm
-        content={{name: "", backgroundColour: "", textColour: "" }}
+        content={{name: ""}}
         onSave={onSave}
       />
     </>

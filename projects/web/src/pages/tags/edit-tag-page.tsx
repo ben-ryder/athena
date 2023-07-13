@@ -47,11 +47,8 @@ export function EditTagPage() {
       if (doc.tags.content.entities[tag.id].name !== updatedContent.name) {
         doc.tags.content.entities[tag.id].name = updatedContent.name;
       }
-      if (doc.tags.content.entities[tag.id].backgroundColour !== updatedContent.backgroundColour) {
-        doc.tags.content.entities[tag.id].backgroundColour = updatedContent.backgroundColour;
-      }
-      if (doc.tags.content.entities[tag.id].textColour !== updatedContent.textColour) {
-        doc.tags.content.entities[tag.id].textColour = updatedContent.textColour;
+      if (doc.tags.content.entities[tag.id].variant !== updatedContent.variant) {
+        doc.tags.content.entities[tag.id].variant = updatedContent.variant;
       }
 
       doc.tags.content.entities[tag.id].updatedAt = timestamp;
@@ -82,8 +79,7 @@ export function EditTagPage() {
         <TagForm
           content={{
             name: tag.name,
-            backgroundColour: tag.backgroundColour,
-            textColour: tag.textColour
+            variant: tag.variant
           }}
           onSave={onSave}
           onDelete={onDelete}

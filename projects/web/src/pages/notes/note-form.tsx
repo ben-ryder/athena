@@ -3,12 +3,11 @@ import {Editor} from "../../patterns/components/editor/editor";
 import {
   JInputControl,
   JLabel,
-  JContentSection,
   JErrorText,
   JMultiSelectControl,
-  JOptionData
+  JMultiSelectOptionData
 } from "@ben-ryder/jigsaw-react";
-import {replaceParam, routes} from "../../routes";
+import {routes} from "../../routes";
 import {
   ContentPage,
   ContentPageContent,
@@ -16,7 +15,6 @@ import {
   ContentPageMenu
 } from "../../patterns/layout/content-page/content-page";
 import {NoteContent} from "../../state/features/database/notes";
-import {ContentItem} from "../../patterns/layout/content-card/content-card";
 import {useLFBApplication} from "../../utils/lfb-context";
 
 
@@ -33,22 +31,26 @@ export function NoteForm(props: NoteFormProps) {
   const [name, setName] = useState<string>(props.noteContent.name);
   const [body, setBody] = useState<string>(props.noteContent.body);
 
-  const [selectedTags, setSelectedTags] = useState<JOptionData[]>(
+  const [selectedTags, setSelectedTags] = useState<JMultiSelectOptionData[]>(
     props.noteContent.tags.map(tagId => {
+      const tag = document.tags.content.entities[tagId];
+
       return {
-        text: document.tags.content.entities[tagId].name,
-        value: document.tags.content.entities[tagId].id,
+        text: tag.name,
+        value: tag.id,
+        variant: tag.variant
       }
     })
   );
 
-  const tagOptions: JOptionData[] = useMemo(() => {
+  const tagOptions: JMultiSelectOptionData[] = useMemo(() => {
     const tags = document.tags.content.ids.map(id => document.tags.content.entities[id]);
 
     return tags.map(tag => {
       return {
         text: tag.name,
-        value: tag.id
+        value: tag.id,
+        variant: tag.variant
       }
     })
   }, [document]);
