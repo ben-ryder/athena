@@ -28,4 +28,11 @@
   &__teaser {
     margin-top: var(--j-space-4);
   }
+
+  &__tags {
+    margin-top: var(--j-space-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--j-space-2);
+  }
 }

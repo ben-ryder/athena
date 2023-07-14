@@ -2,8 +2,8 @@ import { useLFBApplication } from "../../utils/lfb-context";
 import React, { useMemo } from "react";
 import { replaceParam, routes } from "../../routes";
 import { Helmet } from "react-helmet-async";
-import { ContentList } from "../../patterns/layout/content-list/content-list";
-import { ContentItem } from "../../patterns/layout/content-card/content-card";
+import { ContentList } from "../../patterns/components/content-list/content-list";
+import { ContentItem } from "../../patterns/components/content-card/content-card";
 
 export function NotesPage() {
   const { document } = useLFBApplication();
@@ -14,11 +14,14 @@ export function NotesPage() {
     );
 
     return notes.map((note) => {
+      const noteTags = note.tags.map(tagId => document.tags.content.entities[tagId]);
+
       return {
         id: note.id,
         name: note.name,
         teaser: note.body.substring(0, 100),
         url: replaceParam(routes.content.notes.edit, ":id", note.id),
+        tags: noteTags
       };
     });
   }, [document]);

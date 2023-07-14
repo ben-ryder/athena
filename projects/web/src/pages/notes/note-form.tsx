@@ -99,6 +99,8 @@ export function NoteForm(props: NoteFormProps) {
             options={tagOptions}
             selectedOptions={selectedTags}
             setSelectedOptions={setSelectedTags}
+            searchText="Search tags..."
+            noOptionsText="No tags found"
           />
         </ContentPageField>
 
