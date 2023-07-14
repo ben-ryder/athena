@@ -9,38 +9,38 @@ import React from "react";
 import { NoteContent } from "../../state/features/database/notes";
 
 export function CreateNotePage() {
-	const navigate = useNavigate();
-	const { makeChange } = useLFBApplication();
+  const navigate = useNavigate();
+  const { makeChange } = useLFBApplication();
 
-	async function onSave(newNote: NoteContent) {
-		const id = createUUID();
-		const timestamp = new Date().toISOString();
+  async function onSave(newNote: NoteContent) {
+    const id = createUUID();
+    const timestamp = new Date().toISOString();
 
-		await makeChange((doc: AthenaDatabase) => {
-			doc.notes.content.ids.push(id);
-			doc.notes.content.entities[id] = {
-				id: id,
-				name: newNote.name,
-				body: newNote.body,
-				tags: newNote.tags,
-				createdAt: timestamp,
-				updatedAt: timestamp,
-				customFields: [],
-			};
-		});
+    await makeChange((doc: AthenaDatabase) => {
+      doc.notes.content.ids.push(id);
+      doc.notes.content.entities[id] = {
+        id: id,
+        name: newNote.name,
+        body: newNote.body,
+        tags: newNote.tags,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        customFields: [],
+      };
+    });
 
-		navigate(routes.content.notes.list);
-	}
+    navigate(routes.content.notes.list);
+  }
 
-	return (
-		<>
-			<Helmet>
-				<title>Create Note | Athena</title>
-			</Helmet>
-			<NoteForm
-				noteContent={{ name: "", body: "", tags: [], customFields: [] }}
-				onSave={onSave}
-			/>
-		</>
-	);
+  return (
+    <>
+      <Helmet>
+        <title>Create Note | Athena</title>
+      </Helmet>
+      <NoteForm
+        noteContent={{ name: "", body: "", tags: [], customFields: [] }}
+        onSave={onSave}
+      />
+    </>
+  );
 }

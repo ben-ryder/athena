@@ -6,8 +6,8 @@ import { JColourVariants } from "@ben-ryder/jigsaw-react";
  * ========================
  */
 export interface TagContent {
-	name: string;
-	variant?: JColourVariants;
+  name: string;
+  variant?: JColourVariants;
 }
 export interface TagEntity extends Entity, TagContent {}
 export type TagsTable = EntityTable<TagEntity>;

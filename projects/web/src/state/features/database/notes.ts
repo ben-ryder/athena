@@ -6,10 +6,10 @@ import { Entity, EntityTable } from "./entity";
  * ========================
  */
 export interface NoteContent {
-	name: string;
-	body: string;
-	tags: string[];
-	customFields: CustomField[];
+  name: string;
+  body: string;
+  tags: string[];
+  customFields: CustomField[];
 }
 export interface NoteEntity extends Entity, NoteContent {}
 export type NotesTable = EntityTable<NoteEntity>;

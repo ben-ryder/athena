@@ -8,16 +8,16 @@ import { TasksTable } from "./tasks";
  * ========================
  */
 export interface AthenaDatabase {
-	tags: {
-		content: TagsTable;
-	};
-	notes: {
-		content: NotesTable;
-		templates: NoteTemplatesTable;
-		views: ViewsTable;
-	};
-	tasks: {
-		content: TasksTable;
-		views: ViewsTable;
-	};
+  tags: {
+    content: TagsTable;
+  };
+  notes: {
+    content: NotesTable;
+    templates: NoteTemplatesTable;
+    views: ViewsTable;
+  };
+  tasks: {
+    content: TasksTable;
+    views: ViewsTable;
+  };
 }

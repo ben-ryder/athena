@@ -1,4 +1,4 @@
 export interface UpdateTagsPayload {
-	id: string;
-	tags: string[];
+  id: string;
+  tags: string[];
 }

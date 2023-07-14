@@ -9,39 +9,39 @@ import React from "react";
 import { TagContent, TagEntity } from "../../state/features/database/tag";
 
 export function CreateTagPage() {
-	const navigate = useNavigate();
-	const { makeChange } = useLFBApplication();
+  const navigate = useNavigate();
+  const { makeChange } = useLFBApplication();
 
-	async function onSave(content: TagContent) {
-		const id = createUUID();
-		const timestamp = new Date().toISOString();
+  async function onSave(content: TagContent) {
+    const id = createUUID();
+    const timestamp = new Date().toISOString();
 
-		await makeChange((doc: AthenaDatabase) => {
-			doc.tags.content.ids.push(id);
-			const entity: TagEntity = {
-				id: id,
-				name: content.name,
-				createdAt: timestamp,
-				updatedAt: timestamp,
-			};
+    await makeChange((doc: AthenaDatabase) => {
+      doc.tags.content.ids.push(id);
+      const entity: TagEntity = {
+        id: id,
+        name: content.name,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      };
 
-			// automerge doesn't support explicit undefined values, so only include the data if required
-			if (content.variant) {
-				entity.variant = content.variant;
-			}
+      // automerge doesn't support explicit undefined values, so only include the data if required
+      if (content.variant) {
+        entity.variant = content.variant;
+      }
 
-			doc.tags.content.entities[id] = entity;
-		});
+      doc.tags.content.entities[id] = entity;
+    });
 
-		navigate(routes.organisation.tags.list);
-	}
+    navigate(routes.organisation.tags.list);
+  }
 
-	return (
-		<>
-			<Helmet>
-				<title>Create Note | Athena</title>
-			</Helmet>
-			<TagForm content={{ name: "" }} onSave={onSave} />
-		</>
-	);
+  return (
+    <>
+      <Helmet>
+        <title>Create Note | Athena</title>
+      </Helmet>
+      <TagForm content={{ name: "" }} onSave={onSave} />
+    </>
+  );
 }

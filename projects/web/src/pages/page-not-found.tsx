@@ -6,20 +6,20 @@ import { JArrowLink } from "@ben-ryder/jigsaw-react";
 import { InternalLink } from "../patterns/components/internal-link";
 
 export function PageNotFound() {
-	return (
-		<>
-			<Helmet>
-				<title>Not Found | Athena</title>
-			</Helmet>
-			<MessagePage
-				heading="Not Found"
-				content={<p>The page you requested could not be found.</p>}
-				extraContent={
-					<JArrowLink href={routes.home} direction="left" as={InternalLink}>
-						Back to Home Page
-					</JArrowLink>
-				}
-			/>
-		</>
-	);
+  return (
+    <>
+      <Helmet>
+        <title>Not Found | Athena</title>
+      </Helmet>
+      <MessagePage
+        heading="Not Found"
+        content={<p>The page you requested could not be found.</p>}
+        extraContent={
+          <JArrowLink href={routes.home} direction="left" as={InternalLink}>
+            Back to Home Page
+          </JArrowLink>
+        }
+      />
+    </>
+  );
 }

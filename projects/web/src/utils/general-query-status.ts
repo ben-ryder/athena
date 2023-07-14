@@ -1,6 +1,6 @@
 export enum GeneralQueryStatus {
-	LOADING = "loading",
-	SUCCESS = "success",
-	FAILED = "failed",
-	EMPTY = "empty",
+  LOADING = "loading",
+  SUCCESS = "success",
+  FAILED = "failed",
+  EMPTY = "empty",
 }

@@ -8,85 +8,85 @@ import { TagContent, TagEntity } from "../../state/features/database/tag";
 import { TagForm } from "./tag-form/tag-form";
 
 export function EditTagPage() {
-	const navigate = useNavigate();
-	const params = useParams();
-	const { makeChange, document } = useLFBApplication();
+  const navigate = useNavigate();
+  const params = useParams();
+  const { makeChange, document } = useLFBApplication();
 
-	const [tag, setTag] = useState<TagEntity | null>();
-	const [error, setError] = useState<string | null>();
+  const [tag, setTag] = useState<TagEntity | null>();
+  const [error, setError] = useState<string | null>();
 
-	useEffect(() => {
-		// Reset error
-		setError(null);
+  useEffect(() => {
+    // Reset error
+    setError(null);
 
-		if (!params.id) {
-			return navigate(routes.organisation.tags.list);
-		}
+    if (!params.id) {
+      return navigate(routes.organisation.tags.list);
+    }
 
-		const tag = document.tags.content.entities[params.id];
-		if (!tag) {
-			setError("The tag could not be found");
-			setTag(null);
-		} else {
-			setTag(tag);
-		}
-	}, [document, setTag]);
+    const tag = document.tags.content.entities[params.id];
+    if (!tag) {
+      setError("The tag could not be found");
+      setTag(null);
+    } else {
+      setTag(tag);
+    }
+  }, [document, setTag]);
 
-	async function onSave(updatedContent: TagContent) {
-		if (!tag) {
-			return setError("Tried to save a tag that isn't loaded yet.");
-		}
+  async function onSave(updatedContent: TagContent) {
+    if (!tag) {
+      return setError("Tried to save a tag that isn't loaded yet.");
+    }
 
-		await makeChange((doc: AthenaDatabase) => {
-			const timestamp = new Date().toISOString();
+    await makeChange((doc: AthenaDatabase) => {
+      const timestamp = new Date().toISOString();
 
-			// check old values so we only change what's needed
-			// todo: assumption that automerge will register change even if new value is the same?
-			if (doc.tags.content.entities[tag.id].name !== updatedContent.name) {
-				doc.tags.content.entities[tag.id].name = updatedContent.name;
-			}
-			if (
-				doc.tags.content.entities[tag.id].variant !== updatedContent.variant
-			) {
-				doc.tags.content.entities[tag.id].variant = updatedContent.variant;
-			}
+      // check old values so we only change what's needed
+      // todo: assumption that automerge will register change even if new value is the same?
+      if (doc.tags.content.entities[tag.id].name !== updatedContent.name) {
+        doc.tags.content.entities[tag.id].name = updatedContent.name;
+      }
+      if (
+        doc.tags.content.entities[tag.id].variant !== updatedContent.variant
+      ) {
+        doc.tags.content.entities[tag.id].variant = updatedContent.variant;
+      }
 
-			doc.tags.content.entities[tag.id].updatedAt = timestamp;
-		});
+      doc.tags.content.entities[tag.id].updatedAt = timestamp;
+    });
 
-		navigate(routes.organisation.tags.list);
-	}
+    navigate(routes.organisation.tags.list);
+  }
 
-	async function onDelete() {
-		if (!tag) {
-			return setError("Tried to delete a tag that isn't loaded yet.");
-		}
+  async function onDelete() {
+    if (!tag) {
+      return setError("Tried to delete a tag that isn't loaded yet.");
+    }
 
-		await makeChange((doc: AthenaDatabase) => {
-			doc.tags.content.ids = doc.tags.content.ids.filter((id) => id !== tag.id);
-			delete doc.tags.content.entities[tag.id];
-		});
+    await makeChange((doc: AthenaDatabase) => {
+      doc.tags.content.ids = doc.tags.content.ids.filter((id) => id !== tag.id);
+      delete doc.tags.content.entities[tag.id];
+    });
 
-		navigate(routes.organisation.tags.list);
-	}
+    navigate(routes.organisation.tags.list);
+  }
 
-	if (tag) {
-		return (
-			<div>
-				<Helmet>
-					<title>{`${tag.name} | Tags | Athena`}</title>
-				</Helmet>
-				<TagForm
-					content={{
-						name: tag.name,
-						variant: tag.variant,
-					}}
-					onSave={onSave}
-					onDelete={onDelete}
-				/>
-			</div>
-		);
-	}
+  if (tag) {
+    return (
+      <div>
+        <Helmet>
+          <title>{`${tag.name} | Tags | Athena`}</title>
+        </Helmet>
+        <TagForm
+          content={{
+            name: tag.name,
+            variant: tag.variant,
+          }}
+          onSave={onSave}
+          onDelete={onDelete}
+        />
+      </div>
+    );
+  }
 
-	return null;
+  return null;
 }

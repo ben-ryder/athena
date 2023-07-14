@@ -1,25 +1,25 @@
 .ath-content-page {
-	&__menu {
-		margin-top: var(--j-space-12);
-		display: flex;
-		align-items: center;
-		padding: var(--j-space-6);
-		border-bottom: var(--j-border-width-md) solid var(--j-c-blueGrey-800);
-	}
+  &__menu {
+    margin-top: var(--j-space-12);
+    display: flex;
+    align-items: center;
+    padding: var(--j-space-6);
+    border-bottom: var(--j-border-width-md) solid var(--j-c-blueGrey-800);
+  }
 
-	&__actions {
-		margin-left: auto;
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-		gap: var(--j-space-4);
-	}
+  &__actions {
+    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--j-space-4);
+  }
 
-	&__content {
-		margin-top: var(--j-space-12);
-	}
+  &__content {
+    margin-top: var(--j-space-12);
+  }
 
-	&__field {
-		margin-top: var(--j-space-12);
-	}
+  &__field {
+    margin-top: var(--j-space-12);
+  }
 }
