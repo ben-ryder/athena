@@ -14,10 +14,11 @@ export interface AthenaDatabase {
   notes: {
     content: NotesTable;
     templates: NoteTemplatesTable;
-    views: ViewsTable;
   };
   tasks: {
     content: TasksTable;
-    views: ViewsTable;
   };
+  views: {
+    content: ViewsTable
+  }
 }

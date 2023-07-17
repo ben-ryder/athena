@@ -4,6 +4,12 @@ import { Entity, EntityTable } from "./entity";
  * Views
  * ========================
  */
+export enum ViewContentTypes {
+  NOTES = "notes",
+  TASKS = "tasks",
+}
+
+
 export enum ViewOrderByFields {
   CREATED_AT = "createdAt",
   UPDATED_AT = "updatedAt",
@@ -14,8 +20,10 @@ export enum ViewOrderDirection {
   DESC = "desc",
 }
 
+
 export interface ViewContent {
   name: string;
+  contentType: ViewContentTypes
   tags: string[];
   orderBy: ViewOrderByFields;
   orderDirection: ViewOrderDirection;

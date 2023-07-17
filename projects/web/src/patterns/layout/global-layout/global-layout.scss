@@ -56,6 +56,8 @@ body,
         }
       }
 
+      &--notes,
+      &--tasks,
       &--tags,
       &--settings,
       &--help {
@@ -94,6 +96,8 @@ body,
           display: none;
         }
 
+        &--notes,
+        &--tasks,
         &--tags,
         &--settings,
         &--help {

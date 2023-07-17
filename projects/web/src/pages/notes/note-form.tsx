@@ -70,7 +70,7 @@ export function NoteForm(props: NoteFormProps) {
   return (
     <ContentPage>
       <ContentPageMenu
-        backUrl={routes.content.notes.list}
+        backUrl={routes.notes.list}
         backText="Notes"
         onSave={onSave}
         onDelete={props.onDelete}

@@ -59,7 +59,7 @@ export function TagForm(props: TagFormProps) {
   return (
     <ContentPage>
       <ContentPageMenu
-        backUrl={routes.organisation.tags.list}
+        backUrl={routes.tags.list}
         backText="Tags"
         onSave={onSave}
         onDelete={props.onDelete}

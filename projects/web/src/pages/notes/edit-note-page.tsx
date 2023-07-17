@@ -20,7 +20,7 @@ export function EditNotePage() {
     setError(null);
 
     if (!params.id) {
-      return navigate(routes.content.notes.list);
+      return navigate(routes.notes.list);
     }
 
     const note = document.notes.content.entities[params.id];
@@ -57,7 +57,7 @@ export function EditNotePage() {
       doc.notes.content.entities[note.id].updatedAt = timestamp;
     });
 
-    navigate(routes.content.notes.list);
+    navigate(routes.notes.list);
   }
 
   async function onDelete() {
@@ -72,7 +72,7 @@ export function EditNotePage() {
       delete doc.notes.content.entities[note.id];
     });
 
-    navigate(routes.content.notes.list);
+    navigate(routes.notes.list);
   }
 
   if (note) {

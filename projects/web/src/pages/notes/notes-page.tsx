@@ -20,7 +20,7 @@ export function NotesPage() {
         id: note.id,
         name: note.name,
         teaser: note.body.substring(0, 100),
-        url: replaceParam(routes.content.notes.edit, ":id", note.id),
+        url: replaceParam(routes.notes.edit, ":id", note.id),
         tags: noteTags
       };
     });
@@ -38,7 +38,7 @@ export function NotesPage() {
       <ContentList
         items={noteContentItems}
         title="Notes"
-        newUrl={routes.content.notes.create}
+        newUrl={routes.notes.create}
         newText="New Note"
         onDelete={onDelete}
       />

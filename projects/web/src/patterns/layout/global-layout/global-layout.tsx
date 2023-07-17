@@ -10,6 +10,8 @@ import {
   Triangle as LogoIcon,
   LucideIcon,
   HelpCircle as HelpIcon,
+  Filter as ViewsIcon,
+  LayoutTemplate as PagesIcon
 } from "lucide-react";
 import { routes } from "../../../routes";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
@@ -85,30 +87,46 @@ export function GlobalLayout(props: GlobalLayoutProps) {
           </Link>
           <div className="ath-menu-bar__menu">
             <MainMenuLink
-              label="Notes"
-              href={routes.content.notes.list}
-              Icon={NotesIcon}
+              label="Pages"
+              href={routes.pages.list}
+              Icon={PagesIcon}
+              modifier="pages"
             />
             <MainMenuLink
-              label="Tasks"
-              href={routes.content.tasks.list}
-              Icon={TasksIcon}
+              label="Views"
+              href={routes.views.list}
+              Icon={ViewsIcon}
+              modifier="views"
             />
             <MainMenuLink
               label="Journal"
-              href={routes.content.journal.list}
+              href={routes.journal.list}
               Icon={JournalIcon}
+              modifier="journal"
             />
-
             <MainMenuLink
               label="More"
               href="/menu"
               Icon={MobileMenuIcon}
               modifier="more"
             />
+
+            <MainMenuLink
+              label="Notes"
+              href={routes.notes.list}
+              Icon={NotesIcon}
+              modifier="notes"
+            />
+            <MainMenuLink
+              label="Tasks"
+              href={routes.tasks.list}
+              Icon={TasksIcon}
+              modifier="tasks"
+            />
+
             <MainMenuLink
               label="Tags"
-              href={routes.organisation.tags.list}
+              href={routes.tags.list}
               Icon={TagsIcon}
               modifier="tags"
             />

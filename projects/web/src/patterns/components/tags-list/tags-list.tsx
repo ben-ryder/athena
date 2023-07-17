@@ -16,7 +16,7 @@ export function TagsList(props: TagsListProps) {
       <div className="ath-tags-list__header">
         <h2 className="ath-tags-list__heading">Tags</h2>
         <div className="ath-tags-list__actions">
-          <JButtonLink as={InternalLink} href={routes.organisation.tags.create}>
+          <JButtonLink as={InternalLink} href={routes.tags.create}>
             New Tag
           </JButtonLink>
         </div>
@@ -34,7 +34,7 @@ export function TagsList(props: TagsListProps) {
           <JBadge
             key={tag.id}
             text={tag.name}
-            href={replaceParam(routes.organisation.tags.edit, ":id", tag.id)}
+            href={replaceParam(routes.tags.edit, ":id", tag.id)}
             variant={tag.variant}
             linkAs={InternalLink}
           />

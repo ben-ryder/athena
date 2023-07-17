@@ -29,7 +29,7 @@ export function CreateNotePage() {
       };
     });
 
-    navigate(routes.content.notes.list);
+    navigate(routes.notes.list);
   }
 
   return (

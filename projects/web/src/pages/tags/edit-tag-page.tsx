@@ -20,7 +20,7 @@ export function EditTagPage() {
     setError(null);
 
     if (!params.id) {
-      return navigate(routes.organisation.tags.list);
+      return navigate(routes.tags.list);
     }
 
     const tag = document.tags.content.entities[params.id];
@@ -54,7 +54,7 @@ export function EditTagPage() {
       doc.tags.content.entities[tag.id].updatedAt = timestamp;
     });
 
-    navigate(routes.organisation.tags.list);
+    navigate(routes.tags.list);
   }
 
   async function onDelete() {
@@ -67,7 +67,7 @@ export function EditTagPage() {
       delete doc.tags.content.entities[tag.id];
     });
 
-    navigate(routes.organisation.tags.list);
+    navigate(routes.tags.list);
   }
 
   if (tag) {

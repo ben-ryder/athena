@@ -33,7 +33,7 @@ export function CreateTagPage() {
       doc.tags.content.entities[id] = entity;
     });
 
-    navigate(routes.organisation.tags.list);
+    navigate(routes.tags.list);
   }
 
   return (

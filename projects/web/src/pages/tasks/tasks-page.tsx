@@ -55,7 +55,7 @@ export function TasksPage() {
             <h2>{task.name}</h2>
             <Link
               className="absolute w-full h-full top-0 left-0"
-              to={replaceParam(routes.content.tasks.edit, ":id", task.id)}
+              to={replaceParam(routes.tasks.edit, ":id", task.id)}
             >{`view task`}</Link>
           </div>
         ))}

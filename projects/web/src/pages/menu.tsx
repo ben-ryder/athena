@@ -21,23 +21,29 @@ export function MenuPage() {
           <h2>Main Content</h2>
           <ul>
             <li>
-              <Link to={routes.content.notes.list}>Notes</Link>
+              <Link to={routes.notes.list}>Notes</Link>
             </li>
             <li>
-              <Link to={routes.content.tasks.list}>Tasks</Link>
+              <Link to={routes.tasks.list}>Tasks</Link>
             </li>
             <li>
-              <Link to={routes.content.journal.list}>Journal</Link>
+              <Link to={routes.journal.list}>Journal</Link>
             </li>
           </ul>
 
           <h2>Management</h2>
           <ul>
             <li>
-              <Link to={routes.settings}>Settings</Link>
+              <Link to={routes.views.list}>Pages</Link>
             </li>
             <li>
-              <Link to={routes.organisation.tags.list}>Tags</Link>
+              <Link to={routes.views.list}>Views</Link>
+            </li>
+            <li>
+              <Link to={routes.tags.list}>Tags</Link>
+            </li>
+            <li>
+              <Link to={routes.settings}>Settings</Link>
             </li>
           </ul>
 

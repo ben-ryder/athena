@@ -41,35 +41,35 @@ export function App() {
 
                 {/* Notes Routes */}
                 <Route
-                  path={routes.content.notes.list}
+                  path={routes.notes.list}
                   element={<NotesPage />}
                 />
                 <Route
-                  path={routes.content.notes.create}
+                  path={routes.notes.create}
                   element={<CreateNotePage />}
                 />
                 <Route
-                  path={routes.content.notes.edit}
+                  path={routes.notes.edit}
                   element={<EditNotePage />}
                 />
 
                 {/* Tags Routes */}
                 <Route
-                  path={routes.organisation.tags.list}
+                  path={routes.tags.list}
                   element={<TagsPage />}
                 />
                 <Route
-                  path={routes.organisation.tags.create}
+                  path={routes.tags.create}
                   element={<CreateTagPage />}
                 />
                 <Route
-                  path={routes.organisation.tags.edit}
+                  path={routes.tags.edit}
                   element={<EditTagPage />}
                 />
 
                 {/* Tasks Routes */}
                 <Route
-                  path={routes.content.tasks.list}
+                  path={routes.tasks.list}
                   element={<TasksPage />}
                 />
 
