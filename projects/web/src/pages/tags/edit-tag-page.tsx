@@ -62,9 +62,33 @@ export function EditTagPage() {
       return setError("Tried to delete a tag that isn't loaded yet.");
     }
 
+    // todo: I should use deleteAt instead here. ref https://automerge.org/docs/documents/lists/.
     await makeChange((doc: AthenaDatabase) => {
+      // Delete from tags
       doc.tags.content.ids = doc.tags.content.ids.filter((id) => id !== tag.id);
       delete doc.tags.content.entities[tag.id];
+
+      // Remove from all content
+      for (const noteId of doc.notes.content.ids) {
+        if (doc.notes.content.entities[noteId].tags.includes(tag.id)) {
+          doc.notes.content.entities[noteId].tags = doc.notes.content.entities[noteId].tags.filter((tagId) => tagId !== tag.id)
+        }
+      }
+      for (const noteListId of doc.notes.lists.ids) {
+        if (doc.notes.lists.entities[noteListId].tags.includes(tag.id)) {
+          doc.notes.lists.entities[noteListId].tags = doc.notes.lists.entities[noteListId].tags.filter((tagId) => tagId !== tag.id)
+        }
+      }
+      for (const taskId of doc.tasks.content.ids) {
+        if (doc.tasks.content.entities[taskId].tags.includes(tag.id)) {
+          doc.tasks.content.entities[taskId].tags = doc.tasks.content.entities[taskId].tags.filter((tagId) => tagId !== tag.id)
+        }
+      }
+      for (const taskListId of doc.tasks.lists.ids) {
+        if (doc.tasks.lists.entities[taskListId].tags.includes(tag.id)) {
+          doc.tasks.lists.entities[taskListId].tags = doc.tasks.lists.entities[taskListId].tags.filter((tagId) => tagId !== tag.id)
+        }
+      }
     });
 
     navigate(routes.tags.list);

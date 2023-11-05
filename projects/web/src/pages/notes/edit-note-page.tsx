@@ -51,6 +51,7 @@ export function EditNotePage() {
 
       // todo: don't think this works on arrays
       if (doc.notes.content.entities[note.id].tags !== updatedNote.tags) {
+        // todo: I should use not replace the array, but use push and deleteAt instead. ref https://automerge.org/docs/documents/lists/.
         doc.notes.content.entities[note.id].tags = updatedNote.tags;
       }
 
