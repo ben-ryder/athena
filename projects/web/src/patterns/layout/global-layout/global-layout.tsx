@@ -10,8 +10,8 @@ import {
   Triangle as LogoIcon,
   LucideIcon,
   HelpCircle as HelpIcon,
-  LayoutList as ViewsIcon,
-  LayoutTemplate as PagesIcon
+  LayoutTemplate as PagesIcon,
+  Home as HomeIcon
 } from "lucide-react";
 import { routes } from "../../../routes";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
@@ -90,27 +90,8 @@ export function GlobalLayout(props: GlobalLayoutProps) {
               label="Pages"
               href={routes.pages.list}
               Icon={PagesIcon}
-              modifier="pages"
+              modifier="home"
             />
-            <MainMenuLink
-              label="Views"
-              href={routes.views.list}
-              Icon={ViewsIcon}
-              modifier="views"
-            />
-            <MainMenuLink
-              label="Journal"
-              href={routes.journal.list}
-              Icon={JournalIcon}
-              modifier="journal"
-            />
-            <MainMenuLink
-              label="More"
-              href="/menu"
-              Icon={MobileMenuIcon}
-              modifier="more"
-            />
-
             <MainMenuLink
               label="Notes"
               href={routes.notes.list}
@@ -122,6 +103,13 @@ export function GlobalLayout(props: GlobalLayoutProps) {
               href={routes.tasks.list}
               Icon={TasksIcon}
               modifier="tasks"
+            />
+
+            <MainMenuLink
+              label="More"
+              href="/menu"
+              Icon={MobileMenuIcon}
+              modifier="more"
             />
 
             <MainMenuLink
