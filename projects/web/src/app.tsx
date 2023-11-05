@@ -21,9 +21,6 @@ import { MenuPage } from "./pages/menu";
 import { TagsPage } from "./pages/tags/tags-page";
 import { CreateTagPage } from "./pages/tags/create-tag-page";
 import { EditTagPage } from "./pages/tags/edit-tag-page";
-import { CreateViewPage } from "./pages/views/create-view-page";
-import { ViewsPage } from "./pages/views/views-page";
-import { EditViewPage } from "./pages/views/edit-view-page";
 
 export function App() {
   return (
@@ -68,20 +65,6 @@ export function App() {
                 <Route
                   path={routes.tags.edit}
                   element={<EditTagPage />}
-                />
-
-                {/* Views Routes */}
-                <Route
-                  path={routes.views.list}
-                  element={<ViewsPage />}
-                />
-                <Route
-                  path={routes.views.create}
-                  element={<CreateViewPage />}
-                />
-                <Route
-                  path={routes.views.edit}
-                  element={<EditViewPage />}
                 />
 
                 {/* Tasks Routes */}

@@ -25,7 +25,6 @@ export function CreateNotePage() {
         tags: newNote.tags,
         createdAt: timestamp,
         updatedAt: timestamp,
-        customFields: [],
       };
     });
 
@@ -38,7 +37,7 @@ export function CreateNotePage() {
         <title>Create Note | Athena</title>
       </Helmet>
       <NoteForm
-        noteContent={{ name: "", body: "", tags: [], customFields: [] }}
+        noteContent={{ name: "", body: "", tags: [] }}
         onSave={onSave}
       />
     </>

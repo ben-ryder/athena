@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { AthenaDatabase } from "../state/features/database/athena-database";
-import { initialDocument } from "../state/features/database/initial-document";
+import { initialDocument } from "../state/initial/initial-document";
 import * as A from "@automerge/automerge";
 import { UserDto } from "@ben-ryder/lfb-common";
 import {

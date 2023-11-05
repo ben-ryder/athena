@@ -63,7 +63,7 @@ export function NoteForm(props: NoteFormProps) {
       setError(null);
 
       const tags = selectedTags.map((tagOption) => tagOption.value);
-      props.onSave({ name, body, tags: tags, customFields: [] });
+      props.onSave({ name, body, tags: tags });
     }
   }
 

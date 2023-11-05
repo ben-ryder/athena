@@ -86,7 +86,6 @@ export function EditNotePage() {
             name: note.name,
             body: note.body,
             tags: note.tags,
-            customFields: [],
           }}
           onSave={onSave}
           onDelete={onDelete}

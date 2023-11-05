@@ -1,19 +1,25 @@
-import { CustomField } from "./custom-fields";
 import { Entity, EntityTable } from "./entity";
+import { OrderByFields, OrderDirection } from "../../common/lists";
 
 /**
- * Notes & Note Templates
- * ========================
+ * Notes
  */
 export interface NoteContent {
   name: string;
   body: string;
   tags: string[];
-  customFields: CustomField[];
 }
 export interface NoteEntity extends Entity, NoteContent {}
 export type NotesTable = EntityTable<NoteEntity>;
 
-export interface NoteTemplateContent extends NoteContent {}
-export interface NoteTemplateEntity extends Entity, NoteTemplateContent {}
-export type NoteTemplatesTable = EntityTable<NoteTemplateEntity>;
+/**
+ * Note Lists
+ */
+export interface NoteListContent {
+  name: string
+  tags: string[]
+  orderBy: OrderByFields;
+  orderDirection: OrderDirection;
+}
+export interface NoteListEntity extends Entity, NoteListContent {}
+export type NoteListsTable = EntityTable<NoteListEntity>;

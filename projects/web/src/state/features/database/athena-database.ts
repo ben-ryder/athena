@@ -1,7 +1,9 @@
 import { TagsTable } from "./tag";
-import { NotesTable, NoteTemplatesTable } from "./notes";
-import { ViewsTable } from "./views";
-import { TasksTable } from "./tasks";
+import { NoteListsTable, NotesTable } from "./notes";
+import { TaskListsTable, TasksTable } from "./tasks";
+import { PagesTable } from "./pages";
+import { Settings } from "./settings";
+
 
 /**
  * Database
@@ -13,12 +15,14 @@ export interface AthenaDatabase {
   };
   notes: {
     content: NotesTable;
-    templates: NoteTemplatesTable;
+    lists: NoteListsTable;
   };
   tasks: {
     content: TasksTable;
+    lists: TaskListsTable
   };
-  views: {
-    content: ViewsTable
-  }
+  pages: {
+    content: PagesTable
+  };
+  settings: Settings
 }
