@@ -10,7 +10,7 @@ import {
   Triangle as LogoIcon,
   LucideIcon,
   HelpCircle as HelpIcon,
-  Filter as ViewsIcon,
+  LayoutList as ViewsIcon,
   LayoutTemplate as PagesIcon
 } from "lucide-react";
 import { routes } from "../../../routes";

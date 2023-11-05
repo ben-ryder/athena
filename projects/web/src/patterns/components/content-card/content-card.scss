@@ -13,6 +13,13 @@
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: var(--j-z-layer-1);
+  }
+
+  &__tags {
+    .j-badge {
+      z-index: var(--j-z-layer-2);
+    }
   }
 
   &__content {
