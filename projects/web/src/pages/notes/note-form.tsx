@@ -88,7 +88,7 @@ export function NoteForm(props: NoteFormProps) {
             onChange={(e) => {
               setName(e.target.value);
             }}
-            placeholder="a note title..."
+            placeholder="a note name..."
           />
         </ContentPageField>
 

@@ -18,27 +18,8 @@ export function MenuPage() {
 
       <JContentSection>
         <JProse>
-          <h2>Main Content</h2>
+          <h2>Menu</h2>
           <ul>
-            <li>
-              <Link to={routes.notes.list}>Notes</Link>
-            </li>
-            <li>
-              <Link to={routes.tasks.list}>Tasks</Link>
-            </li>
-            <li>
-              <Link to={routes.journal.list}>Journal</Link>
-            </li>
-          </ul>
-
-          <h2>Management</h2>
-          <ul>
-            <li>
-              <Link to={routes.views.list}>Pages</Link>
-            </li>
-            <li>
-              <Link to={routes.views.list}>Views</Link>
-            </li>
             <li>
               <Link to={routes.tags.list}>Tags</Link>
             </li>
