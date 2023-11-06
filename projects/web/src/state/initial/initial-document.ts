@@ -1,5 +1,5 @@
 import * as A from "@automerge/automerge";
-import { AthenaDatabase } from "../features/database/athena-database";
+import { AthenaDatabase } from "../athena-database";
 
 /**
  * The initial change used to create the Automerge document.

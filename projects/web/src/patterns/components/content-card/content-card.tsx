@@ -1,6 +1,6 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
-import { TagEntity } from "../../../state/features/database/tag";
+import { TagEntity } from "../../../state/features/tags/tags.types";
 import { JBadge } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../../routes";
 import { InternalLink } from "../internal-link";
@@ -35,7 +35,7 @@ export function ContentCard(props: ContentCardProps) {
                 key={tag.id}
                 text={tag.name}
                 href={`${routes.notes.list}?tags=${tag.id}`}
-                variant={tag.variant}
+                variant={tag.variant || undefined}
                 linkAs={InternalLink}
               />
             )}

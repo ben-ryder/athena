@@ -4,7 +4,7 @@ import {
   JInputControl,
   JTextAreaControl,
 } from "@ben-ryder/jigsaw-react";
-import { TaskContent } from "../../state/features/database/tasks";
+import { TaskContent } from "../../state/features/tasks/tasks.types";
 
 export interface TaskFormProps {
   taskContent?: TaskContent;

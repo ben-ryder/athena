@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AthenaDatabase } from "../state/features/database/athena-database";
+import { AthenaDatabase } from "../state/athena-database";
 import { initialDocument } from "../state/initial/initial-document";
 import * as A from "@automerge/automerge";
 import { UserDto } from "@ben-ryder/lfb-common";
@@ -23,10 +23,18 @@ const lfbClient = new LFBClient({
   serverUrl: SERVER_URL,
   localStore: localStore,
 });
-const lfbApplication = new LFBApplication<AthenaDatabase>(initialDocument, {
+export const lfbApplication = new LFBApplication<AthenaDatabase>(initialDocument, {
   localStore: localStore,
   lfbClient: lfbClient,
 });
+
+// This is a horrible idea, but offers a final resort escape hatch for fixing corrupt data
+// as you can easily view the current document and make direct .makeChange calls.
+// @todo: consider if this has any security concerns? I don't think so, but worth a think
+if (typeof document !== 'undefined') {
+  // @ts-ignore
+  document.lfbApplication = lfbApplication
+}
 
 export interface LFBContext {
   loading: boolean;

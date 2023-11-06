@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { TaskForm } from "./task-form";
 import { v4 as createUUID } from "uuid";
-import { AthenaDatabase } from "../../state/features/database/athena-database";
-import { TaskEntity } from "../../state/features/database/tasks";
+import { AthenaDatabase } from "../../state/athena-database";
+import { TaskEntity } from "../../state/features/tasks/tasks.types";
 
 export function TasksPage() {
   const { document } = useLFBApplication();

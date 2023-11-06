@@ -13,7 +13,7 @@ import {
   ContentPageField,
   ContentPageMenu,
 } from "../../../patterns/layout/content-page/content-page";
-import { TagContent } from "../../../state/features/database/tag";
+import { TagContent } from "../../../state/features/tags/tags.types";
 import { JColourVariants } from "@ben-ryder/jigsaw-react";
 import "./tag-form.scss";
 
@@ -27,8 +27,8 @@ export function TagForm(props: TagFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState<string>(props.content.name);
-  const [variant, setVariant] = useState<JColourVariants | undefined>(
-    props.content.variant,
+  const [variant, setVariant] = useState<string>(
+    props.content.variant || "",
   );
 
   const tagVariantOptions = useMemo(() => {
@@ -50,9 +50,10 @@ export function TagForm(props: TagFormProps) {
   function onSave() {
     if (name.length === 0) {
       setError("Your note must have a title");
-    } else {
+    }
+    else {
       setError(null);
-      props.onSave({ name, variant });
+      props.onSave({ name, variant: variant as JColourVariants || null });
     }
   }
 
@@ -87,7 +88,6 @@ export function TagForm(props: TagFormProps) {
             label="Colour"
             options={tagVariantOptions}
             value={variant}
-            // @ts-ignore
             onChange={setVariant}
           />
         </ContentPageField>
@@ -95,7 +95,10 @@ export function TagForm(props: TagFormProps) {
         {name.length > 0 && (
           <ContentPageField modifier="preview">
             <JLabel>Preview</JLabel>
-            <JBadge text={name} variant={variant} />
+            <JBadge
+              text={name}
+              variant={variant as JColourVariants || undefined}
+            />
           </ContentPageField>
         )}
       </ContentPageContent>

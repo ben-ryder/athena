@@ -5,7 +5,7 @@ import {
   JLabel,
   JErrorText,
   JMultiSelectControl,
-  JMultiSelectOptionData,
+  JMultiSelectOptionData
 } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../routes";
 import {
@@ -14,7 +14,7 @@ import {
   ContentPageField,
   ContentPageMenu,
 } from "../../patterns/layout/content-page/content-page";
-import { NoteContent } from "../../state/features/database/notes";
+import { NoteContent } from "../../state/features/notes/notes.types";
 import { useLFBApplication } from "../../utils/lfb-context";
 
 export interface NoteFormProps {
@@ -37,7 +37,7 @@ export function NoteForm(props: NoteFormProps) {
       return {
         text: tag.name,
         value: tag.id,
-        variant: tag.variant,
+        variant: tag.variant || undefined,
       };
     }),
   );
@@ -51,7 +51,7 @@ export function NoteForm(props: NoteFormProps) {
       return {
         text: tag.name,
         value: tag.id,
-        variant: tag.variant,
+        variant: tag.variant || undefined,
       };
     });
   }, [document]);

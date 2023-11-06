@@ -1,5 +1,5 @@
-import { Entity, EntityTable } from "./entity";
-import { OrderByFields, OrderDirection } from "../../common/lists";
+import { Entity, EntityTable } from "../../common/entity.types";
+import { OrderByFields, OrderDirection } from "../../common/lists.types";
 
 /**
  * Pages

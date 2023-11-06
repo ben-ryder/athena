@@ -1,4 +1,4 @@
-import { Entity, EntityTable } from "./entity";
+import { Entity, EntityTable } from "../../common/entity.types";
 import { JColourVariants } from "@ben-ryder/jigsaw-react";
 
 /**
@@ -7,7 +7,7 @@ import { JColourVariants } from "@ben-ryder/jigsaw-react";
  */
 export interface TagContent {
   name: string;
-  variant?: JColourVariants;
+  variant: JColourVariants | null;
 }
 export interface TagEntity extends Entity, TagContent {}
 export type TagsTable = EntityTable<TagEntity>;

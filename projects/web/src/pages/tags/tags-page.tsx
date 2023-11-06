@@ -1,21 +1,16 @@
 import { useLFBApplication } from "../../utils/lfb-context";
 import React, { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
-import { TagEntity } from "../../state/features/database/tag";
+import { TagEntity } from "../../state/features/tags/tags.types";
 import { TagsList } from "../../patterns/components/tags-list/tags-list";
+import { getAllTags } from "../../state/features/tags/tags.selectors";
 
 export function TagsPage() {
   const { document } = useLFBApplication();
 
   const tags: TagEntity[] = useMemo(() => {
-    return document.tags.content.ids.map(
-      (id) => document.tags.content.entities[id],
-    );
+    return getAllTags(document)
   }, [document]);
-
-  function onDelete(ids: string[]) {
-    console.log(`deleting ${ids}`);
-  }
 
   return (
     <>

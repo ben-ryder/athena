@@ -10,3 +10,5 @@ export interface EntityTable<T> {
 }
 
 export type EntityWithoutId<T> = Omit<T, "id">;
+
+export type EntityUpdate<T> = Partial<T>
