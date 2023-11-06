@@ -15,6 +15,7 @@ import {
   LFBClient,
   LocalStore,
 } from "@ben-ryder/lfb-toolkit";
+import { LoadingScreen } from "../patterns/components/loading-screen/loading-screen";
 
 const SERVER_URL = import.meta.env.VITE_LFB_SERVER_URL;
 
@@ -28,8 +29,9 @@ export const lfbApplication = new LFBApplication<AthenaDatabase>(initialDocument
   lfbClient: lfbClient,
 });
 
-// This is a horrible idea, but offers a final resort escape hatch for fixing corrupt data
-// as you can easily view the current document and make direct .makeChange calls.
+// This gives a final resort escape hatch for fixing corrupt data as you can
+// easily view the current document and make direct .makeChange calls directly
+// from the browser console.
 // @todo: consider if this has any security concerns? I don't think so, but worth a think
 if (typeof document !== 'undefined') {
   // @ts-ignore
@@ -80,6 +82,8 @@ export function LFBProvider(props: ApplicationProviderProps) {
         /**
          * In order to use the application an encryption key must be present.
          * If there is not one present, randomly generate one.
+         *
+         * todo: replace with error handling once user system and sync is in place.
          */
         const randomEncryptionKey = EncryptionHelper.generateEncryptionKey();
         await localStore.saveEncryptionKey(randomEncryptionKey);
@@ -106,7 +110,9 @@ export function LFBProvider(props: ApplicationProviderProps) {
         lfbClient: lfbClient,
       }}
     >
-      {loading ? null : props.children}
+      {loading
+        ? <LoadingScreen />
+        : props.children}
     </LFBContext.Provider>
   );
 }

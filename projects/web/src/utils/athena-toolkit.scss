@@ -1,3 +1,5 @@
+// todo: remove once https://github.com/ben-ryder/jigsaw/issues/63 is sorted.
+
 $breakpoints: (
   "sm": 576px,
   "md": 768px,
@@ -13,4 +15,11 @@ $breakpoints: (
   } @else {
     @warn "`#{$breakpoint}` is not a valid breakpoint identifier.";
   }
+}
+
+@mixin j-animation-spin {
+  animation-duration: var(--j-motion-duration-slow);
+  animation-name: j-animation-spin;
+  animation-iteration-count: infinite;
+  animation-timing-function: var(--j-motion-linear);
 }
