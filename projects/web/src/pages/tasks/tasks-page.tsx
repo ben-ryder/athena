@@ -1,12 +1,12 @@
-import { useLFBApplication } from "../../utils/lfb-context";
+import { useLFBApplication } from "../../utils/lfb-context.js";
 import React, { useMemo } from "react";
-import { replaceParam, routes } from "../../routes";
+import { replaceParam, routes } from "../../routes.js";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { TaskForm } from "./task-form";
+import { TaskForm } from "./task-form.js";
 import { v4 as createUUID } from "uuid";
-import { AthenaDatabase } from "../../state/athena-database";
-import { TaskEntity } from "../../state/features/tasks/tasks.types";
+import { AthenaDatabase } from "../../state/athena-database.js";
+import { TaskEntity } from "../../state/features/tasks/tasks.types.js";
 
 export function TasksPage() {
   const { document } = useLFBApplication();

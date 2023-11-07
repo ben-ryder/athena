@@ -5,17 +5,16 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AthenaDatabase } from "../state/athena-database";
-import { initialDocument } from "../state/initial/initial-document";
-import * as A from "@automerge/automerge";
-import { UserDto } from "@ben-ryder/lfb-common";
+import { AthenaDatabase } from "../state/athena-database.js";
+import { initialDocument } from "../state/initial/initial-document.js";
+import * as A from "@automerge/automerge/next";
 import {
   EncryptionHelper,
   LFBApplication,
   LFBClient,
   LocalStore,
 } from "@ben-ryder/lfb-toolkit";
-import { LoadingScreen } from "../patterns/components/loading-screen/loading-screen";
+import { LoadingScreen } from "../patterns/components/loading-screen/loading-screen.js";
 
 const SERVER_URL = import.meta.env.VITE_LFB_SERVER_URL;
 
@@ -42,20 +41,12 @@ export interface LFBContext {
   loading: boolean;
   document: AthenaDatabase;
   makeChange: (changeFunc: A.ChangeFn<AthenaDatabase>) => void;
-  currentUser: UserDto | null;
-  online: boolean;
-  setOnline: (online: boolean) => void;
-  lfbClient: LFBClient;
 }
 
 export const LFBContext = createContext<LFBContext>({
   loading: true,
   document: initialDocument,
   makeChange: () => {},
-  currentUser: null,
-  online: true,
-  setOnline: (online: boolean) => {},
-  lfbClient: lfbClient,
 });
 
 export interface ApplicationProviderProps {
@@ -66,8 +57,6 @@ export function LFBProvider(props: ApplicationProviderProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [document, setDocument] =
     useState<A.Doc<AthenaDatabase>>(initialDocument);
-  const [currentUser, setCurrentUser] = useState<UserDto | null>(null);
-  const [online, setOnline] = useState<boolean>(true);
 
   // Hook to do the initial setup and loading
   useEffect(() => {
@@ -104,10 +93,6 @@ export function LFBProvider(props: ApplicationProviderProps) {
         loading,
         document,
         makeChange: lfbApplication.makeChange.bind(lfbApplication),
-        currentUser,
-        online,
-        setOnline,
-        lfbClient: lfbClient,
       }}
     >
       {loading

@@ -1,13 +1,13 @@
-import { AthenaDatabase } from "../../athena-database";
-import { TagContent, TagEntity } from "./tags.types";
-import { lfbApplication } from "../../../utils/lfb-context";
+import { AthenaDatabase } from "../../athena-database.js";
+import { TagContent, TagEntity } from "./tags.types.js";
+import { lfbApplication } from "../../../utils/lfb-context.js";
 import {
   ActionResponse,
   existsInTable,
   GenericErrorMessage, GenericNotFoundOnDeleteMessage,
   GenericNotFoundOnUpdateMessage
-} from "../../common/actions";
-import { EntityUpdate } from "../../common/entity.types";
+} from "../../common/actions.js";
+import { EntityUpdate } from "../../common/entity.types.js";
 
 export async function createTag(tag: TagEntity): Promise<ActionResponse> {
   try {

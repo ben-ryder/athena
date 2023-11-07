@@ -1,13 +1,13 @@
-import { useLFBApplication } from "../../utils/lfb-context";
+import { useLFBApplication } from "../../utils/lfb-context.js";
 import { useNavigate, useParams } from "react-router-dom";
-import { routes } from "../../routes";
+import { routes } from "../../routes.js";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { TagContent, TagEntity } from "../../state/features/tags/tags.types";
-import { TagForm } from "./tag-form/tag-form";
+import { TagContent, TagEntity } from "../../state/features/tags/tags.types.js";
+import { TagForm } from "./tag-form/tag-form.js";
 import { JCallout } from "@ben-ryder/jigsaw-react";
-import { deleteTag, updateTag } from "../../state/features/tags/tags.actions";
-import { getTag } from "../../state/features/tags/tags.selectors";
+import { deleteTag, updateTag } from "../../state/features/tags/tags.actions.js";
+import { getTag } from "../../state/features/tags/tags.selectors.js";
 
 export function EditTagPage() {
   const navigate = useNavigate();

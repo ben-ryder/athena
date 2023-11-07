@@ -1,9 +1,9 @@
 import React from "react";
-import { routes } from "../routes";
-import { MessagePage } from "../patterns/pages/message-page/message-page";
+import { routes } from "../routes.js";
+import { MessagePage } from "../patterns/pages/message-page/message-page.js";
 import { Helmet } from "react-helmet-async";
 import { JArrowLink } from "@ben-ryder/jigsaw-react";
-import { InternalLink } from "../patterns/components/internal-link";
+import { InternalLink } from "../patterns/components/internal-link.js";
 
 export function PageNotFound() {
   return (

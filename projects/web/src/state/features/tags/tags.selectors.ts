@@ -1,5 +1,5 @@
-import { TagEntity } from "./tags.types";
-import { AthenaDatabase } from "../../athena-database";
+import { TagEntity } from "./tags.types.js";
+import { AthenaDatabase } from "../../athena-database.js";
 
 export function getAllTags(doc: AthenaDatabase): TagEntity[] {
   return doc.tags.content.ids.map(

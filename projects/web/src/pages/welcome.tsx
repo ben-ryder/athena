@@ -1,8 +1,8 @@
 import React from "react";
 
-import { routes } from "../routes";
+import { routes } from "../routes.js";
 import { Helmet } from "react-helmet-async";
-import { MessagePage } from "../patterns/pages/message-page/message-page";
+import { MessagePage } from "../patterns/pages/message-page/message-page.js";
 import { JButtonGroup, JButtonLink } from "@ben-ryder/jigsaw-react";
 
 export function WelcomePage() {

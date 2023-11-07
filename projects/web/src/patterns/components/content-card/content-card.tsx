@@ -1,9 +1,9 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
-import { TagEntity } from "../../../state/features/tags/tags.types";
+import { TagEntity } from "../../../state/features/tags/tags.types.js";
 import { JBadge } from "@ben-ryder/jigsaw-react";
-import { routes } from "../../../routes";
-import { InternalLink } from "../internal-link";
+import { routes } from "../../../routes.js";
+import { InternalLink } from "../internal-link.js";
 
 export interface ContentItem {
   id: string;

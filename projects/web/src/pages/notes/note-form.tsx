@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Editor } from "../../patterns/components/editor/editor";
+import { Editor } from "../../patterns/components/editor/editor.js";
 import {
   JInputControl,
   JLabel,
@@ -7,15 +7,15 @@ import {
   JMultiSelectControl,
   JMultiSelectOptionData
 } from "@ben-ryder/jigsaw-react";
-import { routes } from "../../routes";
+import { routes } from "../../routes.js";
 import {
   ContentPage,
   ContentPageContent,
   ContentPageField,
   ContentPageMenu,
-} from "../../patterns/layout/content-page/content-page";
-import { NoteContent } from "../../state/features/notes/notes.types";
-import { useLFBApplication } from "../../utils/lfb-context";
+} from "../../patterns/layout/content-page/content-page.js";
+import { NoteContent } from "../../state/features/notes/notes.types.js";
+import { useLFBApplication } from "../../utils/lfb-context.js";
 
 export interface NoteFormProps {
   noteContent: NoteContent;

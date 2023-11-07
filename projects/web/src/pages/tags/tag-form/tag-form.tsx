@@ -6,14 +6,14 @@ import {
   JBadge,
   JLabel,
 } from "@ben-ryder/jigsaw-react";
-import { routes } from "../../../routes";
+import { routes } from "../../../routes.js";
 import {
   ContentPage,
   ContentPageContent,
   ContentPageField,
   ContentPageMenu,
-} from "../../../patterns/layout/content-page/content-page";
-import { TagContent } from "../../../state/features/tags/tags.types";
+} from "../../../patterns/layout/content-page/content-page.js";
+import { TagContent } from "../../../state/features/tags/tags.types.js";
 import { JColourVariants } from "@ben-ryder/jigsaw-react";
 import "./tag-form.scss";
 

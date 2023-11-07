@@ -1,7 +1,7 @@
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
-import { jigsawTheme } from "./jigsaw-theme";
+import { jigsawTheme } from "./jigsaw-theme.js";
 import { EditorView } from "@codemirror/view";
 import { hyperLink } from "@uiw/codemirror-extensions-hyper-link";
 

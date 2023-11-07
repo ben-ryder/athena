@@ -2,9 +2,8 @@ import { FormEvent, useState } from "react";
 import {
   JButton,
   JInputControl,
-  JTextAreaControl,
 } from "@ben-ryder/jigsaw-react";
-import { TaskContent } from "../../state/features/tasks/tasks.types";
+import { TaskContent } from "../../state/features/tasks/tasks.types.js";
 
 export interface TaskFormProps {
   taskContent?: TaskContent;

@@ -1,8 +1,8 @@
-import { TagsTable } from "./features/tags/tags.types";
-import { NoteListsTable, NotesTable } from "./features/notes/notes.types";
-import { TaskListsTable, TasksTable } from "./features/tasks/tasks.types";
-import { PagesTable } from "./features/pages/pages.types";
-import { Settings } from "./features/settings/settings.types";
+import { TagsTable } from "./features/tags/tags.types.js";
+import { NoteListsTable, NotesTable } from "./features/notes/notes.types.js";
+import { TaskListsTable, TasksTable } from "./features/tasks/tasks.types.js";
+import { PagesTable } from "./features/pages/pages.types.js";
+import { Settings } from "./features/settings/settings.types.js";
 
 
 /**

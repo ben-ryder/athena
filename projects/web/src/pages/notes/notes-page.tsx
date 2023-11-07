@@ -1,9 +1,9 @@
-import { useLFBApplication } from "../../utils/lfb-context";
+import { useLFBApplication } from "../../utils/lfb-context.js";
 import React, { useMemo } from "react";
-import { replaceParam, routes } from "../../routes";
+import { replaceParam, routes } from "../../routes.js";
 import { Helmet } from "react-helmet-async";
-import { ContentList } from "../../patterns/components/content-list/content-list";
-import { ContentItem } from "../../patterns/components/content-card/content-card";
+import { ContentList } from "../../patterns/components/content-list/content-list.js";
+import { ContentItem } from "../../patterns/components/content-card/content-card.js";
 
 export function NotesPage() {
   const { document } = useLFBApplication();

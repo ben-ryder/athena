@@ -1,4 +1,4 @@
-import { EntityTable } from "./entity.types";
+import { EntityTable } from "./entity.types.js";
 
 const CorruptMessage = "You should IMMEDIATELY manually backup all content and seek help on GitHub as your data may be corrupt."
 

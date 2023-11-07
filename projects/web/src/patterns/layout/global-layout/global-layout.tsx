@@ -11,9 +11,8 @@ import {
   LucideIcon,
   HelpCircle as HelpIcon,
   LayoutTemplate as PagesIcon,
-  Home as HomeIcon
 } from "lucide-react";
-import { routes } from "../../../routes";
+import { routes } from "../../../routes.js";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import classNames from "classnames";
 

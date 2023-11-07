@@ -1,7 +1,7 @@
-import { TagEntity } from "../../../state/features/tags/tags.types";
+import { TagEntity } from "../../../state/features/tags/tags.types.js";
 import { JBadge, JButtonLink, JIcon } from "@ben-ryder/jigsaw-react";
-import { replaceParam, routes } from "../../../routes";
-import { InternalLink } from "../internal-link";
+import { replaceParam, routes } from "../../../routes.js";
+import { InternalLink } from "../internal-link.js";
 import React from "react";
 import { FrownIcon as NoContentIcon } from "lucide-react";
 import "./tags-list.scss";

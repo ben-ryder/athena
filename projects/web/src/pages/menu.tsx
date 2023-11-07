@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { JContentSection, JProse } from "@ben-ryder/jigsaw-react";
-import { routes } from "../routes";
+import { routes } from "../routes.js";
 import { Link } from "react-router-dom";
 
 /**

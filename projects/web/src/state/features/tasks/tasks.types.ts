@@ -1,5 +1,5 @@
-import { Entity, EntityTable } from "../../common/entity.types";
-import { OrderByFields, OrderDirection } from "../../common/lists.types";
+import { Entity, EntityTable } from "../../common/entity.types.js";
+import { OrderByFields, OrderDirection } from "../../common/lists.types.js";
 
 /**
  * Tasks

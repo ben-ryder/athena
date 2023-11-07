@@ -1,4 +1,4 @@
-import * as A from "@automerge/automerge"
+import * as A from "@automerge/automerge/next"
 
 const doc = A.change(
   A.init(),

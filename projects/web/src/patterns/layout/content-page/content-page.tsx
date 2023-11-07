@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { JArrowLink, JButton, JContentSection } from "@ben-ryder/jigsaw-react";
-import { InternalLink } from "../../components/internal-link";
-import { PropsWithChildren } from "../../../utils/children-prop";
+import { InternalLink } from "../../components/internal-link.js";
+import { PropsWithChildren } from "../../../utils/children-prop.js";
 import "./content-page.scss";
 
 export function ContentPage(props: PropsWithChildren) {

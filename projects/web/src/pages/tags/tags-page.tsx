@@ -1,9 +1,9 @@
-import { useLFBApplication } from "../../utils/lfb-context";
+import { useLFBApplication } from "../../utils/lfb-context.js";
 import React, { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
-import { TagEntity } from "../../state/features/tags/tags.types";
-import { TagsList } from "../../patterns/components/tags-list/tags-list";
-import { getAllTags } from "../../state/features/tags/tags.selectors";
+import { TagEntity } from "../../state/features/tags/tags.types.js";
+import { TagsList } from "../../patterns/components/tags-list/tags-list.js";
+import { getAllTags } from "../../state/features/tags/tags.selectors.js";
 
 export function TagsPage() {
   const { document } = useLFBApplication();

@@ -22,11 +22,11 @@
     "initial-change": "ts-node --esm src/state/initial/cli.ts"
   },
   "dependencies": {
-    "@automerge/automerge": "^2.0.2",
+    "@automerge/automerge": "^2.1.6",
     "@ben-ryder/jigsaw": "^0.16.0-rc.4",
     "@ben-ryder/jigsaw-react": "^0.16.0-rc.4",
-    "@ben-ryder/lfb-common": "^0.5.0",
-    "@ben-ryder/lfb-toolkit": "^0.5.0",
+    "@ben-ryder/lfb-common": "^0.8.0-rc.1",
+    "@ben-ryder/lfb-toolkit": "0.6.0-rc.1",
     "@codemirror/lang-markdown": "^6.1.0",
     "@codemirror/language-data": "^6.2.0",
     "@codemirror/view": "^6.9.4",

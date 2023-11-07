@@ -1,7 +1,7 @@
 import { JButtonLink, JContentSection, JIcon } from "@ben-ryder/jigsaw-react";
 import { FrownIcon as NoContentIcon } from "lucide-react";
-import { InternalLink } from "../internal-link";
-import { ContentCard, ContentItem } from "../content-card/content-card";
+import { InternalLink } from "../internal-link.js";
+import { ContentCard, ContentItem } from "../content-card/content-card.js";
 import "./content-list.scss";
 
 export interface ContentListProps {

@@ -4,23 +4,23 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Provider as ReduxProvider } from "react-redux";
 
 import "./athena.scss";
-import { routes } from "./routes";
-import { LFBProvider } from "./utils/lfb-context";
-import { store } from "./state/store";
+import { routes } from "./routes.js";
+import { LFBProvider } from "./utils/lfb-context.js";
+import { store } from "./state/store.js";
 
-import { GlobalLayout } from "./patterns/layout/global-layout/global-layout";
+import { GlobalLayout } from "./patterns/layout/global-layout/global-layout.js";
 
-import { HomePage } from "./pages/home";
-import { PageNotFound } from "./pages/page-not-found";
-import { NotesPage } from "./pages/notes/notes-page";
-import { CreateNotePage } from "./pages/notes/create-note-page";
-import { EditNotePage } from "./pages/notes/edit-note-page";
-import { WelcomePage } from "./pages/welcome";
-import { TasksPage } from "./pages/tasks/tasks-page";
-import { MenuPage } from "./pages/menu";
-import { TagsPage } from "./pages/tags/tags-page";
-import { CreateTagPage } from "./pages/tags/create-tag-page";
-import { EditTagPage } from "./pages/tags/edit-tag-page";
+import { HomePage } from "./pages/home.js";
+import { PageNotFound } from "./pages/page-not-found.js";
+import { NotesPage } from "./pages/notes/notes-page.js";
+import { CreateNotePage } from "./pages/notes/create-note-page.js";
+import { EditNotePage } from "./pages/notes/edit-note-page.js";
+import { WelcomePage } from "./pages/welcome.js";
+import { TasksPage } from "./pages/tasks/tasks-page.js";
+import { MenuPage } from "./pages/menu.js";
+import { TagsPage } from "./pages/tags/tags-page.js";
+import { CreateTagPage } from "./pages/tags/create-tag-page.js";
+import { EditTagPage } from "./pages/tags/edit-tag-page.js";
 
 export function App() {
   return (
