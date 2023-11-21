@@ -1,20 +1,16 @@
 # Athena
-A local-first web app for notes, tasks, journaling, habit tracking and reminders.
+A local-first web app for note-taking and task management.
 
 - Core Features:
-  - 📝 Markdown Notes
+  - 📝 Write notes using Markdown
   - ✅ Task Management
-  - 📚 Journaling and Habit Tracking
-  - ⏰ Reminders
-  - 🏷 Organise your content with tags
-  - 📋 Create note & journal templates
-  - 💻 Your data is stored on your own device
-- Server Features:
-  - ☁ Backup your data so you have access to it from anywhere
-  - 📱 Sync your data across unlimited devices, with automatic conflict resolution
-  - ⛰ Make changes offline and they will be synced when you're back online
-  - 🔐 Client-side encryption so the server will never have access to your data
-  - 🧑‍💻 Self-hosted so you can run it however and wherever you want
+  - 🏷 Organise your notes and tasks using tags
+  - Create note and task lists, and create pages of different lists.
+  - 💻 🔐 Your data is stored encrypted on your own device
+- Optional Server Features (self hosted):
+  - ☁ Backup your data so you have access to it from anywhere, on any device.
+  - 📱 Sync your data across unlimited devices in real time, with automatic conflict resolution
+  - ⛰ Make changes offline, and they will be synced when you're back online
 
 ## About
 **This project is very early in development and is not complete, stable or in an MVP release state yet.**  
