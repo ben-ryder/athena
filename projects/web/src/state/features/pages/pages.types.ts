@@ -1,11 +1,11 @@
 import { Entity, EntityTable } from "../../common/entity.types";
-import { OrderByFields, OrderDirection } from "../../common/lists.types";
 
 /**
  * Pages
  */
 export interface PageContent {
   name: string;
+  description: string | null
   taskLists: string[];
   noteLists: string[];
 }
