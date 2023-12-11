@@ -1,7 +1,7 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
 import { TagEntity } from "../../../state/features/tags/tags.types";
-import { JBadge } from "@ben-ryder/jigsaw-react";
+import { JPillLink } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../../routes";
 import { InternalLink } from "../internal-link";
 
@@ -31,13 +31,12 @@ export function ContentCard(props: ContentCardProps) {
         {props.item.tags && props.item.tags.length > 0 &&
           <div className="ath-content-card__tags">
             {props.item.tags.map(tag =>
-              <JBadge
+              <JPillLink
                 key={tag.id}
-                text={tag.name}
                 href={`${routes.notes.list}?tags=${tag.id}`}
                 variant={tag.variant || undefined}
                 linkAs={InternalLink}
-              />
+              >{tag.name}</JPillLink>
             )}
           </div>
         }

@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { Editor } from "../../patterns/components/editor/editor";
 import {
-  JInputControl,
+  JInput,
   JLabel,
   JErrorText,
-  JMultiSelectControl,
+  JMultiSelect,
   JMultiSelectOptionData
 } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../routes";
@@ -80,7 +80,7 @@ export function NoteForm(props: NoteFormProps) {
 
       <ContentPageContent>
         <ContentPageField modifier="name">
-          <JInputControl
+          <JInput
             label="Name"
             id="name"
             type="text"
@@ -93,7 +93,7 @@ export function NoteForm(props: NoteFormProps) {
         </ContentPageField>
 
         <ContentPageField modifier="tags">
-          <JMultiSelectControl
+          <JMultiSelect
             id="tags"
             label="Tags"
             options={tagOptions}

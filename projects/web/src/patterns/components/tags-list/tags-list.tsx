@@ -1,5 +1,5 @@
 import { TagEntity } from "../../../state/features/tags/tags.types";
-import { JBadge, JButtonLink, JIcon } from "@ben-ryder/jigsaw-react";
+import { JPillLink, JButtonLink, JIcon } from "@ben-ryder/jigsaw-react";
 import { replaceParam, routes } from "../../../routes";
 import { InternalLink } from "../internal-link";
 import React from "react";
@@ -31,13 +31,12 @@ export function TagsList(props: TagsListProps) {
           </div>
         )}
         {props.tags.map((tag) => (
-          <JBadge
+          <JPillLink
             key={tag.id}
-            text={tag.name}
             href={replaceParam(routes.tags.edit, ":id", tag.id)}
             variant={tag.variant || undefined}
             linkAs={InternalLink}
-          />
+          >{tag.name}</JPillLink>
         ))}
       </div>
     </div>

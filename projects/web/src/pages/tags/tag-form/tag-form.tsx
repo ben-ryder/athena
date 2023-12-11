@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import {
-  JInputControl,
+  JInput,
   JErrorText,
-  JSelectControl,
-  JBadge,
+  JSelect,
+  JPill,
   JLabel,
+  JColourVariants,
+  JOptionData
 } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../../routes";
 import {
@@ -14,7 +16,6 @@ import {
   ContentPageMenu,
 } from "../../../patterns/layout/content-page/content-page";
 import { TagContent } from "../../../state/features/tags/tags.types";
-import { JColourVariants } from "@ben-ryder/jigsaw-react";
 import "./tag-form.scss";
 
 export interface TagFormProps {
@@ -31,10 +32,10 @@ export function TagForm(props: TagFormProps) {
     props.content.variant || "",
   );
 
-  const tagVariantOptions = useMemo(() => {
+  const tagVariantOptions: JOptionData[] = useMemo(() => {
     return [
       { text: "-- Select Colour --", value: "" },
-      { text: "Teal", value: JColourVariants.teal },
+      { text: "Teal", value: JColourVariants.teal, },
       { text: "Blue Grey", value: JColourVariants.blueGrey },
       { text: "White", value: JColourVariants.white },
       { text: "Red", value: JColourVariants.red },
@@ -45,7 +46,7 @@ export function TagForm(props: TagFormProps) {
       { text: "Purple", value: JColourVariants.purple },
       { text: "Pink", value: JColourVariants.pink },
     ];
-  }, [JColourVariants]);
+  }, []);
 
   function onSave() {
     if (name.length === 0) {
@@ -70,7 +71,7 @@ export function TagForm(props: TagFormProps) {
 
       <ContentPageContent>
         <ContentPageField modifier="name">
-          <JInputControl
+          <JInput
             label="Name"
             id="name"
             type="text"
@@ -83,22 +84,21 @@ export function TagForm(props: TagFormProps) {
         </ContentPageField>
 
         <ContentPageField modifier="variant">
-          <JSelectControl
+          <JSelect
             id="variant"
             label="Colour"
             options={tagVariantOptions}
             value={variant}
-            onChange={setVariant}
+            onChange={(e) => {setVariant(e.target.value)}}
           />
         </ContentPageField>
 
         {name.length > 0 && (
           <ContentPageField modifier="preview">
             <JLabel>Preview</JLabel>
-            <JBadge
-              text={name}
+            <JPill
               variant={variant as JColourVariants || undefined}
-            />
+            >{name}</JPill>
           </ContentPageField>
         )}
       </ContentPageContent>

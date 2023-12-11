@@ -36,7 +36,7 @@ export function ContentList(props: ContentListProps) {
             </div>
           )}
           {props.items.map((item) => (
-            <ContentCard item={item} />
+            <ContentCard key={item.id} item={item} />
           ))}
         </div>
         {!props.hideListInfo && (

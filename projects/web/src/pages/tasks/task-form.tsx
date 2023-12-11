@@ -1,8 +1,7 @@
 import { FormEvent, useState } from "react";
 import {
   JButton,
-  JInputControl,
-  JTextAreaControl,
+  JInput
 } from "@ben-ryder/jigsaw-react";
 import { TaskContent } from "../../state/features/tasks/tasks.types";
 
@@ -47,7 +46,7 @@ export function TaskForm(props: TaskFormProps) {
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <JInputControl
+        <JInput
           id="name"
           label="Name"
           type="text"

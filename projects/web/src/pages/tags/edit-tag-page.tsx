@@ -68,7 +68,7 @@ export function EditTagPage() {
       <Helmet>
         <title>{`${tag?.name || "Edit"} | Tags | Athena`}</title>
       </Helmet>
-      {error && <JCallout variant="danger">{error}</JCallout> }
+      {error && <JCallout variant="critical">{error}</JCallout> }
       {tag &&
         <TagForm
           content={{

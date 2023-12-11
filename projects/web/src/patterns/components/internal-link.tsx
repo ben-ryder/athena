@@ -2,19 +2,19 @@ import {
   JTextLinkProps,
   JArrowLinkProps,
   JButtonLinkProps,
-  JBadgeProps,
+  JPillLinkProps,
 } from "@ben-ryder/jigsaw-react";
 import { Link } from "react-router-dom";
 
 export function InternalLink(
-  props: JTextLinkProps | JArrowLinkProps | JButtonLinkProps | JBadgeProps,
+  props: JTextLinkProps | JArrowLinkProps | JButtonLinkProps | JPillLinkProps,
 ) {
-  if (props.href?.startsWith("/")) {
-    const { href, ...htmlProps } = props;
+  if (props.href && props.href?.startsWith("/")) {
+    const { href, children, ...htmlProps } = props;
     return (
       <>
         {/* @ts-ignore */}
-        <Link to={href} {...htmlProps} />
+        <Link to={href || ''} {...htmlProps}>{children}</Link>
       </>
     );
   }

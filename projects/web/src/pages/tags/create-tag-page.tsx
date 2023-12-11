@@ -39,7 +39,7 @@ export function CreateTagPage() {
       <Helmet>
         <title>Create Note | Athena</title>
       </Helmet>
-      {error && <JCallout variant="danger">{error}</JCallout>}
+      {error && <JCallout variant="critical">{error}</JCallout>}
       <TagForm content={{ name: "", variant: null }} onSave={onSave} />
     </>
   );
