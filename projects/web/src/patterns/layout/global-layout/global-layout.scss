@@ -1,128 +1,76 @@
 @use "@ben-ryder/jigsaw/sass/00-foundations/breakpoints/breakpoints.toolkit" as *;
 
-body,
-#root {
-  min-height: 100vh;
+:root {
+  --a-sidebar-size: 60px;
 }
 
-.ath-root,
-.ath-layout {
-  min-height: 100vh;
+.athena {
+  height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column-reverse;
 
-  .ath-main {
-    flex-grow: 1;
-  }
-}
-
-.ath-menu-bar {
-  background: var(--j-c-background-f2);
-  height: 50px;
-
-  &__logo {
-    display: none;
-  }
-
-  &__menu {
+  &__sidebar {
+    height: var(--a-sidebar-size);
+    background-color: var(--j-c-background-f1);
+    border-top: var(--j-border-width-md) solid var(--j-c-blueGrey-900);
     display: flex;
+    justify-content: center;
     align-items: center;
-    height: 100%;
-    flex-direction: row-reverse;
+    gap: var(--j-space-4);
+    padding: var(--j-space-4) 0;
+  }
 
-    &-link {
-      flex-grow: 1;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+  &__main {
+    height: calc(100vh - var(--a-sidebar-size));
+  }
+
+  @include breakpoint(md) {
+    flex-direction: row;
+
+    &__sidebar {
       flex-direction: column;
-      text-decoration: none;
-      color: var(--j-c-text);
+      height: 100vh;
+      width: var(--a-sidebar-size);
+      border-top: none;
+      border-right: var(--j-border-width-md) solid var(--j-c-blueGrey-900);
+    }
 
-      &:hover {
-        background: var(--j-c-blueGrey-800);
-      }
-
-      span {
-        margin-top: var(--j-space-1);
-        font-size: var(--j-text-size-sm);
-      }
-
-      &--active {
-        background: var(--j-c-primary);
-
-        &:hover {
-          background: var(--j-c-primary);
-        }
-      }
-
-      &--tags,
-      &--settings,
-      &--help {
-        display: none;
-      }
-
-      &--tags {
-        margin-top: auto;
-      }
+    &__main {
+      width: calc(100vw - var(--a-sidebar-size));
+      height: 100%;
     }
   }
 }
 
-@include breakpoint(md) {
-  .ath-layout {
-    flex-direction: row;
+.sidebar-button,
+.sidebar-status-button {
+  color: var(--j-c-mono-100);
+  padding: var(--j-space-3);
+  transition: all var(--j-motion-duration-fast) var(--j-motion-ease-in-out);
+
+  &:hover {
+    cursor: pointer;
+    color: var(--j-c-primary);
+    background-color: var(--j-c-background-f2);
+    border-radius: var(--j-border-radius-md);
   }
+}
 
-  .ath-menu-bar {
-    height: 100vh;
-    width: 70px;
-    display: flex;
-    flex-direction: column;
+.sidebar-divider {
+  width: 42px;
+  height: var(--j-border-width-md);
+  background-color: var(--j-c-blueGrey-900);
+}
 
-    &__menu {
-      flex-direction: column;
-      height: auto;
-      flex-grow: 1;
+.sidebar-separator {
+  flex-grow: 1;
+}
 
-      &-link {
-        flex-grow: 0;
-        height: 70px;
-        width: 100%;
+.sidebar-status-button {
+  color: var(--j-c-variant-green);
 
-        &--more {
-          display: none;
-        }
-
-        &--notes,
-        &--tasks,
-        &--tags,
-        &--settings,
-        &--help {
-          display: flex;
-        }
-      }
-    }
-
-    &__logo {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 70px;
-      margin-bottom: 35px;
-      color: var(--j-c-mono-50);
-      text-decoration: none;
-      font-weight: bold;
-
-      &:hover {
-        background: var(--j-c-blueGrey-800);
-      }
-
-      .logo {
-        color: var(--j-c-primary);
-      }
-    }
+  &:hover {
+    color: var(--j-c-variant-green);
   }
 }

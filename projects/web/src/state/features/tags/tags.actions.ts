@@ -85,9 +85,9 @@ export async function deleteTag(id: string): Promise<ActionResponse> {
           doc.notes.content.entities[noteId].tags = doc.notes.content.entities[noteId].tags.filter((tagId) => tagId !== id)
         }
       }
-      for (const noteListId of doc.notes.lists.ids) {
-        if (doc.notes.lists.entities[noteListId].tags.includes(id)) {
-          doc.notes.lists.entities[noteListId].tags = doc.notes.lists.entities[noteListId].tags.filter((tagId) => tagId !== id)
+      for (const noteListId of doc.notes.views.ids) {
+        if (doc.notes.views.entities[noteListId].tags.includes(id)) {
+          doc.notes.views.entities[noteListId].tags = doc.notes.views.entities[noteListId].tags.filter((tagId) => tagId !== id)
         }
       }
       for (const taskId of doc.tasks.content.ids) {
@@ -95,9 +95,9 @@ export async function deleteTag(id: string): Promise<ActionResponse> {
           doc.tasks.content.entities[taskId].tags = doc.tasks.content.entities[taskId].tags.filter((tagId) => tagId !== id)
         }
       }
-      for (const taskListId of doc.tasks.lists.ids) {
-        if (doc.tasks.lists.entities[taskListId].tags.includes(id)) {
-          doc.tasks.lists.entities[taskListId].tags = doc.tasks.lists.entities[taskListId].tags.filter((tagId) => tagId !== id)
+      for (const taskListId of doc.tasks.views.ids) {
+        if (doc.tasks.views.entities[taskListId].tags.includes(id)) {
+          doc.tasks.views.entities[taskListId].tags = doc.tasks.views.entities[taskListId].tags.filter((tagId) => tagId !== id)
         }
       }
     });

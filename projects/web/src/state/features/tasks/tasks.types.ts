@@ -12,13 +12,13 @@ export interface TaskEntity extends Entity, TaskContent {}
 export type TasksTable = EntityTable<TaskEntity>;
 
 /**
- * Task Lists
+ * Task Views
  */
-export interface TaskListContent {
+export interface TaskViewContent {
   name: string
   tags: string[]
   orderBy: OrderByFields;
   orderDirection: OrderDirection;
 }
-export interface TaskListEntity extends Entity, TaskListContent {}
-export type TaskListsTable = EntityTable<TaskListEntity>;
+export interface TaskViewEntity extends Entity, TaskViewContent {}
+export type TaskViewsTable = EntityTable<TaskViewEntity>;

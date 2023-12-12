@@ -13,13 +13,13 @@ export interface NoteEntity extends Entity, NoteContent {}
 export type NotesTable = EntityTable<NoteEntity>;
 
 /**
- * Note Lists
+ * Note Views
  */
-export interface NoteListContent {
+export interface NoteViewContent {
   name: string
   tags: string[]
   orderBy: OrderByFields;
   orderDirection: OrderDirection;
 }
-export interface NoteListEntity extends Entity, NoteListContent {}
-export type NoteListsTable = EntityTable<NoteListEntity>;
+export interface NoteViewEntity extends Entity, NoteViewContent {}
+export type NoteViewsTable = EntityTable<NoteViewEntity>;

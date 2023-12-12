@@ -1,9 +1,7 @@
 import { TagsTable } from "./features/tags/tags.types";
-import { NoteListsTable, NotesTable } from "./features/notes/notes.types";
-import { TaskListsTable, TasksTable } from "./features/tasks/tasks.types";
-import { PagesTable } from "./features/pages/pages.types";
+import { NoteViewsTable, NotesTable } from "./features/notes/notes.types";
+import { TaskViewsTable, TasksTable } from "./features/tasks/tasks.types";
 import { Settings } from "./features/settings/settings.types";
-
 
 /**
  * Database
@@ -15,14 +13,11 @@ export interface AthenaDatabase {
   };
   notes: {
     content: NotesTable;
-    lists: NoteListsTable;
+    views: NoteViewsTable;
   };
   tasks: {
     content: TasksTable;
-    lists: TaskListsTable
-  };
-  pages: {
-    content: PagesTable
+    views: TaskViewsTable
   };
   settings: Settings
 }

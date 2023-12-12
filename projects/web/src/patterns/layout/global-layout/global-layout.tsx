@@ -1,140 +1,47 @@
 import React, { ReactNode } from "react";
 import { Helmet } from "react-helmet-async";
 import {
-  FileText as NotesIcon,
-  ListChecks as TasksIcon,
-  CalendarRange as JournalIcon,
-  MoreHorizontal as MobileMenuIcon,
+  Library as VaultIcon,
+  Search as SearchIcon,
+  PlusCircle as AddContentIcon,
   Tag as TagsIcon,
   Settings as SettingsIcon,
-  Triangle as LogoIcon,
-  LucideIcon,
-  HelpCircle as HelpIcon,
-  LayoutTemplate as PagesIcon,
-  Home as HomeIcon
+  UserCircle as AccountsIcon,
+  DownloadCloud as StatusDownloadIcon
 } from "lucide-react";
 import { routes } from "../../../routes";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import classNames from "classnames";
+import { JIcon } from "@ben-ryder/jigsaw-react";
 
 export interface GlobalLayoutProps {
   children: ReactNode;
 }
 
-export function AccountIcon() {
-  // this is the lucide-react UserCircle2 icon, but it doesn't appear in the react package
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      className="lucide lucide-user-circle-2"
-    >
-      <path d="M18 20a6 6 0 0 0-12 0"></path>
-      <circle cx="12" cy="10" r="4"></circle>
-      <circle cx="12" cy="12" r="10"></circle>
-    </svg>
-  );
-}
-
-export interface MainMenuLinkProps {
-  Icon: LucideIcon;
-  label: string;
-  href: string;
-  modifier?: string;
-  target?: "_self" | "_blank" | "_parent" | "_top" | string;
-}
-export function MainMenuLink(props: MainMenuLinkProps) {
-  let resolved = useResolvedPath(props.href);
-  let match = useMatch({ path: resolved.pathname, end: false });
-
-  const className = classNames(
-    "ath-menu-bar__menu-link",
-    props.modifier ? `ath-menu-bar__menu-link--${props.modifier}` : "",
-    {
-      "ath-menu-bar__menu-link--active": match,
-    },
-  );
-
-  return (
-    <Link to={props.href} className={className} target={props.target}>
-      <props.Icon />
-      <span>{props.label}</span>
-    </Link>
-  );
-}
-
 export function GlobalLayout(props: GlobalLayoutProps) {
   return (
-    <div className="ath-root">
+    <>
       <Helmet>
-        <title>{`Application | Athena`}</title>
+        <title>{`Athena`}</title>
       </Helmet>
 
-      <div className="ath-layout">
-        <div className="ath-menu-bar">
-          <Link to="/" className="ath-menu-bar__logo">
-            <span className="logo">
-              <LogoIcon size={32} />
-            </span>
-            <p>Athena</p>
-          </Link>
-          <div className="ath-menu-bar__menu">
-            <MainMenuLink
-              label="Pages"
-              href={routes.pages.list}
-              Icon={PagesIcon}
-              modifier="home"
-            />
-            <MainMenuLink
-              label="Notes"
-              href={routes.notes.list}
-              Icon={NotesIcon}
-              modifier="notes"
-            />
-            <MainMenuLink
-              label="Tasks"
-              href={routes.tasks.list}
-              Icon={TasksIcon}
-              modifier="tasks"
-            />
-
-            <MainMenuLink
-              label="More"
-              href="/menu"
-              Icon={MobileMenuIcon}
-              modifier="more"
-            />
-
-            <MainMenuLink
-              label="Tags"
-              href={routes.tags.list}
-              Icon={TagsIcon}
-              modifier="tags"
-            />
-            <MainMenuLink
-              label="Settings"
-              href="/settings"
-              Icon={SettingsIcon}
-              modifier="settings"
-            />
-            <MainMenuLink
-              label="Help"
-              href={routes.external.docs}
-              Icon={HelpIcon}
-              modifier="help"
-              target="_blank"
-            />
+      <div className="athena">
+        <div className="athena__sidebar">
+          <button className="sidebar-button"><JIcon size="lg"><VaultIcon /></JIcon></button>
+          <div className="sidebar-divider" />
+          <button className="sidebar-button"><JIcon size="lg"><SearchIcon /></JIcon></button>
+          <button className="sidebar-button"><JIcon size="lg"><AddContentIcon /></JIcon></button>
+          <button className="sidebar-button"><JIcon size="lg"><TagsIcon /></JIcon></button>
+          <div className="sidebar-separator" />
+          <div>
+            <button className="sidebar-status-button"><JIcon size="md"><StatusDownloadIcon /></JIcon></button>
           </div>
+          <div className="sidebar-divider" />
+          <button className="sidebar-button"><JIcon size="lg"><SettingsIcon /></JIcon></button>
+          <button className="sidebar-button"><JIcon size="lg"><AccountsIcon /></JIcon></button>
         </div>
-        <main className="ath-main">{props.children}</main>
+        <main className="athena__main">{props.children}</main>
       </div>
-    </div>
+    </>
   );
 }
