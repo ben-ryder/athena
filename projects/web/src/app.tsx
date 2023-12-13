@@ -21,6 +21,7 @@ import { MenuPage } from "./pages/menu";
 import { TagsPage } from "./pages/tags/tags-page";
 import { CreateTagPage } from "./pages/tags/create-tag-page";
 import { EditTagPage } from "./pages/tags/edit-tag-page";
+import { BlobTest } from "./pages/blob-test/blob-test";
 
 export function App() {
   return (
@@ -71,6 +72,11 @@ export function App() {
                 <Route
                   path={routes.tasks.list}
                   element={<TasksPage />}
+                />
+
+                <Route
+                  path="/blob-test"
+                  element={<BlobTest />}
                 />
 
                 {/* 404 Route */}
