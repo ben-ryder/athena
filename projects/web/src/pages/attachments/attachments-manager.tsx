@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
-import { blobDatabase, BlobDto } from "../../state/database/attatchments/attachments";
+import { blobDatabase, BlobDto } from "../../state/database/attachments/attachments";
 
-import "./blob-test.scss"
+import "./attachments-manager.scss"
 
 export interface FileRender {
   name: string
@@ -10,12 +10,15 @@ export interface FileRender {
   src: string
 }
 
-export function BlobTest() {
+export type StorageStatus = 'done' | 'in-progress' | 'required'
+
+export function AttachmentsManagerPage() {
   // @ts-ignore
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [storageMessage, setStorageMessage] = useState<string>("Calculating storage info..")
   const [files, setFiles] = useState<FileRender[]>([])
+  const [storageStatus, setStorageStatus] = useState<StorageStatus>("done")
 
   async function save() {
     if (fileInputRef.current?.files) {
@@ -23,17 +26,20 @@ export function BlobTest() {
 
       if (files.length > 0) {
         const file = files.item(0)
-        const fileContent = await file.arrayBuffer()
 
-        const blob: BlobDto = {
-          id: self.crypto.randomUUID(),
-          filename: file.name,
-          mimeType: file.type,
-          size: file.size,
-          data: fileContent
+        if (file) {
+          const fileContent = await file.arrayBuffer()
+
+          const blob: BlobDto = {
+            id: self.crypto.randomUUID(),
+            filename: file.name,
+            mimeType: file.type,
+            size: file.size,
+            data: fileContent
+          }
+
+          blobDatabase.blobs.add(blob)
         }
-
-        blobDatabase.blobs.add(blob)
       }
     }
 
@@ -59,9 +65,22 @@ export function BlobTest() {
     setFiles(files)
   }
 
+  async function processStorageSetup() {
+    setStorageStatus("in-progress")
+
+    const isSetup = await navigator.storage.persist()
+    setStorageStatus(isSetup ? "done" : "required")
+  }
+
   // Load all blobs as files
   useEffect(() => {
     loadBlobs()
+
+    async function checkStorageSetup() {
+      const isSetup = await navigator.storage.persisted()
+      setStorageStatus(isSetup ? "done" : "required")
+    }
+    checkStorageSetup()
   }, [])
 
   // Calculate storage info, recalculate when files change
@@ -72,10 +91,16 @@ export function BlobTest() {
 
     async function calculateStorage() {
       const storageData = await navigator.storage.estimate()
-      setStorageMessage(`Using ${formatMB(storageData.usage)} of ${formatMB(storageData.quota)}`)
+
+      if (storageData.usage && storageData.quota) {
+        setStorageMessage(`Using ${formatMB(storageData.usage)} of ${formatMB(storageData.quota)}`)
+      }
+      else {
+        setStorageMessage(`Failed to retrieve storage usage & quota status.`)
+      }
     }
     calculateStorage()
-  }, [files])
+  }, [files, storageStatus])
 
   const fileElements = []
   for (const file of files) {
@@ -102,8 +127,20 @@ export function BlobTest() {
   }
 
   return (
-    <div className="blob-test">
+    <div className="attachments-manager">
+      {storageStatus !== "done" &&
+        <JCallout variant="warning">
+          <p>This app requires your consent to <em>"store data in persistent storage"</em>. This is required because browsers have a feature called{" "}
+            <a href="https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria#when_is_data_evicted">data eviction</a>,{" "}
+            which on rare occasions may automatically delete saved data if your device is low on storage, if you haven't used the website in a while etc.<br/>
+            Allowing persistent storage ensures that the browser will not automatically delete data from this app.
+          </p>
+          <JButton variant="secondary" disabled={storageStatus === "in-progress"} loading={storageStatus === "in-progress"} onClick={processStorageSetup}>Allow Persistent Storage</JButton>
+        </JCallout>
+      }
+
       <JInput
+        label="Upload File"
         ref={fileInputRef}
         type="file"
         id="upload"
@@ -114,7 +151,7 @@ export function BlobTest() {
 
       <p>{storageMessage}</p>
 
-      <div className="blob-test__files">
+      <div className="attachments-manager__files">
         {fileElements}
       </div>
     </div>

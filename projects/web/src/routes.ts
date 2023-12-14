@@ -23,6 +23,7 @@ export const routes = {
     list: "/views",
     edit: "/views/:id"
   },
+  attachments: "/attachments"
 };
 
 export function replaceParam(

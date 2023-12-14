@@ -20,7 +20,7 @@ import { MenuPage } from "./pages/menu";
 import { TagsPage } from "./pages/tags/tags-page";
 import { CreateTagPage } from "./pages/tags/create-tag-page";
 import { EditTagPage } from "./pages/tags/edit-tag-page";
-import { BlobTest } from "./pages/blob-test/blob-test";
+import { AttachmentsManagerPage } from "./pages/attachments/attachments-manager";
 
 export function App() {
   return (
@@ -68,8 +68,8 @@ export function App() {
                 />
 
                 <Route
-                  path="/blob-test"
-                  element={<BlobTest />}
+                  path={routes.attachments}
+                  element={<AttachmentsManagerPage />}
                 />
 
                 {/* 404 Route */}

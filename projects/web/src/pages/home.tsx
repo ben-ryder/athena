@@ -1,13 +1,9 @@
 import React from "react";
 
-import { Helmet } from "react-helmet-async";
+import { MenuPage } from "./menu";
 
 export function HomePage() {
   return (
-    <>
-      <Helmet>
-        <title>Home | Athena</title>
-      </Helmet>
-    </>
+    <MenuPage />
   );
 }
