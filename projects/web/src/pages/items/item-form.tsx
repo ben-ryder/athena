@@ -14,25 +14,25 @@ import {
   ContentPageField,
   ContentPageMenu,
 } from "../../patterns/layout/content-page/content-page";
-import { NoteContent } from "../../state/features/notes/notes.types";
+import { ItemContent } from "../../state/database/items/items.types";
 import { useLFBApplication } from "../../utils/lfb-context";
 
-export interface NoteFormProps {
-  noteContent: NoteContent;
-  onSave: (noteContent: NoteContent) => void;
+export interface ItemFormProps {
+  itemContent: ItemContent;
+  onSave: (itemContent: ItemContent) => void;
   onDelete?: () => void;
 }
 
-export function NoteForm(props: NoteFormProps) {
+export function ItemForm(props: ItemFormProps) {
   const { document } = useLFBApplication();
   const [error, setError] = useState<string | null>(null);
 
-  const [name, setName] = useState<string>(props.noteContent.name);
-  const [body, setBody] = useState<string>(props.noteContent.body);
+  const [name, setName] = useState<string>(props.itemContent.name);
+  const [body, setBody] = useState<string>(props.itemContent.body);
 
   const [selectedTags, setSelectedTags] = useState<JMultiSelectOptionData[]>(
-    props.noteContent.tags.map((tagId) => {
-      const tag = document.tags.content.entities[tagId];
+    props.itemContent.tags.map((tagId) => {
+      const tag = document.tags.entities[tagId];
 
       return {
         text: tag.name,
@@ -43,8 +43,8 @@ export function NoteForm(props: NoteFormProps) {
   );
 
   const tagOptions: JMultiSelectOptionData[] = useMemo(() => {
-    const tags = document.tags.content.ids.map(
-      (id) => document.tags.content.entities[id],
+    const tags = document.tags.ids.map(
+      (id) => document.tags.entities[id],
     );
 
     return tags.map((tag) => {
@@ -54,11 +54,11 @@ export function NoteForm(props: NoteFormProps) {
         variant: tag.variant || undefined,
       };
     });
-  }, [document]);
+  }, [document.tags.ids]);
 
   function onSave() {
     if (name.length === 0) {
-      setError("Your note must have a title");
+      setError("Your item must have a title");
     } else {
       setError(null);
 
@@ -70,8 +70,8 @@ export function NoteForm(props: NoteFormProps) {
   return (
     <ContentPage>
       <ContentPageMenu
-        backUrl={routes.notes.list}
-        backText="Notes"
+        backUrl={routes.items.list}
+        backText="Items"
         onSave={onSave}
         onDelete={props.onDelete}
       />
@@ -88,7 +88,7 @@ export function NoteForm(props: NoteFormProps) {
             onChange={(e) => {
               setName(e.target.value);
             }}
-            placeholder="a note name..."
+            placeholder="an item name..."
           />
         </ContentPageField>
 
@@ -99,15 +99,15 @@ export function NoteForm(props: NoteFormProps) {
             options={tagOptions}
             selectedOptions={selectedTags}
             setSelectedOptions={setSelectedTags}
-            searchText="Search tags..."
+            searchText="search & select tags..."
             noOptionsText="No tags found"
           />
         </ContentPageField>
 
         <ContentPageField modifier="body">
-          <JLabel htmlFor="note-body">Body</JLabel>
+          <JLabel htmlFor="item-body">Body</JLabel>
           <Editor
-            id="note-body"
+            id="item-body"
             value={body}
             onChange={(updatedBody) => setBody(updatedBody)}
           />

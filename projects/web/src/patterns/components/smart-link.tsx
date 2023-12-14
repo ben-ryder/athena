@@ -6,7 +6,7 @@ import {
 } from "@ben-ryder/jigsaw-react";
 import { Link } from "react-router-dom";
 
-export function InternalLink(
+export function SmartLink(
   props: JTextLinkProps | JArrowLinkProps | JButtonLinkProps | JPillLinkProps,
 ) {
   if (props.href && props.href?.startsWith("/")) {

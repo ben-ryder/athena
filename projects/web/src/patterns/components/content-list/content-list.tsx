@@ -1,6 +1,6 @@
 import { JButtonLink, JContentSection, JIcon } from "@ben-ryder/jigsaw-react";
 import { FrownIcon as NoContentIcon } from "lucide-react";
-import { InternalLink } from "../internal-link";
+import { SmartLink } from "../smart-link";
 import { ContentCard, ContentItem } from "../content-card/content-card";
 import "./content-list.scss";
 
@@ -21,7 +21,7 @@ export function ContentList(props: ContentListProps) {
         <div className="ath-content-list__header">
           <h2 className="ath-content-list__heading">{props.title}</h2>
           <div className="ath-content-list__actions">
-            <JButtonLink as={InternalLink} href={props.newUrl}>
+            <JButtonLink as={SmartLink} href={props.newUrl}>
               {props.newText}
             </JButtonLink>
           </div>

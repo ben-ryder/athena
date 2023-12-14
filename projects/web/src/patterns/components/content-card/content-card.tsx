@@ -1,14 +1,14 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
-import { TagEntity } from "../../../state/features/tags/tags.types";
+import { TagEntity } from "../../../state/database/tags/tags.types";
 import { JPillLink } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../../routes";
-import { InternalLink } from "../internal-link";
+import { SmartLink } from "../smart-link";
 
 export interface ContentItem {
   id: string;
   name: string;
-  teaser?: string;
+  teaser: string | null;
   url: string;
   tags?: TagEntity[]
 }
@@ -33,9 +33,9 @@ export function ContentCard(props: ContentCardProps) {
             {props.item.tags.map(tag =>
               <JPillLink
                 key={tag.id}
-                href={`${routes.notes.list}?tags=${tag.id}`}
+                href={`${routes.items.list}?tags=${tag.id}`}
                 variant={tag.variant || undefined}
-                linkAs={InternalLink}
+                linkAs={SmartLink}
               >{tag.name}</JPillLink>
             )}
           </div>

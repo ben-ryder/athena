@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { routes } from "../../routes";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { TagContent, TagEntity } from "../../state/features/tags/tags.types";
+import { TagContent, TagEntity } from "../../state/database/tags/tags.types";
 import { TagForm } from "./tag-form/tag-form";
 import { JCallout } from "@ben-ryder/jigsaw-react";
-import { deleteTag, updateTag } from "../../state/features/tags/tags.actions";
-import { getTag } from "../../state/features/tags/tags.selectors";
+import { deleteTag, updateTag } from "../../state/database/tags/tags.actions";
+import { getTag } from "../../state/database/tags/tags.selectors";
 
 export function EditTagPage() {
   const navigate = useNavigate();

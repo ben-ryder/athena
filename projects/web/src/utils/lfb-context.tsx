@@ -5,8 +5,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AthenaDatabase } from "../state/athena-database";
-import { initialDocument } from "../state/initial/initial-document";
+import { VaultDatabase } from "../state/database/database.types";
+import { initialDatabase } from "../state/database/initial-database";
 import * as A from "@automerge/automerge";
 import { UserDto } from "@ben-ryder/lfb-common";
 import {
@@ -24,7 +24,7 @@ const lfbClient = new LFBClient({
   serverUrl: SERVER_URL,
   localStore: localStore,
 });
-export const lfbApplication = new LFBApplication<AthenaDatabase>(initialDocument, {
+export const lfbApplication = new LFBApplication<VaultDatabase>(initialDatabase, {
   localStore: localStore,
   lfbClient: lfbClient,
 });
@@ -40,8 +40,8 @@ if (typeof document !== 'undefined') {
 
 export interface LFBContext {
   loading: boolean;
-  document: AthenaDatabase;
-  makeChange: (changeFunc: A.ChangeFn<AthenaDatabase>) => void;
+  document: VaultDatabase;
+  makeChange: (changeFunc: A.ChangeFn<VaultDatabase>) => void;
   currentUser: UserDto | null;
   online: boolean;
   setOnline: (online: boolean) => void;
@@ -50,7 +50,7 @@ export interface LFBContext {
 
 export const LFBContext = createContext<LFBContext>({
   loading: true,
-  document: initialDocument,
+  document: initialDatabase,
   makeChange: () => {},
   currentUser: null,
   online: true,
@@ -65,7 +65,7 @@ export interface ApplicationProviderProps {
 export function LFBProvider(props: ApplicationProviderProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [document, setDocument] =
-    useState<A.Doc<AthenaDatabase>>(initialDocument);
+    useState<A.Doc<VaultDatabase>>(initialDatabase);
   const [currentUser, setCurrentUser] = useState<UserDto | null>(null);
   const [online, setOnline] = useState<boolean>(true);
 

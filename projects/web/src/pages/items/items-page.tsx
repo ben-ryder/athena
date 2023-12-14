@@ -5,23 +5,23 @@ import { Helmet } from "react-helmet-async";
 import { ContentList } from "../../patterns/components/content-list/content-list";
 import { ContentItem } from "../../patterns/components/content-card/content-card";
 
-export function NotesPage() {
+export function ItemsPage() {
   const { document } = useLFBApplication();
 
-  const noteContentItems: ContentItem[] = useMemo(() => {
-    const notes = document.notes.content.ids.map(
-      (id) => document.notes.content.entities[id],
+  const ItemContentItems: ContentItem[] = useMemo(() => {
+    const items = document.items.ids.map(
+      (id) => document.items.entities[id],
     );
 
-    return notes.map((note) => {
-      const noteTags = note.tags.map(tagId => document.tags.content.entities[tagId]);
+    return items.map((item) => {
+      const itemTags = item.tags.map(tagId => document.tags.entities[tagId]);
 
       return {
-        id: note.id,
-        name: note.name,
-        teaser: note.body.substring(0, 100),
-        url: replaceParam(routes.notes.edit, ":id", note.id),
-        tags: noteTags
+        id: item.id,
+        name: item.name,
+        teaser: item.body.length > 0 ? item.body.substring(0, 100) : null,
+        url: replaceParam(routes.items.edit, ":id", item.id),
+        tags: itemTags
       };
     });
   }, [document]);
@@ -33,13 +33,13 @@ export function NotesPage() {
   return (
     <>
       <Helmet>
-        <title>Notes | Athena</title>
+        <title>Items | Athena</title>
       </Helmet>
       <ContentList
-        items={noteContentItems}
-        title="Notes"
-        newUrl={routes.notes.create}
-        newText="New Note"
+        items={ItemContentItems}
+        title="Items"
+        newUrl={routes.items.create}
+        newText="New Item"
         onDelete={onDelete}
       />
     </>

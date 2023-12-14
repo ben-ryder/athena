@@ -15,7 +15,7 @@ import {
   ContentPageField,
   ContentPageMenu,
 } from "../../../patterns/layout/content-page/content-page";
-import { TagContent } from "../../../state/features/tags/tags.types";
+import { TagContent } from "../../../state/database/tags/tags.types";
 import "./tag-form.scss";
 
 export interface TagFormProps {

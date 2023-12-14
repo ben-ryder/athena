@@ -6,17 +6,16 @@ import { Provider as ReduxProvider } from "react-redux";
 import "./athena.scss";
 import { routes } from "./routes";
 import { LFBProvider } from "./utils/lfb-context";
-import { store } from "./state/store";
+import { store } from "./state/ui/redux";
 
 import { GlobalLayout } from "./patterns/layout/global-layout/global-layout";
 
 import { HomePage } from "./pages/home";
 import { PageNotFound } from "./pages/page-not-found";
-import { NotesPage } from "./pages/notes/notes-page";
-import { CreateNotePage } from "./pages/notes/create-note-page";
-import { EditNotePage } from "./pages/notes/edit-note-page";
+import { ItemsPage } from "./pages/items/items-page";
+import { CreateItemPage } from "./pages/items/create-item-page";
+import { EditItemPage } from "./pages/items/edit-item-page";
 import { WelcomePage } from "./pages/welcome";
-import { TasksPage } from "./pages/tasks/tasks-page";
 import { MenuPage } from "./pages/menu";
 import { TagsPage } from "./pages/tags/tags-page";
 import { CreateTagPage } from "./pages/tags/create-tag-page";
@@ -40,18 +39,18 @@ export function App() {
                 <Route path={routes.welcome} element={<WelcomePage />} />
                 <Route path={routes.menu} element={<MenuPage />} />
 
-                {/* Notes Routes */}
+                {/* Item Routes */}
                 <Route
-                  path={routes.notes.list}
-                  element={<NotesPage />}
+                  path={routes.items.list}
+                  element={<ItemsPage />}
                 />
                 <Route
-                  path={routes.notes.create}
-                  element={<CreateNotePage />}
+                  path={routes.items.create}
+                  element={<CreateItemPage />}
                 />
                 <Route
-                  path={routes.notes.edit}
-                  element={<EditNotePage />}
+                  path={routes.items.edit}
+                  element={<EditItemPage />}
                 />
 
                 {/* Tags Routes */}
@@ -66,12 +65,6 @@ export function App() {
                 <Route
                   path={routes.tags.edit}
                   element={<EditTagPage />}
-                />
-
-                {/* Tasks Routes */}
-                <Route
-                  path={routes.tasks.list}
-                  element={<TasksPage />}
                 />
 
                 <Route

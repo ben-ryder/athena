@@ -19,7 +19,7 @@
     "cy:start:e2e": "cypress open --e2e -b firefox",
     "code:lint": "npx eslint .",
     "code:format": "npx prettier . --write",
-    "initial-change": "ts-node --esm src/state/initial/cli.ts"
+    "generate-initial-change": "ts-node --esm scripts/generate-initial-change.ts"
   },
   "dependencies": {
     "@automerge/automerge": "^2.0.2",

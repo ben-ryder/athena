@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { JArrowLink, JButton, JContentSection } from "@ben-ryder/jigsaw-react";
-import { InternalLink } from "../../components/internal-link";
+import { SmartLink } from "../../components/smart-link";
 import { PropsWithChildren } from "../../../utils/children-prop";
 import "./content-page.scss";
 
@@ -22,7 +22,7 @@ export interface ContentPageMenuProps {
 export function ContentPageMenu(props: ContentPageMenuProps) {
   return (
     <div className="ath-content-page__menu">
-      <JArrowLink as={InternalLink} direction="left" href={props.backUrl}>
+      <JArrowLink as={SmartLink} direction="left" href={props.backUrl}>
         {props.backText}
       </JArrowLink>
 

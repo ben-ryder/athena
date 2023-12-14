@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
-import { blobDatabase, BlobDto } from "../../utils/blob";
+import { blobDatabase, BlobDto } from "../../state/database/attatchments/attachments";
 
 import "./blob-test.scss"
-import { number } from "zod";
 
 export interface FileRender {
   name: string

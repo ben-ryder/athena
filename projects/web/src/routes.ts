@@ -13,30 +13,15 @@ export const routes = {
     list: "/tags",
     edit: "/tags/:id/edit",
   },
-  notes: {
-    create: "/notes/new",
-    list: "/notes",
-    edit: "/notes/:id",
+  items: {
+    create: "/item/new",
+    list: "/items",
+    edit: "/item/:id",
   },
-  noteLists: {
-    create: "/lists/notes/new",
-    list: "/lists/notes",
-    edit: "/lists/notes/:id",
-  },
-  tasks: {
-    create: "/tasks/new",
-    list: "/tasks",
-    edit: "/tasks/:id"
-  },
-  taskLists: {
-    create: "/lists/tasks/new",
-    list: "/lists/tasks",
-    edit: "/lists/tasks/:id"
-  },
-  pages: {
-    create: "/pages/new",
-    list: "/pages",
-    edit: "/pages/:id"
+  views: {
+    create: "/views/new",
+    list: "/views",
+    edit: "/views/:id"
   },
 };
 

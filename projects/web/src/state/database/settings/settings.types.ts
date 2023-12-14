@@ -3,5 +3,5 @@
  * Settings
  */
 export interface Settings {
-  homepage: string | null;
+  templatesView: string | null
 }

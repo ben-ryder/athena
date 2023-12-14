@@ -1,4 +1,4 @@
-import { Entity, EntityTable } from "../../common/entity.types";
+import { Entity, EntityTable } from "../common/entity.types";
 import { JColourVariants } from "@ben-ryder/jigsaw-react";
 
 /**

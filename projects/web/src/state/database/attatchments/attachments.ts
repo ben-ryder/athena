@@ -1,3 +1,7 @@
+/**
+ * A test file defining attachment types and database.
+ */
+
 import { Dexie, Table } from 'dexie';
 
 export interface BlobDto {
