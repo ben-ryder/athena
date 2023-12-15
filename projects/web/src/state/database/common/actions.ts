@@ -1,4 +1,4 @@
-import { EntityTable } from "./entity.types";
+import {GenericTable} from "./entity";
 
 const CorruptMessage = "You should IMMEDIATELY manually backup all content and seek help on GitHub as your data may be corrupt."
 
@@ -14,6 +14,6 @@ export type ActionResponse = {
   context?: any
 }
 
-export async function existsInTable(table: EntityTable<any>, id: string): Promise<boolean> {
-  return table.ids.includes(id) && table.entities[id]
+export async function existsInTable<T>(table: GenericTable<T>, id: string): Promise<boolean> {
+  return table.ids.includes(id) && table.entities[id] !== 'undefined'
 }

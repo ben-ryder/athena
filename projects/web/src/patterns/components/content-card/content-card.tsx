@@ -1,6 +1,6 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
-import { TagEntity } from "../../../state/database/tags/tags.types";
+import { TagEntity } from "../../../state/database/tags/tags";
 import { JPillLink } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../../routes";
 import { SmartLink } from "../smart-link";

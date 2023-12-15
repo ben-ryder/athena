@@ -1,4 +1,4 @@
-import { TagEntity } from "./tags.types";
+import { TagEntity } from "./tags";
 import { VaultDatabase } from "../database.types";
 
 export function getAllTags(doc: VaultDatabase): TagEntity[] {

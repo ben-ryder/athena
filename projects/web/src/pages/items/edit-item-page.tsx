@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { routes } from "../../routes";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { ItemContent, ItemEntity } from "../../state/database/items/items.types";
+import { ItemContent, ItemEntity } from "../../state/database/items/items";
 
 export function EditItemPage() {
   const navigate = useNavigate();

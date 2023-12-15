@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { Helmet } from "react-helmet-async";
 import React from "react";
-import { ItemContent } from "../../state/database/items/items.types";
+import { ItemContent } from "../../state/database/items/items";
 
 export function CreateItemPage() {
   const navigate = useNavigate();

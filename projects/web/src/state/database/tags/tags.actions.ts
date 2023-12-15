@@ -1,5 +1,5 @@
 import { VaultDatabase } from "../database.types";
-import { TagContent, TagEntity } from "./tags.types";
+import { TagContent, TagEntity } from "./tags";
 import { lfbApplication } from "../../../utils/lfb-context";
 import {
   ActionResponse,
@@ -7,7 +7,7 @@ import {
   GenericErrorMessage, GenericNotFoundOnDeleteMessage,
   GenericNotFoundOnUpdateMessage
 } from "../common/actions";
-import { EntityUpdate } from "../common/entity.types";
+import { EntityUpdate } from "../common/entity";
 
 export async function createTag(tag: TagEntity): Promise<ActionResponse> {
   try {

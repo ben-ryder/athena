@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { Helmet } from "react-helmet-async";
 import React, { useState } from "react";
-import { TagContent, TagEntity } from "../../state/database/tags/tags.types";
+import { TagContent, TagEntity } from "../../state/database/tags/tags";
 import { createTag } from "../../state/database/tags/tags.actions";
 import { JCallout } from "@ben-ryder/jigsaw-react";
 

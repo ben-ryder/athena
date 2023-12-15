@@ -25,7 +25,7 @@ const doc = A.change(
     };
     // @ts-ignore
     doc.settings = {
-      templatesView: null
+      templateViews: []
     };
   }
 );

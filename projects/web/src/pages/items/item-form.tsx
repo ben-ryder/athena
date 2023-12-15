@@ -14,7 +14,7 @@ import {
   ContentPageField,
   ContentPageMenu,
 } from "../../patterns/layout/content-page/content-page";
-import { ItemContent } from "../../state/database/items/items.types";
+import { ItemContent } from "../../state/database/items/items";
 import { useLFBApplication } from "../../utils/lfb-context";
 
 export interface ItemFormProps {

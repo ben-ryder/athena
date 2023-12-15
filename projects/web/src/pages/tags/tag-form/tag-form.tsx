@@ -15,7 +15,7 @@ import {
   ContentPageField,
   ContentPageMenu,
 } from "../../../patterns/layout/content-page/content-page";
-import { TagContent } from "../../../state/database/tags/tags.types";
+import {TagContent, TagVariants} from "../../../state/database/tags/tags";
 import "./tag-form.scss";
 
 export interface TagFormProps {
@@ -54,7 +54,7 @@ export function TagForm(props: TagFormProps) {
     }
     else {
       setError(null);
-      props.onSave({ name, variant: variant as JColourVariants || null });
+      props.onSave({ name, variant: variant as TagVariants || null });
     }
   }
 
@@ -97,7 +97,7 @@ export function TagForm(props: TagFormProps) {
           <ContentPageField modifier="preview">
             <JLabel>Preview</JLabel>
             <JPill
-              variant={variant as JColourVariants || undefined}
+              variant={variant as TagVariants || undefined}
             >{name}</JPill>
           </ContentPageField>
         )}
