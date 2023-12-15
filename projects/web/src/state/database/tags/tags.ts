@@ -1,31 +1,19 @@
 import {z} from "zod"
 import {Entity, createEntityTable, GenericTable} from "../common/entity";
 import {NameField} from "../common/fields";
-import {JColourVariants} from "@ben-ryder/jigsaw-react";
+import { JColourVariantsList } from "@ben-ryder/jigsaw-react";
 
 // These are directly mapped from Jigsaw colour variants.
-export const TAG_VARIANTS = [
-  JColourVariants.teal,
-  JColourVariants.blueGrey,
-  JColourVariants.white,
-  JColourVariants.red,
-  JColourVariants.orange,
-  JColourVariants.yellow,
-  JColourVariants.green,
-  JColourVariants.blue,
-  JColourVariants.purple,
-  JColourVariants.pink,
-] as const;
-export const TagVariants = z.enum(TAG_VARIANTS);
+export const TagVariants = z.enum(JColourVariantsList);
 export type TagVariants = z.infer<typeof TagVariants>;
 
 export const TagContent = z.object({
   name: NameField,
   variant: TagVariants.nullable()
-})
+}).strict()
 export type TagContent = z.infer<typeof TagContent>
 
-export const TagEntity = Entity.merge(TagContent)
+export const TagEntity = Entity.merge(TagContent).strict()
 export type TagEntity = z.infer<typeof TagEntity>
 
 export const TagsTable = createEntityTable<TagEntity>(TagEntity)

@@ -13,9 +13,9 @@ export const ViewContent = z.object({
   tags: TagsField,
   orderBy: OrderByFields,
   orderDirection: OrderDirection
-})
+}).strict()
 
-export const ViewEntity = Entity.merge(ViewContent)
+export const ViewEntity = Entity.merge(ViewContent).strict()
 export type ViewEntity = z.infer<typeof ViewEntity>
 
 export const ViewsTable = createEntityTable<ViewEntity>(ViewEntity)

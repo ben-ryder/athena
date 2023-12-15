@@ -5,8 +5,7 @@ import {
   JSelect,
   JPill,
   JLabel,
-  JColourVariants,
-  JOptionData
+  JOptionData, JColourVariants
 } from "@ben-ryder/jigsaw-react";
 import { routes } from "../../../routes";
 import {
@@ -15,7 +14,7 @@ import {
   ContentPageField,
   ContentPageMenu,
 } from "../../../patterns/layout/content-page/content-page";
-import {TagContent, TagVariants} from "../../../state/database/tags/tags";
+import { TagContent, TagVariants } from "../../../state/database/tags/tags";
 import "./tag-form.scss";
 
 export interface TagFormProps {
@@ -35,16 +34,10 @@ export function TagForm(props: TagFormProps) {
   const tagVariantOptions: JOptionData[] = useMemo(() => {
     return [
       { text: "-- Select Colour --", value: "" },
-      { text: "Teal", value: JColourVariants.teal, },
-      { text: "Blue Grey", value: JColourVariants.blueGrey },
-      { text: "White", value: JColourVariants.white },
-      { text: "Red", value: JColourVariants.red },
-      { text: "Orange", value: JColourVariants.orange },
-      { text: "Yellow", value: JColourVariants.yellow },
-      { text: "Green", value: JColourVariants.green },
-      { text: "Blue", value: JColourVariants.blue },
-      { text: "Purple", value: JColourVariants.purple },
-      { text: "Pink", value: JColourVariants.pink },
+      ...TagVariants.options.map((variant) => ({
+        text: JColourVariants[variant].label,
+        value: variant
+      }))
     ];
   }, []);
 

@@ -6,10 +6,10 @@ export const ItemContent = z.object({
   name: NameField,
   body: z.string(),
   tags: TagsField,
-})
+}).strict()
 export type ItemContent = z.infer<typeof ItemContent>
 
-export const ItemEntity = Entity.merge(ItemContent)
+export const ItemEntity = Entity.merge(ItemContent).strict()
 export type ItemEntity = z.infer<typeof ItemEntity>
 
 export const ItemsTable = createEntityTable<ItemEntity>(ItemEntity)
