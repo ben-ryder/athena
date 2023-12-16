@@ -5,9 +5,10 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { TagContent, TagEntity } from "../../state/database/tags/tags";
 import { TagForm } from "./tag-form/tag-form";
-import { JCallout } from "@ben-ryder/jigsaw-react";
 import { deleteTag, updateTag } from "../../state/database/tags/tags.actions";
 import { getTag } from "../../state/database/tags/tags.selectors";
+import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
+import { ApplicationError } from "../../state/database/common/errors";
 
 export function EditTagPage() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export function EditTagPage() {
   const { document } = useLFBApplication();
 
   const [tag, setTag] = useState<TagEntity | null>();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApplicationError | null>(null);
 
   useEffect(() => {
     // Reset error
@@ -27,7 +28,9 @@ export function EditTagPage() {
 
     const tag = getTag(document, params.id);
     if (!tag) {
-      setError("The tag could not be found");
+      setError({
+        userMessage: "The tag could not be found"
+      });
       setTag(null);
     }
     else {
@@ -37,29 +40,33 @@ export function EditTagPage() {
 
   async function onSave(updatedContent: Partial<TagContent>) {
     if (!tag) {
-      return setError("Tried to save a tag that isn't loaded yet.");
+      return setError({
+        userMessage: "Tried to save a tag that isn't loaded yet."
+      });
     }
 
-    const res =  await updateTag(tag.id, updatedContent)
+    const res =  await updateTag(document, tag.id, updatedContent)
     if (res.success) {
       navigate(routes.tags.list);
     }
     else {
-      setError(res.errorMessage)
+      setError(res.error)
     }
   }
 
   async function onDelete() {
     if (!tag) {
-      return setError("Tried to delete a tag that isn't loaded yet.");
+      return setError({
+        userMessage: "Tried to delete a tag that isn't loaded yet."
+      });
     }
 
-    const res =  await deleteTag(tag.id)
+    const res =  await deleteTag(document, tag.id)
     if (res.success) {
       navigate(routes.tags.list);
     }
     else {
-      setError(res.errorMessage)
+      setError(res.error)
     }
   }
 
@@ -68,7 +75,7 @@ export function EditTagPage() {
       <Helmet>
         <title>{`${tag?.name || "Edit"} | Tags | Athena`}</title>
       </Helmet>
-      {error && <JCallout variant="critical">{error}</JCallout> }
+      {error && <ErrorCallout error={error} />}
       {tag &&
         <TagForm
           content={{
@@ -79,7 +86,6 @@ export function EditTagPage() {
           onDelete={onDelete}
         />
       }
-      {error}
     </div>
   );
 }

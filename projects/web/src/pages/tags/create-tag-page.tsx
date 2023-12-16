@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
 import { Helmet } from "react-helmet-async";
 import React, { useState } from "react";
-import { TagContent, TagEntity } from "../../state/database/tags/tags";
+import { TagContent } from "../../state/database/tags/tags";
 import { createTag } from "../../state/database/tags/tags.actions";
-import { JCallout } from "@ben-ryder/jigsaw-react";
+import { ApplicationError } from "../../state/database/common/errors";
+import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
 
 export function CreateTagPage() {
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ApplicationError | null>(null)
 
   async function onSave(content: TagContent) {
     const id = createUUID();
@@ -28,7 +29,7 @@ export function CreateTagPage() {
       navigate(routes.tags.list);
     }
     else {
-      setError(res.errorMessage)
+      setError(res.error)
     }
   }
 
@@ -37,7 +38,7 @@ export function CreateTagPage() {
       <Helmet>
         <title>Create Note | Athena</title>
       </Helmet>
-      {error && <JCallout variant="critical">{error}</JCallout>}
+      {error && <ErrorCallout error={error} />}
       <TagForm content={{ name: "", variant: null }} onSave={onSave} />
     </>
   );
