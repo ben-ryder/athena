@@ -14,6 +14,28 @@ export type ActionResponse = {
   error: ApplicationError
 }
 
+export type CreateActionResponse = {
+  success: true
+  id: string
+} | {
+  success: false,
+  error: ApplicationError
+}
+
 export function existsInTable<T>(table: GenericTable<T>, id: string): boolean {
   return table.ids.includes(id) && table.entities[id] !== 'undefined'
+}
+
+export function listRequiresUpdate<T>(current: T[], update: T[]): boolean {
+  // Return immediately if length is different, no need to check anything else
+  if (update.length !== current.length) {
+    return true;
+  }
+
+  // Calculate values that are only in current or update, but not both (xor)
+  const differences =
+    current.filter(x => !update.includes(x))
+    .concat(update.filter(x => !current.includes(x)));
+
+  return differences.length !== 0
 }

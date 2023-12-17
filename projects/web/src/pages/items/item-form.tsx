@@ -16,6 +16,7 @@ import {
 } from "../../patterns/layout/content-page/content-page";
 import { ItemContent } from "../../state/database/items/items";
 import { useLFBApplication } from "../../utils/lfb-context";
+import { getAllTags } from "../../state/database/tags/tags.selectors";
 
 export interface ItemFormProps {
   itemContent: ItemContent;
@@ -24,7 +25,7 @@ export interface ItemFormProps {
 }
 
 export function ItemForm(props: ItemFormProps) {
-  const { document } = useLFBApplication();
+  const { document: db } = useLFBApplication();
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState<string>(props.itemContent.name);
@@ -32,7 +33,7 @@ export function ItemForm(props: ItemFormProps) {
 
   const [selectedTags, setSelectedTags] = useState<JMultiSelectOptionData[]>(
     props.itemContent.tags.map((tagId) => {
-      const tag = document.tags.entities[tagId];
+      const tag = db.tags.entities[tagId];
 
       return {
         text: tag.name,
@@ -43,9 +44,7 @@ export function ItemForm(props: ItemFormProps) {
   );
 
   const tagOptions: JMultiSelectOptionData[] = useMemo(() => {
-    const tags = document.tags.ids.map(
-      (id) => document.tags.entities[id],
-    );
+    const tags = getAllTags(db)
 
     return tags.map((tag) => {
       return {
@@ -54,7 +53,7 @@ export function ItemForm(props: ItemFormProps) {
         variant: tag.variant || undefined,
       };
     });
-  }, [document.tags.ids]);
+  }, [db.tags.ids]);
 
   function onSave() {
     if (name.length === 0) {

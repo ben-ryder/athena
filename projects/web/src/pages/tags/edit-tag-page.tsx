@@ -13,7 +13,7 @@ import { ApplicationError } from "../../state/database/common/errors";
 export function EditTagPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const { document } = useLFBApplication();
+  const { document: db } = useLFBApplication();
 
   const [tag, setTag] = useState<TagEntity | null>();
   const [error, setError] = useState<ApplicationError | null>(null);
@@ -26,7 +26,7 @@ export function EditTagPage() {
       return navigate(routes.tags.list);
     }
 
-    const tag = getTag(document, params.id);
+    const tag = getTag(db, params.id);
     if (!tag) {
       setError({
         userMessage: "The tag could not be found"
@@ -36,7 +36,7 @@ export function EditTagPage() {
     else {
       setTag(tag);
     }
-  }, [document, setTag]);
+  }, [db.tags, setTag]);
 
   async function onSave(updatedContent: Partial<TagContent>) {
     if (!tag) {
@@ -45,7 +45,7 @@ export function EditTagPage() {
       });
     }
 
-    const res =  await updateTag(document, tag.id, updatedContent)
+    const res =  await updateTag(db, tag.id, updatedContent)
     if (res.success) {
       navigate(routes.tags.list);
     }
@@ -61,7 +61,7 @@ export function EditTagPage() {
       });
     }
 
-    const res =  await deleteTag(document, tag.id)
+    const res =  await deleteTag(db, tag.id)
     if (res.success) {
       navigate(routes.tags.list);
     }

@@ -1,19 +1,22 @@
 import { ItemForm } from "./item-form";
-import { VaultDatabase } from "../../state/database/database.types";
 import { useLFBApplication } from "../../utils/lfb-context";
 import { useNavigate, useParams } from "react-router-dom";
 import { routes } from "../../routes";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { ItemContent, ItemEntity } from "../../state/database/items/items";
+import { ItemContent, ItemDto } from "../../state/database/items/items";
+import { ApplicationError } from "../../state/database/common/errors";
+import { getItem } from "../../state/database/items/items.selectors";
+import { deleteItem, updateItem } from "../../state/database/items/items.actions";
+import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
 
 export function EditItemPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const { makeChange, document } = useLFBApplication();
+  const { document: db } = useLFBApplication();
 
-  const [item, setItem] = useState<ItemEntity | null>();
-  const [error, setError] = useState<string | null>();
+  const [item, setItem] = useState<ItemDto | null>();
+  const [error, setError] = useState<ApplicationError | null>(null)
 
   useEffect(() => {
     // Reset error
@@ -23,55 +26,41 @@ export function EditItemPage() {
       return navigate(routes.items.list);
     }
 
-    const item = document.items.entities[params.id];
+    const item = getItem(db, params.id);
     if (!item) {
-      setError("The item could not be found");
+      setError({userMessage: "The item could not be found"});
       setItem(null);
     } else {
       setItem(item);
     }
-  }, [document, setItem]);
+  }, [db.items, setItem]);
 
   async function onSave(updatedItem: ItemContent) {
     if (!item) {
-      return setError("Tried to save a item that isn't loaded yet.");
+      return setError({userMessage: "Tried to save a item that isn't loaded yet."});
     }
 
-    await makeChange((doc: VaultDatabase) => {
-      const timestamp = new Date().toISOString();
-
-      // check old values so we only change what's needed
-      // todo: assumption that automerge will register change even if new value is the same?
-      if (doc.items.entities[item.id].name !== updatedItem.name) {
-        doc.items.entities[item.id].name = updatedItem.name;
-      }
-      if (doc.items.entities[item.id].body !== updatedItem.body) {
-        doc.items.entities[item.id].body = updatedItem.body;
-      }
-
-      // todo: don't think this works on arrays
-      if (doc.items.entities[item.id].tags !== updatedItem.tags) {
-        // todo: I should use not replace the array, but use push and deleteAt instead. ref https://automerge.org/docs/documents/lists/.
-        doc.items.entities[item.id].tags = updatedItem.tags;
-      }
-
-      doc.items.entities[item.id].updatedAt = timestamp;
-    });
-
-    navigate(routes.items.list);
+    const res = await updateItem(db, item.id, updatedItem)
+    if (res.success) {
+      navigate(routes.items.list);
+    }
+    else {
+      setError(res.error)
+    }
   }
 
   async function onDelete() {
     if (!item) {
-      return setError("Tried to delete a item that isn't loaded yet.");
+      return setError({userMessage: "Tried to delete a item that isn't loaded yet."});
     }
 
-    await makeChange((doc: VaultDatabase) => {
-      doc.items.ids = doc.items.ids.filter(
-        (id) => id !== item.id,
-      );
-      delete doc.items.entities[item.id];
-    });
+    const res = await deleteItem(db, item.id)
+    if (res.success) {
+      navigate(routes.items.list);
+    }
+    else {
+      setError(res.error)
+    }
 
     navigate(routes.items.list);
   }
@@ -82,6 +71,7 @@ export function EditItemPage() {
         <Helmet>
           <title>{`${item.name} | Items | Athena`}</title>
         </Helmet>
+        {error && <ErrorCallout error={error} />}
         <ItemForm
           itemContent={{
             name: item.name,

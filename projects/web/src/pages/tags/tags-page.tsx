@@ -6,11 +6,11 @@ import { TagsList } from "../../patterns/components/tags-list/tags-list";
 import { getAllTags } from "../../state/database/tags/tags.selectors";
 
 export function TagsPage() {
-  const { document } = useLFBApplication();
+  const { document: db } = useLFBApplication();
 
   const tags: TagEntity[] = useMemo(() => {
-    return getAllTags(document)
-  }, [document]);
+    return getAllTags(db)
+  }, [db.tags]);
 
   return (
     <>

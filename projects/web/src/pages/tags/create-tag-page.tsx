@@ -14,16 +14,7 @@ export function CreateTagPage() {
   const [error, setError] = useState<ApplicationError | null>(null)
 
   async function onSave(content: TagContent) {
-    const id = createUUID();
-    const timestamp = new Date().toISOString();
-
-    const res = await createTag({
-      id: id,
-      name: content.name,
-      variant: content.variant,
-      createdAt: timestamp,
-      updatedAt: timestamp
-    })
+    const res = await createTag(content)
 
     if (res.success) {
       navigate(routes.tags.list);

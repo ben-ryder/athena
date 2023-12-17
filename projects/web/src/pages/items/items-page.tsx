@@ -4,27 +4,20 @@ import { replaceParam, routes } from "../../routes";
 import { Helmet } from "react-helmet-async";
 import { ContentList } from "../../patterns/components/content-list/content-list";
 import { ContentItem } from "../../patterns/components/content-card/content-card";
+import { getAllItems } from "../../state/database/items/items.selectors";
 
 export function ItemsPage() {
-  const { document } = useLFBApplication();
+  const { document: db } = useLFBApplication();
 
   const ItemContentItems: ContentItem[] = useMemo(() => {
-    const items = document.items.ids.map(
-      (id) => document.items.entities[id],
-    );
-
-    return items.map((item) => {
-      const itemTags = item.tags.map(tagId => document.tags.entities[tagId]);
-
-      return {
-        id: item.id,
-        name: item.name,
-        teaser: item.body.length > 0 ? item.body.substring(0, 100) : null,
-        url: replaceParam(routes.items.edit, ":id", item.id),
-        tags: itemTags
-      };
-    });
-  }, [document]);
+    return getAllItems(db).map(item => ({
+      id: item.id,
+      name: item.name,
+      teaser: item.body.substring(0, 100),
+      url: replaceParam(routes.items.edit, ":id", item.id),
+      tags: item.tagEntities
+    }))
+  }, [db.items, db.tags]);
 
   function onDelete(ids: string[]) {
     console.log(`deleting ${ids}`);
