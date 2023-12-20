@@ -1,18 +1,18 @@
-import { VaultDatabase } from "../database.types";
-import { lfbApplication } from "../../../utils/lfb-context";
+import { VaultDatabase } from "../../../application-state";
+import { TagContent } from "./tags";
+import { lfbApplication } from "../../../../utils/lfb-context";
 import {
   ActionResponse, CreateActionResponse,
   existsInTable,
   GenericNotFoundOnDeleteMessage,
   GenericNotFoundOnUpdateMessage
 } from "../common/actions";
-import { EntityUpdate } from "../common/entity";;
-import { ItemContent } from "./items";
-import { _createItemChange, _deleteItemChange, _updateItemChange } from "./items.changes";
+import { EntityUpdate } from "../common/entity";
+import { _createTagChange, _deleteTagChange, _updateTagChange } from "./tags.changes";
 
-export async function createItem(content: ItemContent): Promise<CreateActionResponse> {
+export async function createTag(content: TagContent): Promise<CreateActionResponse> {
   try {
-    const {id, change} = _createItemChange(content)
+    const {id, change} = _createTagChange(content)
     await lfbApplication.makeChange(change);
 
     return {
@@ -29,13 +29,13 @@ export async function createItem(content: ItemContent): Promise<CreateActionResp
   }
 }
 
-export async function updateItem(doc: VaultDatabase, id: string, update: EntityUpdate<ItemContent>): Promise<ActionResponse> {
+export async function updateTag(doc: VaultDatabase, id: string, update: EntityUpdate<TagContent>): Promise<ActionResponse> {
   try {
-    if (!existsInTable(doc.items, id)) {
+    if (!existsInTable(doc.tags, id)) {
       return {success: false, error: {userMessage: GenericNotFoundOnUpdateMessage}}
     }
 
-    await lfbApplication.makeChange(_updateItemChange(id, update));
+    await lfbApplication.makeChange(_updateTagChange(id, update));
 
     return {
       success: true
@@ -51,13 +51,13 @@ export async function updateItem(doc: VaultDatabase, id: string, update: EntityU
   }
 }
 
-export async function deleteItem(doc: VaultDatabase, id: string): Promise<ActionResponse> {
-  if (!existsInTable(doc.items, id)) {
+export async function deleteTag(doc: VaultDatabase, id: string): Promise<ActionResponse> {
+  if (!existsInTable(doc.tags, id)) {
     return {success: false, error: {userMessage: GenericNotFoundOnDeleteMessage}}
   }
 
   try {
-    await lfbApplication.makeChange(_deleteItemChange(id));
+    await lfbApplication.makeChange(_deleteTagChange(id));
 
     return {
       success: true

@@ -1,4 +1,4 @@
-import { VaultDatabase } from "../database.types";
+import { VaultDatabase } from "../../../application-state";
 import { TagContent } from "./tags";
 import { EntityUpdate } from "../common/entity";
 import { createUUID } from "../common/fields";

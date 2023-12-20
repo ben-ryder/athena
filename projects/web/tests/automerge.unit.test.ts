@@ -7,7 +7,7 @@ import { initialDatabase } from "../src/state/database/initial-database";
 import * as A from "@automerge/automerge"
 import { _createTagChange, _updateTagChange } from "../src/state/database/tags/tags.changes";
 import { Change } from "@automerge/automerge";
-import { VaultDatabase } from "../src/state/database/database.types";
+import { VaultDatabase } from "../src/state/application-state";
 import { _createItemChange } from "../src/state/database/items/items.changes";
 
 test("Updating basic text fields on tags", () => {

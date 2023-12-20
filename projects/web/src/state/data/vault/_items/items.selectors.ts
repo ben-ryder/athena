@@ -1,5 +1,5 @@
-import { VaultDatabase } from "../database.types";
-import { ItemDto } from "./items";
+import { VaultDatabase } from "../../../application-state";
+import { ItemDto } from "../items/items";
 
 export function getAllItems(db: VaultDatabase): ItemDto[] {
   // todo: handle case where id may exist in .ids but not .entities?

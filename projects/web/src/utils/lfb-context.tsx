@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { VaultDatabase } from "../state/database/database.types";
+import { VaultDatabase } from "../state/application-state";
 import { initialDatabase } from "../state/database/initial-database";
 import * as A from "@automerge/automerge";
 import { UserDto } from "@ben-ryder/lfb-common";

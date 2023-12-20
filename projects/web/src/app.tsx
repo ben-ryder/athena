@@ -6,7 +6,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import "./athena.scss";
 import { routes } from "./routes";
 import { LFBProvider } from "./utils/lfb-context";
-import { store } from "./state/ui/redux";
+import { store } from "./state/redux";
 
 import { GlobalLayout } from "./patterns/layout/global-layout/global-layout";
 

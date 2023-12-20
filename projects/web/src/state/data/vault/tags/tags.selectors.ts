@@ -1,5 +1,5 @@
 import { TagEntity } from "./tags";
-import { VaultDatabase } from "../database.types";
+import { VaultDatabase } from "../../../application-state";
 
 export function getAllTags(doc: VaultDatabase): TagEntity[] {
   return doc.tags.ids.map(

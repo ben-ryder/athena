@@ -1,6 +1,6 @@
-import { VaultDatabase } from "../database.types";
+import { VaultDatabase } from "../../../application-state";
 import { EntityUpdate } from "../common/entity";
-import { ItemContent } from "./items";
+import { ItemContent } from "../items/items";
 import { listRequiresUpdate } from "../common/actions";
 import { createUUID } from "../common/fields";
 
