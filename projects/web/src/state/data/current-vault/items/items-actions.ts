@@ -1,11 +1,13 @@
 import {createAction} from "@reduxjs/toolkit";
-import { ItemContent, ItemEntity } from "../items/items";
-import { AppThunkDispatch } from "../../../redux";
+import { ItemContent, ItemEntity } from "./items";
+import {EntityUpdate} from "../common/entity";
+import {AppThunkDispatch} from "../../../application-state";
 
 export enum ItemsActions {
   CREATE = "items/create",
   UPDATE = "items/update",
-  DELETE = "items/delete"
+  DELETE = "items/delete",
+  DELETE_ALL = "items/delete/all"
 }
 
 export const _createItemAction = createAction<ItemEntity>(ItemsActions.CREATE);
@@ -15,7 +17,7 @@ export function createItem(itemContent: ItemContent) {
     const id = self.crypto.randomUUID();
     const timestamp = new Date().toISOString();
 
-    // todo: create Localful content
+    // todo: create Localful content & first version
 
     const item: ItemEntity = {
       id,
@@ -30,20 +32,20 @@ export function createItem(itemContent: ItemContent) {
 }
 
 
-
 export interface UpdateItemPayload {
   id: string,
-  content: Partial<ItemContent>
+  changes: Partial<ItemContent>
 }
+
 export const _updateItemAction = createAction<UpdateItemPayload>(ItemsActions.UPDATE);
 
-export function updateItem(id: string, content: ItemContent) {
+export function updateItem(id: string, changes: EntityUpdate<ItemEntity>) {
   return (dispatch: AppThunkDispatch) => {
-    const timestamp = new Date().toISOString();
+    // todo: create new Localful version, update item in state
 
     dispatch(_updateItemAction({
       id,
-      content,
+      changes,
     }));
   }
 }
@@ -52,14 +54,10 @@ export const _deleteItemAction = createAction<string>(ItemsActions.DELETE);
 
 export function deleteItem(id: string) {
   return (dispatch: AppThunkDispatch) => {
-    const timestamp = new Date().toISOString();
+    // todo: delete Localful content & versions, delete item in state
 
-    dispatch(_deleteItemAction({
-      id: noteId,
-      changes: {
-        body: newBody,
-        updatedAt: timestamp
-      }
-    }));
+    dispatch(_deleteItemAction(id));
   }
 }
+
+export const _deleteAllItems = createAction<string>(ItemsActions.DELETE_ALL);
