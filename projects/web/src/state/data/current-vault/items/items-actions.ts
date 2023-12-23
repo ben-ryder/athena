@@ -2,6 +2,8 @@ import {createAction} from "@reduxjs/toolkit";
 import { ItemContent, ItemEntity } from "./items";
 import {EntityUpdate} from "../common/entity";
 import {AppThunkDispatch} from "../../../application-state";
+import {localful} from "../../../../localful/localful";
+import {ContentTypes} from "../vault-state";
 
 export enum ItemsActions {
   CREATE = "items/create",
@@ -17,17 +19,18 @@ export function createItem(itemContent: ItemContent) {
     const id = self.crypto.randomUUID();
     const timestamp = new Date().toISOString();
 
-    // todo: create Localful content & first version
+    const result = await localful.createContent({
+      type: ContentTypes.ITEMS,
+      schema: ItemContent,
+      data: itemContent
+    })
 
-    const item: ItemEntity = {
-      id,
-      name: itemContent.name,
-      body: itemContent.body,
-      tags: itemContent.tags,
-      createdAt: timestamp,
-      updatedAt: timestamp
+    if (result.success) {
+      dispatch(_createItemAction(item))
     }
-    dispatch(_createItemAction(item))
+    else {
+
+    }
   }
 }
 

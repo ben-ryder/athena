@@ -5,6 +5,12 @@ import {ItemsTable} from "./items/items";
 import {ViewsTable} from "./views/views";
 import {VaultSettings} from "./settings/settings";
 
+export enum ContentTypes {
+  ITEMS = "items",
+  TAGS = "tags",
+  VIEWS = "views"
+}
+
 export interface VaultDatabase {
   tags: TagsTable
   items: ItemsTable
