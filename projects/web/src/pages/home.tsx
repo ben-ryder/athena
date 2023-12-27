@@ -1,9 +1,7 @@
 import React from "react";
 
-import { MenuPage } from "./menu";
-
 export function HomePage() {
   return (
-    <MenuPage />
+    <h1>Athena</h1>
   );
 }

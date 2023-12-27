@@ -1,7 +1,6 @@
 import { JAccordion, JAccordionItem, JCallout, JProse } from "@ben-ryder/jigsaw-react";
 import React from "react";
-import { ApplicationError } from "../../../state/database/common/errors";
-import { GenericErrorMessage } from "../../../state/database/common/actions";
+import { ApplicationError } from "../../../state/status/errors";
 
 export interface ErrorCalloutProps {
   error: ApplicationError
@@ -12,7 +11,7 @@ export function ErrorCallout(props: ErrorCalloutProps) {
 
   return (
     <JCallout variant="critical">
-      <p>{props.error.userMessage || GenericErrorMessage}</p>
+      <p>{props.error.userMessage}</p>
       {(props.error.description || props.error.context) && (
         <JAccordion>
           <JAccordionItem title="Error Details">

@@ -32,8 +32,6 @@ export function GlobalLayout(props: GlobalLayoutProps) {
             <SmartLink href={routes.home} className="sidebar-button"><JIcon size="lg"><VaultIcon /></JIcon></SmartLink>
             <div className="sidebar-divider" />
             <SmartLink href={routes.items.list} className="sidebar-button"><JIcon size="lg"><SearchIcon /></JIcon></SmartLink>
-            <SmartLink href={routes.items.create} className="sidebar-button"><JIcon size="lg"><AddContentIcon /></JIcon></SmartLink>
-            <SmartLink href={routes.views.list} className="sidebar-button"><JIcon size="lg"><ViewsIcon /></JIcon></SmartLink>
             <SmartLink href={routes.tags.list} className="sidebar-button"><JIcon size="lg"><TagsIcon /></JIcon></SmartLink>
             <SmartLink href={routes.attachments} className="sidebar-button"><JIcon size="lg"><AttachmentsIcon /></JIcon></SmartLink>
             <div className="sidebar-separator" />

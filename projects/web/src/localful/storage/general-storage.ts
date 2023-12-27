@@ -4,12 +4,9 @@ import z from "zod"
 export class GeneralStorage {
     private SERVER_URL_KEY = 'lf_server_url';
     private SERVER_INFO_KEY = 'lf_server_info';
-
     private CURRENT_USER_KEY = 'lf_account_currentUser';
-
     private HAS_ONBOARDED_KEY = 'lf_app_hasOnboarded';
     private HAS_STORAGE_PERMISSIONS_KEY = 'lf_app_hasStoragePermissions';
-
     private CURRENT_CLOUD_VAULTS = 'lf_app_currentCloudVaults';
 
     static async _loadLocalStorageData<Schema>(key: string, schema: z.ZodType<Schema>): Promise<Schema|null> {
