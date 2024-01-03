@@ -5,18 +5,18 @@ import { Helmet } from "react-helmet-async";
 import { JArrowLink } from "@ben-ryder/jigsaw-react";
 import { SmartLink } from "../patterns/components/smart-link";
 
-export function PageNotFound() {
+export function AboutPage() {
   return (
     <>
       <Helmet>
-        <title>Not Found | Athena</title>
+        <title>About | Athena</title>
       </Helmet>
       <MessagePage
-        heading="Not Found"
-        content={<p>The page you requested could not be found.</p>}
+        heading="About Athena"
+        content={<p>TODO</p>}
         extraContent={
           <JArrowLink href={routes.main} as={SmartLink} variant="minimal">
-            Go to Home Page
+            Back to App
           </JArrowLink>
         }
       />

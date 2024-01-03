@@ -1,14 +1,14 @@
-import { LocalfulError, LocalfulErrorIdentifiers, RequestError } from "../common/errors";
+import {LocalfulError, LocalfulErrorIdentifiers, RequestError} from "../common/errors";
 import {
   CreateUserDto,
   ErrorIdentifiers,
   LoginRequest,
   LoginResponse,
-  ServerInfoDto,
+  ServerInfoDto, TokenPair,
   UpdateUserDto,
   UserDto
 } from "@localful/common";
-import { io, Socket } from "socket.io-client";
+import {io, Socket} from "socket.io-client";
 
 export interface QueryOptions {
   url: string,
@@ -32,8 +32,8 @@ export interface LocalfulEvent<Data> {
 
 
 export class ServerClient {
-  private serverBaseUrl: string|null
-  private socket: Socket|null
+  private serverBaseUrl!: string|null
+  private socket!: Socket|null
   private readonly config: ServerClientConfig;
 
   constructor(config: ServerClientConfig) {
@@ -68,7 +68,7 @@ export class ServerClient {
       })
     }
 
-    let headers: Headers = new Headers({"Content-Type": "application/json"})
+    const headers: Headers = new Headers({"Content-Type": "application/json"})
 
     if (!options.noAuthRequired) {
       const accessToken = await this.config.getAccessToken();
@@ -81,7 +81,7 @@ export class ServerClient {
       headers.set("Authorization", `Bearer ${accessToken}`)
     }
 
-    let url =
+    const url =
       options.params && Array.from(options.params.keys()).length > 0
         ? `${this.serverBaseUrl}${options.url}?${options.params.toString()}`: `${this.serverBaseUrl}${options.url}`
 
@@ -104,6 +104,7 @@ export class ServerClient {
 
       throw new RequestError(
         {
+          identifier: LocalfulErrorIdentifiers.REQUEST_ERROR,
           message: `There was an error with the request '${options.url} [${options.method}]'`,
           originalError: e,
           response: e.response?.data
@@ -168,7 +169,7 @@ export class ServerClient {
       })
     }
 
-    const data = await this.query({
+    const data = await this.query<TokenPair>({
       method: 'POST',
       url: `/v1/auth/refresh`,
       noAuthRequired: true,
@@ -183,7 +184,7 @@ export class ServerClient {
     // consumers can listen for independent of any other API calls.
     await this.emitEvent({
       identifier: "TOKEN_UPDATE",
-      data: data.tokens
+      data: data
     })
 
     return data

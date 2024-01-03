@@ -9,10 +9,8 @@ import {
   DownloadCloud as StatusDownloadIcon,
   Paperclip as AttachmentsIcon
 } from "lucide-react";
-import { routes } from "../../../routes";
 import { JDialog, JIcon } from "@ben-ryder/jigsaw-react";
-import { SmartLink } from "../../components/smart-link";
-import { AttachmentsManagerPage } from "../../../pages/attachments/attachments-manager";
+import { AttachmentsManagerPage } from "../../../modals/attachments-manager/attachments-manager";
 
 export function VaultPopup() {
   const [open, setOpen] = useState<boolean>(false)

@@ -1,10 +1,8 @@
-import { TagEntity } from "../../../state/database/tags/tags";
-import { JPillLink, JButtonLink, JIcon } from "@ben-ryder/jigsaw-react";
-import { replaceParam, routes } from "../../../routes";
-import { SmartLink } from "../smart-link";
+import {JIcon, JPill, JButton} from "@ben-ryder/jigsaw-react";
 import React from "react";
 import { FrownIcon as NoContentIcon } from "lucide-react";
 import "./tags-list.scss";
+import {TagEntity} from "../../../state/data/current-vault/tags/tags";
 
 export interface TagsListProps {
   tags: TagEntity[];
@@ -16,9 +14,9 @@ export function TagsList(props: TagsListProps) {
       <div className="ath-tags-list__header">
         <h2 className="ath-tags-list__heading">Tags</h2>
         <div className="ath-tags-list__actions">
-          <JButtonLink as={SmartLink} href={routes.tags.create}>
+          <JButton>
             New Tag
-          </JButtonLink>
+          </JButton>
         </div>
       </div>
       <div className="ath-tags-list__list">
@@ -31,12 +29,10 @@ export function TagsList(props: TagsListProps) {
           </div>
         )}
         {props.tags.map((tag) => (
-          <JPillLink
+          <JPill
             key={tag.id}
-            href={replaceParam(routes.tags.edit, ":id", tag.id)}
             variant={tag.variant || undefined}
-            linkAs={SmartLink}
-          >{tag.name}</JPillLink>
+          >{tag.name}</JPill>
         ))}
       </div>
     </div>

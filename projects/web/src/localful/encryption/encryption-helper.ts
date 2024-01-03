@@ -1,5 +1,3 @@
-import { DecryptError, EncryptError } from "../common/errors";
-
 const INITIALIZATION_VECTOR_LENGTH = 12;
 const SALT_LENGTH = 16;
 
@@ -61,9 +59,9 @@ export class EncryptionHelper {
      * @param profileEncryptionKey
      * @param vaultEncryptionKey
      */
-    static async encryptVaultEncryptionKey(vaultEncryptionKey: CryptoKey, profileEncryptionKey: CryptoKey): Promise<string> {
-
-    }
+    // static async encryptVaultEncryptionKey(vaultEncryptionKey: CryptoKey, profileEncryptionKey: CryptoKey): Promise<string> {
+    //
+    // }
 
     /**
      * Decrypt the vault encryption key using the profile encryption key.
@@ -71,23 +69,23 @@ export class EncryptionHelper {
      * @param encryptedVaultEncryptionKey
      * @param profileEncryptionKey
      */
-    static async decryptVaultEncryptionKey(encryptedVaultEncryptionKey: CryptoKey, profileEncryptionKey: CryptoKey): Promise<string> {
-
-    }
+    // static async decryptVaultEncryptionKey(encryptedVaultEncryptionKey: CryptoKey, profileEncryptionKey: CryptoKey): Promise<string> {
+    //
+    // }
 
     /**
      * Generate a random vault encryption key used to encrypt vault content.
      */
-    static async generateVaultEncryptionKey(): Promise<CryptoKey> {
-        const key = await window.crypto.subtle.generateKey(
-          {
-            name: "AES-GCM",
-            length: 256
-          },
-          true,
-          ["encrypt", "decrypt"]
-        )
-    }
+    // static async generateVaultEncryptionKey(): Promise<CryptoKey> {
+    //     const key = await window.crypto.subtle.generateKey(
+    //       {
+    //         name: "AES-GCM",
+    //         length: 256
+    //       },
+    //       true,
+    //       ["encrypt", "decrypt"]
+    //     )
+    // }
 
     /**
      * Derive the profile encryption key from teh user supplied secret.

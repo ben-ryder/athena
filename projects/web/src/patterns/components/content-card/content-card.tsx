@@ -1,9 +1,7 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
-import { TagEntity } from "../../../state/database/tags/tags";
-import { JPillLink } from "@ben-ryder/jigsaw-react";
-import { routes } from "../../../routes";
-import { SmartLink } from "../smart-link";
+import {JPill} from "@ben-ryder/jigsaw-react";
+import {TagEntity} from "../../../state/data/current-vault/tags/tags";
 
 export interface ContentItem {
   id: string;
@@ -31,12 +29,10 @@ export function ContentCard(props: ContentCardProps) {
         {props.item.tags && props.item.tags.length > 0 &&
           <div className="ath-content-card__tags">
             {props.item.tags.map(tag =>
-              <JPillLink
+              <JPill
                 key={tag.id}
-                href={`${routes.items.list}?tags=${tag.id}`}
                 variant={tag.variant || undefined}
-                linkAs={SmartLink}
-              >{tag.name}</JPillLink>
+              >{tag.name}</JPill>
             )}
           </div>
         }

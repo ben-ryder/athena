@@ -37,9 +37,7 @@ export class DecryptError extends EncryptionError {}
 export class APIClientError extends LocalfulError {}
 export class NoEncryptionKeyError extends APIClientError {}
 
-export interface RequestErrorOptions {
-    message?: string;
-    originalError?: any;
+export interface RequestErrorOptions extends LocalfulErrorOptions {
     response?: any
 }
 

@@ -10,10 +10,11 @@ import { store } from "./state/application-state";
 
 import { GlobalLayout } from "./patterns/layout/global-layout/global-layout";
 
-import { HomePage } from "./pages/home";
+import { MainPage } from "./pages/main";
 import { PageNotFound } from "./pages/page-not-found";
 import { WelcomePage } from "./pages/welcome";
-import { AttachmentsManagerPage } from "./pages/attachments/attachments-manager";
+import {AboutPage} from "./pages/about";
+import {PoliciesPage} from "./pages/policies";
 
 export function App() {
   return (
@@ -28,13 +29,10 @@ export function App() {
             <GlobalLayout>
               <Routes>
                 {/* Basic Pages */}
-                <Route path={routes.home} element={<HomePage />} />
+                <Route path={routes.main} element={<MainPage />} />
                 <Route path={routes.welcome} element={<WelcomePage />} />
-
-                <Route
-                  path={routes.attachments}
-                  element={<AttachmentsManagerPage />}
-                />
+                <Route path={routes.about} element={<AboutPage />} />
+                <Route path={routes.policies} element={<PoliciesPage />} />
 
                 {/* 404 Route */}
                 <Route path="*" element={<PageNotFound />} />
