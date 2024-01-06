@@ -1,58 +1,78 @@
 # Athena
-A local-first web app for customisable note-taking, task-management, journaling, personal wikis and much more.
+A local-first web app for creating customizable content databases, suitable for note-taking, task-management, personal knowledge bases and more.
 
-## About
+---
+
 **This project is very early in development and is not complete or stable.**  
-The section below on "how it works" details the aspirational goal of this apps functionality, but
-is not currently the reality.  
+The about section below outlines the aspirational goal of this apps functionality, but is not currently the reality.  
 Keep an eye on the releases and commits to see the current progress!
 
 More documentation including usage instructions, development setup, more details will come closer to a `v1.0` release.
 
-## How it works
-- Athena doesn't have the concept of "notes", "tasks" etc built in, instead everything you create is just a "content item".
-- A content item has a name, tags, optional description and custom fields.
-- Custom fields give you the flexibility to create any content you want, the types include:
-  - Plain Text
-  - Markdown
-  - Boolean (checkbox)
-  - Number
-  - Scale (integer, 1 to set value)
-  - Options (select one from list of strings)
-  - URL
-  - Date
-  - Timestamp
-- Views can be created to easily access & manage your content. Views let your filter and sort content, and "view modes" can be used to customise how the content is displayed.
-- View modes include:
-  - List - Display a basic list of content.
-  - Kanban - Display a kanban board, with columns based on a custom options field.
-  - Calendar - Display content in a calendar format, using a custom date field.
-  - Graph - Display a graph based on the values of custom fields.
-  - Canvas - Place content in an infinite canvas.
-- By configuring a content item as a template, it's also possible to create content quickly and easily without having to create the same custom fields every time.
-- Athena lets you create multiple vaults, which are completely separate collections of content.
+---
 
-### Need a note-taking system?
-- Create template content with the "note" tag, and add a custom markdown field called "body".
-- Create a view that only displays content with the "note" tag.
-- You could add things like a custom "status" field with options like "Draft", "Published" and "Archived" to add a
-  workflow to your notes, or add other tags and views to create different note types.
+## About
+The way each person wants to organise their content (such as notes, tasks etc) is unique, personal and often use-case specific.  
+Athena gives you the building blocks to create your own content databases, in your own way. It is not just a "notes app"
+or a "task management app", it is what you decide to build.  
 
-### Need a task-management system?
-- Create template content with the "task" tag, and add custom fields for "status", "priority", "due date" etc as required.
-- Create a view that only displays content with the "task" tag, then you could use the "kanban" view mode
-  to display and manage tasks based on the custom "status" field you created.
+The building blocks of Athena are "fields", "content types" and "views". You can learn more about these
+below...
 
-### Need a journaling or daily/monthly note system?
-- Create template content with the "journal" tag and a custom "date" field.
-- Create a view for this content with the "calendar" view mode based on the custom date field.
-- You could then add additional fields as required such as a markdown body, a scale field for mood tracking etc.
+### Fields
+Fields are the atoms that make up your content. There are different field types for different types of data, these are:
+- Short Text
+- Long Text (plain or markdown)
+- Checkbox (boolean)
+- Number
+- Scale (number within a range)
+- Options (select one from list of options)
+- URL
+- Date
+- Timestamp
+- Attachments (file/s of a configurable number and type)
 
-### Need something else?
-Using tags, custom fields, views & view modes the possibilities for your content are endless! Here are a few other examples:
-- Create a wiki for your next book by creating character, location, research and other types of content.
-- Add a "read later" or "bookmarks" feature by creating content with a URL field. You could also add a "status" field to track what things you've still got left to read.
-- Manage your ongoing projects using the kanban view mode and fields such as status, due date, etc.
+Fields can be shared between different content types. This is useful when you wish to display content of multiple types
+in the same view. For example, the board view requires both content types to have the same options field and the
+calendar view requires both content types to have the same date field.
+
+### Content Types
+Content types are the level that you define your content structure. 
+types may include things uch as "notes", "tasks", "bookmarks" and more.  
+All content types have some built-in fields such as name, description, tags & timestamps, but you can then add custom fields
+as required by your content structure.  
+Here are some example content types:
+- A "note" type may include the fields:
+  - `body` - Long Text (markdown)
+  - `status` - Options (draft, published, archived)
+- A "task" type may include the fields:
+  - `status` - Options (todo, in-progress, done)
+  - `priority` - Options (low, medium, high)`
+  - `due date` - Date
+- A "journal" type may include the fields:
+  - `date` - Date
+  - `mood` - Scale (1 to 5)`
+  - `health tracker` - Checkbox (with label "Have you done excessive and eaten well today?")
+  - `body` - Long Text (markdown)
+- A "bookmark" type may include the fields:
+  - `url` - URL
+  - `type` - Options (news, blog post, other)
+
+### Views
+Views let you create predefined "views" for your content.   
+The exact functionality of a view depends on the view type, but at a high-level views let you filter content by content type and tags before displaying the results.  
+The available view types are:
+- List - Display a basic list of content, allowing for things like custom ordering.
+- Board - Display content on a kanban board, with columns based on an options field.
+- Calendar - Display content on a calendar using a date field.
+- Table - Display a table with columns based on selected fields.
+- Graph - Display a graph based on the values of selected fields.
+- Canvas - Place content on an infinite canvas.
+- Gallery - Display a gallery of images from an attachments field.
+
+## Databases
+Athena lets you create multiple databases, which are a self-contained collections of content. Each database has its own
+content types, content etc.
 
 ## Cloud Features
 Athena is a local-first web application meaning it's designed to work in your web browser and save data to your device

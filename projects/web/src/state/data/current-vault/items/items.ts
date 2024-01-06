@@ -11,7 +11,7 @@ export const ItemContent = z.object({
     .max(100, "description must be between 1 and 100 chars")
     .nullable(),
   tags: TagsField,
-  customFields: z.array(CustomFieldStorage)
+  fields: z.array(CustomFieldStorage)
 }).strict()
 export type ItemContent = z.infer<typeof ItemContent>
 

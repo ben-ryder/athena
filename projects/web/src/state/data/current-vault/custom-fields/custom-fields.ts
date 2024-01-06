@@ -1,10 +1,10 @@
 import {z} from "zod";
-import {CreatedAtField, UpdatedAtField} from "../common/fields";
+import { CreatedAtField, IdField, UpdatedAtField } from "../common/fields";
 import isISO8601Date from 'validator/lib/isISO8601';
 
 export enum CustomFieldType {
-  TEXT_PLAIN = "text-plain",
-  TEXT_MARKDOWN = "text-markdown",
+  TEXT_SHORT = "text-short",
+  TEXT_LONG = "text-long",
   URL = "url",
   NUMBER = "number",
   SCALE = "scale",
@@ -22,44 +22,52 @@ export enum CustomFieldType {
  */
 const isValidSlug = /^[a-z0-9](-?[a-z0-9])*$/.test
 
+export const CustomFieldVisibility = z.enum(["hidden", "hidden-teaser", "visible"])
+export type CustomFieldVisibility = z.infer<typeof CustomFieldVisibility>
+
 export const CustomFieldBase = z.object({
-  id: z.string()
-    .min(1, "The id length must be between 1 and 20 chars")
-    .max(20, "The id length must be between 1 and 20 chars")
+  id: IdField,
+  slug: z.string()
+    .min(1, "slug length must be between 1 and 20 chars")
+    .max(20, "slug length must be between 1 and 20 chars")
     .refine(
       isValidSlug,
-      {message: "id must be slug format such as 'example1' or 'example-slug-1'"}
-    )
-  ,
+      {message: "slug must be slug format such as 'example1' or 'example-slug-1'"}
+    ),
   label: z.string()
-    .min(1, "The label length must be between 1 and 20 chars")
-    .max(20, "The label length must be between 1 and 20 chars"),
+    .min(1, "label length must be between 1 and 50 chars")
+    .max(50, "label length must be between 1 and 50 chars"),
+  visibility: CustomFieldVisibility,
   createdAt: CreatedAtField,
   updatedAt: UpdatedAtField
 }).strict()
 export type CustomFieldBase = z.infer<typeof CustomFieldBase>
 
-export const CustomFieldTextPLain = z.object({
-  type: z.literal(CustomFieldType.TEXT_PLAIN),
-  rows: z.number()
-    .int("rows value must be a whole integer number")
-    .min(1, "rows value must be greater than or equal to 1")
-    .optional(),
+export const CustomFieldTextShort = z.object({
+  type: z.literal(CustomFieldType.TEXT_SHORT),
   value: z.string()
+    .min(1, "value length must be between 1 and 100")
+    .max(100, "value length must be between 1 and 100")
     .nullable()
 }).strict()
-export type CustomFieldTextPLain = z.infer<typeof CustomFieldTextPLain>
+export type CustomFieldTextShort = z.infer<typeof CustomFieldTextShort>
 
-export const CustomFieldTextMarkdown = z.object({
-  type: z.literal(CustomFieldType.TEXT_MARKDOWN),
-  rows: z.number()
-    .int("rows value must be a whole integer number")
-    .min(1, "rows value must be greater than or equal to 1")
+export const TextLongEditMode = z.enum(["plain", "markdown"])
+export type TextLongEditMode = z.infer<typeof TextLongEditMode>
+
+export const CustomFieldTextLong = z.object({
+  type: z.literal(CustomFieldType.TEXT_LONG),
+  defaultRows: z.number()
+    .int("defaultRows value must be a whole integer number")
+    .min(1, "defaultRows value must be between 1 and 50")
+    .min(50, "defaultRows value must be between 1 and 50")
     .optional(),
+  editMode: TextLongEditMode,
   value: z.string()
+    .min(1, "value length must be at least 1 character")
     .nullable()
 }).strict()
-export type CustomFieldTextMarkdown = z.infer<typeof CustomFieldTextMarkdown>
+export type CustomFieldTextLong = z.infer<typeof CustomFieldTextLong>
 
 export const CustomFieldURL = z.object({
   type: z.literal(CustomFieldType.URL),
@@ -84,6 +92,7 @@ export const _CustomFieldScale_MISSING_VALIDATION = z.object({
   maxLabel: z.number()
     .min(1, "maxLabel length must be between 1 and 20 chars")
     .max(1, "maxLabel length must be between 1 and 20 chars"),
+  // todo: allow scaleMin to be configured? Allow below 1?
   scaleMax: z.number()
     .int("scaleMax must be a whole integer number")
     .min(3, "scaleMax must be between 3 and 5")
@@ -140,8 +149,8 @@ export const CustomFieldDate= z.object({
 export type CustomFieldDate = z.infer<typeof CustomFieldDate>
 
 export const CustomFieldEntity = z.union([
-  CustomFieldTextPLain,
-  CustomFieldTextMarkdown,
+  CustomFieldTextShort,
+  CustomFieldTextLong,
   CustomFieldURL,
   CustomFieldNumber,
   CustomFieldScale,
@@ -158,13 +167,13 @@ export const CustomFieldsTable = z.object({
 export type CustomFieldsTable =  z.infer<typeof CustomFieldsTable>
 
 export const CustomFieldStorage = z.union([
-  CustomFieldTextPLain.pick({id: true, value: true}),
-  CustomFieldTextMarkdown.pick({id: true, value: true}),
-  CustomFieldURL.pick({id: true, value: true}),
-  CustomFieldNumber.pick({id: true, value: true}),
-  _CustomFieldScale_MISSING_VALIDATION.pick({id: true, value: true}),
-  CustomFieldBoolean.pick({id: true, value: true}),
-  CustomFieldTimestamp.pick({id: true, value: true}),
-  CustomFieldDate.pick({id: true, value: true})
+  CustomFieldTextShort.pick({type: true, id: true, value: true}),
+  CustomFieldTextLong.pick({type: true, id: true, value: true}),
+  CustomFieldURL.pick({type: true, id: true, value: true}),
+  CustomFieldNumber.pick({type: true, id: true, value: true}),
+  _CustomFieldScale_MISSING_VALIDATION.pick({type: true, id: true, value: true}),
+  CustomFieldBoolean.pick({type: true, id: true, value: true}),
+  CustomFieldTimestamp.pick({type: true, id: true, value: true}),
+  CustomFieldDate.pick({type: true, id: true, value: true})
 ])
 export type CustomFieldStorage = z.infer<typeof CustomFieldStorage>

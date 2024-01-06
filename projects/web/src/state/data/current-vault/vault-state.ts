@@ -4,17 +4,12 @@ import {TagsTable} from "./tags/tags";
 import {ItemsTable} from "./items/items";
 import {ViewsTable} from "./views/views";
 import {VaultSettings} from "./settings/settings";
-
-export enum ContentTypes {
-  ITEMS = "items",
-  TAGS = "tags",
-  VIEWS = "views"
-}
+import { CustomFieldsTable } from "./custom-fields/custom-fields";
 
 export interface VaultDatabase {
   tags: TagsTable
   items: ItemsTable
-  fields: FieldsTable
+  fields: CustomFieldsTable
   views: ViewsTable
   settings: VaultSettings
 }

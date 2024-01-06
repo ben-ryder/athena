@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { LoadingScreen } from "../patterns/components/loading-screen/loading-screen";
+import { LoadingScreen } from "../view/patterns/components/loading-screen/loading-screen";
 import { ApplicationState, store } from "../state/application-state";
 
 export interface LFBContext {

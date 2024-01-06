@@ -18,11 +18,9 @@
     "cy:start:unit": "cypress open --component -b firefox",
     "cy:start:e2e": "cypress open --e2e -b firefox",
     "code:lint": "npx eslint .",
-    "code:format": "npx prettier . --write",
-    "generate-initial-change": "ts-node --esm scripts/generate-initial-change.ts"
+    "code:format": "npx prettier . --write"
   },
   "dependencies": {
-    "@automerge/automerge": "^2.1.9",
     "@ben-ryder/jigsaw": "^0.19.0",
     "@ben-ryder/jigsaw-react": "^0.19.2",
     "@codemirror/lang-markdown": "^6.2.3",
