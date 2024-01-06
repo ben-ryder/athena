@@ -14,6 +14,7 @@ export enum ContentTypes {
 export interface VaultDatabase {
   tags: TagsTable
   items: ItemsTable
+  fields: FieldsTable
   views: ViewsTable
   settings: VaultSettings
 }

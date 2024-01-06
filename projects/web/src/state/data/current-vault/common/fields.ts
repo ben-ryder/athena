@@ -20,3 +20,9 @@ export function createUUID() {
     return v4()
   }
 }
+
+export const CreatedAtField = z.string().datetime()
+export type CreatedAtField = z.infer<typeof CreatedAtField>
+
+export const UpdatedAtField =  z.string().datetime()
+export type UpdatedAtField = z.infer<typeof CreatedAtField>

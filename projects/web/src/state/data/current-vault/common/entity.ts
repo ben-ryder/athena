@@ -1,10 +1,10 @@
 import {z} from "zod"
-import {IdField} from "./fields";
+import {CreatedAtField, IdField, UpdatedAtField} from "./fields";
 
 export const Entity = z.object({
   id: IdField,
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: CreatedAtField,
+  updatedAt: UpdatedAtField,
 }).strict()
 export type Entity = z.infer<typeof Entity>
 

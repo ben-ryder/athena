@@ -17,27 +17,14 @@ export function createItem(itemContent: ItemContent) {
     const id = self.crypto.randomUUID();
     const timestamp = new Date().toISOString();
 
-    // const result = await localful.createContent({
-    //   type: ContentTypes.ITEMS,
-    //   schema: ItemContent,
-    //   data: itemContent
-    // })
-
     dispatch(_createItemAction({
       id,
       ...itemContent,
       createdAt: timestamp,
       updatedAt: timestamp
     }))
-    // if (result.success) {
-    //   dispatch(_createItemAction(item))
-    // }
-    // else {
-    //
-    // }
   }
 }
-
 
 export interface UpdateItemPayload {
   id: string,
@@ -48,8 +35,6 @@ export const _updateItemAction = createAction<UpdateItemPayload>(ItemsActions.UP
 
 export function updateItem(id: string, changes: EntityUpdate<ItemEntity>) {
   return (dispatch: AppThunkDispatch) => {
-    // todo: create new Localful version, update item in state
-
     dispatch(_updateItemAction({
       id,
       changes,
@@ -61,8 +46,6 @@ export const _deleteItemAction = createAction<string>(ItemsActions.DELETE);
 
 export function deleteItem(id: string) {
   return (dispatch: AppThunkDispatch) => {
-    // todo: delete Localful content & versions, delete item in state
-
     dispatch(_deleteItemAction(id));
   }
 }
