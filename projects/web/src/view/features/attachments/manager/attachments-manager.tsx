@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
 import "./attachments-manager.scss"
-import { blobDatabase, BlobDto } from "../../../../state/data/database/attachments/attachments";
+import { blobDatabase, BlobDto } from "../../../../state/database/attachments/attachments";
 
 export interface FileRender {
   name: string

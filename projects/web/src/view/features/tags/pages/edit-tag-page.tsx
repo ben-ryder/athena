@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useState } from "react";
 import { TagForm } from "../tag-form/tag-form";
 import { ErrorCallout } from "../../../patterns/components/error-callout/error-callout";
-import { ApplicationError } from "../../../../state/actions";
-import { store } from "../../../../state/application-state";
-import { TagData, TagDto } from "../../../../state/data/database/tags/tags";
-import { selectTag } from "../../../../state/data/database/tags/tags.selectors";
-import { deleteTag, updateTag } from "../../../../state/data/database/tags/tags.thunks";
+import { ActionStatus, ApplicationError, LOADING_STATUS } from "../../../../state/actions";
+import { TagData } from "../../../../state/database/tags/tags";
 import { TagsManagerNavigate } from "../tags-manager";
+import { db } from "../../../../state/database";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export interface EditTagPageProps {
   id: string,
@@ -15,64 +13,39 @@ export interface EditTagPageProps {
 }
 
 export function EditTagPage(props: EditTagPageProps) {
-  const state = store.getState();
-  const [tag, setTag] = useState<TagDto | null>();
   const [errors, setErrors] = useState<ApplicationError[]>([])
-
-  useEffect(() => {
-    // Reset error
-    setErrors([]);
-
-    const tagResult = selectTag(state, props.id);
-    if (tagResult.success) {
-      setTag(tagResult.data)
-    }
-    else {
-      setErrors(tagResult.errors);
-      setTag(null);
-    }
-  }, [state, setTag]);
+  const tag = useLiveQuery(db.createGetTagQuery(props.id), [], LOADING_STATUS)
 
   async function onSave(updatedData: Partial<TagData>) {
-    if (!tag) {
-      return;
-    }
-
-    const res = await updateTag(tag.id, updatedData)
-    if (res.success) {
-      props.navigate({page: "list"});
-    }
-    else {
-      setErrors(res.errors)
-    }
+    const res = await db.updateTag(props.id, updatedData)
+    props.navigate({page: "list"})
   }
 
   async function onDelete() {
-    if (!tag) {
-      return;
-    }
+    const res = await db.deleteTag(props.id)
+    props.navigate({page: "list"})
+  }
 
-    const res =  await deleteTag(tag.id)
-    if (res.success) {
-      props.navigate({page: "list"});
-    }
-    else {
-      setErrors(res.errors)
-    }
+  if (tag.status === ActionStatus.LOADING) {
+    return (
+      <p>Loading...</p>
+    )
+  }
+  if (tag.status === ActionStatus.ERROR) {
+    return (
+      <ErrorCallout errors={tag.errors} />
+    )
   }
 
   return (
     <div>
-      <Helmet>
-        <title>{`${tag?.name || "Edit"} | Tags | Athena`}</title>
-      </Helmet>
       {errors.length > 0 && <ErrorCallout errors={errors} />}
       {tag &&
         <TagForm
-          title={`Edit Tag ${tag?.name}`}
+          title={`Edit Tag '${tag.data.name}'`}
           data={{
-            name: tag.name,
-            variant: tag.variant,
+            name: tag.data.name,
+            variant: tag.data.variant,
           }}
           onSave={onSave}
           onDelete={onDelete}

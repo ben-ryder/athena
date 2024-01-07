@@ -1,5 +1,5 @@
 import {z} from "zod"
-import {Entity, createEntityTable, GenericTable} from "../common/entity";
+import {Entity} from "../common/entity";
 import {NameField, TagsField} from "../common/fields";
 import { TagEntity } from "../tags/tags";
 import { CustomFieldStorage } from "../custom-fields/custom-fields";
@@ -21,6 +21,3 @@ export type ContentItemEntity = z.infer<typeof ContentItemEntity>
 export interface ContentItemDto extends ContentItemEntity {
   tagEntities: TagEntity[]
 }
-
-export const ContentItemsTable = createEntityTable<ContentItemEntity>(ContentItemEntity)
-export type ContentItemsTable = GenericTable<ContentItemEntity>

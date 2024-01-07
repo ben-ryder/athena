@@ -6,7 +6,6 @@ import {
   useState,
 } from "react";
 import { LoadingScreen } from "../view/patterns/components/loading-screen/loading-screen";
-import { ApplicationState, store } from "../state/application-state";
 
 export interface LFBContext {
   loading: boolean

@@ -1,11 +1,11 @@
-import { JButton, JPillButton } from "@ben-ryder/jigsaw-react";
+import { JPillButton } from "@ben-ryder/jigsaw-react";
 import React from "react";
 import "./tags-list.scss";
-import {TagEntity} from "../../../../state/data/database/tags/tags";
+import { TagDto } from "../../../../state/database/tags/tags";
 import { TagsManagerNavigate } from "../tags-manager";
 
 export interface TagsListProps {
-  tags: TagEntity[];
+  tags: TagDto[];
   navigate: TagsManagerNavigate
 }
 
@@ -19,7 +19,7 @@ export function TagsList(props: TagsListProps) {
           }}
           style={{fontWeight: "bold"}}
         >
-          Create Tag
+          Create New Tag
         </JPillButton>
         {props.tags.map((tag) => (
           <JPillButton

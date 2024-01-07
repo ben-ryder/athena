@@ -1,10 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { Provider as ReduxProvider } from "react-redux";
 
 import { routes } from "./routes";
-import { store } from "./state/application-state";
 
 import { MainPage } from "./view/pages/main/main";
 import { PageNotFound } from "./view/pages/page-not-found";
@@ -12,24 +10,21 @@ import { WelcomePage } from "./view/pages/welcome";
 
 export function App() {
   return (
-    <ReduxProvider store={store}>
-      <BrowserRouter>
+    <BrowserRouter>
+      <HelmetProvider>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Athena</title>
+        </Helmet>
+        <Routes>
+          {/* Basic Pages */}
+          <Route path={routes.main} element={<MainPage />} />
+          <Route path={routes.welcome} element={<WelcomePage />} />
 
-          <HelmetProvider>
-            <Helmet>
-              <meta charSet="utf-8" />
-              <title>Athena</title>
-            </Helmet>
-            <Routes>
-              {/* Basic Pages */}
-              <Route path={routes.main} element={<MainPage />} />
-              <Route path={routes.welcome} element={<WelcomePage />} />
-
-              {/* 404 Route */}
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
-          </HelmetProvider>
-      </BrowserRouter>
-    </ReduxProvider>
+          {/* 404 Route */}
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </HelmetProvider>
+    </BrowserRouter>
   );
 }

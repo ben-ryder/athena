@@ -18,10 +18,10 @@ export function TagsDialog() {
       disableOutsideClose={true}
       heading="Manage Tags"
       description="Manage tags"
-      style={{
-        maxWidth: "1000px",
-        minHeight: "60vh"
-      }}
+      // style={{
+      //   maxWidth: "1000px",
+      //   minHeight: "60vh"
+      // }}
       content={
         <TagsManager />
       }

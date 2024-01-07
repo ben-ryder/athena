@@ -1,14 +1,14 @@
-import { useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import {
   JInput,
   JErrorText,
   JSelect,
   JPill,
   JLabel,
-  JOptionData, JColourVariants, JButtonGroup, JButton, JArrowButton
+  JOptionData, JColourVariants, JButtonGroup, JButton, JArrowButton, JForm, JFormHeader, JFormContent, JFormRow
 } from "@ben-ryder/jigsaw-react";
 import "./tag-form.scss";
-import { TagData, TagVariants } from "../../../../state/data/database/tags/tags";
+import { TagData, TagVariants } from "../../../../state/database/tags/tags";
 import { TagsManagerNavigate } from "../tags-manager";
 
 export interface TagFormProps {
@@ -37,7 +37,9 @@ export function TagForm(props: TagFormProps) {
     ];
   }, []);
 
-  function onSave() {
+  function onSave(e: FormEvent) {
+    e.preventDefault()
+
     if (name.length === 0) {
       setError("Your tag must have a name");
     }
@@ -48,54 +50,65 @@ export function TagForm(props: TagFormProps) {
   }
 
   return (
-    <div>
-      <JArrowButton
-        onClick={() => {
-          props.navigate({page: "list"})
-        }}
-        direction="left"
-      >All Tags</JArrowButton>
-
-      <h2>{props.title}</h2>
-
-      {error && <JErrorText>{error}</JErrorText>}
-
-      <JInput
-        label="Name"
-        id="name"
-        type="text"
-        value={name}
-        onChange={(e) => {
-          setName(e.target.value);
-        }}
-        placeholder="a note title..."
-      />
-
-      <JSelect
-        id="variant"
-        label="Colour"
-        options={tagVariantOptions}
-        value={variant}
-        onChange={(e) => {setVariant(e.target.value)}}
-      />
-        <JLabel>Preview</JLabel>
-        <JPill
-          variant={variant as TagVariants || undefined}
-        >{name}</JPill>
-
-      <JButtonGroup>
-        {props.onDelete &&
-          <JButton
-            variant="destructive"
-            onClick={() => {
-              if (props.onDelete) {
-                props.onDelete()
-              }
+    <JForm className="tag-form" onSubmit={onSave}>
+      <div className="tag-form__back">
+        <JArrowButton
+          onClick={() => {
+            props.navigate({page: "list"})
+          }}
+          direction="left"
+        >All Tags</JArrowButton>
+      </div>
+      <div className="tag-form__header">
+        <h2>{props.title}</h2>
+        {error && <JErrorText>{error}</JErrorText>}
+      </div>
+      <JFormContent>
+        <JFormRow>
+          <JInput
+            label="Name"
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
             }}
-          >Delete</JButton>
-        }
-        <JButton onClick={onSave}>Save</JButton>
-      </JButtonGroup>
-</div>
+            placeholder="a note title..."
+          />
+        </JFormRow>
+        <JFormRow>
+          <JSelect
+            id="variant"
+            label="Colour"
+            options={tagVariantOptions}
+            value={variant}
+            onChange={(e) => {setVariant(e.target.value)}}
+          />
+        </JFormRow>
+        <JFormRow className="preview-field">
+          <JLabel>Preview</JLabel>
+            <JPill
+              variant={variant as TagVariants || undefined}
+            >{name || "Preview"}</JPill>
+        </JFormRow>
+      </JFormContent>
+
+      <JFormRow>
+        <JButtonGroup>
+          {props.onDelete &&
+            <JButton
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                if (props.onDelete) {
+                  props.onDelete()
+                }
+              }}
+            >Delete</JButton>
+          }
+          <JButton type="submit">Save</JButton>
+        </JButtonGroup>
+      </JFormRow>
+    </JForm>
   );
 }

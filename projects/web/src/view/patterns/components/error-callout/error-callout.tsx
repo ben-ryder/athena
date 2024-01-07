@@ -11,11 +11,12 @@ export function ErrorCallout(props: ErrorCalloutProps) {
 
   return (
     <JCallout variant="critical">
-        {props.errors.map(error => (
-          <>
-              <p>{`${error.type}: ${error.description}`}</p>
-          </>
-        ))}
+      {props.errors.map(error => (
+        <div key={error.toString()}>
+          <strong>{`${error.type}: ${error.userMessage}`}</strong>
+          <p>{error.devMessage}</p>
+        </div>
+      ))}
     </JCallout>
   )
 }

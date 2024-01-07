@@ -1,11 +1,11 @@
 import { TagsList } from "./tags-list/tags-list";
-import { store } from "../../../state/application-state";
-import { selectAllTags } from "../../../state/data/database/tags/tags.selectors";
-import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
 import { useState } from "react";
 import { CreateTagPage } from "./pages/create-tag-page";
 import { EditTagPage } from "./pages/edit-tag-page";
-import { ApplicationErrorType } from "../../../state/actions";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "../../../state/database";
+import { ActionStatus, LOADING_STATUS } from "../../../state/actions";
+import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
 
 export type TagsManagerPages = {
   page: "list"
@@ -19,18 +19,16 @@ export type TagsManagerNavigate = (page: TagsManagerPages) => void
 
 export function TagsManager() {
   const [currentPage, navigate] = useState<TagsManagerPages>({page: "list"})
+  const tags = useLiveQuery(db.getTags, [], LOADING_STATUS)
 
-  const state = store.getState()
-  const tagsResult = selectAllTags(state)
-
-  if (!tagsResult.success) {
+  if (tags.status === ActionStatus.LOADING) {
     return (
-      <ErrorCallout
-        errors={[{
-          type: ApplicationErrorType.UNEXPECTED,
-          userMessage: tagsResult.errors.map(e => e.userMessage).join(",")
-        }]}
-      />
+      <p>Loading...</p>
+    )
+  }
+  if (tags.status === ActionStatus.ERROR) {
+    return (
+      <ErrorCallout errors={tags.errors} />
     )
   }
 
@@ -57,7 +55,7 @@ export function TagsManager() {
     return (
       <>
         <TagsList
-          tags={tagsResult.data}
+          tags={tags.data}
           navigate={navigate}
         />
       </>

@@ -1,7 +1,7 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
 import {JPill} from "@ben-ryder/jigsaw-react";
-import { TagDto } from "../../../../state/data/database/tags/tags";
+import { TagDto } from "../../../../state/database/tags/tags";
 
 export interface ContentItem {
   id: string;

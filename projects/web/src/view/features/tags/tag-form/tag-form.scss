@@ -1,5 +1,22 @@
-.ath-content-page__field--preview {
-  .j-pill {
+.tag-form {
+  .preview-field {
+    .j-pill {
+      margin-top: var(--j-space-4);
+    }
+  }
+
+  &__back {
     margin-top: var(--j-space-4);
+  }
+
+  &__header {
+    text-align: center;
+    margin-top: var(--j-space-12);
+    margin-bottom: var(--j-space-4);
+
+    h2 {
+      font-size: var(--j-text-size-lg);
+      font-weight: bold
+    }
   }
 }

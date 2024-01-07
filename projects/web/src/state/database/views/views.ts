@@ -1,4 +1,4 @@
-import {createEntityTable, Entity, GenericTable} from "../common/entity";
+import {Entity} from "../common/entity";
 import {z} from "zod";
 import {NameField, TagsField} from "../common/fields";
 
@@ -18,5 +18,3 @@ export const ViewContent = z.object({
 export const ViewEntity = Entity.merge(ViewContent).strict()
 export type ViewEntity = z.infer<typeof ViewEntity>
 
-export const ViewsTable = createEntityTable<ViewEntity>(ViewEntity)
-export type ViewsTable = GenericTable<ViewEntity>
