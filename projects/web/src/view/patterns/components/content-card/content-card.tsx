@@ -1,14 +1,14 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
 import {JPill} from "@ben-ryder/jigsaw-react";
-import {TagEntity} from "../../../../state/data/current-vault/tags/tags";
+import { TagDto } from "../../../../state/data/database/tags/tags";
 
 export interface ContentItem {
   id: string;
   name: string;
   teaser: string | null;
   url: string;
-  tags?: TagEntity[]
+  tags?: TagDto[]
 }
 
 export interface ContentCardProps {

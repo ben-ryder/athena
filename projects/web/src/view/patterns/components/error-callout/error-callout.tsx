@@ -1,42 +1,21 @@
-import { JAccordion, JAccordionItem, JCallout, JProse } from "@ben-ryder/jigsaw-react";
+import { JCallout } from "@ben-ryder/jigsaw-react";
 import React from "react";
-import { ApplicationError } from "../../../../state/status/errors";
+import { ApplicationError } from "../../../../state/actions";
 
 export interface ErrorCalloutProps {
-  error: ApplicationError
+  errors: ApplicationError[]
 }
 
 export function ErrorCallout(props: ErrorCalloutProps) {
-  console.log(props.error.context)
+  console.log(props.errors)
 
   return (
     <JCallout variant="critical">
-      <p>{props.error.userMessage}</p>
-      {(props.error.description || props.error.context) && (
-        <JAccordion>
-          <JAccordionItem title="Error Details">
-            <JProse>
-              {props.error.description && (
-                <p>{props.error.description}</p>
-              )}
-              {props.error.context && (
-                <>
-                  <pre>
-                    <code>
-                      {props.error.context.message}
-                    </code>
-                    {/* todo: including stack causing overflow issues? */}
-                    {/*<code>*/}
-                    {/*  {props.error.context.stack}*/}
-                    {/*</code>*/}
-                  </pre>
-                  <p />
-                </>
-              )}
-            </JProse>
-          </JAccordionItem>
-        </JAccordion>
-      )}
+        {props.errors.map(error => (
+          <>
+              <p>{`${error.type}: ${error.description}`}</p>
+          </>
+        ))}
     </JCallout>
   )
 }

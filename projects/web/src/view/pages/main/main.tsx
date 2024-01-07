@@ -3,7 +3,7 @@ import { DatabaseDialog } from "../../features/database/manager/database-dialog"
 import { PagesDialog } from "../../features/pages/manager/pages-dialog";
 import { ViewsDialog } from "../../features/views/manager/views-dialog";
 import { SearchDialog } from "../../features/search/search-dialog";
-import { TagsDialog } from "../../features/tags/manager/tags-dialog";
+import { TagsDialog } from "../../features/tags/tags-dialog";
 import { AttachmentsDialog } from "../../features/attachments/manager/attatchments-dialog";
 import { LogsDialog } from "../../features/logs/logs-dialog";
 import { SettingsDialog } from "../../features/settings/settings-dialog";

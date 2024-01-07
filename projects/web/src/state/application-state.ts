@@ -7,8 +7,8 @@ import {
   ThunkDispatch,
 } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import {dataReducer} from "./data/data-state";
-import {VaultDatabase} from "./data/current-vault/vault-state";
+import { dataReducer } from "./data/data";
+import { Database } from "./data/database/database";
 
 export interface ApplicationState {
   status: {
@@ -19,9 +19,9 @@ export interface ApplicationState {
   },
   data: {
     current: {
-      vault: {
+      database: {
         id: string,
-        db: VaultDatabase
+        db: Database
       },
       user: UserDto | null
     },

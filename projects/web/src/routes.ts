@@ -8,11 +8,3 @@ export const routes = {
     creator: "https://www.benryder.me",
   },
 };
-
-export function replaceParam(
-  route: string,
-  paramName: string,
-  paramValue: string,
-) {
-  return route.replaceAll(paramName, paramValue);
-}

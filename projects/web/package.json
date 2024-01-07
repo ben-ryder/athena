@@ -21,8 +21,8 @@
     "code:format": "npx prettier . --write"
   },
   "dependencies": {
-    "@ben-ryder/jigsaw": "^0.19.0",
-    "@ben-ryder/jigsaw-react": "^0.19.2",
+    "@ben-ryder/jigsaw": "^0.19.1",
+    "@ben-ryder/jigsaw-react": "^0.19.4",
     "@codemirror/lang-markdown": "^6.2.3",
     "@codemirror/language-data": "^6.3.1",
     "@codemirror/view": "^6.22.3",

@@ -21,7 +21,9 @@ export function AttachmentsDialog() {
       content={
         <AttachmentsManagerPage />
       }
-      maxWidth="1000px"
+      style={{
+        maxWidth: "1000px"
+      }}
     />
   )
 }
