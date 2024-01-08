@@ -14,15 +14,15 @@ export interface EditTagPageProps {
 
 export function EditTagPage(props: EditTagPageProps) {
   const [errors, setErrors] = useState<ApplicationError[]>([])
-  const tag = useLiveQuery(db.createGetTagQuery(props.id), [], LOADING_STATUS)
+  const tag = useLiveQuery(db.tagsHelper.createGetTagQuery(props.id), [], LOADING_STATUS)
 
   async function onSave(updatedData: Partial<TagData>) {
-    const res = await db.updateTag(props.id, updatedData)
+    const res = await db.tagsHelper.updateTag(props.id, updatedData)
     props.navigate({page: "list"})
   }
 
   async function onDelete() {
-    const res = await db.deleteTag(props.id)
+    const res = await db.tagsHelper.deleteTag(props.id)
     props.navigate({page: "list"})
   }
 

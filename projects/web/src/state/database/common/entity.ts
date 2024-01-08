@@ -7,8 +7,8 @@ import {CreatedAtField, IdField, UpdatedAtField} from "./fields";
  * which means top-level entities only need to store basic id and timestamp data.
  */
 export const Entity = z.object({
-  vaultId: IdField,
   id: IdField,
+  isDeleted: z.boolean().optional(),
   createdAt: CreatedAtField,
 }).strict()
 export type Entity = z.infer<typeof Entity>
@@ -19,16 +19,17 @@ export type Entity = z.infer<typeof Entity>
  * The 'createdAt' field of a version can then be used to identify the latest version.
  */
 export const EntityVersion = z.object({
-  parentId: IdField,
   id: IdField,
   createdAt: CreatedAtField,
+  // All actual data is encrypted, so stored data will always be ciphertext string
+  data: z.string()
 }).strict()
 export type EntityVersion = z.infer<typeof EntityVersion>
 
 /**
- * While data is stored in versions, mostly it's only required to load the
- * current version. The entity dto is the building block for building these
- * return types.
+ * While data is stored in versions, most of the time it's only required to
+ * load the current version. The entity dto is the building block for building
+ * these return types.
  */
 export const EntityDto = Entity.extend({
   id: IdField,

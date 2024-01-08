@@ -19,7 +19,7 @@ export type TagsManagerNavigate = (page: TagsManagerPages) => void
 
 export function TagsManager() {
   const [currentPage, navigate] = useState<TagsManagerPages>({page: "list"})
-  const tags = useLiveQuery(db.getTags, [], LOADING_STATUS)
+  const tags = useLiveQuery(db.tagsHelper.getTags, [], LOADING_STATUS)
 
   if (tags.status === ActionStatus.LOADING) {
     return (

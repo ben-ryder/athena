@@ -1,6 +1,6 @@
 import {z} from "zod"
 import { Entity, EntityDto, EntityVersion } from "../common/entity";
-import {NameField} from "../common/fields";
+import { IdField, NameField } from "../common/fields";
 import { JColourVariantsList } from "@ben-ryder/jigsaw-react";
 
 export const TagEntity = Entity
@@ -16,7 +16,9 @@ export const TagData = z.object({
 }).strict()
 export type TagData = z.infer<typeof TagData>
 
-export const TagVersion = EntityVersion.merge(TagData)
+export const TagVersion = EntityVersion.extend({
+  tagId: IdField
+})
 export type TagVersion = z.infer<typeof TagVersion>
 
 export const TagDto = EntityDto.merge(TagData)

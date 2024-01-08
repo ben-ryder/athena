@@ -15,7 +15,7 @@ export function CreateTagPage(props: CreateTagPageProps) {
   const [errors, setErrors] = useState<ApplicationError[]>([])
 
   async function onSave(data: TagData) {
-    const res = await db.createTag(data)
+    const res = await db.tagsHelper.createTag(data)
     props.navigate({page: "list"})
   }
 
