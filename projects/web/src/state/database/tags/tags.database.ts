@@ -1,8 +1,8 @@
-import { TagData, TagDto, TagEntity, TagVersion } from "./tags";
-import { VaultDatabase, EXAMPLE_VAULT_ID } from "../../database";
-import { ActionResult, ActionStatus, ApplicationErrorType } from "../../actions";
+import { TagData, TagDto, TagVersion } from "./tags";
+import { VaultDatabase } from "../../database";
+import { ActionResult, ActionStatus, ApplicationErrorType, QueryResult } from "../../actions";
 import { EntityUpdate } from "../common/entity";
-import { EncryptionHelper, EXAMPLE_KEY } from "../../../utils/encryption/encryption-helper";
+import { CryptographyHelper, EXAMPLE_KEY } from "../../../localful/encryption/cryptography-helper";
 
 export class TagsDatabase {
   db: VaultDatabase
@@ -12,19 +12,27 @@ export class TagsDatabase {
     this.getTags = this.getTags.bind(this)
   }
 
-  async getTags(): Promise<ActionResult<TagDto[]>> {
+  async getTags(): Promise<QueryResult<TagDto[]>> {
     const tags: TagDto[] = []
     const tagEntities = await this.db.tags.toArray()
 
     for (const tagEntity of tagEntities) {
       const latestVersion = await this.getLatestTagVersion(tagEntity.id)
 
+      const decryptResult = await CryptographyHelper.decryptAndValidateData<TagData>(
+        EXAMPLE_KEY,
+        TagData,
+        latestVersion.data
+      )
+      if (!decryptResult.success) {
+        return { status: ActionStatus.ERROR, errors: decryptResult.errors }
+      }
+
       tags.push({
-        vaultId: tagEntity.vaultId,
         id: tagEntity.id,
         versionId: latestVersion.id,
-        name: latestVersion.name,
-        variant: latestVersion.variant,
+        name: decryptResult.data.name,
+        variant: decryptResult.data.variant,
         createdAt: tagEntity.createdAt,
         updatedAt: latestVersion.createdAt
       })
@@ -44,7 +52,7 @@ export class TagsDatabase {
     const tagEntity = await this.db.tags.get(entityId)
     if (!tagEntity) {
       return {
-        status: ActionStatus.ERROR,
+        success: false,
         errors: [
           {
             type: ApplicationErrorType.ENTITY_NOT_FOUND,
@@ -54,14 +62,20 @@ export class TagsDatabase {
     }
 
     const latestVersion = await this.getLatestTagVersion(entityId)
+    const decryptResult = await CryptographyHelper.decryptAndValidateData(
+      EXAMPLE_KEY,
+      TagData,
+      latestVersion.data
+    )
+    if (!decryptResult.success) return decryptResult
+
     return {
-      status: ActionStatus.SUCCESS,
+      success: true,
       data: {
-        vaultId: tagEntity.vaultId,
         id: tagEntity.id,
         versionId: latestVersion.id,
-        name: latestVersion.name,
-        variant: latestVersion.variant,
+        name: decryptResult.data.name,
+        variant: decryptResult.data.variant,
         createdAt: tagEntity.createdAt,
         updatedAt: latestVersion.createdAt
       }
@@ -75,7 +89,7 @@ export class TagsDatabase {
 
   async getTagVersions(entityId: string): Promise<TagVersion[]> {
     return this.db.tags_versions
-      .where('parentId')
+      .where('tagId')
       .equals(entityId)
       .toArray()
   }
@@ -89,20 +103,18 @@ export class TagsDatabase {
   }
 
   async createTag(tagData: TagData): Promise<ActionResult<string>> {
-    const entityId = self.crypto.randomUUID();
+    const entityId = await CryptographyHelper.generateUUID();
     const timestamp = new Date().toISOString();
 
-    const encResult = await EncryptionHelper.encrypt(EXAMPLE_KEY, tagData)
-    if (!encResult.success) {
-      return encResult
-    }
+    const encResult = await CryptographyHelper.encryptData(EXAMPLE_KEY, tagData)
+    if (!encResult.success) return encResult
 
     await this.db.tags.add({
       id: entityId,
       createdAt: timestamp,
     })
 
-    const versionId = self.crypto.randomUUID();
+    const versionId = await CryptographyHelper.generateUUID();
     await this.db.tags_versions.add({
       tagId: entityId,
       id: versionId,
@@ -114,24 +126,23 @@ export class TagsDatabase {
   }
 
   async updateTag(entityId: string, updateData: EntityUpdate<TagData>) {
-    const oldVersion = await this.getLatestTagVersion(entityId)
-    const newVersionId = self.crypto.randomUUID();
+    const oldTag = await this.getTag(entityId)
+    if (!oldTag.success) return oldTag.errors
+
+    const newVersionId = await CryptographyHelper.generateUUID();
     const timestamp = new Date().toISOString();
 
     const updatedTag: TagData = {
-      name: updateData.name || oldVersion.name,
-      variant: updateData.variant || oldVersion.variant
+      name: updateData.name || oldTag.data.name,
+      variant: updateData.variant || oldTag.data.variant
     }
-    const encResult = await EncryptionHelper.encrypt(EXAMPLE_KEY, tagData)
-    if (!encResult.success) {
-      return encResult
-    }
+    const encResult = await CryptographyHelper.encryptData(EXAMPLE_KEY, updatedTag)
+    if (!encResult.success) return encResult
 
     await this.db.tags_versions.add({
-      parentId: entityId,
+      tagId: entityId,
       id: newVersionId,
-      name: updateData.name || oldVersion.name,
-      variant: updateData.variant || oldVersion.variant,
+      data: encResult.data,
       createdAt: timestamp
     })
   }
@@ -139,7 +150,7 @@ export class TagsDatabase {
   async deleteTag(entityId: string) {
     await this.db.tags.delete(entityId)
     await this.db.tags_versions
-      .where("parentId").equals(entityId)
+      .where("tagId").equals(entityId)
       .delete()
   }
 }

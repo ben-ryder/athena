@@ -1,4 +1,4 @@
-import {EncryptionHelper} from "./encryption-helper";
+import {CryptographyHelper} from "./cryptography-helper";
 
 //
 // test('encrypt and decrypt a string', async () => {
