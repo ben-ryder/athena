@@ -1,26 +1,16 @@
-/**
- * A test file defining attachment types and database.
- */
+import {EntityVersion} from "../common/entity";
+import {z} from "zod";
 
-import { Dexie, Table } from 'dexie';
+export const AttachmentData = z.object({
+  filename: z.string(),
+  mimeType: z.string(),
+  size: z.number(),
+  data: z.string()
+}).strict()
+export type AttachmentData = z.infer<typeof AttachmentData>
 
-export interface BlobDto {
-  id: string
-  filename: string
-  mimeType: string
-  size: number
-  data: ArrayBuffer
-}
+export const AttachmentEntity = EntityVersion
+export type AttachmentEntity = z.infer<typeof AttachmentEntity>
 
-export class BlobDatabase extends Dexie {
-  blobs!: Table<BlobDto>;
-
-  constructor() {
-    super('blobs');
-    this.version(1).stores({
-      blobs: '&id'
-    });
-  }
-}
-
-export const blobDatabase = new BlobDatabase();
+export const AttachmentDto = AttachmentEntity.merge(AttachmentData)
+export type AttachmentDto = z.infer<typeof AttachmentDto>

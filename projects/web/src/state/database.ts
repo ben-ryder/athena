@@ -1,12 +1,14 @@
 import { Dexie, Table } from "dexie";
 import { TagEntity, TagVersion } from "./database/tags/tags";
 import { TagsDatabase } from "./database/tags/tags.database";
+import {AttachmentEntity} from "./database/attachments/attachments";
 
 export const EXAMPLE_VAULT_ID = "d7ef8db9-e401-4971-93e2-156d94a0a8d2"
 
 export class VaultDatabase extends Dexie {
   tags!: Table<TagEntity>;
   tags_versions!: Table<TagVersion>;
+  attachments!: Table<AttachmentEntity>
 
   tagsHelper!: TagsDatabase
 
@@ -24,7 +26,9 @@ export class VaultDatabase extends Dexie {
 
       content: 'id, contentTypeId, isDeleted',
       content_versions: 'id, contentId, createdAt',
-      content_fields_versions: 'id, [contentId+fieldId], createdAt'
+      content_fields_versions: 'id, [contentId+fieldId], createdAt',
+
+      attachments: 'id, isDeleted'
     });
 
     this.tagsHelper = new TagsDatabase(this)

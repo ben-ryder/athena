@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
 import "./attachments-manager.scss"
-import { blobDatabase, BlobDto } from "../../../../state/database/attachments/attachments";
+import {AttachmentData, AttachmentEntity} from "../../../../state/database/attachments/attachments";
+import {CryptographyHelper, EXAMPLE_KEY} from "../../../../localful/encryption/cryptography-helper";
+import {db} from "../../../../state/database";
 
 export interface FileRender {
   name: string
   mimeType: string
   src: string
+  size: number
 }
 
 export type StorageStatus = 'done' | 'in-progress' | 'required'
@@ -28,16 +31,31 @@ export function AttachmentsManagerPage() {
 
         if (file) {
           const fileContent = await file.arrayBuffer()
+          const fileText = new TextDecoder().decode(fileContent)
 
-          const blob: BlobDto = {
-            id: self.crypto.randomUUID(),
+          const id = await CryptographyHelper.generateUUID()
+          const timestamp = new Date().toISOString()
+
+          const attachmentData: AttachmentData = {
             filename: file.name,
             mimeType: file.type,
             size: file.size,
-            data: fileContent
+            data: fileText
           }
 
-          blobDatabase.blobs.add(blob)
+          const encResult = await CryptographyHelper.encryptData(EXAMPLE_KEY, attachmentData)
+          if (!encResult.success) {
+            console.debug(encResult.errors)
+            return
+          }
+
+          const attachment: AttachmentEntity = {
+            id: id,
+            data: encResult.data,
+            createdAt: timestamp
+          }
+
+          db.attachments.add(attachment)
         }
       }
     }
@@ -47,18 +65,27 @@ export function AttachmentsManagerPage() {
   }
 
   async function loadBlobs() {
-    const blobs = await blobDatabase.blobs.toArray()
+    const blobs = await db.attachments.toArray()
 
     const files: FileRender[] = []
     for (const blobData of blobs) {
-      const blob = new Blob([blobData.data], {type: blobData.mimeType})
-      const renderUrl = URL.createObjectURL(blob)
+      const decryptResult = await CryptographyHelper.decryptAndValidateData(EXAMPLE_KEY, AttachmentData, blobData.data)
+      if (decryptResult.success) {
+        const rawBlob = new TextEncoder().encode(decryptResult.data.data)
 
-      files.push({
-        name: blobData.filename,
-        src: renderUrl,
-        mimeType: blobData.mimeType
-      })
+        const blob = new Blob([rawBlob], {type: decryptResult.data.mimeType})
+        const renderUrl = URL.createObjectURL(blob)
+
+        files.push({
+          name: decryptResult.data.filename,
+          src: renderUrl,
+          mimeType: decryptResult.data.mimeType,
+          size: decryptResult.data.size
+        })
+      }
+      else {
+        console.debug(decryptResult.errors)
+      }
     }
 
     setFiles(files)
