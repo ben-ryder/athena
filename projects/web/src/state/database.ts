@@ -2,6 +2,7 @@ import { Dexie, Table } from "dexie";
 import { TagEntity, TagVersion } from "./database/tags/tags";
 import { TagsDatabase } from "./database/tags/tags.database";
 import {AttachmentEntity} from "./database/attachments/attachments";
+import {ZodTypeAny} from "zod";
 
 export const EXAMPLE_VAULT_ID = "d7ef8db9-e401-4971-93e2-156d94a0a8d2"
 
@@ -12,8 +13,8 @@ export class VaultDatabase extends Dexie {
 
   tagsHelper!: TagsDatabase
 
-  constructor(vaultId: string) {
-    super(`vault_${vaultId}`);
+  constructor(vaultName: string) {
+    super(vaultName);
 
     this.version(1).stores({
       tags: 'id, isDeleted',
@@ -35,4 +36,47 @@ export class VaultDatabase extends Dexie {
   }
 }
 
-export const db = new VaultDatabase(EXAMPLE_VAULT_ID)
+export class VersionedEntityQueries {
+  db: VaultDatabase
+
+  constructor(db: VaultDatabase) {
+    this.db = db
+  }
+
+  /**
+   * Fetch the given entity, including all decrypted data.
+   */
+  getDto() {
+
+  }
+
+  /**
+   * Fetch all entities, including all decrypted data.
+   */
+  getAllDto() {
+
+  }
+
+  /**
+   * Fetch the raw entity.
+   */
+  getEntity() {
+
+  }
+
+  /**
+   * Fetch all raw entity versions.
+   */
+  getAllVersions() {
+
+  }
+
+  /**
+   * Given a list of all versions, return the latest.
+   */
+  getLatestVersion() {
+
+  }
+}
+
+export const db = new VaultDatabase(`vault_${EXAMPLE_VAULT_ID}`)

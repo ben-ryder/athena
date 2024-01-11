@@ -20,13 +20,13 @@ export interface ApplicationProviderProps {
 }
 
 export function LFBProvider(props: ApplicationProviderProps) {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
-  }, [])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setLoading(false)
+  //   }, 1000)
+  // }, [])
 
   return (
     <LFBContext.Provider

@@ -49,15 +49,11 @@ export class TagsDatabase {
   }
 
   async getTag(entityId: string): Promise<ActionResult<TagDto>> {
-    const tagEntity = await this.db.tags.get(entityId)
+    const tagEntity = await this.db.table('tags').get(entityId)
     if (!tagEntity) {
       return {
         success: false,
-        errors: [
-          {
-            type: ApplicationErrorType.ENTITY_NOT_FOUND,
-          }
-        ]
+        errors: [{type: ApplicationErrorType.ENTITY_NOT_FOUND}]
       }
     }
 
