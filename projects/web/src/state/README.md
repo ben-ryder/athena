@@ -1,4 +1,50 @@
 
+# Data Structure
+Tag Data
+- name
+- variant
+
+Content Type Data
+- Basic Data
+  - name
+  - description
+  - icon?
+  - colour?
+- Content Template
+  - contentNameTemplate
+  - contentDescriptionTemplate
+  - fields (list of ids)
+
+Field Data
+- type
+- displaySettings
+- validationSettings
+
+Content Data
+- name
+- description
+- tags (list of ids)
+- fields (list of field storage data)
+  - id
+  - type
+  - value
+
+- Content stores field data, but uses the field id to link back to the actual field for display and validation settings
+- Saving the field type allows for fallback behaviour if the actual field can't be found
+
+View Data
+- Basic Data
+  - name
+  - description
+  - colour?
+- filters
+  - content types (list of ids, AND)
+  - tags (list of ids, OR)
+  - query
+  - custom fields
+- type
+- settings
+
 
 # Load Tag
 - Load tag from `tags` table

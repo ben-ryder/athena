@@ -2,7 +2,6 @@ import { Dexie, Table } from "dexie";
 import { TagEntity, TagVersion } from "./database/tags/tags";
 import { TagsDatabase } from "./database/tags/tags.database";
 import {AttachmentEntity} from "./database/attachments/attachments";
-import {ZodTypeAny} from "zod";
 
 export const EXAMPLE_VAULT_ID = "d7ef8db9-e401-4971-93e2-156d94a0a8d2"
 
@@ -19,16 +18,12 @@ export class VaultDatabase extends Dexie {
     this.version(1).stores({
       tags: 'id, isDeleted',
       tags_versions: 'id, tagId, createdAt',
-
       content_types: 'id, isDeleted',
       content_types_versions: 'id, contentTypeId, createdAt',
       fields:  'id, contentTypeId, isDeleted', // type
       fields_versions: 'id, fieldId, createdAt',
-
       content: 'id, contentTypeId, isDeleted',
       content_versions: 'id, contentId, createdAt',
-      content_fields_versions: 'id, [contentId+fieldId], createdAt',
-
       attachments: 'id, isDeleted'
     });
 
@@ -46,14 +41,14 @@ export class VersionedEntityQueries {
   /**
    * Fetch the given entity, including all decrypted data.
    */
-  getDto() {
+  get() {
 
   }
 
   /**
    * Fetch all entities, including all decrypted data.
    */
-  getAllDto() {
+  getAll() {
 
   }
 

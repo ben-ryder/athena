@@ -3,12 +3,12 @@ import {VaultDatabase} from "../../../state/database";
 import {ActionStatus} from "../../../state/actions";
 import {ReportFunction} from "./performance";
 
-const SHORT_STRING = "A communi observantia"
+const SHORT_STRING = "Chapter - Firstname lastname"
 const MEDIUM_STRING = "Magna pars studiorum, prodita quaerimus. Magna pars studiorum, prodita quaerimus. Cras mattis iudicium purus sit amet fermentum. Quo usque tandem abutere, Catilina, patientia nostra?"
 const LONG_STRING = "Cras mattis iudicium purus sit amet fermentum. Paullum deliquit, ponderibus modulisque suis ratio utitur. Quisque ut dolor gravida, placerat libero vel, euismod. A communi observantia non est recedendum. Gallia est omnis divisa in partes tres, quarum. Nec dubitamus multa iter quae et nos invenerat. Phasellus laoreet lorem vel dolor tempus vehicula. Quo usque tandem abutere, Catilina, patientia nostra? Curabitur blandit tempus ardua ridiculus sed magna. A communi observantia non est recedendum. Quisque ut dolor gravida, placerat libero vel, euismod. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Quo usque tandem abutere, Catilina, patientia nostra? A communi observantia non est recedendum. Curabitur blandit tempus ardua ridiculus sed magna. Ullamco laboris nisi ut aliquid ex ea commodi consequat. Phasellus laoreet lorem vel dolor tempus vehicula. A communi observantia non est recedendum. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Gallia est omnis divisa in partes tres, quarum. Curabitur blandit tempus ardua ridiculus sed magna. Cras mattis iudicium purus sit amet fermentum. Curabitur blandit tempus ardua ridiculus sed magna. Quisque ut dolor gravida, placerat libero vel, euismod. Magna pars studiorum, prodita quaerimus. Gallia est omnis divisa in partes tres, quarum. Gallia est omnis divisa in partes tres, quarum. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. A communi observantia non est recedendum. Cras mattis iudicium purus sit amet fermentum. Curabitur blandit tempus ardua ridiculus sed magna. Unam incolunt Belgae, aliam Aquitani, tertiam. A communi observantia non est recedendum. Quisque ut dolor gravida, placerat libero vel, euismod. Curabitur est gravida et libero vitae dictum. Unam incolunt Belgae, aliam Aquitani, tertiam. Unam incolunt Belgae, aliam Aquitani, tertiam. Pellentesque habitant morbi tristique senectus et netus. Paullum deliquit, ponderibus modulisque suis ratio utitur. Curabitur est gravida et libero vitae dictum. Pellentesque habitant morbi tristique senectus et netus. Curabitur est gravida et libero vitae dictum. Unam incolunt Belgae, aliam Aquitani, tertiam. Pellentesque habitant morbi tristique senectus et netus. Inmensae subtilitatis, obscuris et malesuada fames. Gallia est omnis divisa in partes tres, quarum. Curabitur blandit tempus ardua ridiculus sed magna. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. A communi observantia non est recedendum. Phasellus laoreet lorem vel dolor tempus vehicula. A communi observantia non est recedendum. Nec dubitamus multa iter quae et nos invenerat. Nec dubitamus multa iter quae et nos invenerat. Unam incolunt Belgae, aliam Aquitani, tertiam. Paullum deliquit, ponderibus modulisque suis ratio utitur. Curabitur est gravida et libero vitae dictum. A communi observantia non est recedendum. Quisque ut dolor gravida, placerat libero vel, euismod. Ullamco laboris nisi ut aliquid ex ea commodi consequat. Curabitur est gravida et libero vitae dictum. A communi observantia non est recedendum. Magna pars studiorum, prodita quaerimus. Curabitur est gravida et libero vitae dictum. A communi observantia non est recedendum. Quo usque tandem abutere, Catilina, patientia nostra? Phasellus laoreet lorem vel dolor tempus vehicula. Unam incolunt Belgae, aliam Aquitani, tertiam. Magna pars studiorum, prodita quaerimus. Quo usque tandem abutere, Catilina, patientia nostra? Paullum deliquit, ponderibus modulisque suis ratio utitur. A communi observantia non est recedendum. Curabitur est gravida et libero vitae dictum. Quisque ut dolor gravida, placerat libero vel, euismod. Curabitur est gravida et libero vitae dictum. Pellentesque habitant morbi tristique senectus et netus. Curabitur est gravida et libero vitae dictum."
 
 const TAG_NUMBER = 50
-const TAG_VERSIONS_NUMBER = 50
+const TAG_VERSIONS_NUMBER = 10
 
 const CONTENT_TYPE_NUMBER = 10
 const CONTENT_TYPE_VERSIONS_NUMBER = 20
@@ -24,7 +24,7 @@ export async function runTest(report: ReportFunction) {
 	const vaultId = await CryptographyHelper.generateUUID()
 	const vaultName = `perf_${vaultId}`
 	const perfDb = new VaultDatabase(vaultName)
-	report({level: "message", text: `Created test vault. IndexDB table is ${vaultName}`})
+	report({level: "message", text: `Created test vault ${vaultName}`})
 
 	await createTestData(perfDb, report)
 	await queryTestData(perfDb, report)
@@ -56,7 +56,7 @@ export async function queryTestData(perfDb: VaultDatabase, report: ReportFunctio
 	const tags = await perfDb.tagsHelper.getTags()
 	if (tags.status !== ActionStatus.SUCCESS) throw tags
 	const getTagsEnd = performance.now()
-	report({level: "message", text: `fetched single tag in ${getTagsEnd - getTagsStart}ms`})
+	report({level: "message", text: `fetched all tag in ${getTagsEnd - getTagsStart}ms`})
 
 	report({level: "task", text: "Fetching Single Tag"})
 	const tagId = tags.data[10].id
