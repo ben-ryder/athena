@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CreateTagPage } from "./pages/create-tag-page";
 import { EditTagPage } from "./pages/edit-tag-page";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../../../state/database";
+import { db } from "../../../state/storage/database";
 import { ActionStatus, LOADING_STATUS } from "../../../state/actions";
 import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
 

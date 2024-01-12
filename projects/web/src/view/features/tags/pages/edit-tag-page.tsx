@@ -4,7 +4,7 @@ import { ErrorCallout } from "../../../patterns/components/error-callout/error-c
 import { ActionStatus, ApplicationError, LOADING_STATUS } from "../../../../state/actions";
 import { TagData } from "../../../../state/database/tags/tags";
 import { TagsManagerNavigate } from "../tags-manager";
-import { db } from "../../../../state/database";
+import { db } from "../../../../state/storage/database";
 import { useLiveQuery } from "dexie-react-hooks";
 
 export interface EditTagPageProps {

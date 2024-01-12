@@ -5,7 +5,7 @@ import { ErrorCallout } from "../../../patterns/components/error-callout/error-c
 import { TagData } from "../../../../state/database/tags/tags";
 import { TagsManagerNavigate } from "../tags-manager";
 import { ApplicationError } from "../../../../state/actions";
-import { db, EXAMPLE_VAULT_ID } from "../../../../state/database";
+import { db, EXAMPLE_VAULT_ID } from "../../../../state/storage/database";
 
 export interface CreateTagPageProps {
   navigate: TagsManagerNavigate

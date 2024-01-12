@@ -1,4 +1,5 @@
 import {z} from "zod";
+import { JColourVariantsList } from "@ben-ryder/jigsaw-react";
 
 export const IdField = z.string().uuid()
 export type IdField = z.infer<typeof IdField>
@@ -22,3 +23,7 @@ export type CreatedAtField = z.infer<typeof CreatedAtField>
 
 export const UpdatedAtField =  z.string().datetime()
 export type UpdatedAtField = z.infer<typeof CreatedAtField>
+
+// These are directly mapped from Jigsaw colour variants right now.
+export const ColourVariants = z.enum(JColourVariantsList);
+export type ColourVariants = z.infer<typeof ColourVariants>;

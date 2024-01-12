@@ -3,7 +3,7 @@ import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
 import "./attachments-manager.scss"
 import {AttachmentData, AttachmentEntity} from "../../../../state/database/attachments/attachments";
 import {CryptographyHelper, EXAMPLE_KEY} from "../../../../localful/encryption/cryptography-helper";
-import {db} from "../../../../state/database";
+import {db} from "../../../../state/storage/database";
 
 export interface FileRender {
   name: string

@@ -1,5 +1,5 @@
 import { TagData, TagDto, TagVersion } from "./tags";
-import { VaultDatabase } from "../../database";
+import { VaultDatabase } from "../../storage/database";
 import { ActionResult, ActionStatus, ApplicationErrorType, QueryResult } from "../../actions";
 import { EntityUpdate } from "../common/entity";
 import { CryptographyHelper, EXAMPLE_KEY } from "../../../localful/encryption/cryptography-helper";

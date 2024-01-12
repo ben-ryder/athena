@@ -1,5 +1,5 @@
 import {CryptographyHelper} from "../../../localful/encryption/cryptography-helper";
-import {VaultDatabase} from "../../../state/database";
+import {VaultDatabase} from "../../../state/storage/database";
 import {ActionStatus} from "../../../state/actions";
 import {ReportFunction} from "./performance";
 
