@@ -29,6 +29,7 @@ export const FieldDataBase = z.object({
   label: z.string()
     .min(1, "label length must be between 1 and 50 chars")
     .max(50, "label length must be between 1 and 50 chars"),
+  required: z.boolean()
 }).strict()
 export type FieldDataBase = z.infer<typeof FieldDataBase>
 
@@ -46,14 +47,12 @@ export type FieldTextLongEditMode = z.infer<typeof FieldTextLongEditMode>
 
 export const FieldTextLongData = FieldDataBase.extend({
   type: z.literal(FieldTypes.TEXT_LONG),
-  displaySettings: z.object({
-    editMode: FieldTextLongEditMode,
-    defaultRows: z.number()
-      .int("defaultRows value must be a whole integer number")
-      .min(1, "defaultRows value must be between 1 and 50")
-      .min(50, "defaultRows value must be between 1 and 50")
-      .optional(),
-  }),
+  editMode: FieldTextLongEditMode,
+  defaultRows: z.number()
+    .int("defaultRows value must be a whole integer number")
+    .min(1, "defaultRows value must be between 1 and 50")
+    .min(50, "defaultRows value must be between 1 and 50")
+    .optional(),
   value: z.string()
     .min(1, "value length must be at least 1 character")
     .nullable()
@@ -89,21 +88,17 @@ export type FieldNumberData = z.infer<typeof FieldNumberData>
 
 export const _FieldScaleData_MISSING_VALIDATION = FieldDataBase.extend({
   type: z.literal(FieldTypes.SCALE),
-  displaySettings: z.object({
-    minLabel: z.string()
-      .min(1, "minLabel length must be between 1 and 20 chars")
-      .max(1, "minLabel length must be between 1 and 20 chars"),
-    maxLabel: z.number()
-      .min(1, "maxLabel length must be between 1 and 20 chars")
-      .max(1, "maxLabel length must be between 1 and 20 chars"),
-  }),
-  validationSettings: z.object({
+  minLabel: z.string()
+    .min(1, "minLabel length must be between 1 and 20 chars")
+    .max(1, "minLabel length must be between 1 and 20 chars"),
+  maxLabel: z.number()
+    .min(1, "maxLabel length must be between 1 and 20 chars")
+    .max(1, "maxLabel length must be between 1 and 20 chars"),
     // todo: allow scaleMin to be configured? Allow below 1?
-    scaleMax: z.number()
-      .int("scaleMax must be a whole integer number")
-      .min(3, "scaleMax must be between 3 and 5")
-      .max(5, "scaleMax must be between 3 and 5")
-  }),
+  scaleMax: z.number()
+    .int("scaleMax must be a whole integer number")
+    .min(3, "scaleMax must be between 3 and 5")
+    .max(5, "scaleMax must be between 3 and 5"),
   value: z.number()
     .int("value must be a whole integer number")
     .nullable()
@@ -119,11 +114,11 @@ export const FieldScaleData = _FieldScaleData_MISSING_VALIDATION
   // Validate that value is within the range 1 - scaleMax
   .refine(
     (data) => {
-      return data.value !== null ? data.value >= 1 && data.value <= data.validationSettings.scaleMax : true
+      return data.value !== null ? data.value >= 1 && data.value <= data.scaleMax : true
     },
     (data) => {
       return {
-        message: `value must be between 1 and ${data.validationSettings.scaleMax}`
+        message: `value must be between 1 and ${data.scaleMax}`
       }
     }
   )

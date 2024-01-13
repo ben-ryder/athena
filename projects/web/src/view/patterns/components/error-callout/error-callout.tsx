@@ -1,13 +1,13 @@
 import { JCallout } from "@ben-ryder/jigsaw-react";
 import React from "react";
-import { ApplicationError } from "../../../../state/actions";
+import { ErrorObject } from "../../../../state/control-flow";
 
 export interface ErrorCalloutProps {
-  errors: ApplicationError[]
+  errors: ErrorObject[]
 }
 
 export function ErrorCallout(props: ErrorCalloutProps) {
-  console.log(props.errors)
+  console.error(props.errors)
 
   return (
     <JCallout variant="critical">

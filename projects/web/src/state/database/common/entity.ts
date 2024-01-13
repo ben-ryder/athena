@@ -8,7 +8,8 @@ import {CreatedAtField, IdField, UpdatedAtField} from "./fields";
  */
 export const Entity = z.object({
   id: IdField,
-  isDeleted: z.boolean().optional(),
+  // IndexDB can't index boolean types, so 0 and 1 must be used instead.
+  isDeleted: z.union([z.literal(0), z.literal(1)]),
   createdAt: CreatedAtField,
 }).strict()
 export type Entity = z.infer<typeof Entity>

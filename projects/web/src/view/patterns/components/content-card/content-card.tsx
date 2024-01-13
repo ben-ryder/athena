@@ -31,7 +31,7 @@ export function ContentCard(props: ContentCardProps) {
             {props.item.tags.map(tag =>
               <JPill
                 key={tag.id}
-                variant={tag.variant || undefined}
+                variant={tag.colourVariant || undefined}
               >{tag.name}</JPill>
             )}
           </div>

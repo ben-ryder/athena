@@ -5,11 +5,12 @@ import {
   JSelect,
   JPill,
   JLabel,
-  JOptionData, JColourVariants, JButtonGroup, JButton, JArrowButton, JForm, JFormHeader, JFormContent, JFormRow
+  JOptionData, JColourVariants, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow
 } from "@ben-ryder/jigsaw-react";
 import "./tag-form.scss";
-import { TagData, TagVariants } from "../../../../state/database/tags/tags";
+import { TagData } from "../../../../state/database/tags/tags";
 import { TagsManagerNavigate } from "../tags-manager";
+import { ColourVariants } from "../../../../state/database/common/fields";
 
 export interface TagFormProps {
   title: string
@@ -23,14 +24,15 @@ export function TagForm(props: TagFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState<string>(props.data.name);
-  const [variant, setVariant] = useState<string>(
-    props.data.variant || "",
+  const [colourVariant, setColourVariant] = useState<ColourVariants|"">(
+    props.data.colourVariant || "",
   );
 
   const tagVariantOptions: JOptionData[] = useMemo(() => {
     return [
       { text: "-- Select Colour --", value: "" },
-      ...TagVariants.options.map((variant) => ({
+      ...ColourVariants.options.map((variant) => ({
+        // todo: replace with generic labels, not direct from Jigsaw
         text: JColourVariants[variant].label,
         value: variant
       }))
@@ -45,7 +47,7 @@ export function TagForm(props: TagFormProps) {
     }
     else {
       setError(null);
-      props.onSave({ name, variant: variant as TagVariants || null });
+      props.onSave({ name: name, colourVariant: colourVariant || undefined });
     }
   }
 
@@ -81,14 +83,14 @@ export function TagForm(props: TagFormProps) {
             id="variant"
             label="Colour"
             options={tagVariantOptions}
-            value={variant}
-            onChange={(e) => {setVariant(e.target.value)}}
+            value={colourVariant}
+            onChange={(e) => {setColourVariant(e.target.value as ColourVariants|"")}}
           />
         </JFormRow>
         <JFormRow className="preview-field">
           <JLabel>Preview</JLabel>
             <JPill
-              variant={variant as TagVariants || undefined}
+              variant={colourVariant as ColourVariants || undefined}
             >{name || "Preview"}</JPill>
         </JFormRow>
       </JFormContent>

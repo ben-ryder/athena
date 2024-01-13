@@ -1,11 +1,12 @@
 import { TagsList } from "./tags-list/tags-list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateTagPage } from "./pages/create-tag-page";
 import { EditTagPage } from "./pages/edit-tag-page";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../../state/storage/database";
-import { ActionStatus, LOADING_STATUS } from "../../../state/actions";
+import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../state/control-flow";
 import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
+import { TagDto } from "../../../state/database/tags/tags";
 
 export type TagsManagerPages = {
   page: "list"
@@ -19,22 +20,37 @@ export type TagsManagerNavigate = (page: TagsManagerPages) => void
 
 export function TagsManager() {
   const [currentPage, navigate] = useState<TagsManagerPages>({page: "list"})
-  const tags = useLiveQuery(db.tagsHelper.getTags, [], LOADING_STATUS)
+  const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  if (tags.status === ActionStatus.LOADING) {
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [tags, setTags] = useState<TagDto[]>([])
+
+  useEffect(() => {
+    async function getTags() {
+      setIsLoading(true)
+      const tags = await db.tagQueries.getAll()
+      if (tags.success) {
+        setTags(tags.data)
+      }
+      if (tags.errors) {
+        setErrors(tags.errors)
+      }
+      setIsLoading(false)
+    }
+    getTags()
+  }, [currentPage])
+
+
+  if (isLoading) {
     return (
       <p>Loading...</p>
-    )
-  }
-  if (tags.status === ActionStatus.ERROR) {
-    return (
-      <ErrorCallout errors={tags.errors} />
     )
   }
 
   if (currentPage.page === 'new') {
     return (
       <>
+        {errors.length > 0 && <ErrorCallout errors={errors} />}
         <CreateTagPage
           navigate={navigate}
         />
@@ -44,6 +60,7 @@ export function TagsManager() {
   else if (currentPage.page === 'edit') {
     return (
       <>
+        {errors.length > 0 && <ErrorCallout errors={errors} />}
         <EditTagPage
           id={currentPage.id}
           navigate={navigate}
@@ -54,8 +71,9 @@ export function TagsManager() {
   else {
     return (
       <>
+        {errors.length > 0 && <ErrorCallout errors={errors} />}
         <TagsList
-          tags={tags.data}
+          tags={tags}
           navigate={navigate}
         />
       </>

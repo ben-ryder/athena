@@ -7,7 +7,7 @@ export type TagEntity = z.infer<typeof TagEntity>
 
 export const TagData = z.object({
   name: NameField,
-  colourVariant: ColourVariants
+  colourVariant: ColourVariants.optional()
 }).strict()
 export type TagData = z.infer<typeof TagData>
 

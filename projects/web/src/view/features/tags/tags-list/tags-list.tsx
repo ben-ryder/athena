@@ -27,7 +27,7 @@ export function TagsList(props: TagsListProps) {
               props.navigate({page: "edit", id: tag.id})
             }}
             key={tag.id}
-            variant={tag.variant || undefined}
+            variant={tag.colourVariant || undefined}
           >{tag.name}</JPillButton>
         ))}
       </div>

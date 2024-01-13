@@ -1,5 +1,5 @@
 
-# Data Structure
+## Data Structure
 Tag Data
 - name
 - variant

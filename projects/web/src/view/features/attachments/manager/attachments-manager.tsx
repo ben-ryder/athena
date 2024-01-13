@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
 import "./attachments-manager.scss"
 import {AttachmentData, AttachmentEntity} from "../../../../state/database/attachments/attachments";
-import {CryptographyHelper, EXAMPLE_KEY} from "../../../../localful/encryption/cryptography-helper";
+import {CryptographyHelper} from "../../../../state/encryption/cryptography-helper";
 import {db} from "../../../../state/storage/database";
 
 export interface FileRender {
@@ -43,7 +43,8 @@ export function AttachmentsManagerPage() {
             data: fileText
           }
 
-          const encResult = await CryptographyHelper.encryptData(EXAMPLE_KEY, attachmentData)
+          const encryptionKey = await db.getEncryptionKey()
+          const encResult = await CryptographyHelper.encryptData(encryptionKey, attachmentData)
           if (!encResult.success) {
             console.debug(encResult.errors)
             return
@@ -69,7 +70,8 @@ export function AttachmentsManagerPage() {
 
     const files: FileRender[] = []
     for (const blobData of blobs) {
-      const decryptResult = await CryptographyHelper.decryptAndValidateData(EXAMPLE_KEY, AttachmentData, blobData.data)
+      const key = await db.getEncryptionKey()
+      const decryptResult = await CryptographyHelper.decryptAndValidateData(key, AttachmentData, blobData.data)
       if (decryptResult.success) {
         const rawBlob = new TextEncoder().encode(decryptResult.data.data)
 
