@@ -1,5 +1,7 @@
 import React, { ReactNode } from "react";
 
+import "./message-page.scss"
+
 export interface MessagePageProps {
   heading: string;
   content: ReactNode;
