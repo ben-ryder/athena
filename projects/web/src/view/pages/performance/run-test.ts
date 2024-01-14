@@ -57,12 +57,25 @@ export async function queryTestData(perfDb: VaultDatabase, report: ReportFunctio
 	const getTagsEnd = performance.now()
 	report({level: "message", text: `fetched all tag in ${getTagsEnd - getTagsStart}ms`})
 
+	report({level: "task", text: "Fetching Tags Again (from memory cache)"})
+	const getTagsRetryStart = performance.now()
+	await perfDb.tagQueries.getAll()
+	if (!tags.success) throw tags
+	const getTagsRetryEnd = performance.now()
+	report({level: "message", text: `fetched all tag in ${getTagsRetryEnd - getTagsRetryStart}ms`})
+
 	report({level: "task", text: "Fetching Single Tag"})
 	const tagId = tags.data[10].id
 	const getTagStart = performance.now()
 	await perfDb.tagQueries.get(tagId)
 	const getTagEnd = performance.now()
 	report({level: "message", text: `fetched single tag in ${getTagEnd - getTagStart}ms`})
+
+	report({level: "task", text: "Fetching Single Tag Again (from memory cache)"})
+	const getTagRetryStart = performance.now()
+	await perfDb.tagQueries.get(tagId)
+	const getTagRetryEnd = performance.now()
+	report({level: "message", text: `fetched single tag in ${getTagRetryEnd - getTagRetryStart}ms`})
 
 	report({level: "task", text: "Updating Tag"})
 	const updateTagId = tags.data[20].id

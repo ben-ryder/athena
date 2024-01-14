@@ -41,7 +41,8 @@ export class VaultDatabase extends Dexie {
       entityTable: "tags",
       versionTable: "tags_versions",
       entityRelationshipId: "tagId",
-      dataSchema: TagData
+      dataSchema: TagData,
+      useMemoryCache: true
     })
   }
 

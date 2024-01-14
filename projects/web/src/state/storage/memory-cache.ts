@@ -19,9 +19,14 @@ export class MemoryCache {
 		return Object.keys(this.cacheStore).includes(key)
 	}
 
-	async get<T extends ZodTypeAny>(key: string, schema: T): Promise<T | null> {
+	async get<T extends ZodTypeAny>(key: string, schema?: T): Promise<T | null> {
 		if (this.hasKey(key)) {
 			const rawData = this.cacheStore[key]
+
+			if (!schema) {
+				return rawData as T
+			}
+
 			const parseResult = schema.safeParse(rawData)
 			if (parseResult.success) {
 				return parseResult.data

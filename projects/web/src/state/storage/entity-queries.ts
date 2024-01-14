@@ -1,14 +1,16 @@
-import { ZodTypeAny } from "zod";
+import {z, ZodTypeAny} from "zod";
 import { VaultDatabase } from "./database";
 import { Entity, EntityDto, EntityUpdate, EntityVersion } from "../database/common/entity";
 import { CryptographyHelper } from "../encryption/cryptography-helper";
 import { ActionResult, ErrorObject, ErrorTypes } from "../control-flow";
+import {memoryCache} from "./memory-cache";
 
 export interface VersionedEntityQueriesConfig {
   entityTable: string,
   versionTable: string,
-  entityRelationshipId: string
+  entityRelationshipId: string,
   dataSchema: ZodTypeAny,
+  useMemoryCache?: boolean
 }
 
 export interface VersionedEntityQueriesMethod<EntitySchema, VersionSchema, DataSchema, DtoSchema> {
@@ -28,7 +30,7 @@ export interface VersionedEntityQueriesMethod<EntitySchema, VersionSchema, DataS
   deleteVersion: (versionId: string) => Promise<ActionResult>
   deleteOldVersions: (entityId: string) => Promise<ActionResult>
 
-  _createEntityVersionDto: (entity: EntitySchema, version: VersionSchema) => Promise<ActionResult<DtoSchema>>
+  _createEntityVersionDto: (entity: EntitySchema, version: VersionSchema) => Promise<DtoSchema>
 }
 
 export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema extends EntityVersion, DataSchema, DtoSchema extends EntityDto>
@@ -50,25 +52,22 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * @param entity
    * @param version
    */
-  async _createEntityVersionDto(entity: EntitySchema, version: VersionSchema): Promise<ActionResult<DtoSchema>> {
+  async _createEntityVersionDto(entity: EntitySchema, version: VersionSchema): Promise<DtoSchema> {
     const encryptionKey = await this.db.getEncryptionKey()
     const decryptedData = await CryptographyHelper.decryptAndValidateData<DataSchema>(
       encryptionKey,
       this.config.dataSchema,
       version.data
     )
-    if (!decryptedData.success) return decryptedData
+    if (!decryptedData.success) return decryptedData as unknown as DtoSchema
 
+    // @ts-expect-error - Trusting that schemas have been implemented correctly.
     return {
-      success: true,
-      // @ts-expect-error - Trusting that schema relationships are correct.
-      data: {
-        id: entity.id,
-        createdAt: entity.createdAt,
-        versionId: version.id,
-        updatedAt: version.createdAt,
-        ...decryptedData.data
-      }
+      id: entity.id,
+      createdAt: entity.createdAt,
+      versionId: version.id,
+      updatedAt: version.createdAt,
+      ...decryptedData.data
     }
   }
 
@@ -78,6 +77,13 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * @param id
    */
   async get(id: string): Promise<ActionResult<DtoSchema>> {
+    if (this.config.useMemoryCache) {
+      const cachedResponse = await memoryCache.get(`${this.config.entityTable}-get-${id}`)
+      if (cachedResponse) {
+        return {success: true, data: cachedResponse as unknown as DtoSchema}
+      }
+    }
+
     const entity = await this.getEntity(id)
     if (!entity.success) return entity
 
@@ -87,7 +93,12 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
     const latestVersion = await this.getLatestVersion(versions.data)
     if (!latestVersion.success) return latestVersion
 
-    return this._createEntityVersionDto(entity.data, latestVersion.data)
+    const dto = await this._createEntityVersionDto(entity.data, latestVersion.data)
+    if (this.config.useMemoryCache) {
+      await memoryCache.add(`${this.config.entityTable}-get-${id}`, dto)
+    }
+
+    return {success: true, data: dto}
   }
 
   /**
@@ -96,6 +107,13 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * @param ids
    */
   async getMultiple(ids: string[]): Promise<ActionResult<DtoSchema[]>>  {
+    if (this.config.useMemoryCache) {
+      const cachedResponse = await memoryCache.get(`${this.config.entityTable}-${ids.join(',')}`)
+      if (cachedResponse) {
+        return {success: true, data: cachedResponse as unknown as DtoSchema[]}
+      }
+    }
+
     const dtos: DtoSchema[] = []
     const errors: ErrorObject[] = []
 
@@ -108,6 +126,10 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
       }
     }
 
+    if (this.config.useMemoryCache) {
+      await memoryCache.add(`${this.config.entityTable}-${ids.join(',')}`, dtos)
+    }
+
     return {success: true, data: dtos, errors: errors}
   }
 
@@ -115,6 +137,13 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * Get all, fetching the latest version for each entity.
    */
   async getAll(): Promise<ActionResult<DtoSchema[]>> {
+    if (this.config.useMemoryCache) {
+      const cachedResponse = await memoryCache.get(`${this.config.entityTable}-getAll`)
+      if (cachedResponse) {
+        return {success: true, data: cachedResponse as unknown as DtoSchema[]}
+      }
+    }
+
     const entities = await this.db.table<EntitySchema>(this.config.entityTable)
       .where('isDeleted').equals(0)
       .toArray()
@@ -135,12 +164,11 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
       }
 
       const dto = await this._createEntityVersionDto(entity, latestVersion.data)
-      if (!dto.success) {
-        errors.push(...dto.errors)
-        continue
-      }
+      dtos.push(dto)
+    }
 
-      dtos.push(dto.data)
+    if (this.config.useMemoryCache) {
+      await memoryCache.add(`${this.config.entityTable}-getAll`, dtos)
     }
 
     return {
@@ -220,6 +248,11 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
       createdAt: timestamp
     })
 
+    if (this.config.useMemoryCache) {
+      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
+      await memoryCache.delete(`${this.config.entityTable}-gelAll`)
+    }
+
     return {success: true, data: newVersionId}
   }
 
@@ -232,6 +265,11 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
     await this.db.table(this.config.versionTable)
       .where(this.config.entityRelationshipId).equals(id)
       .delete()
+
+    if (this.config.useMemoryCache) {
+      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
+      await memoryCache.delete(`${this.config.entityTable}-gelAll`)
+    }
 
     return {success: true, data: null}
   }
@@ -275,6 +313,11 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
     await this.db.table(this.config.versionTable)
       .where(this.config.entityRelationshipId).equals(id)
       .delete()
+
+    if (this.config.useMemoryCache) {
+      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
+      await memoryCache.delete(`${this.config.entityTable}-gelAll`)
+    }
 
     return {success: true, data: null}
   }
