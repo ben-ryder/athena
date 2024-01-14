@@ -161,6 +161,7 @@ export const FieldData = z.union([
   FieldTimestampData,
   FieldDateData
 ])
+export type FieldData = z.infer<typeof FieldData>
 
 export const FieldStorage = z.union([
   FieldTextShortData.pick({type: true, value: true}).extend({id: IdField}),

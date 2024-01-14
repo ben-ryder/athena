@@ -1,9 +1,14 @@
 import { Dexie, Table } from "dexie";
 import {TagData, TagDto, TagEntity, TagVersion} from "../database/tags/tags";
 import {AttachmentEntity} from "../database/attachments/attachments";
-import {ContentTypeEntity, ContentTypeVersion} from "../database/content-types/content-types";
-import {FieldEntity, FieldVersion} from "../database/fields/fields";
-import {ContentEntity, ContentVersion} from "../database/content/content";
+import {
+  ContentTypeData,
+  ContentTypeDto,
+  ContentTypeEntity,
+  ContentTypeVersion
+} from "../database/content-types/content-types";
+import {FieldData, FieldDto, FieldEntity, FieldVersion} from "../database/fields/fields";
+import {ContentData, ContentDto, ContentEntity, ContentVersion} from "../database/content/content";
 import {VersionedEntityQueries} from "./entity-queries";
 import * as WebCrypto from "easy-web-crypto";
 
@@ -21,6 +26,9 @@ export class VaultDatabase extends Dexie {
   attachments!: Table<AttachmentEntity>
 
   tagQueries!: VersionedEntityQueries<TagEntity, TagVersion, TagData, TagDto>
+  contentTypeQueries!: VersionedEntityQueries<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>
+  fieldQueries!: VersionedEntityQueries<FieldEntity, FieldVersion, FieldData, FieldDto>
+  contentQueries!: VersionedEntityQueries<ContentEntity, ContentVersion, ContentData, ContentDto>
 
   constructor(vaultName: string) {
     super(vaultName);
@@ -44,6 +52,35 @@ export class VaultDatabase extends Dexie {
       dataSchema: TagData,
       useMemoryCache: true
     })
+    this.contentTypeQueries = new VersionedEntityQueries<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>(
+      this,
+      {
+        entityTable: "content_types",
+        versionTable: "content_types_versions",
+        entityRelationshipId: "contentTypeId",
+        dataSchema: ContentTypeData,
+        useMemoryCache: true
+      }
+    )
+    this.fieldQueries = new VersionedEntityQueries<FieldEntity, FieldVersion, FieldData, FieldDto>(
+      this,
+      {
+        entityTable: "fields",
+        versionTable: "fields_versions",
+        entityRelationshipId: "fieldId",
+        dataSchema: FieldData,
+        useMemoryCache: true
+      }
+    )
+    this.contentQueries = new VersionedEntityQueries<ContentEntity, ContentVersion, ContentData, ContentDto>(
+      this,
+      {
+        entityTable: "content",
+        versionTable: "content_versions",
+        entityRelationshipId: "contentId",
+        dataSchema: ContentData,
+      }
+    )
   }
 
   async getEncryptionKey(): Promise<CryptoKey> {
