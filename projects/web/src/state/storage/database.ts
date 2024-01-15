@@ -50,7 +50,7 @@ export class VaultDatabase extends Dexie {
       versionTable: "tags_versions",
       entityRelationshipId: "tagId",
       dataSchema: TagData,
-      useMemoryCache: true
+      useMemoryCache: false
     })
     this.contentTypeQueries = new VersionedEntityQueries<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>(
       this,
@@ -59,7 +59,7 @@ export class VaultDatabase extends Dexie {
         versionTable: "content_types_versions",
         entityRelationshipId: "contentTypeId",
         dataSchema: ContentTypeData,
-        useMemoryCache: true
+        useMemoryCache: false
       }
     )
     this.fieldQueries = new VersionedEntityQueries<FieldEntity, FieldVersion, FieldData, FieldDto>(
@@ -69,7 +69,7 @@ export class VaultDatabase extends Dexie {
         versionTable: "fields_versions",
         entityRelationshipId: "fieldId",
         dataSchema: FieldData,
-        useMemoryCache: true
+        useMemoryCache: false
       }
     )
     this.contentQueries = new VersionedEntityQueries<ContentEntity, ContentVersion, ContentData, ContentDto>(

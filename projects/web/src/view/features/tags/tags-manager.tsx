@@ -1,12 +1,11 @@
 import { TagsList } from "./tags-list/tags-list";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CreateTagPage } from "./pages/create-tag-page";
 import { EditTagPage } from "./pages/edit-tag-page";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../../state/storage/database";
 import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../state/control-flow";
 import { ErrorCallout } from "../../patterns/components/error-callout/error-callout";
-import { TagDto } from "../../../state/database/tags/tags";
 
 export type TagsManagerPages = {
   page: "list"
@@ -22,26 +21,18 @@ export function TagsManager() {
   const [currentPage, navigate] = useState<TagsManagerPages>({page: "list"})
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [tags, setTags] = useState<TagDto[]>([])
-
-  useEffect(() => {
-    async function getTags() {
-      setIsLoading(true)
-      const tags = await db.tagQueries.getAll()
-      if (tags.success) {
-        setTags(tags.data)
-      }
-      if (tags.errors) {
-        setErrors(tags.errors)
-      }
-      setIsLoading(false)
+  const tags = useLiveQuery(async () => {
+    const tags = await db.tagQueries.getAll()
+    if (tags.success) {
+      return {status: QueryStatus.SUCCESS, data: tags.data}
     }
-    getTags()
-  }, [currentPage])
+    if (tags.errors) {
+      setErrors(tags.errors)
+    }
+    return {status: QueryStatus.ERROR, errors: tags.errors, data: null}
+  }, [], QUERY_LOADING)
 
-
-  if (isLoading) {
+  if (tags.status === QueryStatus.LOADING) {
     return (
       <p>Loading...</p>
     )
@@ -73,7 +64,7 @@ export function TagsManager() {
       <>
         {errors.length > 0 && <ErrorCallout errors={errors} />}
         <TagsList
-          tags={tags}
+          tags={tags.data || []}
           navigate={navigate}
         />
       </>

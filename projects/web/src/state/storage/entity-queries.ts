@@ -1,4 +1,4 @@
-import {z, ZodTypeAny} from "zod";
+import { ZodTypeAny } from "zod";
 import { VaultDatabase } from "./database";
 import { Entity, EntityDto, EntityUpdate, EntityVersion } from "../database/common/entity";
 import { CryptographyHelper } from "../encryption/cryptography-helper";
@@ -107,13 +107,6 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * @param ids
    */
   async getMultiple(ids: string[]): Promise<ActionResult<DtoSchema[]>>  {
-    if (this.config.useMemoryCache) {
-      const cachedResponse = await memoryCache.get(`${this.config.entityTable}-${ids.join(',')}`)
-      if (cachedResponse) {
-        return {success: true, data: cachedResponse as unknown as DtoSchema[]}
-      }
-    }
-
     const dtos: DtoSchema[] = []
     const errors: ErrorObject[] = []
 
@@ -124,10 +117,6 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
       } else if (dto.errors) {
         errors.push(...dto.errors)
       }
-    }
-
-    if (this.config.useMemoryCache) {
-      await memoryCache.add(`${this.config.entityTable}-${ids.join(',')}`, dtos)
     }
 
     return {success: true, data: dtos, errors: errors}
@@ -221,6 +210,11 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
     const oldEntity = await this.get(id)
     if (!oldEntity.success) return oldEntity
 
+    if (this.config.useMemoryCache) {
+      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
+      await memoryCache.delete(`${this.config.entityTable}-getAll`)
+    }
+
     const newVersionId = await CryptographyHelper.generateUUID();
     const timestamp = new Date().toISOString();
 
@@ -248,11 +242,6 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
       createdAt: timestamp
     })
 
-    if (this.config.useMemoryCache) {
-      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
-      await memoryCache.delete(`${this.config.entityTable}-gelAll`)
-    }
-
     return {success: true, data: newVersionId}
   }
 
@@ -261,15 +250,15 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * deleting all versions.
    */
   async delete(id: string): Promise<ActionResult> {
+    if (this.config.useMemoryCache) {
+      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
+      await memoryCache.delete(`${this.config.entityTable}-getAll`)
+    }
+
     await this.db.table(this.config.entityTable).update(id, {isDeleted: 1})
     await this.db.table(this.config.versionTable)
       .where(this.config.entityRelationshipId).equals(id)
       .delete()
-
-    if (this.config.useMemoryCache) {
-      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
-      await memoryCache.delete(`${this.config.entityTable}-gelAll`)
-    }
 
     return {success: true, data: null}
   }
@@ -309,15 +298,15 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * @param id
    */
   async purge(id: string): Promise<ActionResult> {
+    if (this.config.useMemoryCache) {
+      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
+      await memoryCache.delete(`${this.config.entityTable}-getAll`)
+    }
+
     await this.db.table(this.config.entityTable).delete(id)
     await this.db.table(this.config.versionTable)
       .where(this.config.entityRelationshipId).equals(id)
       .delete()
-
-    if (this.config.useMemoryCache) {
-      await memoryCache.delete(`${this.config.entityTable}-get-${id}`)
-      await memoryCache.delete(`${this.config.entityTable}-gelAll`)
-    }
 
     return {success: true, data: null}
   }
