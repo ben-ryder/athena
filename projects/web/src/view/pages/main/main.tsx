@@ -1,10 +1,7 @@
 import React from "react";
 import { DatabaseDialog } from "../../features/database/manager/database-dialog";
 import { PagesDialog } from "../../features/pages/manager/pages-dialog";
-import { ViewsDialog } from "../../features/views/manager/views-dialog";
 import { SearchDialog } from "../../features/search/search-dialog";
-import { TagsDialog } from "../../features/tags/tags-dialog";
-import { AttachmentsDialog } from "../../features/attachments/manager/attatchments-dialog";
 import { LogsDialog } from "../../features/logs/logs-dialog";
 import { SettingsDialog } from "../../features/settings/settings-dialog";
 import { AccountsDialog } from "../../features/accounts/manager/accounts-dialog";
@@ -21,14 +18,10 @@ export function MainPage() {
             <DatabaseDialog />
             <div className="sidebar-divider" />
             <PagesDialog />
-            <ViewsDialog />
             <SearchDialog />
-            <div className="sidebar-divider" />
-            <TagsDialog />
-            <AttachmentsDialog />
+            <SettingsDialog />
             <div className="sidebar-separator" />
             <LogsDialog />
-            <SettingsDialog />
             <div className="sidebar-divider" />
             <AccountsDialog />
           </div>

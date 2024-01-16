@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { JDialog, JIcon } from "@ben-ryder/jigsaw-react";
 import { Settings as SettingsIcon } from "lucide-react";
+import { SettingsManager } from "./settings-management";
 
 export function SettingsDialog() {
   const [open, setOpen] = useState<boolean>(false)
@@ -17,8 +18,13 @@ export function SettingsDialog() {
       disableOutsideClose={true}
       heading="Settings"
       description="Manage vault and application settings"
+      style={{
+        width: "100%",
+        maxWidth: "1000px",
+        height: "100%"
+      }}
       content={
-        <p>Manage vault and application settings.</p>
+        <SettingsManager />
       }
     />
   )
