@@ -1,5 +1,5 @@
 import {z} from "zod"
-import {CreatedAtField, IdField, UpdatedAtField} from "./fields";
+import { CreatedAtField, IdField, IsDeletedField, UpdatedAtField } from "./fields";
 
 /**
  * An entity is the base of all storable data.
@@ -8,8 +8,7 @@ import {CreatedAtField, IdField, UpdatedAtField} from "./fields";
  */
 export const Entity = z.object({
   id: IdField,
-  // IndexDB can't index boolean types, so 0 and 1 must be used instead.
-  isDeleted: z.union([z.literal(0), z.literal(1)]),
+  isDeleted: IsDeletedField,
   createdAt: CreatedAtField,
 }).strict()
 export type Entity = z.infer<typeof Entity>
@@ -32,8 +31,9 @@ export type EntityVersion = z.infer<typeof EntityVersion>
  * load the current version. The entity dto is the building block for building
  * these return types.
  */
-export const EntityDto = Entity.extend({
+export const EntityDto = z.object({
   id: IdField,
+  isDeleted: IsDeletedField,
   versionId: IdField,
   // This will be the entity createdAt field
   createdAt: CreatedAtField,

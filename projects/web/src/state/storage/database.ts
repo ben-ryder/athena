@@ -1,14 +1,14 @@
 import { Dexie, Table } from "dexie";
-import {TagData, TagDto, TagEntity, TagVersion} from "../database/tags/tags";
-import {AttachmentEntity} from "../database/attachments/attachments";
+import {TagData, TagDto, TagEntity, TagVersion} from "../schemas/tags/tags";
+import {AttachmentEntity} from "../schemas/attachments/attachments";
 import {
   ContentTypeData,
   ContentTypeDto,
   ContentTypeEntity,
   ContentTypeVersion
-} from "../database/content-types/content-types";
-import {FieldData, FieldDto, FieldEntity, FieldVersion} from "../database/fields/fields";
-import {ContentData, ContentDto, ContentEntity, ContentVersion} from "../database/content/content";
+} from "../schemas/content-types/content-types";
+import {FieldData, FieldDto, FieldEntity, FieldVersion} from "../schemas/fields/fields";
+import {ContentData, ContentDto, ContentEntity, ContentVersion} from "../schemas/content/content";
 import {VersionedEntityQueries} from "./entity-queries";
 import * as WebCrypto from "easy-web-crypto";
 

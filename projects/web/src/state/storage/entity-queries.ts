@@ -1,6 +1,6 @@
 import { ZodTypeAny } from "zod";
 import { VaultDatabase } from "./database";
-import { Entity, EntityDto, EntityUpdate, EntityVersion } from "../database/common/entity";
+import { Entity, EntityDto, EntityUpdate, EntityVersion } from "../schemas/common/entity";
 import { CryptographyHelper } from "../encryption/cryptography-helper";
 import { ActionResult, ErrorObject, ErrorTypes } from "../control-flow";
 import {memoryCache} from "./memory-cache";

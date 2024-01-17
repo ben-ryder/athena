@@ -1,7 +1,8 @@
 import { ReactNode, useState } from "react";
 import { AttachmentsManagerPage } from "../attachments/manager/attachments-manager";
 import { JButton, JButtonGroup } from "@ben-ryder/jigsaw-react";
-import { TagsManager } from "../tags/tags-manager";
+import { TagsManager } from "./tags/tags-manager";
+import { FieldsManager } from "./fields/fields-manager";
 
 export type SettingsTabs = "tags" | "content-types" | "fields" | "attachments" | "app-settings"
 
@@ -11,6 +12,9 @@ export function SettingsManager() {
   let content: ReactNode
   if (currentTab === "tags") {
     content = <TagsManager />
+  }
+  else if (currentTab === "fields") {
+    content = <FieldsManager />
   }
   else if (currentTab === "attachments") {
     content = <AttachmentsManagerPage />

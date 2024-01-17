@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { TagForm } from "../tag-form/tag-form";
-import { ErrorCallout } from "../../../patterns/components/error-callout/error-callout";
-import { TagData } from "../../../../state/database/tags/tags";
-import { TagsManagerNavigate } from "../tags-manager";
-import { db } from "../../../../state/storage/database";
+import { TagForm } from "../forms/tag-form";
+import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
+import { TagData } from "../../../../../state/schemas/tags/tags";
+import { db } from "../../../../../state/storage/database";
 import { useLiveQuery } from "dexie-react-hooks";
-import { ErrorObject, QUERY_LOADING, QueryResult, QueryStatus } from "../../../../state/control-flow";
+import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../state/control-flow";
+import {
+  ContentManagerContentScreenProps,
+} from "../../../../common/content-manager/content-manager";
 
-export interface EditTagPageProps {
-  id: string,
-  navigate: TagsManagerNavigate
-}
 
-export function EditTagPage(props: EditTagPageProps) {
+export function EditTagScreen(props: ContentManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   const tagResult = useLiveQuery(async () => {
@@ -29,7 +27,7 @@ export function EditTagPage(props: EditTagPageProps) {
       setErrors(res.errors)
     }
     else {
-      props.navigate({page: "list"})
+      props.navigate({screen: "list"})
     }
   }
 
@@ -39,7 +37,7 @@ export function EditTagPage(props: EditTagPageProps) {
       setErrors(res.errors)
     }
     else {
-      props.navigate({page: "list"})
+      props.navigate({screen: "list"})
     }
   }
 

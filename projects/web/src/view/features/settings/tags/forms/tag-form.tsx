@@ -8,16 +8,16 @@ import {
   JOptionData, JColourVariants, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow
 } from "@ben-ryder/jigsaw-react";
 import "./tag-form.scss";
-import { TagData } from "../../../../state/database/tags/tags";
-import { TagsManagerNavigate } from "../tags-manager";
-import { ColourVariants } from "../../../../state/database/common/fields";
+import { TagData } from "../../../../../state/schemas/tags/tags";
+import { ColourVariants } from "../../../../../state/schemas/common/fields";
+import { ContentManagerNavigate } from "../../../../common/content-manager/content-manager";
 
 export interface TagFormProps {
   title: string
   data: TagData;
   onSave: (content: TagData) => void;
   onDelete?: () => void;
-  navigate: TagsManagerNavigate
+  navigate: ContentManagerNavigate
 }
 
 export function TagForm(props: TagFormProps) {
@@ -56,7 +56,7 @@ export function TagForm(props: TagFormProps) {
       <div className="tag-form__back">
         <JArrowButton
           onClick={() => {
-            props.navigate({page: "list"})
+            props.navigate({screen: "list"})
           }}
           direction="left"
         >All Tags</JArrowButton>

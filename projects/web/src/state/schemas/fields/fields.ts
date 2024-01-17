@@ -3,17 +3,17 @@ import { IdField } from "../common/fields";
 import isISO8601Date from 'validator/lib/isISO8601';
 import {Entity, EntityDto, EntityVersion} from "../common/entity";
 
-export enum FieldTypes {
-  TEXT_SHORT = "text-short",
-  TEXT_LONG = "text-long",
-  OPTIONS = "options",
-  URL = "url",
-  NUMBER = "number",
-  SCALE = "scale",
-  BOOLEAN = "boolean",
-  DATE = "date",
-  TIMESTAMP = "timestamp"
-}
+export const FieldTypes =  {
+  TEXT_SHORT: "text-short",
+  TEXT_LONG: "text-long",
+  OPTIONS: "options",
+  URL: "url",
+  NUMBER: "number",
+  SCALE: "scale",
+  BOOLEAN: "boolean",
+  DATE: "date",
+  TIMESTAMP: "timestamp"
+} as const
 
 /**
  * Validate if a string is a slug
@@ -123,21 +123,21 @@ export const FieldScaleData = _FieldScaleData_MISSING_VALIDATION
     }
   )
 
-export const FieldBooleanData = z.object({
+export const FieldBooleanData = FieldDataBase.extend({
   type: z.literal(FieldTypes.BOOLEAN),
   value: z.boolean()
     .nullable()
 }).strict()
 export type FieldBooleanData = z.infer<typeof FieldBooleanData>
 
-export const FieldTimestampData= z.object({
+export const FieldTimestampData= FieldDataBase.extend({
   type: z.literal(FieldTypes.TIMESTAMP),
   value: z.string().datetime()
     .nullable()
 }).strict()
 export type FieldTimestampData = z.infer<typeof FieldTimestampData>
 
-export const FieldDateData= z.object({
+export const FieldDateData= FieldDataBase.extend({
   type: z.literal(FieldTypes.DATE),
   value: z.string()
     .nullable()
@@ -185,14 +185,14 @@ export const FieldVersion = EntityVersion.extend({
 export type FieldVersion = z.infer<typeof FieldVersion>
 
 export const FieldDto = z.union([
-  EntityDto.merge(FieldTextShortData),
-  EntityDto.merge(FieldTextLongData),
-  EntityDto.merge(FieldOptionsData),
-  EntityDto.merge(FieldURLData),
-  EntityDto.merge(FieldNumberData),
-  EntityDto.merge(_FieldScaleData_MISSING_VALIDATION),
-  EntityDto.merge(FieldBooleanData),
-  EntityDto.merge(FieldTimestampData),
-  EntityDto.merge(FieldDateData)
+  EntityDto.extend(FieldTextShortData.shape),
+  EntityDto.extend(FieldTextLongData.shape),
+  EntityDto.extend(FieldOptionsData.shape),
+  EntityDto.extend(FieldURLData.shape),
+  EntityDto.extend(FieldNumberData.shape),
+  EntityDto.extend(_FieldScaleData_MISSING_VALIDATION.shape),
+  EntityDto.extend(FieldBooleanData.shape),
+  EntityDto.extend(FieldTimestampData.shape),
+  EntityDto.extend(FieldDateData.shape)
 ])
 export type FieldDto = z.infer<typeof FieldDto>

@@ -27,3 +27,7 @@ export type UpdatedAtField = z.infer<typeof CreatedAtField>
 // These are directly mapped from Jigsaw colour variants right now.
 export const ColourVariants = z.enum(JColourVariantsList);
 export type ColourVariants = z.infer<typeof ColourVariants>;
+
+// IndexDB can't index boolean types, so 0 and 1 must be used instead.
+export const IsDeletedField = z.union([z.literal(0), z.literal(1)])
+export type IsDeletedField = z.infer<typeof IsDeletedField>

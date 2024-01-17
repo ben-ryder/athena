@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { JDialog, JIcon } from "@ben-ryder/jigsaw-react";
 import { Settings as SettingsIcon } from "lucide-react";
-import { SettingsManager } from "./settings-management";
+import { SettingsManager } from "./settings-manager";
 
 export function SettingsDialog() {
   const [open, setOpen] = useState<boolean>(false)

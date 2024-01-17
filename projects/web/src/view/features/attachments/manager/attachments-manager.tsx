@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
 import "./attachments-manager.scss"
-import {AttachmentData, AttachmentEntity} from "../../../../state/database/attachments/attachments";
+import {AttachmentData, AttachmentEntity} from "../../../../state/schemas/attachments/attachments";
 import {CryptographyHelper} from "../../../../state/encryption/cryptography-helper";
 import {db} from "../../../../state/storage/database";
 
