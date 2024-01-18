@@ -7,7 +7,7 @@ import {
   ContentTypeEntity,
   ContentTypeVersion
 } from "../schemas/content-types/content-types";
-import {FieldData, FieldDto, FieldEntity, FieldVersion} from "../schemas/fields/fields";
+import {FieldDefinition, FieldDto, FieldEntity, FieldVersion} from "../schemas/fields/fields";
 import {ContentData, ContentDto, ContentEntity, ContentVersion} from "../schemas/content/content";
 import {VersionedEntityQueries} from "./entity-queries";
 import * as WebCrypto from "easy-web-crypto";
@@ -27,7 +27,7 @@ export class VaultDatabase extends Dexie {
 
   tagQueries!: VersionedEntityQueries<TagEntity, TagVersion, TagData, TagDto>
   contentTypeQueries!: VersionedEntityQueries<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>
-  fieldQueries!: VersionedEntityQueries<FieldEntity, FieldVersion, FieldData, FieldDto>
+  fieldQueries!: VersionedEntityQueries<FieldEntity, FieldVersion, FieldDefinition, FieldDto>
   contentQueries!: VersionedEntityQueries<ContentEntity, ContentVersion, ContentData, ContentDto>
 
   constructor(vaultName: string) {
@@ -62,13 +62,13 @@ export class VaultDatabase extends Dexie {
         useMemoryCache: false
       }
     )
-    this.fieldQueries = new VersionedEntityQueries<FieldEntity, FieldVersion, FieldData, FieldDto>(
+    this.fieldQueries = new VersionedEntityQueries<FieldEntity, FieldVersion, FieldDefinition, FieldDto>(
       this,
       {
         entityTable: "fields",
         versionTable: "fields_versions",
         entityRelationshipId: "fieldId",
-        dataSchema: FieldData,
+        dataSchema: FieldDefinition,
         useMemoryCache: false
       }
     )

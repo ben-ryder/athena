@@ -1,5 +1,5 @@
 import {runTest} from "./run-test";
-import {JButton, JProse} from "@ben-ryder/jigsaw-react";
+import {JButton} from "@ben-ryder/jigsaw-react";
 import {ReactNode, useMemo, useState} from "react";
 
 import "./performance.scss"
@@ -11,7 +11,7 @@ export interface ReportItem {
 
 export type ReportFunction = (reportItem: ReportItem) => void
 
-export function PerformancePage() {
+export function PerformanceManager() {
 	const [logs, setLogs] = useState<ReportItem[]>([])
 	const [isRunning, setIsRunning] = useState<boolean>(false)
 
@@ -44,7 +44,7 @@ export function PerformancePage() {
 	return (
 		<div className="performance">
 			<div className="performance__header">
-				<h1 className="performance__heading">Vault Performance Tests</h1>
+				<h1 className="performance__heading">Device Performance Benchmark</h1>
 				<JButton className="performance__button" onClick={() => {run()}} disabled={isRunning} loading={isRunning}>Run Test</JButton>
 			</div>
 			<div className="performance__logs-container">

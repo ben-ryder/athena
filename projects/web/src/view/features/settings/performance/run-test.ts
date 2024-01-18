@@ -1,6 +1,6 @@
-import {CryptographyHelper} from "../../../state/encryption/cryptography-helper";
-import {VaultDatabase} from "../../../state/storage/database";
-import {ReportFunction} from "./performance";
+import {CryptographyHelper} from "../../../../state/encryption/cryptography-helper";
+import {VaultDatabase} from "../../../../state/storage/database";
+import {ReportFunction} from "./performance-manager";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
 const MEDIUM_STRING = "Magna pars studiorum, prodita quaerimus. Magna pars studiorum, prodita quaerimus. Cras mattis iudicium purus sit amet fermentum. Quo usque tandem abutere, Catilina, patientia nostra?"

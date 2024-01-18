@@ -14,6 +14,8 @@ export const FieldTypes =  {
   DATE: "date",
   TIMESTAMP: "timestamp"
 } as const
+export type FieldTypeLabels = keyof typeof FieldTypes
+export type FieldTypeValues = typeof FieldTypes[FieldTypeLabels]
 
 /**
  * Validate if a string is a slug
@@ -150,18 +152,18 @@ export const FieldDateData= FieldDataBase.extend({
 }).strict()
 export type FieldDateData = z.infer<typeof FieldDateData>
 
-export const FieldData = z.union([
-  FieldTextShortData,
-  FieldTextLongData,
-  FieldOptionsData,
-  FieldURLData,
-  FieldNumberData,
-  FieldScaleData,
-  FieldBooleanData,
-  FieldTimestampData,
-  FieldDateData
+export const FieldDefinition = z.union([
+  FieldTextShortData.omit({value: true}),
+  FieldTextLongData.omit({value: true}),
+  FieldOptionsData.omit({value: true}),
+  FieldURLData.omit({value: true}),
+  FieldNumberData.omit({value: true}),
+  _FieldScaleData_MISSING_VALIDATION.omit({value: true}),
+  FieldBooleanData.omit({value: true}),
+  FieldTimestampData.omit({value: true}),
+  FieldDateData.omit({value: true})
 ])
-export type FieldData = z.infer<typeof FieldData>
+export type FieldDefinition = z.infer<typeof FieldDefinition>
 
 export const FieldStorage = z.union([
   FieldTextShortData.pick({type: true, value: true}).extend({id: IdField}),

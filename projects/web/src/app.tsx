@@ -7,7 +7,6 @@ import { routes } from "./routes";
 import { MainPage } from "./view/pages/main/main";
 import { PageNotFound } from "./view/pages/page-not-found";
 import { WelcomePage } from "./view/pages/welcome";
-import {PerformancePage} from "./view/pages/performance/performance";
 import { UnderDevelopmentPage } from "./view/pages/under-development/under-development";
 
 export function App() {
@@ -35,8 +34,6 @@ export function App() {
           {/* Basic Pages */}
           <Route path={routes.main} element={<MainPage />} />
           <Route path={routes.welcome} element={<WelcomePage />} />
-
-          <Route path={routes.performance} element={<PerformancePage />} />
 
           {/* 404 Route */}
           <Route path="*" element={<PageNotFound />} />

@@ -7,27 +7,23 @@ import {
   JLabel,
   JOptionData, JColourVariants, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow
 } from "@ben-ryder/jigsaw-react";
-import "./tag-form.scss";
-import { TagData } from "../../../../../state/schemas/tags/tags";
 import { ColourVariants } from "../../../../../state/schemas/common/fields";
 import {ContentFormProps} from "../../../../common/content-form/content-form";
+import {FieldDefinition, FieldTypeLabels, FieldTypes, FieldTypeValues} from "../../../../../state/schemas/fields/fields";
 
-
-export function TagForm(props: ContentFormProps<TagData>) {
+export function FieldForm(props: ContentFormProps<FieldDefinition>) {
   const [error, setError] = useState<string | null>(null);
 
-  const [name, setName] = useState<string>(props.data.name);
-  const [colourVariant, setColourVariant] = useState<ColourVariants|"">(
-    props.data.colourVariant || "",
-  );
+  const [type, setType] = useState<FieldTypeValues>(props.data.type);
+  const [label, setLabel] = useState<string>(props.data.label);
 
-  const tagVariantOptions: JOptionData[] = useMemo(() => {
+
+  const fieldOptions: JOptionData[] = useMemo(() => {
     return [
-      { text: "-- Select Colour --", value: "" },
-      ...ColourVariants.options.map((variant) => ({
+      ...Object.keys(FieldTypes).map((fieldLabel) => ({
         // todo: replace with generic labels, not direct from Jigsaw
-        text: JColourVariants[variant].label,
-        value: variant
+        text: fieldLabel,
+        value: FieldTypes[fieldLabel as FieldTypeLabels]
       }))
     ];
   }, []);
@@ -35,24 +31,24 @@ export function TagForm(props: ContentFormProps<TagData>) {
   function onSave(e: FormEvent) {
     e.preventDefault()
 
-    if (name.length === 0) {
-      setError("Your tag must have a name");
-    }
-    else {
-      setError(null);
-      props.onSave({ name: name, colourVariant: colourVariant || undefined });
-    }
+    // if (name.length === 0) {
+    //   setError("Your tag must have a name");
+    // }
+    // else {
+    //   setError(null);
+    //   props.onSave({ name: name, colourVariant: colourVariant || undefined });
+    // }
   }
 
   return (
-    <JForm className="tag-form" onSubmit={onSave}>
-      <div className="tag-form__back">
+    <JForm className="content-form" onSubmit={onSave}>
+      <div className="content-form__back">
         <JArrowButton
           onClick={() => {
             props.navigate({screen: "list"})
           }}
           direction="left"
-        >All Tags</JArrowButton>
+        >Back</JArrowButton>
       </div>
       <div className="tag-form__header">
         <h2>{props.title}</h2>
@@ -61,30 +57,24 @@ export function TagForm(props: ContentFormProps<TagData>) {
       <JFormContent>
         <JFormRow>
           <JInput
-            label="Name"
-            id="name"
+            label="Label"
+            id="label"
             type="text"
-            value={name}
+            value={label}
             onChange={(e) => {
-              setName(e.target.value);
+              setLabel(e.target.value);
             }}
-            placeholder="a note title..."
+            placeholder="a field label..."
           />
         </JFormRow>
         <JFormRow>
           <JSelect
-            id="variant"
-            label="Colour"
-            options={tagVariantOptions}
-            value={colourVariant}
-            onChange={(e) => {setColourVariant(e.target.value as ColourVariants|"")}}
+            label="Type"
+            id="type"
+            options={fieldOptions}
+            value={type}
+            onChange={(e) => {setType(e.target.value as FieldTypeValues)}}
           />
-        </JFormRow>
-        <JFormRow className="preview-field">
-          <JLabel>Preview</JLabel>
-            <JPill
-              variant={colourVariant as ColourVariants || undefined}
-            >{name || "Preview"}</JPill>
         </JFormRow>
       </JFormContent>
 

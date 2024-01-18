@@ -3,8 +3,9 @@ import { AttachmentsManagerPage } from "../attachments/manager/attachments-manag
 import { JButton, JButtonGroup } from "@ben-ryder/jigsaw-react";
 import { TagsManager } from "./tags/tags-manager";
 import { FieldsManager } from "./fields/fields-manager";
+import {PerformanceManager} from "./performance/performance-manager";
 
-export type SettingsTabs = "tags" | "content-types" | "fields" | "attachments" | "app-settings"
+export type SettingsTabs = "tags" | "content-types" | "fields" | "attachments" | "app-settings" | "performance"
 
 export function SettingsManager() {
   const [currentTab, setCurrentTab] = useState<SettingsTabs>("tags")
@@ -19,6 +20,9 @@ export function SettingsManager() {
   else if (currentTab === "attachments") {
     content = <AttachmentsManagerPage />
   }
+  else if (currentTab === "performance") {
+    content = <PerformanceManager />
+  }
   else {
     content = <p>Tab Not Found: {currentTab}</p>
   }
@@ -31,6 +35,7 @@ export function SettingsManager() {
         <JButton onClick={() => setCurrentTab("fields")}>Fields</JButton>
         <JButton onClick={() => setCurrentTab("attachments")}>Attachments</JButton>
         <JButton onClick={() => setCurrentTab("app-settings")}>App Settings</JButton>
+        <JButton onClick={() => setCurrentTab("performance")}>Device Benchmark</JButton>
       </JButtonGroup>
 
       <div>
