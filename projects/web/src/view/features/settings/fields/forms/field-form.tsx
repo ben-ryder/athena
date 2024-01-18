@@ -3,41 +3,84 @@ import {
   JInput,
   JErrorText,
   JSelect,
-  JPill,
-  JLabel,
-  JOptionData, JColourVariants, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow
+  JOptionData, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow
 } from "@ben-ryder/jigsaw-react";
-import { ColourVariants } from "../../../../../state/schemas/common/fields";
 import {ContentFormProps} from "../../../../common/content-form/content-form";
-import {FieldDefinition, FieldTypeLabels, FieldTypes, FieldTypeValues} from "../../../../../state/schemas/fields/fields";
+import {FieldDefinition} from "../../../../../state/schemas/fields/fields";
+import { FIELD_TYPES, FieldTypes, FieldTypesList } from "../../../../../state/schemas/fields/field-types";
 
-export function FieldForm(props: ContentFormProps<FieldDefinition>) {
+export interface FieldFormProps extends ContentFormProps<FieldDefinition> {
+  disableTypeEdit: boolean
+}
+
+export function FieldForm(props: FieldFormProps) {
   const [error, setError] = useState<string | null>(null);
 
-  const [type, setType] = useState<FieldTypeValues>(props.data.type);
+  const [type, setType] = useState<FieldTypes>(props.data.type);
   const [label, setLabel] = useState<string>(props.data.label);
 
 
   const fieldOptions: JOptionData[] = useMemo(() => {
-    return [
-      ...Object.keys(FieldTypes).map((fieldLabel) => ({
+    return FieldTypesList.map((field) => ({
         // todo: replace with generic labels, not direct from Jigsaw
-        text: fieldLabel,
-        value: FieldTypes[fieldLabel as FieldTypeLabels]
+        text: FIELD_TYPES[field].label,
+        value: FIELD_TYPES[field].identifier,
       }))
-    ];
   }, []);
 
   function onSave(e: FormEvent) {
     e.preventDefault()
 
-    // if (name.length === 0) {
-    //   setError("Your tag must have a name");
-    // }
-    // else {
-    //   setError(null);
-    //   props.onSave({ name: name, colourVariant: colourVariant || undefined });
-    // }
+    let data
+    switch (type) {
+      case FIELD_TYPES.textShort.identifier:
+      case FIELD_TYPES.url.identifier:
+      case FIELD_TYPES.number.identifier:
+      case FIELD_TYPES.boolean.identifier:
+      case FIELD_TYPES.timestamp.identifier:
+      case FIELD_TYPES.date.identifier:
+      case FIELD_TYPES.textLong.identifier: {
+        data = {
+          label,
+          type,
+          required: true
+        }
+        break
+      }
+      case FIELD_TYPES.options.identifier: {
+        data = {
+          label,
+          type,
+          required: true,
+          options: ["Backlog", "Todo", "In Progress", "Done", "Archived"]
+        }
+        break
+      }
+      case FIELD_TYPES.scale.identifier: {
+        data = {
+          label,
+          type,
+          required: true,
+          minLabel: "1",
+          maxLabel: "5",
+        }
+        break
+      }
+      default: {
+        setError("Attempted to save a field type that is not supported.")
+        return;
+      }
+    }
+
+    const parseResult = FieldDefinition.safeParse(data)
+    if (!parseResult.success) {
+      setError("The given data is invalid")
+      console.error(parseResult.error)
+      return
+    }
+
+    setError(null);
+    props.onSave(parseResult.data);
   }
 
   return (
@@ -73,8 +116,10 @@ export function FieldForm(props: ContentFormProps<FieldDefinition>) {
             id="type"
             options={fieldOptions}
             value={type}
-            onChange={(e) => {setType(e.target.value as FieldTypeValues)}}
+            onChange={(e) => {setType(e.target.value as FieldTypes)}}
+            disabled={props.disableTypeEdit}
           />
+          {props.disableTypeEdit && <JErrorText>A fields type can't be changed. This is to prevent compatibility issues with existing content that may already use this field.</JErrorText>}
         </JFormRow>
       </JFormContent>
 

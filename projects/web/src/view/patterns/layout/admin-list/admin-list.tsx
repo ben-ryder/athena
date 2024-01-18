@@ -5,6 +5,7 @@ import { ContentManagerNavigate } from "../../../common/content-manager/content-
 export interface AdminListItemProps {
   id: string
   title: string
+  description?: string
   icon?: ReactNode
   navigate: ContentManagerNavigate
 }
@@ -60,6 +61,11 @@ export function AdminListItem(props: AdminListItemProps) {
         {props.icon && props.icon}
         <h3>{props.title}</h3>
       </div>
+      {props.description &&
+        <div className="admin-list-item__data">
+          <p className="admin-list-item__description">{props.description}</p>
+        </div>
+      }
       <div className="admin-list-item__actions">
         <JButton variant="destructive" onClick={() => {props.navigate({screen: "edit", id: props.id})}}>Delete</JButton>
         <JButton onClick={() => {props.navigate({screen: "edit", id: props.id})}}>Edit</JButton>

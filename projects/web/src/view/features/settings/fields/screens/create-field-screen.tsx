@@ -5,8 +5,9 @@ import { db } from "../../../../../state/storage/database";
 import {
   ContentManagerScreenProps
 } from "../../../../common/content-manager/content-manager";
-import {FieldDefinition, FieldTypes} from "../../../../../state/schemas/fields/fields";
-import {FieldForm} from "./field-form";
+import {FieldDefinition} from "../../../../../state/schemas/fields/fields";
+import {FieldForm} from "../forms/field-form";
+import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
 
 export function CreateFieldScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
@@ -26,9 +27,10 @@ export function CreateFieldScreen(props: ContentManagerScreenProps) {
       {errors.length > 0 && <ErrorCallout errors={errors} />}
       <FieldForm
         title="Create Field"
-        data={{ label: "", type: FieldTypes.TEXT_SHORT, required: true }}
+        data={{ label: "", type: FIELD_TYPES.textShort.identifier, required: true }}
         onSave={onSave}
         navigate={props.navigate}
+        disableTypeEdit={false}
       />
     </>
   );

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { ContentManagerScreens } from "../../../common/content-manager/content-manager";
 import { ListFieldsScreen } from "./screens/list-fields-screen";
-import {CreateFieldScreen} from "./forms/create-field-screen";
+import {CreateFieldScreen} from "./screens/create-field-screen";
+import { EditFieldScreen } from "./screens/edit-field-screen";
 
 export function FieldsManager() {
   const [currentScreen, navigate] = useState<ContentManagerScreens>({screen: "list"})
@@ -10,7 +11,7 @@ export function FieldsManager() {
     return <CreateFieldScreen navigate={navigate} />
   }
   else if (currentScreen.screen === "edit") {
-    return <p>field edit</p>
+    return <EditFieldScreen navigate={navigate} id={currentScreen.id} />
   }
   else {
     return <ListFieldsScreen navigate={navigate} />

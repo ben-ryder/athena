@@ -5,6 +5,7 @@ import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../state/co
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../../../../state/storage/database";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
+import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
 
 export function ListFieldsScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
@@ -24,6 +25,7 @@ export function ListFieldsScreen(props: ContentManagerScreenProps) {
     ? fields.data.map(field => ({
       id: field.id,
       title: field.label,
+      description: `type: ${FIELD_TYPES[field.type].label} | entity: ${field.id} | version: ${field.versionId} | created: ${field.createdAt} | updated: ${field.updatedAt}`,
       navigate: props.navigate
     }))
     : []

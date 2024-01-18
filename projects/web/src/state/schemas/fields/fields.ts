@@ -2,20 +2,7 @@ import {z} from "zod";
 import { IdField } from "../common/fields";
 import isISO8601Date from 'validator/lib/isISO8601';
 import {Entity, EntityDto, EntityVersion} from "../common/entity";
-
-export const FieldTypes =  {
-  TEXT_SHORT: "text-short",
-  TEXT_LONG: "text-long",
-  OPTIONS: "options",
-  URL: "url",
-  NUMBER: "number",
-  SCALE: "scale",
-  BOOLEAN: "boolean",
-  DATE: "date",
-  TIMESTAMP: "timestamp"
-} as const
-export type FieldTypeLabels = keyof typeof FieldTypes
-export type FieldTypeValues = typeof FieldTypes[FieldTypeLabels]
+import { FIELD_TYPES } from "./field-types";
 
 /**
  * Validate if a string is a slug
@@ -36,7 +23,7 @@ export const FieldDataBase = z.object({
 export type FieldDataBase = z.infer<typeof FieldDataBase>
 
 export const FieldTextShortData = FieldDataBase.extend({
-  type: z.literal(FieldTypes.TEXT_SHORT),
+  type: z.literal(FIELD_TYPES.textShort.identifier),
   value: z.string()
     .min(1, "value length must be between 1 and 100")
     .max(100, "value length must be between 1 and 100")
@@ -44,17 +31,8 @@ export const FieldTextShortData = FieldDataBase.extend({
 }).strict()
 export type FieldTextShortData = z.infer<typeof FieldTextShortData>
 
-export const FieldTextLongEditMode = z.enum(["plain", "markdown"])
-export type FieldTextLongEditMode = z.infer<typeof FieldTextLongEditMode>
-
 export const FieldTextLongData = FieldDataBase.extend({
-  type: z.literal(FieldTypes.TEXT_LONG),
-  editMode: FieldTextLongEditMode,
-  defaultRows: z.number()
-    .int("defaultRows value must be a whole integer number")
-    .min(1, "defaultRows value must be between 1 and 50")
-    .min(50, "defaultRows value must be between 1 and 50")
-    .optional(),
+  type: z.literal(FIELD_TYPES.textLong.identifier),
   value: z.string()
     .min(1, "value length must be at least 1 character")
     .nullable()
@@ -62,19 +40,15 @@ export const FieldTextLongData = FieldDataBase.extend({
 export type FieldTextLongData = z.infer<typeof FieldTextLongData>
 
 export const FieldOptionsData = FieldDataBase.extend({
-  type: z.literal(FieldTypes.OPTIONS),
-  options: z.array(z.object({
-    label: z.string(),
-    slug: z.string()
-      .refine(isValidSlug)
-  })),
+  type: z.literal(FIELD_TYPES.options.identifier),
+  options: z.array(z.string()),
   value: z.string()
     .nullable()
 }).strict()
 export type FieldOptionsData = z.infer<typeof FieldOptionsData>
 
 export const FieldURLData = FieldDataBase.extend({
-  type: z.literal(FieldTypes.URL),
+  type: z.literal(FIELD_TYPES.url.identifier),
   value: z.string()
     .url("URL value must be a valid URL.")
     .nullable()
@@ -82,65 +56,42 @@ export const FieldURLData = FieldDataBase.extend({
 export type FieldURLData = z.infer<typeof FieldURLData>
 
 export const FieldNumberData = FieldDataBase.extend({
-  type: z.literal(FieldTypes.NUMBER),
+  type: z.literal(FIELD_TYPES.number.identifier),
   value: z.number()
     .nullable()
 }).strict()
 export type FieldNumberData = z.infer<typeof FieldNumberData>
 
-export const _FieldScaleData_MISSING_VALIDATION = FieldDataBase.extend({
-  type: z.literal(FieldTypes.SCALE),
+export const FieldScaleData = FieldDataBase.extend({
+  type: z.literal(FIELD_TYPES.scale.identifier),
   minLabel: z.string()
     .min(1, "minLabel length must be between 1 and 20 chars")
-    .max(1, "minLabel length must be between 1 and 20 chars"),
-  maxLabel: z.number()
+    .max(20, "minLabel length must be between 1 and 20 chars"),
+  maxLabel: z.string()
     .min(1, "maxLabel length must be between 1 and 20 chars")
-    .max(1, "maxLabel length must be between 1 and 20 chars"),
-    // todo: allow scaleMin to be configured? Allow below 1?
-  scaleMax: z.number()
-    .int("scaleMax must be a whole integer number")
-    .min(3, "scaleMax must be between 3 and 5")
-    .max(5, "scaleMax must be between 3 and 5"),
+    .max(20, "maxLabel length must be between 1 and 20 chars"),
   value: z.number()
     .int("value must be a whole integer number")
     .nullable()
-})
-  .strict()
-export type _FieldScaleData_MISSING_VALIDATION = z.infer<typeof _FieldScaleData_MISSING_VALIDATION>
-
-// The return of .refine is ZodEffect which can't be processed like a ZodObject (.pick, .merge etc don't work).
-// This means that in order use .refine to validate WHILE ALSO using underlying ZodObject, they must be separate.
-// Adding _ and _MISSING_VALIDATION is an attempt to reduce the risk of using the 'unrefined' object for validation.
-// See https://github.com/colinhacks/zod/issues/2474 for more info.
-export const FieldScaleData = _FieldScaleData_MISSING_VALIDATION
-  // Validate that value is within the range 1 - scaleMax
-  .refine(
-    (data) => {
-      return data.value !== null ? data.value >= 1 && data.value <= data.scaleMax : true
-    },
-    (data) => {
-      return {
-        message: `value must be between 1 and ${data.scaleMax}`
-      }
-    }
-  )
+}).strict()
+export type FieldScaleData = z.infer<typeof FieldScaleData>
 
 export const FieldBooleanData = FieldDataBase.extend({
-  type: z.literal(FieldTypes.BOOLEAN),
+  type: z.literal(FIELD_TYPES.boolean.identifier),
   value: z.boolean()
     .nullable()
 }).strict()
 export type FieldBooleanData = z.infer<typeof FieldBooleanData>
 
 export const FieldTimestampData= FieldDataBase.extend({
-  type: z.literal(FieldTypes.TIMESTAMP),
+  type: z.literal(FIELD_TYPES.timestamp.identifier),
   value: z.string().datetime()
     .nullable()
 }).strict()
 export type FieldTimestampData = z.infer<typeof FieldTimestampData>
 
 export const FieldDateData= FieldDataBase.extend({
-  type: z.literal(FieldTypes.DATE),
+  type: z.literal(FIELD_TYPES.date.identifier),
   value: z.string()
     .nullable()
     .refine(
@@ -158,7 +109,7 @@ export const FieldDefinition = z.union([
   FieldOptionsData.omit({value: true}),
   FieldURLData.omit({value: true}),
   FieldNumberData.omit({value: true}),
-  _FieldScaleData_MISSING_VALIDATION.omit({value: true}),
+  FieldScaleData.omit({value: true}),
   FieldBooleanData.omit({value: true}),
   FieldTimestampData.omit({value: true}),
   FieldDateData.omit({value: true})
@@ -171,7 +122,7 @@ export const FieldStorage = z.union([
   FieldOptionsData.pick({type: true, value: true}).extend({id: IdField}),
   FieldURLData.pick({type: true, value: true}).extend({id: IdField}),
   FieldNumberData.pick({type: true, value: true}).extend({id: IdField}),
-  _FieldScaleData_MISSING_VALIDATION.pick({type: true,  value: true}).extend({id: IdField}),
+  FieldScaleData.pick({type: true,  value: true}).extend({id: IdField}),
   FieldBooleanData.pick({type: true, value: true}).extend({id: IdField}),
   FieldTimestampData.pick({type: true, value: true}).extend({id: IdField}),
   FieldDateData.pick({type: true, value: true}).extend({id: IdField}),
@@ -192,7 +143,7 @@ export const FieldDto = z.union([
   EntityDto.extend(FieldOptionsData.shape),
   EntityDto.extend(FieldURLData.shape),
   EntityDto.extend(FieldNumberData.shape),
-  EntityDto.extend(_FieldScaleData_MISSING_VALIDATION.shape),
+  EntityDto.extend(FieldScaleData.shape),
   EntityDto.extend(FieldBooleanData.shape),
   EntityDto.extend(FieldTimestampData.shape),
   EntityDto.extend(FieldDateData.shape)
