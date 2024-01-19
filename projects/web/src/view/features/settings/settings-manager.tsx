@@ -4,6 +4,7 @@ import { JButton, JButtonGroup } from "@ben-ryder/jigsaw-react";
 import { TagsManager } from "./tags/tags-manager";
 import { FieldsManager } from "./fields/fields-manager";
 import {PerformanceManager} from "./performance/performance-manager";
+import {ContentTypesManager} from "./content-types/content-types-manager";
 
 export type SettingsTabs = "tags" | "content-types" | "fields" | "attachments" | "app-settings" | "performance"
 
@@ -13,6 +14,9 @@ export function SettingsManager() {
   let content: ReactNode
   if (currentTab === "tags") {
     content = <TagsManager />
+  }
+  else if (currentTab === "content-types") {
+    content = <ContentTypesManager />
   }
   else if (currentTab === "fields") {
     content = <FieldsManager />

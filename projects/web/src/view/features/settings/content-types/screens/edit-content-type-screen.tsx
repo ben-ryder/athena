@@ -6,22 +6,22 @@ import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../state/co
 import {
   ContentManagerContentScreenProps,
 } from "../../../../common/content-manager/content-manager";
-import { FieldForm } from "../forms/field-form";
-import { FieldDefinition } from "../../../../../state/schemas/fields/fields";
+import {ContentTypeForm} from "../forms/content-type-form";
+import {ContentTypeData} from "../../../../../state/schemas/content-types/content-types";
 
-export function EditFieldScreen(props: ContentManagerContentScreenProps) {
+export function EditContentTypeScreen(props: ContentManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const fieldQuery = useLiveQuery(async () => {
-    const query = await db.fieldQueries.get(props.id)
+  const contentTypeQuery = useLiveQuery(async () => {
+    const query = await db.contentTypeQueries.get(props.id)
     if (query.success) {
       return {status: QueryStatus.SUCCESS, data: query.data, errors: query.errors}
     }
     return {status: QueryStatus.ERROR, errors: query.errors, data: null}
   }, [], QUERY_LOADING)
 
-  async function onSave(updatedData: Partial<FieldDefinition>) {
-    const res = await db.fieldQueries.update(props.id, updatedData)
+  async function onSave(updatedData: Partial<ContentTypeData>) {
+    const res = await db.contentTypeQueries.update(props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -31,7 +31,7 @@ export function EditFieldScreen(props: ContentManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await db.tagQueries.delete(props.id)
+    const res = await db.contentTypeQueries.delete(props.id)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -43,17 +43,16 @@ export function EditFieldScreen(props: ContentManagerContentScreenProps) {
   return (
     <div>
       {errors.length > 0 && <ErrorCallout errors={errors} />}
-      {fieldQuery.status === QueryStatus.LOADING && (
+      {contentTypeQuery.status === QueryStatus.LOADING && (
         <p>Loading...</p>
       )}
-      {fieldQuery.status === QueryStatus.SUCCESS &&
-        <FieldForm
-          title={`Edit Field '${fieldQuery.data.label}'`}
-          data={fieldQuery.data}
+      {contentTypeQuery.status === QueryStatus.SUCCESS &&
+        <ContentTypeForm
+          title={`Edit Content Type '${contentTypeQuery.data.name}'`}
+          data={contentTypeQuery.data}
           onSave={onSave}
           onDelete={onDelete}
           navigate={props.navigate}
-          disableTypeEdit={true}
         />
       }
     </div>

@@ -6,10 +6,10 @@ export const ContentTypeData = z.object({
   name: NameField,
   description: DescriptionField,
   icon: z.string().optional(),
-  colourVariant: ColourVariants,
-  contentTemplateName: NameField,
-  contentTemplateDescription: NameField,
-  contentTemplateTags: z.array(IdField),
+  colourVariant: ColourVariants.optional(),
+  contentTemplateName: NameField.optional(),
+  contentTemplateDescription: NameField.optional(),
+  contentTemplateTags: z.array(IdField).optional(),
   fields: z.array(IdField)
 }).strict()
 export type ContentTypeData = z.infer<typeof ContentTypeData>

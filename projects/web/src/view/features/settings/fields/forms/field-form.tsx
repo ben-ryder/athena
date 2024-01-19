@@ -3,7 +3,7 @@ import {
   JInput,
   JErrorText,
   JSelect,
-  JOptionData, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow
+  JOptionData, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow, JProse
 } from "@ben-ryder/jigsaw-react";
 import {ContentFormProps} from "../../../../common/content-form/content-form";
 import {FieldDefinition} from "../../../../../state/schemas/fields/fields";
@@ -119,7 +119,11 @@ export function FieldForm(props: FieldFormProps) {
             onChange={(e) => {setType(e.target.value as FieldTypes)}}
             disabled={props.disableTypeEdit}
           />
-          {props.disableTypeEdit && <JErrorText>A fields type can't be changed. This is to prevent compatibility issues with existing content that may already use this field.</JErrorText>}
+          {props.disableTypeEdit &&
+            <JProse>
+              <p><em>The type of a field can't be changed. This is to prevent compatibility issues with existing content that may already use this field.</em></p>
+            </JProse>
+          }
         </JFormRow>
       </JFormContent>
 
