@@ -46,7 +46,7 @@ export function AdminList(props: AdminListProps) {
       {!props.isLoading && props.items.length > 0 &&
         <ul className="admin-list__list">
           {props.items.map(item =>
-            <AdminListItem {...item} />
+            <AdminListItem key={item.id} {...item} />
           )}
         </ul>
       }

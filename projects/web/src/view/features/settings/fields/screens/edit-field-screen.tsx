@@ -31,7 +31,7 @@ export function EditFieldScreen(props: ContentManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await db.tagQueries.delete(props.id)
+    const res = await db.fieldQueries.delete(props.id)
     if (!res.success) {
       setErrors(res.errors)
     }

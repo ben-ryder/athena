@@ -7,8 +7,6 @@ export interface ErrorCalloutProps {
 }
 
 export function ErrorCallout(props: ErrorCalloutProps) {
-  console.error(props.errors)
-
   return (
     <JCallout variant="critical">
       {props.errors.map(error => (
