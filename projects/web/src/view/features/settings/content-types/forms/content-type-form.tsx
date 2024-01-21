@@ -18,7 +18,7 @@ import {ContentTypeData} from "../../../../../state/schemas/content-types/conten
 import {ColourVariants} from "../../../../../state/schemas/common/fields";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../../../../state/storage/database";
-import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../state/control-flow";
+import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
 import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 

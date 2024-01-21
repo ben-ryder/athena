@@ -1,4 +1,3 @@
-import { c } from "@storybook/theming/dist/create-df04f5c3";
 
 export enum ErrorTypes {
   ENTITY_NOT_FOUND = 'entity-not-found',
@@ -30,7 +29,7 @@ export const QueryStatus = {
   ERROR: "error"
 } as const
 
-export type QueryResult<Data = null> = {
+export type Query<Data = null> = {
   status: typeof QueryStatus.LOADING,
 } | {
   status: typeof QueryStatus.SUCCESS,

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import { ErrorObject } from "../../../../../state/control-flow";
+import { ErrorObject } from "../../../../../../localful/control-flow";
 import { db } from "../../../../../state/storage/database";
 import {
   ContentManagerScreenProps

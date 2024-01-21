@@ -1,9 +1,9 @@
 import { ZodTypeAny } from "zod";
 import { VaultDatabase } from "./database";
 import { Entity, EntityDto, EntityUpdate, EntityVersion } from "../schemas/common/entity";
-import { CryptographyHelper } from "../encryption/cryptography-helper";
-import { ActionResult, ErrorObject, ErrorTypes } from "../control-flow";
-import {memoryCache} from "./memory-cache";
+import { LocalfulEncryption } from "../../../localful/encryption/localful-encryption";
+import { ActionResult, ErrorObject, ErrorTypes } from "../../../localful/control-flow";
+import {memoryCache} from "../../../localful/storage/memory-cache";
 
 export interface VersionedEntityQueriesConfig {
   entityTable: string,
@@ -54,7 +54,7 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    */
   async _createEntityVersionDto(entity: EntitySchema, version: VersionSchema): Promise<DtoSchema> {
     const encryptionKey = await this.db.getEncryptionKey()
-    const decryptedData = await CryptographyHelper.decryptAndValidateData<DataSchema>(
+    const decryptedData = await LocalfulEncryption.decryptAndValidateData<DataSchema>(
       encryptionKey,
       this.config.dataSchema,
       version.data
@@ -174,11 +174,11 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
    * @param data
    */
   async create(data: DataSchema): Promise<ActionResult<string>> {
-    const entityId = await CryptographyHelper.generateUUID();
+    const entityId = await LocalfulEncryption.generateUUID();
     const timestamp = new Date().toISOString();
 
     const encryptionKey = await this.db.getEncryptionKey()
-    const encResult = await CryptographyHelper.encryptData(encryptionKey, data)
+    const encResult = await LocalfulEncryption.encryptData(encryptionKey, data)
     if (!encResult.success) return encResult
 
     await this.db.table(this.config.entityTable).add({
@@ -187,7 +187,7 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
       createdAt: timestamp,
     })
 
-    const versionId = await CryptographyHelper.generateUUID();
+    const versionId = await LocalfulEncryption.generateUUID();
     await this.db.table(this.config.versionTable).add({
       [this.config.entityRelationshipId]: entityId,
       id: versionId,
@@ -215,7 +215,7 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
       await memoryCache.delete(`${this.config.entityTable}-getAll`)
     }
 
-    const newVersionId = await CryptographyHelper.generateUUID();
+    const newVersionId = await LocalfulEncryption.generateUUID();
     const timestamp = new Date().toISOString();
 
     // Pick out all entity/version fields, which will leave only data fields.
@@ -232,7 +232,7 @@ export class VersionedEntityQueries<EntitySchema extends Entity, VersionSchema e
     }
 
     const encryptionKey = await this.db.getEncryptionKey()
-    const encResult = await CryptographyHelper.encryptData(encryptionKey, updatedData)
+    const encResult = await LocalfulEncryption.encryptData(encryptionKey, updatedData)
     if (!encResult.success) return encResult
 
     await this.db.table(this.config.versionTable).add({

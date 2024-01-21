@@ -1,4 +1,4 @@
-import {CryptographyHelper} from "../../../../state/encryption/cryptography-helper";
+import {LocalfulEncryption} from "../../../../../localful/encryption/localful-encryption";
 import {VaultDatabase} from "../../../../state/storage/database";
 import {ReportFunction} from "./performance-manager";
 
@@ -22,7 +22,7 @@ export async function runTest(report: ReportFunction) {
 	const benchmarkStartTime = performance.now()
 
 	report({level: "section", text: "Setup"})
-	const vaultId = await CryptographyHelper.generateUUID()
+	const vaultId = await LocalfulEncryption.generateUUID()
 	const vaultName = `perf_${vaultId}`
 	const perfDb = new VaultDatabase(vaultName)
 	report({level: "message", text: `Created test vault ${vaultName}`})

@@ -6,7 +6,7 @@ import * as WebCrypto from "easy-web-crypto"
  * A helper class which contains the cryptographic functions used
  * to encrypt and decrypt data.
  */
-export class CryptographyHelper {
+export class LocalfulEncryption {
   /**
    * Encrypt the given text.
    * The returned string will include the encrypted text and initialization vector combined.
@@ -51,7 +51,7 @@ export class CryptographyHelper {
    */
   static async encryptData<T>(key: CryptoKey, data: T): Promise<ActionResult<string>> {
     const dataString = JSON.stringify(data)
-    return CryptographyHelper.encryptText(key, dataString)
+    return LocalfulEncryption.encryptText(key, dataString)
   }
 
   /**
@@ -66,7 +66,7 @@ export class CryptographyHelper {
     schema: z.ZodType<T>,
     ciphertext: string
   ): Promise<ActionResult<T>> {
-    const decryptResult = await CryptographyHelper.decryptText(key, ciphertext)
+    const decryptResult = await LocalfulEncryption.decryptText(key, ciphertext)
     if (!decryptResult.success) return decryptResult
 
     let rawData

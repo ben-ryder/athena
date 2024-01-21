@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
 import "./attachments-manager.scss"
 import {AttachmentData, AttachmentEntity} from "../../../../state/schemas/attachments/attachments";
-import {CryptographyHelper} from "../../../../state/encryption/cryptography-helper";
+import {LocalfulEncryption} from "../../../../../localful/encryption/localful-encryption";
 import {db} from "../../../../state/storage/database";
 
 export interface FileRender {
@@ -33,7 +33,7 @@ export function AttachmentsManagerPage() {
           const fileContent = await file.arrayBuffer()
           const fileText = new TextDecoder().decode(fileContent)
 
-          const id = await CryptographyHelper.generateUUID()
+          const id = await LocalfulEncryption.generateUUID()
           const timestamp = new Date().toISOString()
 
           const attachmentData: AttachmentData = {
@@ -44,7 +44,7 @@ export function AttachmentsManagerPage() {
           }
 
           const encryptionKey = await db.getEncryptionKey()
-          const encResult = await CryptographyHelper.encryptData(encryptionKey, attachmentData)
+          const encResult = await LocalfulEncryption.encryptData(encryptionKey, attachmentData)
           if (!encResult.success) {
             console.debug(encResult.errors)
             return
@@ -71,7 +71,7 @@ export function AttachmentsManagerPage() {
     const files: FileRender[] = []
     for (const blobData of blobs) {
       const key = await db.getEncryptionKey()
-      const decryptResult = await CryptographyHelper.decryptAndValidateData(key, AttachmentData, blobData.data)
+      const decryptResult = await LocalfulEncryption.decryptAndValidateData(key, AttachmentData, blobData.data)
       if (decryptResult.success) {
         const rawBlob = new TextEncoder().encode(decryptResult.data.data)
 

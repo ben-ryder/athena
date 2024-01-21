@@ -1,6 +1,6 @@
 import { JCallout } from "@ben-ryder/jigsaw-react";
 import React from "react";
-import { ErrorObject } from "../../../../state/control-flow";
+import { ErrorObject } from "../../../../../localful/control-flow";
 
 export interface ErrorCalloutProps {
   errors: ErrorObject[]
