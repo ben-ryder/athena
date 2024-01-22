@@ -31,23 +31,22 @@ export const LOCALFUL_VERSION = Object.freeze(1)
 const ENTITY_INDEXED_FIELDS = ['id', 'isDeleted'] as const
 const VERSION_INDEXED_FIELDS = ['id', 'entityId'] as const
 
-export const EXAMPLE_VAULT_ID = 'C68EF132-75F3-456A-B43C-89F662B79A19'
 
-export class LocalfulWeb {
-	currentDatabaseId: string
+export class LocalfulWeb<UserDataSchema extends DataSchema> {
+	currentDatabaseId: string | undefined
 	events: EventTarget
 	dataSchema: DataSchema
 
 	private _db: Dexie | undefined
-	private entityTables: {
+	private readonly entityTables: {
 		[key: string]: EntityTable<never, never, never, never>
 	}
-	private dexieTables: {
+	private readonly dexieTables: {
 		[key: string]: string
 	}
 
 	constructor(config: LocalfulWebConfig) {
-		this.currentDatabaseId = EXAMPLE_VAULT_ID
+		this.currentDatabaseId = config.initialDatabaseId
 
 		this.events = new EventTarget()
 
@@ -56,9 +55,9 @@ export class LocalfulWeb {
 		this.dexieTables = {}
 		for (const entityKey of Object.keys(config.dataSchema)) {
 			const versionTableName = `${entityKey}_versions`
-			// @ts-ignore
+			// @ts-expect-error - fuck it, probably fine :)
 			dexieTables[entityKey] = ENTITY_INDEXED_FIELDS.join(",")
-			// @ts-ignore
+			// @ts-expect-error - fuck it, probably fine :)
 			dexieTables[versionTableName] = VERSION_INDEXED_FIELDS.join(",")
 		}
 
@@ -78,8 +77,11 @@ export class LocalfulWeb {
 		}
 	}
 
-	db<EntitySchema extends Entity, VersionSchema extends EntityVersion, DataSchema, DtoSchema extends EntityDto>(entityKey: string): EntityTable<EntitySchema, VersionSchema, DataSchema, DtoSchema> {
-		return this.entityTables[entityKey]
+	db<SchemaKey>(entityKey: SchemaKey) {
+
+		UserDataSchema[SchemaKey]['']
+
+		return this.entityTables[entityKey] as EntityTable<UserDataSchema[SchemaKey][''], any, any, any>
 	}
 
 	async getCurrentDatabase(): Promise<Dexie> {

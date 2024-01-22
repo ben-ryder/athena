@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TagForm } from "../forms/tag-form";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import { TagData } from "../../../../../state/schemas/tags/tags";
+import { TagData, TagDto } from "../../../../../state/schemas/tags/tags";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
 import {
@@ -22,7 +22,7 @@ export function EditTagScreen(props: ContentManagerContentScreenProps) {
   }, [], QUERY_LOADING)
 
   async function onSave(updatedData: Partial<TagData>) {
-    const res = await localful.db('tags').update(props.id, updatedData)
+    const res = await localful.db<TagDto>('tags').update(props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }

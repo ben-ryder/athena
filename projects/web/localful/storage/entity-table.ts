@@ -5,8 +5,7 @@ import { LocalfulEncryption } from "../encryption/localful-encryption";
 import { memoryCache } from "./memory-cache";
 import { Observable } from "rxjs";
 import { LocalfulWeb } from "../localful-web";
-import { createDataEvent, DataEventCauses, DataEventDetails, getDataEventKey } from "../events/events";
-import { Dexie } from "dexie";
+import { createDataEvent, DataEventCauses, DataEventDetails, EventTypes, getDataEventKey } from "../events/events";
 
 export interface EntityTableConfig {
 	entityTable: string,
@@ -40,8 +39,8 @@ export interface EntityTableQueries<EntitySchema, VersionSchema, DataSchema, Dto
 	observableGetAll: () => Observable<Query<DtoSchema[]>>
 }
 
-export class EntityTable<EntitySchema extends Entity, VersionSchema extends EntityVersion, DataSchema, DtoSchema extends EntityDto>
-	implements EntityTableQueries<EntitySchema, VersionSchema, DataSchema, DtoSchema> {
+export class EntityTable<DataSchema>
+	implements EntityTableQueries<Entity, EntityVersion, DataSchema, DataSchema extends EntityDto> {
 	localful: LocalfulWeb
 
 	entityTable: string
@@ -331,7 +330,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * This is different to deletion, which will only delete all versions and set
 	 * the 'isDeleted' flag on teh entity.
 	 *
-	 * @param id
+	 * @param entityId
 	 */
 	async purge(entityId: string): Promise<ActionResult> {
 		const db = await this.localful.getCurrentDatabase()
@@ -426,30 +425,36 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 			const eventKey = getDataEventKey(this.entityTable)
 			subscriber.next(QUERY_LOADING)
 
-			const query = async () => {
+			const runQuery = async () => {
 				subscriber.next(QUERY_LOADING)
 
 				const result = await this.get(id)
 				if (result.success) {
 					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
 				}
-				subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				else {
+					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				}
 			}
 
 			const handleEvent = (e: CustomEvent<DataEventDetails>) => {
 				// Discard query if ID doesn't match, as the data won't have changed.
 				if (e.detail.id === id) {
-					query()
+					runQuery()
 				}
 			}
 
+			// @ts-expect-error - addEventListener CAN accept CustomEvent handler
 			this.localful.events.addEventListener(eventKey, handleEvent)
+			this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
 
 			// Run initial query
-			query()
+			runQuery()
 
 			return () => {
+				// @ts-expect-error - addEventListener CAN accept CustomEvent handler
 				this.localful.events.removeEventListener(eventKey, handleEvent)
+				this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
 			}
 		})
 	}
@@ -459,29 +464,35 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 			const eventKey = getDataEventKey(this.entityTable)
 			subscriber.next(QUERY_LOADING)
 
-			const query = async () => {
+			const runQuery = async () => {
 				subscriber.next(QUERY_LOADING)
 
 				const result = await this.getMany(ids)
 				if (result.success) {
 					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
 				}
-				subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				else {
+					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				}
 			}
 
 			const handleEvent = (e: CustomEvent<DataEventDetails>) => {
 				if (ids.includes(e.detail.id)) {
-					query()
+					runQuery()
 				}
 			}
 
+			// @ts-expect-error - addEventListener CAN accept CustomEvent handler
 			this.localful.events.addEventListener(eventKey, handleEvent)
+			this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
 
 			// Run initial query
-			query()
+			runQuery()
 
 			return () => {
+				// @ts-expect-error - addEventListener CAN accept CustomEvent handler
 				this.localful.events.removeEventListener(eventKey, handleEvent)
+				this.localful.events.removeEventListener(EventTypes.DATABASE_SWITCH, runQuery)
 			}
 		})
 	}
@@ -491,27 +502,31 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 			const eventKey = getDataEventKey(this.entityTable)
 			subscriber.next(QUERY_LOADING)
 
-			const query = async () => {
+			const runQuery = async () => {
 				subscriber.next(QUERY_LOADING)
 
 				const result = await this.getAll()
 				if (result.success) {
 					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
 				}
-				subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				else {
+					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				}
 			}
 
 			const handleEvent = () => {
-				query()
+				runQuery()
 			}
 
 			this.localful.events.addEventListener(eventKey, handleEvent)
+			this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
 
 			// Run initial query
-			query()
+			runQuery()
 
 			return () => {
 				this.localful.events.removeEventListener(eventKey, handleEvent)
+				this.localful.events.removeEventListener(EventTypes.DATABASE_SWITCH, runQuery)
 			}
 		})
 	}
