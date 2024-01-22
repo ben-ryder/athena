@@ -1,27 +1,23 @@
 import { ContentManagerScreenProps } from "../../../../common/content-manager/content-manager";
 import { AdminList, AdminListItemProps } from "../../../../patterns/layout/admin-list/admin-list";
 import React, { useState } from "react";
-import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../../../../../state/storage/database";
+import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
+import { useObservableQuery } from "@localful-athena/react/use-observable-query";
+import { localful } from "../../../../../state/athena-localful";
+import {
+  ContentTypeData, ContentTypeDto,
+  ContentTypeEntity,
+  ContentTypeVersion
+} from "../../../../../state/schemas/content-types/content-types";
 
 export function ListContentTypesScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const contentType = useLiveQuery(async () => {
-    const result = await db.contentTypeQueries.getAll()
-    if (result.success) {
-      return {status: QueryStatus.SUCCESS, data: result.data}
-    }
-    if (result.errors) {
-      setErrors(result.errors)
-    }
-    return {status: QueryStatus.ERROR, errors: result.errors, data: null}
-  }, [], QUERY_LOADING)
+  const contentTypes = useObservableQuery(localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').observableGetAll())
 
-  const listItems: AdminListItemProps[] = contentType.status === QueryStatus.SUCCESS
-    ? contentType.data.map(contentType => ({
+  const listItems: AdminListItemProps[] = contentTypes.status === QueryStatus.SUCCESS
+    ? contentTypes.data.map(contentType => ({
       id: contentType.id,
       title: contentType.name,
       description: `desc: ${contentType.description} | entity: ${contentType.id} | version: ${contentType.versionId} | created: ${contentType.createdAt} | updated: ${contentType.updatedAt}`,
@@ -38,7 +34,7 @@ export function ListContentTypesScreen(props: ContentManagerScreenProps) {
         addNewText="New Content Type"
         noItemsText="No Content Types"
         loadingText="Loading Content Types..."
-        isLoading={contentType.status === QueryStatus.LOADING}
+        isLoading={contentTypes.status === QueryStatus.LOADING}
         items={listItems}
         navigate={props.navigate}
       />

@@ -1,25 +1,17 @@
 import { ContentManagerScreenProps } from "../../../../common/content-manager/content-manager";
 import { AdminList, AdminListItemProps } from "../../../../patterns/layout/admin-list/admin-list";
 import React, { useState } from "react";
-import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../../../../../state/storage/database";
+import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
+import { useObservableQuery } from "@localful-athena/react/use-observable-query";
+import { localful } from "../../../../../state/athena-localful";
+import { FieldDefinition, FieldDto, FieldEntity, FieldVersion } from "../../../../../state/schemas/fields/fields";
 
 export function ListFieldsScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const fields = useLiveQuery(async () => {
-    const result = await db.fieldQueries.getAll()
-    if (result.success) {
-      return {status: QueryStatus.SUCCESS, data: result.data}
-    }
-    if (result.errors) {
-      setErrors(result.errors)
-    }
-    return {status: QueryStatus.ERROR, errors: result.errors, data: null}
-  }, [], QUERY_LOADING)
+  const fields = useObservableQuery(localful.db<FieldEntity, FieldVersion, FieldDefinition, FieldDto>('fields').observableGetAll())
 
   const listItems: AdminListItemProps[] = fields.status === QueryStatus.SUCCESS
     ? fields.data.map(field => ({

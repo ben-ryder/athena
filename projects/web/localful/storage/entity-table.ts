@@ -39,8 +39,8 @@ export interface EntityTableQueries<EntitySchema, VersionSchema, DataSchema, Dto
 	observableGetAll: () => Observable<Query<DtoSchema[]>>
 }
 
-export class EntityTable<DataSchema>
-	implements EntityTableQueries<Entity, EntityVersion, DataSchema, DataSchema extends EntityDto> {
+export class EntityTable<EntitySchema extends Entity, VersionSchema extends EntityVersion, DataSchema, DtoSchema extends EntityDto>
+	implements EntityTableQueries<EntitySchema, VersionSchema, DataSchema, DtoSchema> {
 	localful: LocalfulWeb
 
 	entityTable: string
@@ -285,7 +285,7 @@ export class EntityTable<DataSchema>
 
 		await db.table(this.entityTable).update(entityId, {isDeleted: 1})
 		await db.table(this.versionTable)
-			.where(this.versionTable).equals(entityId)
+			.where('entityId').equals(entityId)
 			.delete()
 
 		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.DELETE, id: entityId})
@@ -303,7 +303,7 @@ export class EntityTable<DataSchema>
 		const db = await this.localful.getCurrentDatabase()
 
 		const versions = await db.table<VersionSchema>(this.versionTable)
-			.where(this.versionTable).equals(entityId)
+			.where('entityId').equals(entityId)
 			.toArray()
 		return {success: true, data: versions}
 	}
@@ -342,7 +342,7 @@ export class EntityTable<DataSchema>
 
 		await db.table(this.entityTable).delete(entityId)
 		await db.table(this.versionTable)
-			.where(this.versionTable).equals(entityId)
+			.where('entityId').equals(entityId)
 			.delete()
 
 		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.DELETE, id: entityId})
@@ -364,7 +364,7 @@ export class EntityTable<DataSchema>
 		if (!latestVersion.success) return latestVersion
 
 		await db.table(this.versionTable)
-			.where(this.versionTable).equals(entityId)
+			.where('entityId').equals(entityId)
 			.and((version => version.id !== latestVersion.data.id))
 			.delete()
 

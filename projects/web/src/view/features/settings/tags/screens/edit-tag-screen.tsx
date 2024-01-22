@@ -1,28 +1,22 @@
 import React, { useState } from "react";
 import { TagForm } from "../forms/tag-form";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import { TagData, TagDto } from "../../../../../state/schemas/tags/tags";
-import { useLiveQuery } from "dexie-react-hooks";
-import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
+import { TagData, TagDto, TagEntity, TagVersion } from "../../../../../state/schemas/tags/tags";
+import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import {
   ContentManagerContentScreenProps,
 } from "../../../../common/content-manager/content-manager";
 import {localful} from "../../../../../state/athena-localful";
+import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 
 
 export function EditTagScreen(props: ContentManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const tagResult = useLiveQuery(async () => {
-    const tag = await localful.db('tags').get(props.id)
-    if (tag.success) {
-      return {status: QueryStatus.SUCCESS, data: tag.data, errors: tag.errors}
-    }
-    return {status: QueryStatus.ERROR, errors: tag.errors, data: null}
-  }, [], QUERY_LOADING)
+  const tagResult = useObservableQuery(localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').observableGet(props.id))
 
   async function onSave(updatedData: Partial<TagData>) {
-    const res = await localful.db<TagDto>('tags').update(props.id, updatedData)
+    const res = await localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').update(props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -32,7 +26,7 @@ export function EditTagScreen(props: ContentManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await localful.db('tags').delete(props.id)
+    const res = await localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').delete(props.id)
     if (!res.success) {
       setErrors(res.errors)
     }

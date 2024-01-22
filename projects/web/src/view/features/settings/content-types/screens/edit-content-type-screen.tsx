@@ -1,27 +1,25 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import { db } from "../../../../../state/storage/database";
-import { useLiveQuery } from "dexie-react-hooks";
-import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
+import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import {
   ContentManagerContentScreenProps,
 } from "../../../../common/content-manager/content-manager";
 import {ContentTypeForm} from "../forms/content-type-form";
-import {ContentTypeData} from "../../../../../state/schemas/content-types/content-types";
+import {
+  ContentTypeData, ContentTypeDto,
+  ContentTypeEntity,
+  ContentTypeVersion
+} from "../../../../../state/schemas/content-types/content-types";
+import { useObservableQuery } from "@localful-athena/react/use-observable-query";
+import { localful } from "../../../../../state/athena-localful";
 
 export function EditContentTypeScreen(props: ContentManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const contentTypeQuery = useLiveQuery(async () => {
-    const query = await db.contentTypeQueries.get(props.id)
-    if (query.success) {
-      return {status: QueryStatus.SUCCESS, data: query.data, errors: query.errors}
-    }
-    return {status: QueryStatus.ERROR, errors: query.errors, data: null}
-  }, [], QUERY_LOADING)
+  const contentTypeQuery = useObservableQuery(localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').observableGet(props.id))
 
   async function onSave(updatedData: Partial<ContentTypeData>) {
-    const res = await db.contentTypeQueries.update(props.id, updatedData)
+    const res = await localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').update(props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -31,7 +29,7 @@ export function EditContentTypeScreen(props: ContentManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await db.contentTypeQueries.delete(props.id)
+    const res = await localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').delete(props.id)
     if (!res.success) {
       setErrors(res.errors)
     }

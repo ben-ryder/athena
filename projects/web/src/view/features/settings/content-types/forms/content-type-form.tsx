@@ -1,7 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   JInput,
-  JErrorText,
   JButtonGroup,
   JButton,
   JArrowButton,
@@ -14,13 +13,17 @@ import {
   JOptionData, JColourVariants, JSelect, JMultiSelect
 } from "@ben-ryder/jigsaw-react";
 import {ContentFormProps} from "../../../../common/content-form/content-form";
-import {ContentTypeData} from "../../../../../state/schemas/content-types/content-types";
+import {
+  ContentTypeData
+} from "../../../../../state/schemas/content-types/content-types";
 import {ColourVariants} from "../../../../../state/schemas/common/fields";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../../../../../state/storage/database";
-import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
+import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
+import { useObservableQuery } from "@localful-athena/react/use-observable-query";
+import { localful } from "../../../../../state/athena-localful";
+import { TagData, TagDto, TagEntity, TagVersion } from "../../../../../state/schemas/tags/tags";
+import { FieldDefinition, FieldDto, FieldEntity, FieldVersion } from "../../../../../state/schemas/fields/fields";
 
 
 export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
@@ -31,17 +34,7 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
   const [icon, setIcon] = useState<string>(props.data.icon || '');
 
   const [contentTemplateTags, setContentTemplateTags] = useState<JMultiSelectOptionData[]>([]);
-  const allTags = useLiveQuery(async () => {
-    const tags = await db.tagQueries.getAll()
-    if (!tags.success) {
-      return {status: QueryStatus.ERROR, errors: tags.errors, data: null}
-    }
-    if (tags.errors) {
-      // @ts-expect-error - tags.errors is a list
-      setErrors((e) => {return [...e, ...tags.errors]})
-    }
-    return {status: QueryStatus.SUCCESS, data: tags.data}
-  }, [], QUERY_LOADING)
+  const allTags = useObservableQuery(localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').observableGetAll())
   const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
     ? allTags.data.map(tag => ({
       text: tag.name,
@@ -53,7 +46,7 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
   useEffect(() => {
     async function loadSelectedTags() {
       if (props.data.contentTemplateTags && props.data.contentTemplateTags.length > 0) {
-        const selectedTags = await db.tagQueries.getMultiple(props.data.contentTemplateTags)
+        const selectedTags = await localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').getMany(props.data.contentTemplateTags)
         if (!selectedTags.success) {
           setErrors((e) => {return [...e, ...selectedTags.errors]})
         }
@@ -89,33 +82,30 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
   const [contentTemplateName, setContentTemplateName] = useState<string>(props.data.contentTemplateName || '');
   const [contentTemplateDescription, setContentTemplateDescription] = useState<string>(props.data.contentTemplateDescription || '');
 
-  const [fields, setFields] = useState<JMultiSelectOptionData[]>([]);
-  const allFields = useLiveQuery(async () => {
-    const query = await db.fieldQueries.getAll()
-    if (!query.success) {
-      return {status: QueryStatus.ERROR, errors: query.errors, data: null}
+  const [fieldOptions, setFieldOptions] = useState<JMultiSelectOptionData[]>([]);
+  const allFields = useObservableQuery(localful.db<FieldEntity, FieldVersion, FieldDefinition, FieldDto>('fields').observableGetAll())
+  useEffect(() => {
+    if (allFields.status === QueryStatus.SUCCESS) {
+      const fieldOptionMappings: JMultiSelectOptionData[] = allFields.status === QueryStatus.SUCCESS
+        ? allFields.data.map(field => ({
+          text: `${field.label} (${FIELD_TYPES[field.type].label})`,
+          value: field.id,
+        }))
+        : []
+      setFieldOptions(fieldOptionMappings)
     }
-    if (query.errors) {
-      setErrors((e) => {return [...e, ...query.errors]})
-    }
-    return {status: QueryStatus.SUCCESS, data: query.data}
-  }, [], QUERY_LOADING)
-  const fieldOptions: JMultiSelectOptionData[] = allFields.status === QueryStatus.SUCCESS
-    ? allFields.data.map(field => ({
-      text: `${field.label} (${FIELD_TYPES[field.type].label})`,
-      value: field.id,
-    }))
-    : []
+  }, [allFields])
 
+  const [selectedFields, setSelectedFields] = useState<JMultiSelectOptionData[]>([]);
   useEffect(() => {
     async function loadSelectedFields() {
       if (props.data.fields && props.data.fields.length > 0) {
-        const selectedFields = await db.fieldQueries.getMultiple(props.data.fields)
+        const selectedFields = await localful.db<FieldEntity, FieldVersion, FieldDefinition, FieldDto>('fields').getMany(props.data.fields)
         if (!selectedFields.success) {
           setErrors((e) => {return [...e, ...selectedFields.errors]})
         }
         else {
-          setFields(selectedFields.data.map(field => ({
+          setSelectedFields(selectedFields.data.map(field => ({
               text: `${field.label} (${FIELD_TYPES[field.type].label})`,
               value: field.id,
             }))
@@ -142,7 +132,7 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
       contentTemplateName: contentTemplateName || undefined,
       contentTemplateDescription: contentTemplateDescription || undefined,
       contentTemplateTags: contentTemplateTags.map(t => t.value),
-      fields: fields.map(f => f.value)
+      fields: selectedFields.map(f => f.value)
     } as ContentTypeData)
     if (!parseResult.success) {
       console.error(parseResult.error)
@@ -261,8 +251,8 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
             id="fields"
             label="Fields"
             options={fieldOptions}
-            selectedOptions={fields}
-            setSelectedOptions={setFields}
+            selectedOptions={selectedFields}
+            setSelectedOptions={setSelectedFields}
             searchText="Search and select fields..."
             noOptionsText="No Fields Found"
           />
