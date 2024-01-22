@@ -3,31 +3,18 @@ import React, { useState } from "react";
 import "./list-tags-screen.scss";
 import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../../localful/control-flow";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../../../../../../state/storage/database";
 import { ErrorCallout } from "../../../../../patterns/components/error-callout/error-callout";
 import {
   ContentManagerScreenProps
 } from "../../../../../common/content-manager/content-manager";
+import {useObservableQuery} from "../../../../../../../localful/react/use-observable-query";
+import {localful} from "../../../../../../state/athena-localful";
+import {TagData, TagDto, TagEntity, TagVersion} from "../../../../../../state/schemas/tags/tags";
 
 export function ListTagsScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const tags = useLiveQuery(async () => {
-    const tags = await db.tagQueries.getAll()
-    if (tags.success) {
-      return {status: QueryStatus.SUCCESS, data: tags.data}
-    }
-    if (tags.errors) {
-      setErrors(tags.errors)
-    }
-    return {status: QueryStatus.ERROR, errors: tags.errors, data: null}
-  }, [], QUERY_LOADING)
-
-  if (tags.status === QueryStatus.LOADING) {
-    return (
-      <p>Loading...</p>
-    )
-  }
+  const tags = useObservableQuery<TagDto[]>(localful.db('tags').observableGetAll())
 
   return (
     <>

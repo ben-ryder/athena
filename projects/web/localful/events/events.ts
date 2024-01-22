@@ -1,5 +1,6 @@
 
 export const EventTypes = {
+	DATABASE_SWITCH: 'database-switch',
 	DATA_CHANGE: 'data-change'
 } as const
 

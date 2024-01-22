@@ -2,19 +2,19 @@ import React, { useState } from "react";
 import { TagForm } from "../forms/tag-form";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { TagData } from "../../../../../state/schemas/tags/tags";
-import { db } from "../../../../../state/storage/database";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ErrorObject, QUERY_LOADING, QueryStatus } from "../../../../../../localful/control-flow";
 import {
   ContentManagerContentScreenProps,
 } from "../../../../common/content-manager/content-manager";
+import {localful} from "../../../../../state/athena-localful";
 
 
 export function EditTagScreen(props: ContentManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   const tagResult = useLiveQuery(async () => {
-    const tag = await db.tagQueries.get(props.id)
+    const tag = await localful.db('tags').get(props.id)
     if (tag.success) {
       return {status: QueryStatus.SUCCESS, data: tag.data, errors: tag.errors}
     }
@@ -22,7 +22,7 @@ export function EditTagScreen(props: ContentManagerContentScreenProps) {
   }, [], QUERY_LOADING)
 
   async function onSave(updatedData: Partial<TagData>) {
-    const res = await db.tagQueries.update(props.id, updatedData)
+    const res = await localful.db('tags').update(props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -32,7 +32,7 @@ export function EditTagScreen(props: ContentManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await db.tagQueries.delete(props.id)
+    const res = await localful.db('tags').delete(props.id)
     if (!res.success) {
       setErrors(res.errors)
     }

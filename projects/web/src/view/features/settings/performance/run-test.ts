@@ -1,6 +1,7 @@
 import {LocalfulEncryption} from "../../../../../localful/encryption/localful-encryption";
-import {VaultDatabase} from "../../../../state/storage/database";
 import {ReportFunction} from "./performance-manager";
+import {LocalfulWeb} from "../../../../../localful/localful-web";
+import {localful} from "../../../../state/athena-localful";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
 const MEDIUM_STRING = "Magna pars studiorum, prodita quaerimus. Magna pars studiorum, prodita quaerimus. Cras mattis iudicium purus sit amet fermentum. Quo usque tandem abutere, Catilina, patientia nostra?"
@@ -24,14 +25,15 @@ export async function runTest(report: ReportFunction) {
 	report({level: "section", text: "Setup"})
 	const vaultId = await LocalfulEncryption.generateUUID()
 	const vaultName = `perf_${vaultId}`
-	const perfDb = new VaultDatabase(vaultName)
+	localful.setCurrentVault(vaultName)
+
 	report({level: "message", text: `Created test vault ${vaultName}`})
 
-	await createTestData(perfDb, report)
-	await queryTestData(perfDb, report)
+	await createTestData(localful, report)
+	await queryTestData(localful, report)
 
 	report({level: "section", text: "Teardown"})
-	await perfDb.delete()
+	//await localful.c()
 	report({level: "message", text: "deleted test vault"})
 
 	const benchmarkEndTime = performance.now()
@@ -39,26 +41,26 @@ export async function runTest(report: ReportFunction) {
 	report({level: "message", text: `Full benchmark ran in ${benchmarkEndTime - benchmarkStartTime}ms`})
 }
 
-export async function createTestData(perfDb: VaultDatabase, report: ReportFunction) {
+export async function createTestData(localful: LocalfulWeb, report: ReportFunction) {
 	report({level: "section", text: "Tags"})
 	report({level: "task", text: "Creating Tags"})
 	const tagCreationStart = performance.now()
 	for (let i = 1; i <= TAG_NUMBER; i++) {
-		const tagId = await perfDb.tagQueries.create({name: SHORT_STRING, colourVariant: "purple"})
+		const tagId = await localful.db('tags').create({name: SHORT_STRING, colourVariant: "purple"})
 		if (!tagId.success) throw tagId
 
 		for (let j = 1; j <= TAG_VERSIONS_NUMBER; j++) {
-			await perfDb.tagQueries.update(tagId.data, {name: SHORT_STRING, colourVariant: "purple"})
+			await localful.db('tags').update(tagId.data, {name: SHORT_STRING, colourVariant: "purple"})
 		}
 	}
 	const tagCreationEnd = performance.now()
 	report({level: "message", text: `created ${TAG_NUMBER} tags, with ${TAG_VERSIONS_NUMBER} versions each in ${tagCreationEnd - tagCreationStart}ms`})
 }
 
-export async function queryTestData(perfDb: VaultDatabase, report: ReportFunction) {
+export async function queryTestData(localful: LocalfulWeb, report: ReportFunction) {
 	report({level: "task", text: "Fetching Tags"})
 	const getTagsStart = performance.now()
-	const tags = await perfDb.tagQueries.getAll()
+	const tags = await localful.db('tags').getAll()
 	if (!tags.success) throw tags
 	const getTagsEnd = performance.now()
 	report({level: "message", text: `fetched all tags in ${getTagsEnd - getTagsStart}ms`})
@@ -73,7 +75,7 @@ export async function queryTestData(perfDb: VaultDatabase, report: ReportFunctio
 	report({level: "task", text: "Fetching Single Tag"})
 	const tagId = tags.data[10].id
 	const getTagStart = performance.now()
-	await perfDb.tagQueries.get(tagId)
+	await localful.db('tags').get(tagId)
 	const getTagEnd = performance.now()
 	report({level: "message", text: `fetched single tag in ${getTagEnd - getTagStart}ms`})
 
@@ -86,14 +88,14 @@ export async function queryTestData(perfDb: VaultDatabase, report: ReportFunctio
 	report({level: "task", text: "Updating Tag"})
 	const updateTagId = tags.data[20].id
 	const updateTagStart = performance.now()
-	await perfDb.tagQueries.update(updateTagId, {name: SHORT_STRING})
+	await localful.db('tags').update(updateTagId, {name: SHORT_STRING})
 	const updateTagEnd = performance.now()
 	report({level: "message", text: `updated tag in ${updateTagEnd - updateTagStart}ms`})
 
 	report({level: "task", text: "Deleting Tag"})
 	const deleteTagId = tags.data[15].id
 	const deleteTagStart = performance.now()
-	await perfDb.tagQueries.delete(deleteTagId)
+	await localful.db('tags').delete(deleteTagId)
 	const deleteTagEnd = performance.now()
 	report({level: "message", text: `deleted tag in ${deleteTagEnd - deleteTagStart}ms`})
 }

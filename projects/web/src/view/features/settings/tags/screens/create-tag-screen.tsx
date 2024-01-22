@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { TagData } from "../../../../../state/schemas/tags/tags";
 import { ErrorObject } from "../../../../../../localful/control-flow";
-import { db } from "../../../../../state/storage/database";
 import {
   ContentManagerScreenProps
 } from "../../../../common/content-manager/content-manager";
 import { TagForm } from "../forms/tag-form";
+import {localful} from "../../../../../state/athena-localful";
 
 export function CreateTagScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   async function onSave(data: TagData) {
-    const res = await db.tagQueries.create(data)
+    const res = await localful.db('tags').create(data)
     if (!res.success) {
       setErrors(res.errors)
     }

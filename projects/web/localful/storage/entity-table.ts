@@ -8,10 +8,11 @@ import { LocalfulWeb } from "../localful-web";
 import { createDataEvent, DataEventCauses, DataEventDetails, getDataEventKey } from "../events/events";
 import { Dexie } from "dexie";
 
-
 export interface EntityTableConfig {
-	entityKey: string,
+	entityTable: string,
+	versionTable: string,
 	dataSchema: ZodTypeAny,
+	currentSchemaVersion: string
 	useMemoryCache?: boolean
 }
 
@@ -35,29 +36,28 @@ export interface EntityTableQueries<EntitySchema, VersionSchema, DataSchema, Dto
 	_createEntityVersionDto: (entity: EntitySchema, version: VersionSchema) => Promise<DtoSchema>
 	
 	observableGet: (id: string) => Observable<Query<DtoSchema>>
-	observableGetMany: (id: string) => Observable<Query<DtoSchema[]>>
-	observableGetAll: (id: string) => Observable<Query<DtoSchema[]>>
+	observableGetMany: (ids: string[]) => Observable<Query<DtoSchema[]>>
+	observableGetAll: () => Observable<Query<DtoSchema[]>>
 }
 
 export class EntityTable<EntitySchema extends Entity, VersionSchema extends EntityVersion, DataSchema, DtoSchema extends EntityDto>
 	implements EntityTableQueries<EntitySchema, VersionSchema, DataSchema, DtoSchema> {
 	localful: LocalfulWeb
-	db: Dexie
 
-	entityTableName: string
-	versionTableName: string
+	entityTable: string
+	versionTable: string
 	dataSchema: ZodTypeAny
 	useMemoryCache: boolean
 
 	constructor(
-		db: Dexie,
+		localful: LocalfulWeb,
 		config: EntityTableConfig
 	) {
-		this.db = db
+		this.localful = localful
 		
-		this.entityTableName = config.entityKey
-		this.versionTableName = `${config.entityKey}_versions`
-		this.useMemoryCache = config.useMemoryCache
+		this.entityTable = config.entityTable
+		this.versionTable = config.versionTable
+		this.useMemoryCache = config.useMemoryCache || false
 		this.dataSchema = config.dataSchema
 	}
 
@@ -93,7 +93,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 */
 	async get(id: string): Promise<ActionResult<DtoSchema>> {
 		if (this.useMemoryCache) {
-			const cachedResponse = await memoryCache.get(`${this.entityTableName}-get-${id}`)
+			const cachedResponse = await memoryCache.get(`${this.entityTable}-get-${id}`)
 			if (cachedResponse) {
 				return {success: true, data: cachedResponse as unknown as DtoSchema}
 			}
@@ -110,7 +110,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 
 		const dto = await this._createEntityVersionDto(entity.data, latestVersion.data)
 		if (this.useMemoryCache) {
-			await memoryCache.add(`${this.entityTableName}-get-${id}`, dto)
+			await memoryCache.add(`${this.entityTable}-get-${id}`, dto)
 		}
 
 		return {success: true, data: dto}
@@ -141,14 +141,16 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * Get all, fetching the latest version for each entity.
 	 */
 	async getAll(): Promise<ActionResult<DtoSchema[]>> {
+		const db = await this.localful.getCurrentDatabase()
+
 		if (this.useMemoryCache) {
-			const cachedResponse = await memoryCache.get(`${this.entityTableName}-getAll`)
+			const cachedResponse = await memoryCache.get(`${this.entityTable}-getAll`)
 			if (cachedResponse) {
 				return {success: true, data: cachedResponse as unknown as DtoSchema[]}
 			}
 		}
 
-		const entities = await this.db.table<EntitySchema>(this.entityTableName)
+		const entities = await db.table<EntitySchema>(this.entityTable)
 			.where('isDeleted').equals(0)
 			.toArray()
 
@@ -172,7 +174,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 		}
 
 		if (this.useMemoryCache) {
-			await memoryCache.add(`${this.entityTableName}-getAll`, dtos)
+			await memoryCache.add(`${this.entityTable}-getAll`, dtos)
 		}
 
 		return {
@@ -189,6 +191,8 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param data
 	 */
 	async create(data: DataSchema): Promise<ActionResult<string>> {
+		const db = await this.localful.getCurrentDatabase()
+
 		const entityId = await LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
@@ -196,21 +200,21 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 		const encResult = await LocalfulEncryption.encryptData(encryptionKey, data)
 		if (!encResult.success) return encResult
 
-		await this.db.table(this.entityTableName).add({
+		await db.table(this.entityTable).add({
 			id: entityId,
 			isDeleted: 0,
 			createdAt: timestamp,
 		})
 
 		const versionId = await LocalfulEncryption.generateUUID();
-		await this.db.table(`${this.entityTableName}_versions`).add({
+		await db.table(this.versionTable).add({
 			entityId: entityId,
 			id: versionId,
 			data: encResult.data,
 			createdAt: timestamp
 		})
 
-		const event = createDataEvent(this.entityTableName, {cause: DataEventCauses.CREATE, id: entityId})
+		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.CREATE, id: entityId})
 		this.localful.events.dispatchEvent(event)
 
 		return { success: true, data: entityId }
@@ -225,12 +229,14 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param dataUpdate
 	 */
 	async update(id: string, dataUpdate: EntityUpdate<DataSchema>): Promise<ActionResult<string>> {
+		const db = await this.localful.getCurrentDatabase()
+
 		const oldEntity = await this.get(id)
 		if (!oldEntity.success) return oldEntity
 
 		if (this.useMemoryCache) {
-			await memoryCache.delete(`${this.entityTableName}-get-${id}`)
-			await memoryCache.delete(`${this.entityTableName}-getAll`)
+			await memoryCache.delete(`${this.entityTable}-get-${id}`)
+			await memoryCache.delete(`${this.entityTable}-getAll`)
 		}
 
 		const newVersionId = await LocalfulEncryption.generateUUID();
@@ -253,14 +259,14 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 		const encResult = await LocalfulEncryption.encryptData(encryptionKey, updatedData)
 		if (!encResult.success) return encResult
 
-		await this.db.table(this.versionTableName).add({
+		await db.table(this.versionTable).add({
 			entityId: id,
 			id: newVersionId,
 			data: encResult.data,
 			createdAt: timestamp
 		})
 
-		const event = createDataEvent(this.entityTableName, {cause: DataEventCauses.UPDATE, id: entityId})
+		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.UPDATE, id: entityId})
 		this.localful.events.dispatchEvent(event)
 
 		return {success: true, data: newVersionId}
@@ -271,17 +277,19 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * deleting all versions.
 	 */
 	async delete(entityId: string): Promise<ActionResult> {
+		const db = await this.localful.getCurrentDatabase()
+
 		if (this.useMemoryCache) {
-			await memoryCache.delete(`${this.entityTableName}-get-${entityId}`)
-			await memoryCache.delete(`${this.entityTableName}-getAll`)
+			await memoryCache.delete(`${this.entityTable}-get-${entityId}`)
+			await memoryCache.delete(`${this.entityTable}-getAll`)
 		}
 
-		await this.db.table(this.entityTableName).update(entityId, {isDeleted: 1})
-		await this.db.table(this.versionTableName)
-			.where(this.versionTableName).equals(entityId)
+		await db.table(this.entityTable).update(entityId, {isDeleted: 1})
+		await db.table(this.versionTable)
+			.where(this.versionTable).equals(entityId)
 			.delete()
 
-		const event = createDataEvent(this.entityTableName, {cause: DataEventCauses.DELETE, id: entityId})
+		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.DELETE, id: entityId})
 		this.localful.events.dispatchEvent(event)
 
 		return {success: true, data: null}
@@ -293,8 +301,10 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param entityId
 	 */
 	async getAllVersions(entityId: string): Promise<ActionResult<VersionSchema[]>> {
-		const versions = await this.db.table<VersionSchema>(this.versionTableName)
-			.where(this.versionTableName).equals(entityId)
+		const db = await this.localful.getCurrentDatabase()
+
+		const versions = await db.table<VersionSchema>(this.versionTable)
+			.where(this.versionTable).equals(entityId)
 			.toArray()
 		return {success: true, data: versions}
 	}
@@ -305,7 +315,9 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param entityId
 	 */
 	async getEntity(entityId: string): Promise<ActionResult<EntitySchema>> {
-		const entity = await this.db.table<EntitySchema>(this.entityTableName).get(entityId)
+		const db = await this.localful.getCurrentDatabase()
+
+		const entity = await db.table<EntitySchema>(this.entityTable).get(entityId)
 
 		if (!entity || entity.isDeleted === 1) {
 			return {success: false, errors: [{type: ErrorTypes.ENTITY_NOT_FOUND, context: entityId}]}
@@ -322,17 +334,19 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param id
 	 */
 	async purge(entityId: string): Promise<ActionResult> {
+		const db = await this.localful.getCurrentDatabase()
+
 		if (this.useMemoryCache) {
-			await memoryCache.delete(`${this.entityTableName}-get-${entityId}`)
-			await memoryCache.delete(`${this.entityTableName}-getAll`)
+			await memoryCache.delete(`${this.entityTable}-get-${entityId}`)
+			await memoryCache.delete(`${this.entityTable}-getAll`)
 		}
 
-		await this.db.table(this.entityTableName).delete(entityId)
-		await this.db.table(this.versionTableName)
-			.where(this.versionTableName).equals(entityId)
+		await db.table(this.entityTable).delete(entityId)
+		await db.table(this.versionTable)
+			.where(this.versionTable).equals(entityId)
 			.delete()
 
-		const event = createDataEvent(this.entityTableName, {cause: DataEventCauses.DELETE, id: entityId})
+		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.DELETE, id: entityId})
 		this.localful.events.dispatchEvent(event)
 
 		return {success: true, data: null}
@@ -342,14 +356,16 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * Delete all versions except the most recent.
 	 */
 	async deleteOldVersions(entityId: string): Promise<ActionResult> {
+		const db = await this.localful.getCurrentDatabase()
+
 		const versions = await this.getAllVersions(entityId)
 		if (!versions.success) return versions
 
 		const latestVersion = await this.getLatestVersion(versions.data)
 		if (!latestVersion.success) return latestVersion
 
-		await this.db.table(this.versionTableName)
-			.where(this.versionTableName).equals(entityId)
+		await db.table(this.versionTable)
+			.where(this.versionTable).equals(entityId)
 			.and((version => version.id !== latestVersion.data.id))
 			.delete()
 
@@ -362,7 +378,9 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param versionId
 	 */
 	async deleteVersion(versionId: string): Promise<ActionResult> {
-		const numberDeleted = await this.db.table(this.versionTableName)
+		const db = await this.localful.getCurrentDatabase()
+
+		const numberDeleted = await db.table(this.versionTable)
 			.where('id').equals(versionId)
 			.delete()
 
@@ -376,7 +394,9 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param versionId
 	 */
 	async getVersion(versionId: string): Promise<ActionResult<VersionSchema>> {
-		const version = await this.db.table<VersionSchema>(this.versionTableName).get(versionId)
+		const db = await this.localful.getCurrentDatabase()
+
+		const version = await db.table<VersionSchema>(this.versionTable).get(versionId)
 		if (!version) return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: versionId}]}
 
 		return {success: true, data: version}
@@ -403,7 +423,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	
 	observableGet(id: string) {
 		return new Observable<Query<DtoSchema>>((subscriber) => {
-			const eventKey = getDataEventKey(this.entityTableName)
+			const eventKey = getDataEventKey(this.entityTable)
 			subscriber.next(QUERY_LOADING)
 
 			const query = async () => {
@@ -425,6 +445,9 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 
 			this.localful.events.addEventListener(eventKey, handleEvent)
 
+			// Run initial query
+			query()
+
 			return () => {
 				this.localful.events.removeEventListener(eventKey, handleEvent)
 			}
@@ -432,10 +455,64 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	}
 	
 	observableGetMany(ids: string[]) {
-		
+		return new Observable<Query<DtoSchema[]>>((subscriber) => {
+			const eventKey = getDataEventKey(this.entityTable)
+			subscriber.next(QUERY_LOADING)
+
+			const query = async () => {
+				subscriber.next(QUERY_LOADING)
+
+				const result = await this.getMany(ids)
+				if (result.success) {
+					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
+				}
+				subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+			}
+
+			const handleEvent = (e: CustomEvent<DataEventDetails>) => {
+				if (ids.includes(e.detail.id)) {
+					query()
+				}
+			}
+
+			this.localful.events.addEventListener(eventKey, handleEvent)
+
+			// Run initial query
+			query()
+
+			return () => {
+				this.localful.events.removeEventListener(eventKey, handleEvent)
+			}
+		})
 	}
 	
-	observableGetAll(): {
-		
+	observableGetAll() {
+		return new Observable<Query<DtoSchema[]>>((subscriber) => {
+			const eventKey = getDataEventKey(this.entityTable)
+			subscriber.next(QUERY_LOADING)
+
+			const query = async () => {
+				subscriber.next(QUERY_LOADING)
+
+				const result = await this.getAll()
+				if (result.success) {
+					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
+				}
+				subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+			}
+
+			const handleEvent = () => {
+				query()
+			}
+
+			this.localful.events.addEventListener(eventKey, handleEvent)
+
+			// Run initial query
+			query()
+
+			return () => {
+				this.localful.events.removeEventListener(eventKey, handleEvent)
+			}
+		})
 	}
 }
