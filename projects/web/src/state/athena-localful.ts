@@ -30,4 +30,7 @@ export const localful = new LocalfulWeb({
 	}
 })
 
+// Added for dev debugging purposes
+// todo: remove this
+// @ts-expect-error - custom
 window.athenaLocalful = localful

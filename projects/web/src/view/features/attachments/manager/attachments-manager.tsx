@@ -93,12 +93,12 @@ export function AttachmentsManagerPage() {
   //   setFiles(files)
   // }
   //
-  // async function processStorageSetup() {
-  //   setStorageStatus("in-progress")
-  //
-  //   const isSetup = await navigator.storage.persist()
-  //   setStorageStatus(isSetup ? "done" : "required")
-  // }
+  async function processStorageSetup() {
+    setStorageStatus("in-progress")
+
+    const isSetup = await navigator.storage.persist()
+    setStorageStatus(isSetup ? "done" : "required")
+  }
   //
   // // Load all blobs as files
   // useEffect(() => {
@@ -163,7 +163,7 @@ export function AttachmentsManagerPage() {
             which on rare occasions may automatically delete saved data if your device is low on storage, if you haven't used the website in a while etc.<br/>
             Allowing persistent storage ensures that the browser will not automatically delete data from this app.
           </p>
-          <JButton variant="secondary" disabled={storageStatus === "in-progress"} loading={storageStatus === "in-progress"} onClick={processStorageSetup}>Allow Persistent Storage</JButton>
+          <JButton variant="secondary" disabled={storageStatus === "in-progress"} loading={storageStatus === "in-progress"} onClick={(processStorageSetup)}>Allow Persistent Storage</JButton>
         </JCallout>
       }
 

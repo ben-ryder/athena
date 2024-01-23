@@ -59,7 +59,7 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
           )
 
           if (Array.isArray(selectedTags.errors) && selectedTags.errors.length > 0) {
-            setErrors((e) => {return [...e, ...selectedTags.errors]})
+            setErrors((e) => {return [...e, ...selectedTags.errors as ErrorObject[]]})
           }
         }
       }
@@ -112,7 +112,7 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
           )
 
           if (Array.isArray(selectedFields.errors) && selectedFields.errors.length > 0) {
-            setErrors((e) => {return [...e, ...selectedFields.errors]})
+            setErrors((e) => {return [...e, ...selectedFields.errors as ErrorObject[]]})
           }
         }
       }
