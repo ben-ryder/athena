@@ -104,7 +104,7 @@ export class LocalfulEncryption {
   /**
    * Generate a random UUID value.
    */
-  static async generateUUID(): Promise<string> {
+  static generateUUID(): string {
     return self.crypto.randomUUID()
   }
 }

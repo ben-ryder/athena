@@ -1,9 +1,10 @@
 import * as WebCrypto from "easy-web-crypto";
-import {ZodTypeAny} from "zod";
-import {Dexie} from "dexie";
-import {EntityTable} from "./storage/entity-table";
-import {Entity, EntityDto, EntityVersion} from "../src/state/schemas/common/entity";
-import {EventTypes} from "./events/events";
+import { ZodTypeAny } from "zod";
+import { Dexie } from "dexie";
+import { EntityTable } from "./storage/entity-table";
+import { Entity, EntityDto, EntityVersion } from "../src/state/schemas/common/entity";
+import { EventTypes } from "./events/events";
+import { EventManager } from "./events/event-manager";
 
 export interface MigrationMeta {
 	currentVersion: string
@@ -34,8 +35,9 @@ const VERSION_INDEXED_FIELDS = ['&id', 'entityId'] as const
 
 export class LocalfulWeb {
 	currentDatabaseId: string | undefined
-	events: EventTarget
 	dataSchema: DataSchema
+
+	eventManager: EventManager
 
 	private _db: Dexie | undefined
 	private readonly entityTables: {
@@ -46,9 +48,7 @@ export class LocalfulWeb {
 	}
 
 	constructor(config: LocalfulWebConfig) {
-		this.currentDatabaseId = config.initialDatabaseId
-
-		this.events = new EventTarget()
+		this.eventManager = new EventManager()
 
 		this.dataSchema = config.dataSchema
 
@@ -73,13 +73,18 @@ export class LocalfulWeb {
 				useMemoryCache: entityData.useMemoryCache || false
 			})
 		}
+
+		this.currentDatabaseId = config.initialDatabaseId
+		if (this.currentDatabaseId) {
+			this.eventManager.dispatch(EventTypes.DATABASE_SWITCH, {id: this.currentDatabaseId})
+		}
 	}
 
 	db<EntitySchema extends Entity, VersionSchema extends EntityVersion, DataSchema, DtoSchema extends EntityDto>(entityKey: string): EntityTable<EntitySchema, VersionSchema, DataSchema, DtoSchema> {
 		return this.entityTables[entityKey]
 	}
 
-	async getCurrentDatabase(): Promise<Dexie> {
+	async _getCurrentDatabase(): Promise<Dexie> {
 		if (this._db && this._db.name === this.currentDatabaseId) {
 			return this._db
 		}
@@ -98,9 +103,7 @@ export class LocalfulWeb {
 
 	setCurrentVault(databaseId: string) {
 		this.currentDatabaseId = databaseId
-
-		const event = new CustomEvent(EventTypes.DATABASE_SWITCH)
-		this.events.dispatchEvent(event)
+		this.eventManager.dispatch(EventTypes.DATABASE_SWITCH, {id: this.currentDatabaseId})
 	}
 
 	getCurrentVault() {

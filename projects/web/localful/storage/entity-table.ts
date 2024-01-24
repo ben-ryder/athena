@@ -5,7 +5,7 @@ import { LocalfulEncryption } from "../encryption/localful-encryption";
 import { memoryCache } from "./memory-cache";
 import { Observable } from "rxjs";
 import { LocalfulWeb } from "../localful-web";
-import { createDataEvent, DataEventCauses, DataEventDetails, EventTypes, getDataEventKey } from "../events/events";
+import { DataChangeEvent, EventTypes } from "../events/events";
 
 export interface EntityTableConfig {
 	entityTable: string,
@@ -140,7 +140,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * Get all, fetching the latest version for each entity.
 	 */
 	async getAll(): Promise<ActionResult<DtoSchema[]>> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		if (this.useMemoryCache) {
 			const cachedResponse = await memoryCache.get(`${this.entityTable}-getAll`)
@@ -190,7 +190,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param data
 	 */
 	async create(data: DataSchema): Promise<ActionResult<string>> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		const entityId = await LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
@@ -213,8 +213,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 			createdAt: timestamp
 		})
 
-		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.CREATE, id: entityId})
-		this.localful.events.dispatchEvent(event)
+		this.localful.eventManager.dispatch( EventTypes.DATA_CHANGE, { entityKey: this.entityTable, action: 'create', id: entityId})
 
 		return { success: true, data: entityId }
 	}
@@ -228,7 +227,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param dataUpdate
 	 */
 	async update(id: string, dataUpdate: EntityUpdate<DataSchema>): Promise<ActionResult<string>> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		const oldEntity = await this.get(id)
 		if (!oldEntity.success) return oldEntity
@@ -265,8 +264,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 			createdAt: timestamp
 		})
 
-		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.UPDATE, id: entityId})
-		this.localful.events.dispatchEvent(event)
+		this.localful.eventManager.dispatch( EventTypes.DATA_CHANGE, { entityKey: this.entityTable, action: 'update', id: entityId})
 
 		return {success: true, data: newVersionId}
 	}
@@ -276,7 +274,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * deleting all versions.
 	 */
 	async delete(entityId: string): Promise<ActionResult> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		if (this.useMemoryCache) {
 			await memoryCache.delete(`${this.entityTable}-get-${entityId}`)
@@ -288,8 +286,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 			.where('entityId').equals(entityId)
 			.delete()
 
-		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.DELETE, id: entityId})
-		this.localful.events.dispatchEvent(event)
+		this.localful.eventManager.dispatch( EventTypes.DATA_CHANGE, { entityKey: this.entityTable, action: 'delete', id: entityId})
 
 		return {success: true, data: null}
 	}
@@ -300,7 +297,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param entityId
 	 */
 	async getAllVersions(entityId: string): Promise<ActionResult<VersionSchema[]>> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		const versions = await db.table<VersionSchema>(this.versionTable)
 			.where('entityId').equals(entityId)
@@ -314,7 +311,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param entityId
 	 */
 	async getEntity(entityId: string): Promise<ActionResult<EntitySchema>> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		const entity = await db.table<EntitySchema>(this.entityTable).get(entityId)
 
@@ -333,7 +330,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param entityId
 	 */
 	async purge(entityId: string): Promise<ActionResult> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		if (this.useMemoryCache) {
 			await memoryCache.delete(`${this.entityTable}-get-${entityId}`)
@@ -345,8 +342,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 			.where('entityId').equals(entityId)
 			.delete()
 
-		const event = createDataEvent(this.entityTable, {cause: DataEventCauses.DELETE, id: entityId})
-		this.localful.events.dispatchEvent(event)
+		this.localful.eventManager.dispatch( EventTypes.DATA_CHANGE, { entityKey: this.entityTable, action: 'purge', id: entityId})
 
 		return {success: true, data: null}
 	}
@@ -355,7 +351,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * Delete all versions except the most recent.
 	 */
 	async deleteOldVersions(entityId: string): Promise<ActionResult> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		const versions = await this.getAllVersions(entityId)
 		if (!versions.success) return versions
@@ -377,7 +373,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param versionId
 	 */
 	async deleteVersion(versionId: string): Promise<ActionResult> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		const numberDeleted = await db.table(this.versionTable)
 			.where('id').equals(versionId)
@@ -393,7 +389,7 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	 * @param versionId
 	 */
 	async getVersion(versionId: string): Promise<ActionResult<VersionSchema>> {
-		const db = await this.localful.getCurrentDatabase()
+		const db = await this.localful._getCurrentDatabase()
 
 		const version = await db.table<VersionSchema>(this.versionTable).get(versionId)
 		if (!version) return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: versionId}]}
@@ -422,7 +418,6 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 	
 	observableGet(id: string) {
 		return new Observable<Query<DtoSchema>>((subscriber) => {
-			const eventKey = getDataEventKey(this.entityTable)
 			subscriber.next(QUERY_LOADING)
 
 			const runQuery = async () => {
@@ -437,31 +432,28 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 				}
 			}
 
-			const handleEvent = (e: CustomEvent<DataEventDetails>) => {
-				// Discard query if ID doesn't match, as the data won't have changed.
-				if (e.detail.id === id) {
+			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
+				// Discard if entityKey or  ID doesn't match, as the data won't have changed.
+				if (e.detail.data.entityKey === this.entityTable && e.detail.data.id === id) {
 					runQuery()
 				}
 			}
 
-			// @ts-expect-error - addEventListener CAN accept CustomEvent handler
-			this.localful.events.addEventListener(eventKey, handleEvent)
-			this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
+			this.localful.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
+			this.localful.eventManager.subscribe(EventTypes.DATABASE_SWITCH, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				// @ts-expect-error - addEventListener CAN accept CustomEvent handler
-				this.localful.events.removeEventListener(eventKey, handleEvent)
-				this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
+				this.localful.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
+				this.localful.eventManager.unsubscribe(EventTypes.DATABASE_SWITCH, runQuery)
 			}
 		})
 	}
 	
 	observableGetMany(ids: string[]) {
 		return new Observable<Query<DtoSchema[]>>((subscriber) => {
-			const eventKey = getDataEventKey(this.entityTable)
 			subscriber.next(QUERY_LOADING)
 
 			const runQuery = async () => {
@@ -476,30 +468,27 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 				}
 			}
 
-			const handleEvent = (e: CustomEvent<DataEventDetails>) => {
-				if (ids.includes(e.detail.id)) {
+			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
+				if (e.detail.data.entityKey === this.entityTable && ids.includes(e.detail.data.id)) {
 					runQuery()
 				}
 			}
 
-			// @ts-expect-error - addEventListener CAN accept CustomEvent handler
-			this.localful.events.addEventListener(eventKey, handleEvent)
-			this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
+			this.localful.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
+			this.localful.eventManager.subscribe(EventTypes.DATABASE_SWITCH, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				// @ts-expect-error - addEventListener CAN accept CustomEvent handler
-				this.localful.events.removeEventListener(eventKey, handleEvent)
-				this.localful.events.removeEventListener(EventTypes.DATABASE_SWITCH, runQuery)
+				this.localful.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
+				this.localful.eventManager.unsubscribe(EventTypes.DATABASE_SWITCH, runQuery)
 			}
 		})
 	}
 	
 	observableGetAll() {
 		return new Observable<Query<DtoSchema[]>>((subscriber) => {
-			const eventKey = getDataEventKey(this.entityTable)
 			subscriber.next(QUERY_LOADING)
 
 			const runQuery = async () => {
@@ -514,19 +503,21 @@ export class EntityTable<EntitySchema extends Entity, VersionSchema extends Enti
 				}
 			}
 
-			const handleEvent = () => {
-				runQuery()
+			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
+				if (e.detail.data.entityKey === this.entityTable) {
+					runQuery()
+				}
 			}
 
-			this.localful.events.addEventListener(eventKey, handleEvent)
-			this.localful.events.addEventListener(EventTypes.DATABASE_SWITCH, runQuery)
+			this.localful.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
+			this.localful.eventManager.subscribe(EventTypes.DATABASE_SWITCH, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				this.localful.events.removeEventListener(eventKey, handleEvent)
-				this.localful.events.removeEventListener(EventTypes.DATABASE_SWITCH, runQuery)
+				this.localful.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
+				this.localful.eventManager.unsubscribe(EventTypes.DATABASE_SWITCH, runQuery)
 			}
 		})
 	}
