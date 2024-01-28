@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { JButton, JCallout, JInput } from "@ben-ryder/jigsaw-react";
 import "./attachments-manager.scss"
-import {AttachmentData, AttachmentEntity} from "../../../../state/schemas/attachments/attachments";
-import { LocalfulEncryption } from "@localful-athena/encryption/localful-encryption";
-import { localful } from "../../../../state/athena-localful";
 
 export interface FileRender {
   name: string

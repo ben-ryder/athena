@@ -1,8 +1,9 @@
 
-export enum EventTypes {
-	DATABASE_SWITCH = 'database-switch',
-	DATA_CHANGE = 'data-change'
-}
+export const EventTypes = {
+	DATA_CHANGE: 'data-change',
+	DATABASE_SWITCH: 'database-switch',
+	DATABASE_CLOSE: 'database-close',
+} as const
 
 
 export interface EventContext {
@@ -10,7 +11,7 @@ export interface EventContext {
 }
 
 export interface DataChangeEvent {
-	type: EventTypes.DATA_CHANGE,
+	type: typeof EventTypes.DATA_CHANGE,
 	detail: {
 		context: EventContext,
 		data: {
@@ -22,7 +23,7 @@ export interface DataChangeEvent {
 }
 
 export interface DatabaseSwitchEvent {
-	type: EventTypes.DATABASE_SWITCH,
+	type: typeof EventTypes.DATABASE_SWITCH,
 	detail: {
 		context: EventContext,
 		data: {
@@ -31,9 +32,22 @@ export interface DatabaseSwitchEvent {
 	}
 }
 
-export type LocalfulEvent = DataChangeEvent | DatabaseSwitchEvent
+export interface DatabaseCloseEvent {
+	type: typeof EventTypes.DATABASE_CLOSE,
+	detail: {
+		context: EventContext,
+		data: {
+			id: string
+		}
+	}
+}
+
+export type LocalfulEvent = DataChangeEvent | DatabaseSwitchEvent | DatabaseCloseEvent
 
 export interface EventMap {
-	[EventTypes.DATABASE_SWITCH]: DatabaseSwitchEvent,
 	[EventTypes.DATA_CHANGE]: DataChangeEvent
+	[EventTypes.DATABASE_SWITCH]: DatabaseSwitchEvent,
+	[EventTypes.DATABASE_CLOSE]: DatabaseCloseEvent,
 }
+
+export type EventTypes = keyof EventMap

@@ -6,9 +6,7 @@ import {
 } from "../../../../common/content-manager/content-manager";
 import {ContentTypeForm} from "../forms/content-type-form";
 import {
-  ContentTypeData, ContentTypeDto,
-  ContentTypeEntity,
-  ContentTypeVersion
+  ContentTypeData
 } from "../../../../../state/schemas/content-types/content-types";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../../state/athena-localful";
@@ -16,10 +14,10 @@ import { localful } from "../../../../../state/athena-localful";
 export function EditContentTypeScreen(props: ContentManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const contentTypeQuery = useObservableQuery(localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').observableGet(props.id))
+  const contentTypeQuery = useObservableQuery(localful.db.observableGet('content_types', props.id))
 
   async function onSave(updatedData: Partial<ContentTypeData>) {
-    const res = await localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').update(props.id, updatedData)
+    const res = await localful.db.update("content_types", props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -29,7 +27,7 @@ export function EditContentTypeScreen(props: ContentManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').delete(props.id)
+    const res = await localful.db.delete('content_types', props.id)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -46,8 +44,8 @@ export function EditContentTypeScreen(props: ContentManagerContentScreenProps) {
       )}
       {contentTypeQuery.status === QueryStatus.SUCCESS &&
         <ContentTypeForm
-          title={`Edit Content Type '${contentTypeQuery.data.name}'`}
-          data={contentTypeQuery.data}
+          title={`Edit Content Type '${contentTypeQuery.data.data.name}'`}
+          data={contentTypeQuery.data.data}
           onSave={onSave}
           onDelete={onDelete}
           navigate={props.navigate}

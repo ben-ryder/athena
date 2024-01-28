@@ -1,8 +1,6 @@
 import {z} from "zod";
 import { JColourVariantsList } from "@ben-ryder/jigsaw-react";
-
-export const IdField = z.string().uuid()
-export type IdField = z.infer<typeof IdField>
+import { IdField } from "@localful-athena/storage/entity-types";
 
 export const NameField = z.string()
   .min(1, "name length must be between 1 and 50 chars")
@@ -18,16 +16,6 @@ export type DescriptionField = z.infer<typeof DescriptionField>
 export const TagsField = z.array(IdField)
 export type TagsField = z.infer<typeof TagsField>
 
-export const CreatedAtField = z.string().datetime()
-export type CreatedAtField = z.infer<typeof CreatedAtField>
-
-export const UpdatedAtField =  z.string().datetime()
-export type UpdatedAtField = z.infer<typeof CreatedAtField>
-
 // These are directly mapped from Jigsaw colour variants right now.
 export const ColourVariants = z.enum(JColourVariantsList);
 export type ColourVariants = z.infer<typeof ColourVariants>;
-
-// IndexDB can't index boolean types, so 0 and 1 must be used instead.
-export const IsDeletedField = z.union([z.literal(0), z.literal(1)])
-export type IsDeletedField = z.infer<typeof IsDeletedField>

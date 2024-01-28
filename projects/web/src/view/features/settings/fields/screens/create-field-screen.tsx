@@ -4,7 +4,7 @@ import { ErrorObject } from "@localful-athena/control-flow";
 import {
   ContentManagerScreenProps
 } from "../../../../common/content-manager/content-manager";
-import { FieldDefinition, FieldDto, FieldEntity, FieldVersion } from "../../../../../state/schemas/fields/fields";
+import { FieldDefinition} from "../../../../../state/schemas/fields/fields";
 import {FieldForm} from "../forms/field-form";
 import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
 import { localful } from "../../../../../state/athena-localful";
@@ -13,7 +13,7 @@ export function CreateFieldScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   async function onSave(data: FieldDefinition) {
-    const res = await localful.db<FieldEntity, FieldVersion, FieldDefinition, FieldDto>('fields').create(data)
+    const res = await localful.db.create('fields', data)
     if (!res.success) {
       setErrors(res.errors)
     }

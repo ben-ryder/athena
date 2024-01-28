@@ -1,4 +1,3 @@
-import {Entity} from "../common/entity";
 import {z} from "zod";
 import {NameField, TagsField} from "../common/fields";
 
@@ -14,7 +13,3 @@ export const ViewContent = z.object({
   orderBy: OrderByFields,
   orderDirection: OrderDirection
 }).strict()
-
-export const ViewEntity = Entity.merge(ViewContent).strict()
-export type ViewEntity = z.infer<typeof ViewEntity>
-

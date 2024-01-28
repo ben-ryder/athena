@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import { TagData, TagDto, TagEntity, TagVersion } from "../../../../../state/schemas/tags/tags";
+import { TagData } from "../../../../../state/schemas/tags/tags";
 import { ErrorObject } from "@localful-athena/control-flow";
 import {
   ContentManagerScreenProps
@@ -12,7 +12,7 @@ export function CreateTagScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   async function onSave(data: TagData) {
-    const res = await localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').create(data)
+    const res = await localful.db.create('tags', data)
     if (!res.success) {
       setErrors(res.errors)
     }

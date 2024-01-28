@@ -5,9 +5,7 @@ import {
   ContentManagerScreenProps
 } from "../../../../common/content-manager/content-manager";
 import {
-  ContentTypeData, ContentTypeDto,
-  ContentTypeEntity,
-  ContentTypeVersion
+  ContentTypeData
 } from "../../../../../state/schemas/content-types/content-types";
 import {ContentTypeForm} from "../forms/content-type-form";
 import { localful } from "../../../../../state/athena-localful";
@@ -16,7 +14,7 @@ export function CreateContentTypeScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   async function onSave(data: ContentTypeData) {
-    const res = await localful.db<ContentTypeEntity, ContentTypeVersion, ContentTypeData, ContentTypeDto>('content_types').create(data)
+    const res = await localful.db.create('content_types', data)
     if (!res.success) {
       setErrors(res.errors)
     }

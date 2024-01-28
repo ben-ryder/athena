@@ -1,14 +1,15 @@
 import "./content-card.scss";
 import { Link } from "react-router-dom";
 import {JPill} from "@ben-ryder/jigsaw-react";
-import { TagDto } from "../../../../state/schemas/tags/tags";
+import { TagData } from "../../../../state/schemas/tags/tags";
+import { EntityDto } from "@localful-athena/storage/entity-types";
 
 export interface ContentItem {
   id: string;
   name: string;
   teaser: string | null;
   url: string;
-  tags?: TagDto[]
+  tags?: EntityDto<TagData>[]
 }
 
 export interface ContentCardProps {
@@ -31,8 +32,8 @@ export function ContentCard(props: ContentCardProps) {
             {props.item.tags.map(tag =>
               <JPill
                 key={tag.id}
-                variant={tag.colourVariant || undefined}
-              >{tag.name}</JPill>
+                variant={tag.data.colourVariant || undefined}
+              >{tag.data.name}</JPill>
             )}
           </div>
         }

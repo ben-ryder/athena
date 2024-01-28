@@ -6,18 +6,17 @@ import { ErrorCallout } from "../../../../patterns/components/error-callout/erro
 import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../../state/athena-localful";
-import { FieldDefinition, FieldDto, FieldEntity, FieldVersion } from "../../../../../state/schemas/fields/fields";
 
 export function ListFieldsScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const fields = useObservableQuery(localful.db<FieldEntity, FieldVersion, FieldDefinition, FieldDto>('fields').observableGetAll())
+  const fields = useObservableQuery(localful.db.observableGetAll('fields'))
 
   const listItems: AdminListItemProps[] = fields.status === QueryStatus.SUCCESS
     ? fields.data.map(field => ({
       id: field.id,
-      title: field.label,
-      description: `type: ${FIELD_TYPES[field.type].label} | entity: ${field.id} | version: ${field.versionId} | created: ${field.createdAt} | updated: ${field.updatedAt}`,
+      title: field.data.label,
+      description: `type: ${FIELD_TYPES[field.data.type].label} | entity: ${field.id} | version: ${field.versionId} | created: ${field.createdAt} | updated: ${field.updatedAt}`,
       navigate: props.navigate
     }))
     : []

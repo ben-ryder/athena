@@ -22,7 +22,7 @@ export class EventManager {
 		})
 	}
 
-	dispatch<Event extends EventTypes>(type: Event, data: EventMap[Event]['detail']['data'], context?: EventContext) {
+	dispatch<Event extends keyof EventMap>(type: Event, data: EventMap[Event]['detail']['data'], context?: EventContext) {
 		const eventDetail = {
 			context: context || {contextId: this.contextId},
 			data: data,
@@ -34,18 +34,18 @@ export class EventManager {
 		// Only broadcast events that originate in the current context, otherwise hello infinite event ping pong!
 		if (this.crossContextChannel && eventDetail.context.contextId === this.contextId) {
 			// Each context can use a different database, so that event should never be broadcast otherwise all contexts would update!
-			if (type !== EventTypes.DATABASE_SWITCH) {
+			if (type !== 'database-switch') {
 				this.crossContextChannel.postMessage({ type, detail: eventDetail })
 			}
 		}
 	}
 
-	subscribe<Event extends EventTypes>(type: Event, callback: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
+	subscribe<Event extends keyof EventMap>(type: Event, callback: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
 		// @ts-expect-error - We can add a callback for custom events!
 		this.eventTarget.addEventListener(type, callback)
 	}
 
-	unsubscribe<Event extends EventTypes>(type: Event, callback: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
+	unsubscribe<Event extends keyof EventMap>(type: Event, callback: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
 		// @ts-expect-error - We can add a callback for custom events!
 		this.eventTarget.removeEventListener(type, callback)
 	}

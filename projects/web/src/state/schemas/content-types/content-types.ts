@@ -1,6 +1,6 @@
 import {z} from "zod"
-import {Entity, EntityDto, EntityVersion} from "../common/entity";
-import {ColourVariants, DescriptionField, IdField, NameField} from "../common/fields";
+import {ColourVariants, DescriptionField, NameField} from "../common/fields";
+import { IdField } from "@localful-athena/storage/entity-types";
 
 export const ContentTypeData = z.object({
   name: NameField,
@@ -13,14 +13,3 @@ export const ContentTypeData = z.object({
   fields: z.array(IdField)
 }).strict()
 export type ContentTypeData = z.infer<typeof ContentTypeData>
-
-export const ContentTypeEntity = Entity
-export type ContentTypeEntity = z.infer<typeof ContentTypeEntity>
-
-export const ContentTypeVersion = EntityVersion.extend({
-  contentTypeId: IdField
-})
-export type ContentTypeVersion = z.infer<typeof ContentTypeVersion>
-
-export const ContentTypeDto = EntityDto.merge(ContentTypeData)
-export type ContentTypeDto = z.infer<typeof ContentTypeDto>

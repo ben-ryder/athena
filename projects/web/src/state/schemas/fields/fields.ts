@@ -1,8 +1,7 @@
 import {z} from "zod";
-import { IdField } from "../common/fields";
 import isISO8601Date from 'validator/lib/isISO8601';
-import {Entity, EntityDto, EntityVersion} from "../common/entity";
 import { FIELD_TYPES } from "./field-types";
+import { IdField } from "@localful-athena/storage/entity-types";
 
 /**
  * Validate if a string is a slug
@@ -128,24 +127,3 @@ export const FieldStorage = z.union([
   FieldDateData.pick({type: true, value: true}).extend({id: IdField}),
 ])
 export type FieldStorage = z.infer<typeof FieldStorage>
-
-export const FieldEntity = Entity
-export type FieldEntity = z.infer<typeof FieldEntity>
-
-export const FieldVersion = EntityVersion.extend({
-  fieldId: IdField
-})
-export type FieldVersion = z.infer<typeof FieldVersion>
-
-export const FieldDto = z.union([
-  EntityDto.extend(FieldTextShortData.shape),
-  EntityDto.extend(FieldTextLongData.shape),
-  EntityDto.extend(FieldOptionsData.shape),
-  EntityDto.extend(FieldURLData.shape),
-  EntityDto.extend(FieldNumberData.shape),
-  EntityDto.extend(FieldScaleData.shape),
-  EntityDto.extend(FieldBooleanData.shape),
-  EntityDto.extend(FieldTimestampData.shape),
-  EntityDto.extend(FieldDateData.shape)
-])
-export type FieldDto = z.infer<typeof FieldDto>

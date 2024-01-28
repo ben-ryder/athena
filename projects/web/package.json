@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@ben-ryder/jigsaw": "^0.19.1",
-    "@ben-ryder/jigsaw-react": "^0.19.4",
+    "@ben-ryder/jigsaw-react": "^0.20.1",
     "@codemirror/lang-markdown": "^6.2.4",
     "@codemirror/language-data": "^6.4.0",
     "@codemirror/view": "^6.23.1",
@@ -35,8 +35,8 @@
     "@uiw/react-codemirror": "^4.21.21",
     "classnames": "^2.5.1",
     "codemirror": "^6.0.1",
-    "dexie": "^3.2.4",
     "easy-web-crypto": "^1.4.0",
+    "idb": "^8.0.0",
     "lucide-react": "^0.315.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

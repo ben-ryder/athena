@@ -22,9 +22,6 @@ import { FIELD_TYPES } from "../../../../../state/schemas/fields/field-types";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../../state/athena-localful";
-import { TagData, TagDto, TagEntity, TagVersion } from "../../../../../state/schemas/tags/tags";
-import { FieldDefinition, FieldDto, FieldEntity, FieldVersion } from "../../../../../state/schemas/fields/fields";
-
 
 export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
   const [errors, setErrors] = useState<ErrorObject[]>([]);
@@ -34,27 +31,27 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
   const [icon, setIcon] = useState<string>(props.data.icon || '');
 
   const [contentTemplateTags, setContentTemplateTags] = useState<JMultiSelectOptionData[]>([]);
-  const allTags = useObservableQuery(localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').observableGetAll())
+  const allTags = useObservableQuery(localful.db.observableGetAll('tags'))
   const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
     ? allTags.data.map(tag => ({
-      text: tag.name,
+      text: tag.data.name,
       value: tag.id,
-      variant: tag.colourVariant
+      variant: tag.data.colourVariant
     }))
     : []
 
   useEffect(() => {
     async function loadSelectedTags() {
       if (props.data.contentTemplateTags && props.data.contentTemplateTags.length > 0) {
-        const selectedTags = await localful.db<TagEntity, TagVersion, TagData, TagDto>('tags').getMany(props.data.contentTemplateTags)
+        const selectedTags = await localful.db.getMany('tags', props.data.contentTemplateTags)
         if (!selectedTags.success) {
           setErrors((e) => {return [...e, ...selectedTags.errors]})
         }
         else {
           setContentTemplateTags(selectedTags.data.map(tag => ({
-              text: tag.name,
+              text: tag.data.name,
               value: tag.id,
-              variant: tag.colourVariant
+              variant: tag.data.colourVariant
             }))
           )
 
@@ -83,12 +80,12 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
   const [contentTemplateDescription, setContentTemplateDescription] = useState<string>(props.data.contentTemplateDescription || '');
 
   const [fieldOptions, setFieldOptions] = useState<JMultiSelectOptionData[]>([]);
-  const allFields = useObservableQuery(localful.db<FieldEntity, FieldVersion, FieldDefinition, FieldDto>('fields').observableGetAll())
+  const allFields = useObservableQuery(localful.db.observableGetAll('fields'))
   useEffect(() => {
     if (allFields.status === QueryStatus.SUCCESS) {
       const fieldOptionMappings: JMultiSelectOptionData[] = allFields.status === QueryStatus.SUCCESS
         ? allFields.data.map(field => ({
-          text: `${field.label} (${FIELD_TYPES[field.type].label})`,
+          text: `${field.data.label} (${FIELD_TYPES[field.data.type].label})`,
           value: field.id,
         }))
         : []
@@ -100,13 +97,13 @@ export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
   useEffect(() => {
     async function loadSelectedFields() {
       if (props.data.fields && props.data.fields.length > 0) {
-        const selectedFields = await localful.db<FieldEntity, FieldVersion, FieldDefinition, FieldDto>('fields').getMany(props.data.fields)
+        const selectedFields = await localful.db.getMany('fields', props.data.fields)
         if (!selectedFields.success) {
           setErrors((e) => {return [...e, ...selectedFields.errors]})
         }
         else {
           setSelectedFields(selectedFields.data.map(field => ({
-              text: `${field.label} (${FIELD_TYPES[field.type].label})`,
+              text: `${field.data.label} (${FIELD_TYPES[field.data.type].label})`,
               value: field.id,
             }))
           )

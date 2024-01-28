@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { QUERY_LOADING, Query } from "../control-flow";
+import { QUERY_LOADING, Query, ErrorObject } from "../control-flow";
 import { useEffect, useState } from "react";
 
 /**
