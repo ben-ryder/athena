@@ -6,6 +6,6 @@ export const ContentData = z.object({
   name: NameField,
   description: DescriptionField,
   tags: TagsField,
-  fields: z.array(FieldStorage)
+  fields: FieldStorage
 }).strict()
 export type ContentData = z.infer<typeof ContentData>

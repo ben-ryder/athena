@@ -115,15 +115,21 @@ export const FieldDefinition = z.union([
 ])
 export type FieldDefinition = z.infer<typeof FieldDefinition>
 
-export const FieldStorage = z.union([
-  FieldTextShortData.pick({type: true, value: true}).extend({id: IdField}),
-  FieldTextLongData.pick({type: true, value: true}).extend({id: IdField}),
-  FieldOptionsData.pick({type: true, value: true}).extend({id: IdField}),
-  FieldURLData.pick({type: true, value: true}).extend({id: IdField}),
-  FieldNumberData.pick({type: true, value: true}).extend({id: IdField}),
-  FieldScaleData.pick({type: true,  value: true}).extend({id: IdField}),
-  FieldBooleanData.pick({type: true, value: true}).extend({id: IdField}),
-  FieldTimestampData.pick({type: true, value: true}).extend({id: IdField}),
-  FieldDateData.pick({type: true, value: true}).extend({id: IdField}),
+export const FieldData = z.union([
+  FieldTextShortData.pick({type: true, value: true}),
+  FieldTextLongData.pick({type: true, value: true}),
+  FieldOptionsData.pick({type: true, value: true}),
+  FieldURLData.pick({type: true, value: true}),
+  FieldNumberData.pick({type: true, value: true}),
+  FieldScaleData.pick({type: true,  value: true}),
+  FieldBooleanData.pick({type: true, value: true}),
+  FieldTimestampData.pick({type: true, value: true}),
+  FieldDateData.pick({type: true, value: true}),
 ])
+export type FieldData = z.infer<typeof FieldData>
+
+export const FieldStorage = z.record(
+  z.string().uuid(),
+  FieldData
+)
 export type FieldStorage = z.infer<typeof FieldStorage>

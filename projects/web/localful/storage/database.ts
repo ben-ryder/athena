@@ -16,6 +16,7 @@ export type SchemaKeys<DataSchema extends DataSchemaDefinition, EntityKey extend
 export type SchemaVersion<DataSchema extends DataSchemaDefinition, EntityKey extends keyof DataSchema, SchemaVersion extends keyof DataSchema[EntityKey]['schemas']> = DataSchema[EntityKey]['schemas'][SchemaVersion]
 export type CurrentSchema<DataSchema extends DataSchemaDefinition, EntityKey extends keyof DataSchema> = SchemaVersion<DataSchema, EntityKey, DataSchema[EntityKey]['currentSchema']>
 
+
 export type DataMigration<
 	DataSchema extends DataSchemaDefinition,
 	EntityKey extends keyof DataSchema, 
@@ -37,8 +38,6 @@ export interface DataSchemaDefinition {
 		useMemoryCache?: boolean
 	}
 }
-
-
 
 export interface LocalfulDatabaseConfig {
 	dataSchema: DataSchemaDefinition,
