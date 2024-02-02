@@ -23,6 +23,11 @@ export const Entity = z.object({
 }).strict()
 export type Entity = z.infer<typeof Entity>
 
+export const LocalEntity = Entity.extend({
+  currentVersionId: z.string().uuid().optional()
+}).strict()
+export type LocalEntity = z.infer<typeof LocalEntity>
+
 /**
  * An entity version is where actual data is stored.
  * When an entity needs to be updated, a new version of that entity is created.
