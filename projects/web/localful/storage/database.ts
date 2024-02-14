@@ -1,12 +1,12 @@
-import { z, ZodTypeAny } from "zod";
-import { ActionResult, ErrorObject, ErrorTypes, Query, QUERY_LOADING, QueryStatus } from "../control-flow";
-import { LocalfulEncryption } from "../encryption/localful-encryption";
-import { memoryCache } from "./memory-cache";
-import { Observable } from "rxjs";
-import { DataChangeEvent, EventTypes } from "../events/events";
-import { IDBPDatabase, openDB } from "idb";
+import {z, ZodTypeAny} from "zod";
+import {ActionResult, ErrorObject, ErrorTypes, Query, QUERY_LOADING, QueryStatus} from "../control-flow";
+import {LocalfulEncryption} from "../encryption/localful-encryption";
+import {memoryCache} from "./memory-cache";
+import {Observable} from "rxjs";
+import {DataChangeEvent, EventTypes} from "../events/events";
+import {IDBPDatabase, openDB} from "idb";
 import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/storage/entity-types";
-import { EventManager } from "@localful-athena/events/event-manager";
+import {EventManager} from "@localful-athena/events/event-manager";
 
 const LOCALFUL_INDEXDB_VERSION = 1
 const LOCALFUL_VERSION = '1.0'
@@ -152,10 +152,12 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			success: true,
 			data: {
 				id: entity.id,
-				createdAt: entity.createdAt,
 				versionId: version.id,
+				createdAt: entity.createdAt,
 				updatedAt: version.createdAt,
-				data: data
+				data: data,
+				localfulVersion: entity.localfulVersion,
+				isDeleted: entity.isDeleted,
 			}
 		}
 	}
@@ -174,13 +176,38 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 		}
 
-		const entity = await this._getEntity(entityKey, id)
-		if (!entity.success) return entity
+		const db = await this.getDb()
+		const tx = db.transaction([entityKey, this._getVersionTableName(entityKey)], 'readonly')
+		const entity = await tx.objectStore(entityKey).get(id) as LocalEntity|undefined
+		if (!entity) {
+			return {success: false, errors: [{type: ErrorTypes.ENTITY_NOT_FOUND, context: id}]}
+		}
 
-		const latestVersion = await this._getLatestVersion(entity.data)
-		if (!latestVersion.success) return latestVersion
+		let version: EntityVersion|undefined = undefined
+		if (entity.currentVersionId) {
+			version = await tx.objectStore(this._getVersionTableName(entityKey)).get(entity.currentVersionId) as EntityVersion|undefined
 
-		const dto = await this._createEntityVersionDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>(entityKey, entity.data, latestVersion.data, this.dataSchema[entityKey].schemas[this.dataSchema[entityKey].currentSchema])
+			// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
+			if (!version) {
+				return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: id}]}
+			}
+		}
+		else {
+			const allVersions = await tx.objectStore(this._getVersionTableName(entityKey)).getAll() as EntityVersion[]
+			const sortedVersions = allVersions.sort((a, b) => {
+				return a.createdAt < b.createdAt ? 1 : 0
+			})
+			if (sortedVersions[0]) {
+				version = sortedVersions[0]
+			}
+			else {
+				return {success: false, errors: [{type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: id}]}
+			}
+		}
+
+		await tx.done
+
+		const dto = await this._createEntityVersionDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>(entityKey, entity, version, this.dataSchema[entityKey].schemas[this.dataSchema[entityKey].currentSchema])
 		if (!dto.success) return dto
 
 		if (this.dataSchema[entityKey].useMemoryCache) {
@@ -222,7 +249,8 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	async create<EntityKey extends EntityKeys<DataSchema>>(entityKey: EntityKey, data: z.infer<CurrentSchema<DataSchema, EntityKey>>): Promise<ActionResult<string>> {
 		const db = await this.getDb()
 
-		const entityId = await LocalfulEncryption.generateUUID();
+		const entityId = LocalfulEncryption.generateUUID();
+		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
 		if (!this.currentDatabaseId) throw new Error("Attempted to use database features but there is not active database")
@@ -230,16 +258,10 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		const encResult = await LocalfulEncryption.encryptData(encryptionKey, data)
 		if (!encResult.success) return encResult
 
-		const entityData: Entity = {
-			id: entityId,
-			isDeleted: 0,
-			createdAt: timestamp,
-			localfulVersion: LOCALFUL_VERSION
-		}
-		await db.add(entityKey, entityData)
+		const tx = db.transaction([entityKey, this._getVersionTableName(entityKey)], 'readwrite')
 
-		const versionId = await LocalfulEncryption.generateUUID();
-		const versionData: EntityVersion = {
+
+		const version: EntityVersion = {
 			entityId: entityId,
 			id: versionId,
 			data: encResult.data,
@@ -247,7 +269,18 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			localfulVersion: LOCALFUL_VERSION,
 			schemaVersion: this.dataSchema[entityKey].currentSchema
 		}
-		await db.add(this._getVersionTableName(entityKey), versionData)
+		await tx.objectStore(this._getVersionTableName(entityKey)).add(version)
+
+		const entity: LocalEntity = {
+			id: entityId,
+			isDeleted: 0,
+			createdAt: timestamp,
+			localfulVersion: LOCALFUL_VERSION,
+			currentVersionId: versionId
+		}
+		await tx.objectStore(entityKey).add(entity)
+
+		await tx.done
 
 		this.eventManager.dispatch( EventTypes.DATA_CHANGE, { entityKey: entityKey, action: 'create', id: entityId})
 
@@ -265,8 +298,6 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param preventEventDispatch - UUseful in situations like data migrations, where an update is done while fetching data so an event shouldn't be triggered.
 	 */
 	async update<EntityKey extends EntityKeys<DataSchema>>(entityKey: EntityKey, entityId: string, dataUpdate: EntityUpdate<z.infer<CurrentSchema<DataSchema, EntityKey>>>, preventEventDispatch?: boolean): Promise<ActionResult<string>> {
-		const db = await this.getDb()
-
 		const oldEntity = await this.get(entityKey, entityId)
 		if (!oldEntity.success) return oldEntity
 
@@ -286,9 +317,13 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		const encResult = await LocalfulEncryption.encryptData(encryptionKey, updatedData)
 		if (!encResult.success) return encResult
 
-		const versionId = await LocalfulEncryption.generateUUID();
+		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
-		const versionData: EntityVersion = {
+
+		const db = await this.getDb()
+		const tx = db.transaction([entityKey, this._getVersionTableName(entityKey)], 'readwrite')
+
+		const newVersion: EntityVersion = {
 			entityId: entityId,
 			id: versionId,
 			createdAt: timestamp,
@@ -296,8 +331,18 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			data: encResult.data,
 			schemaVersion: this.dataSchema[entityKey].currentSchema
 		}
+		await tx.objectStore(this._getVersionTableName(entityKey)).add(newVersion)
 
-		await db.add(this._getVersionTableName(entityKey), versionData)
+		const updatedEntity: LocalEntity = {
+			id: oldEntity.data.id,
+			createdAt: oldEntity.data.createdAt,
+			isDeleted: oldEntity.data.isDeleted,
+			localfulVersion: oldEntity.data.localfulVersion,
+			currentVersionId: versionId
+		}
+		await tx.objectStore(entityKey).put(updatedEntity)
+
+		await tx.done
 
 		if (!preventEventDispatch) {
 			this.eventManager.dispatch( EventTypes.DATA_CHANGE, { entityKey: entityKey, action: 'update', id: entityId})
@@ -348,8 +393,6 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * Query for content.
 	 */
 	async query<EntityKey extends EntityKeys<DataSchema>>(entityKey: EntityKey): Promise<ActionResult<EntityDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>[]>> {
-		const db = await this.getDb()
-
 		// todo: add query memory cache
 		// if (this.dataSchema[entityKey].useMemoryCache) {
 		// 	const cachedResponse = await memoryCache.get<EntityDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>[]>(`${entityKey}-getAll`)
@@ -358,25 +401,53 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		// 	}
 		// }
 
-		const entities = await db.getAllFromIndex(entityKey, 'isDeleted', 0)
+		const db = await this.getDb()
+		const tx = db.transaction([entityKey, this._getVersionTableName(entityKey)], 'readonly')
+		const entityIndex = tx.objectStore(entityKey).index('isDeleted')
 
-		const dtos: EntityDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>[] = []
+		const rawResults: {entity: LocalEntity, version: EntityVersion}[] = []
 		const errors: ErrorObject[] = []
 
-		for (const entity of entities) {
-			const latestVersion = await this._getLatestVersion(entity.data)
-			if (!latestVersion.success) {
-				errors.push(...latestVersion.errors)
-				continue
+		for await (const entityCursor of entityIndex.iterate(0)) {
+			const entity = entityCursor.value as LocalEntity
+			let version: EntityVersion|undefined = undefined
+			if (entity.currentVersionId) {
+				version = await tx.objectStore(this._getVersionTableName(entityKey)).get(entity.currentVersionId) as EntityVersion|undefined
+
+				// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
+				if (!version) {
+					errors.push({type: ErrorTypes.VERSION_NOT_FOUND, context: entity.id})
+					break
+				}
+			}
+			else {
+				const allVersions = await tx.objectStore(this._getVersionTableName(entityKey)).getAll() as EntityVersion[]
+				const sortedVersions = allVersions.sort((a, b) => {
+					return a.createdAt < b.createdAt ? 1 : 0
+				})
+				if (sortedVersions[0]) {
+					version = sortedVersions[0]
+				}
+				else {
+					errors.push({type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: entity.id})
+					break
+				}
+			}
+			rawResults.push({entity: entity, version: version})
+		}
+
+		await tx.done
+
+		const results: EntityDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>[] = []
+		for (const result of rawResults) {
+			const dto = await this._createEntityVersionDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>(entityKey, result.entity, result.version, this.dataSchema[entityKey].schemas[this.dataSchema[entityKey].currentSchema])
+			if (dto.success) {
+				results.push(dto.data)
 			}
 
-			const dto = await this._createEntityVersionDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>(entityKey, entity, latestVersion.data, this.dataSchema[entityKey].schemas[this.dataSchema[entityKey].currentSchema])
-			if (!dto.success) {
+			if (dto.errors) {
 				errors.push(...dto.errors)
-				continue
 			}
-
-			dtos.push(dto.data)
 		}
 
 		// todo: add query memory cache
@@ -386,7 +457,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 
 		return {
 			success: true,
-			data: dtos,
+			data: results,
 			errors: errors
 		}
 	}
@@ -450,15 +521,19 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		const versions = await this.getAllVersions(entityKey, entityId)
 		if (!versions.success) return versions
 
-		const latestVersion = await this.getLatestVersion(versions.data)
-		if (!latestVersion.success) return latestVersion
+		const sortedVersions = versions.data.sort((a, b) => {
+			return a.createdAt < b.createdAt ? 1 : 0
+		})
+		if (!sortedVersions[0]) {
+			return {success: false, errors: [{type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: entityId}]}
+		}
 
 		const tx = db.transaction(this._getVersionTableName(entityKey), 'readwrite')
 		const versionsIndex = tx.store.index('entityId')
 		let deletionCursor = await versionsIndex.openKeyCursor(entityId)
 		while (deletionCursor) {
-			if (deletionCursor.key !== latestVersion.data.id) {
-				deletionCursor.delete()
+			if (deletionCursor.key !== sortedVersions[0].id) {
+				await deletionCursor.delete()
 			}
 			deletionCursor = await deletionCursor.continue()
 		}
@@ -516,35 +591,6 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		return {success: true, data: entity}
 	}
 
-	/**
-	 * Return the latest version in the given list of versions.
-	 *
-	 * @param localEntity
-	 */
-	async _getLatestVersion(localEntity: LocalEntity): Promise<ActionResult<EntityVersion>> {
-		if (localEntity.currentVersionId) {
-			// load current version
-		}
-
-		// load all versions and set current
-		const versions: EntityVersion[] = []
-
-		if (versions.length === 0) {
-			return {
-				success: false,
-				errors: [{type: ErrorTypes.ENTITY_WITHOUT_VERSION}]
-			}
-		}
-
-		const sortedVersions = versions.sort((a, b) => {
-			return a.createdAt < b.createdAt ? 1 : 0
-		})
-
-		// set version on entity
-
-		return {success: true, data: sortedVersions[0]}
-	}
-	
 	observableGet<EntityKey extends EntityKeys<DataSchema>>(entityKey: EntityKey, id: string) {
 		return new Observable<Query<EntityDto<z.infer<CurrentSchema<DataSchema, EntityKey>>>>>((subscriber) => {
 			subscriber.next(QUERY_LOADING)

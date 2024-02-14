@@ -9,7 +9,7 @@ import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {localful} from "../../../../../../state/athena-localful";
 
 export function ListTagsScreen(props: ContentManagerScreenProps) {
-  const tags = useObservableQuery(localful.db.observableGetAll('tags'))
+  const tags = useObservableQuery(localful.db.observableQuery('tags'))
 
   return (
     <>

@@ -10,7 +10,7 @@ import { localful } from "../../../../../state/athena-localful";
 export function ListFieldsScreen(props: ContentManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const fields = useObservableQuery(localful.db.observableGetAll('fields'))
+  const fields = useObservableQuery(localful.db.observableQuery('fields'))
 
   const listItems: AdminListItemProps[] = fields.status === QueryStatus.SUCCESS
     ? fields.data.map(field => ({

@@ -49,11 +49,8 @@ export type EntityVersion = z.infer<typeof EntityVersion>
  * load the current version. The entity dto is the building block for building
  * these return types.
  */
-export const EntityDtoBase = z.object({
-  id: IdField,
+export const EntityDtoBase = Entity.extend({
   versionId: IdField,
-  // This will be the entity createdAt field
-  createdAt: TimestampField,
   // This will be the version createdAt field,
   // which conceptually is the updated timestamp
   updatedAt: TimestampField

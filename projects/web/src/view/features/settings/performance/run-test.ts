@@ -48,7 +48,7 @@ export async function createTestData(localful: LocalfulWeb<typeof DATA_SCHEMA>, 
 export async function queryTestData(localful: LocalfulWeb<typeof DATA_SCHEMA>, report: ReportFunction) {
 	report({level: "task", text: "Fetching Tags"})
 	const getTagsStart = performance.now()
-	const tags = await localful.db.getAll('tags')
+	const tags = await localful.db.query('tags')
 	if (!tags.success) throw tags
 	const getTagsEnd = performance.now()
 	report({level: "message", text: `fetched all tags in ${getTagsEnd - getTagsStart}ms`})
