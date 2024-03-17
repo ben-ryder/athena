@@ -18,9 +18,12 @@ export interface Query<
 	DataSchema extends DataSchemaDefinition,
 	EntityKey extends EntityKeys<DataSchema>
 > {
-	select: EntityKey
+	from: EntityKey
 	where: WhereOptions<DataSchema, EntityKey>
 	groupBy?: keyof CurrentSchema<DataSchema, EntityKey>
 	orderBy: keyof CurrentSchema<DataSchema, EntityKey>
 	orderDirection?: 'asc' | 'desc'
 }
+
+
+

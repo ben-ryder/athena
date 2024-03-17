@@ -4,7 +4,7 @@ import {LocalfulWeb} from "@localful-athena/localful-web";
 import { DATA_SCHEMA, localful } from "../../../../state/athena-localful";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
-const TAG_NUMBER = 50
+const TAG_NUMBER = 3000
 const TAG_VERSIONS_NUMBER = 20
 
 export async function runTest(report: ReportFunction) {

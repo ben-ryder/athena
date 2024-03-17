@@ -11,7 +11,7 @@ export function DatabaseDialog() {
       setOpen={setOpen}
       triggerContent={
         <button className="sidebar-button">
-          <JIcon size="lg"><VaultIcon /></JIcon>
+          <JIcon size="lg"><VaultIcon strokeWidth={1.5} /></JIcon>
         </button>
       }
       disableOutsideClose={true}
