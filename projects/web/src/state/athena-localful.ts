@@ -5,37 +5,42 @@ import {ContentTypeData} from "./schemas/content-types/content-types";
 import {ContentData} from "./schemas/content/content";
 
 export const DATA_SCHEMA = {
-	tags: {
-		version: "1",
-		currentSchema: 'v1',
-		schemas: {
-			v1: TagData
+	version: 1.0,
+	tables: {
+		tags: {
+			currentSchema: 'v1',
+			schemas: {
+				v1: {data: TagData}
+			},
+			useMemoryCache: false,
 		},
-		useMemoryCache: false,
-	},
-	fields: {
-		version: "1",
-		currentSchema: 'v1',
-		schemas: {
-			v1: FieldDefinition
+		fields: {
+			currentSchema: 'v1',
+			schemas: {
+				v1: {data: FieldDefinition}
+			},
+			useMemoryCache: false,
 		},
-		useMemoryCache: false,
-	},
-	content_types: {
-		version: "1",
-		currentSchema: 'v1',
-		schemas: {
-			v1: ContentTypeData
+		content_types: {
+			currentSchema: 'v1',
+			schemas: {
+				v1: {
+					data: ContentTypeData,
+					exposedFields: {fields: 'plain', contentTemplateTags: 'plain'}
+				}
+			},
+			useMemoryCache: false,
 		},
-		useMemoryCache: false,
-	},
-	content: {
-		version: "1",
-		currentSchema: 'v1',
-		schemas: {
-			v1: ContentData
+		content: {
+			currentSchema: 'v1',
+			schemas: {
+				v1: {
+					data: ContentData,
+					exposedFields: {type: 'indexed', tags: 'plain'}
+				}
+			},
+			useMemoryCache: false,
 		},
-		useMemoryCache: false,
 	},
 } as const
 
@@ -47,4 +52,4 @@ export const localful = new LocalfulWeb<typeof DATA_SCHEMA>({
 // Added for dev debugging purposes
 // todo: remove this
 // @ts-expect-error - custom
-window.athenaLocalful = localful
+window.localful = localful

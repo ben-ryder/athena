@@ -15,7 +15,7 @@ export interface DataChangeEvent {
 	detail: {
 		context: EventContext,
 		data: {
-			entityKey: string
+			tableKey: string
 			action: 'create' | 'update' | 'delete' | 'purge'
 			id: string,
 		}
