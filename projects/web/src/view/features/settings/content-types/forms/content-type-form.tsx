@@ -12,7 +12,7 @@ import {
   JMultiSelectOptionData,
   JOptionData, JColourVariants, JSelect, JMultiSelect
 } from "@ben-ryder/jigsaw-react";
-import {ContentFormProps} from "../../../../common/content-form/content-form";
+import {GenericFormProps} from "../../../../common/generic-form/generic-form";
 import {
   ContentTypeData
 } from "../../../../../state/schemas/content-types/content-types";
@@ -23,7 +23,7 @@ import { ErrorCallout } from "../../../../patterns/components/error-callout/erro
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../../state/athena-localful";
 
-export function ContentTypeForm(props: ContentFormProps<ContentTypeData>) {
+export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
   const [errors, setErrors] = useState<ErrorObject[]>([]);
 
   const [name, setName] = useState<string>(props.data.name);

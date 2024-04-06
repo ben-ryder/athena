@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 import { JButton, JProse } from "@ben-ryder/jigsaw-react";
-import { ContentManagerNavigate } from "../../../common/content-manager/content-manager";
+import { GenericManagerNavigate } from "../../../common/generic-manager/generic-manager";
 
 export interface AdminListItemProps {
   id: string
   title: string
   description?: string
   icon?: ReactNode
-  navigate: ContentManagerNavigate
+  navigate: GenericManagerNavigate
 }
 
 export interface AdminListProps {
@@ -18,7 +18,7 @@ export interface AdminListProps {
   items: AdminListItemProps[]
   loadingText: string
   isLoading: boolean
-  navigate: ContentManagerNavigate
+  navigate: GenericManagerNavigate
 }
 
 export function AdminList(props: AdminListProps) {

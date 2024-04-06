@@ -10,10 +10,10 @@ import {
 import "./tag-form.scss";
 import { TagData } from "../../../../../state/schemas/tags/tags";
 import { ColourVariants } from "../../../../../state/schemas/common/fields";
-import {ContentFormProps} from "../../../../common/content-form/content-form";
+import {GenericFormProps} from "../../../../common/generic-form/generic-form";
 
 
-export function TagForm(props: ContentFormProps<TagData>) {
+export function TagForm(props: GenericFormProps<TagData>) {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState<string>(props.data.name);

@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import {
-  ContentManagerContentScreenProps,
-} from "../../../../common/content-manager/content-manager";
+  GenericManagerContentScreenProps,
+} from "../../../../common/generic-manager/generic-manager";
 import { FieldForm } from "../forms/field-form";
 import { FieldDefinition} from "../../../../../state/schemas/fields/fields";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../../state/athena-localful";
 
-export function EditFieldScreen(props: ContentManagerContentScreenProps) {
+export function EditFieldScreen(props: GenericManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   const fieldQuery = useObservableQuery(localful.db.observableGet('fields', props.id))

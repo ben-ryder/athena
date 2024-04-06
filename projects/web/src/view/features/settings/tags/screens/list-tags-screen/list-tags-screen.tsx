@@ -3,12 +3,12 @@ import "./list-tags-screen.scss";
 import { QueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../../patterns/components/error-callout/error-callout";
 import {
-  ContentManagerScreenProps
-} from "../../../../../common/content-manager/content-manager";
+  GenericManagerScreenProps
+} from "../../../../../common/generic-manager/generic-manager";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {localful} from "../../../../../../state/athena-localful";
 
-export function ListTagsScreen(props: ContentManagerScreenProps) {
+export function ListTagsScreen(props: GenericManagerScreenProps) {
   const tags = useObservableQuery(localful.db.observableQuery('tags'))
 
   return (

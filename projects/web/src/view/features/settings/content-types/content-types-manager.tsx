@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ContentManagerScreens } from "../../../common/content-manager/content-manager";
+import { GenericManagerScreens } from "../../../common/generic-manager/generic-manager";
 import {CreateContentTypeScreen} from "./screens/create-content-type-screen";
 import {EditContentTypeScreen} from "./screens/edit-content-type-screen";
 import {ListContentTypesScreen} from "./screens/list-content-types-screen";
 export function ContentTypesManager() {
-  const [currentScreen, navigate] = useState<ContentManagerScreens>({screen: "list"})
+  const [currentScreen, navigate] = useState<GenericManagerScreens>({screen: "list"})
 
   if (currentScreen.screen === "new") {
     return <CreateContentTypeScreen navigate={navigate} />

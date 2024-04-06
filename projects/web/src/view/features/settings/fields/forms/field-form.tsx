@@ -5,11 +5,11 @@ import {
   JSelect,
   JOptionData, JButtonGroup, JButton, JArrowButton, JForm, JFormContent, JFormRow, JProse
 } from "@ben-ryder/jigsaw-react";
-import {ContentFormProps} from "../../../../common/content-form/content-form";
+import {GenericFormProps} from "../../../../common/generic-form/generic-form";
 import {FieldDefinition} from "../../../../../state/schemas/fields/fields";
 import { FIELD_TYPES, FieldTypes, FieldTypesList } from "../../../../../state/schemas/fields/field-types";
 
-export interface FieldFormProps extends ContentFormProps<FieldDefinition> {
+export interface FieldFormProps extends GenericFormProps<FieldDefinition> {
   disableTypeEdit: boolean
 }
 

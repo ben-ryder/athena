@@ -4,13 +4,13 @@ import { ErrorCallout } from "../../../../patterns/components/error-callout/erro
 import { TagData } from "../../../../../state/schemas/tags/tags";
 import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import {
-  ContentManagerContentScreenProps,
-} from "../../../../common/content-manager/content-manager";
+  GenericManagerContentScreenProps,
+} from "../../../../common/generic-manager/generic-manager";
 import {localful} from "../../../../../state/athena-localful";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 
 
-export function EditTagScreen(props: ContentManagerContentScreenProps) {
+export function EditTagScreen(props: GenericManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   const tagResult = useObservableQuery(localful.db.observableGet('tags', props.id))

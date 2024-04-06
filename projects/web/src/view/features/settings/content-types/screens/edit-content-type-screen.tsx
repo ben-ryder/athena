@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import {
-  ContentManagerContentScreenProps,
-} from "../../../../common/content-manager/content-manager";
+  GenericManagerContentScreenProps,
+} from "../../../../common/generic-manager/generic-manager";
 import {ContentTypeForm} from "../forms/content-type-form";
 import {
   ContentTypeData
@@ -11,7 +11,7 @@ import {
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../../state/athena-localful";
 
-export function EditContentTypeScreen(props: ContentManagerContentScreenProps) {
+export function EditContentTypeScreen(props: GenericManagerContentScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   const contentTypeQuery = useObservableQuery(localful.db.observableGet('content_types', props.id))

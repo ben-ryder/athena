@@ -1,4 +1,6 @@
 import {useWorkspaceContext, WorkspaceTab} from "./workspace-context";
+import {ReactNode} from "react";
+import {NewContentTab} from "./content/new-content-tab";
 
 export interface TabProps {
 	tab: WorkspaceTab
@@ -8,37 +10,37 @@ export interface TabProps {
 export function Tab(props: TabProps) {
 	const {closeTab} = useWorkspaceContext()
 
-	let display: string = props.tab.type
+	let displayElement: ReactNode = <p>props.tab.type</p>
 	switch (props.tab.type) {
 		case "content": {
-			display = `content ${props.tab.contentId}`
+			displayElement = <p>content {props.tab.contentId}</p>
 			break;
 		}
 		case "content_new": {
-			display = `new content, type ${props.tab.contentTypeId}`
+			displayElement = <NewContentTab contentTypeId={props.tab.contentTypeId} />
 			break;
 		}
 		case "content_list": {
-			display = `content list`
+			displayElement = <p>content list</p>
 			break;
 		}
 		case "view": {
-			display = `view ${props.tab.viewId}`
+			displayElement = <p>view {props.tab.viewId}</p>
 			break;
 		}
 		case "view_list": {
-			display = `view list`
+			displayElement = <p>view list</p>
 			break;
 		}
 		case "search": {
-			display = `search`
+			displayElement = <p>search</p>
 			break;
 		}
 	}
 
 	return (
 		<div>
-			{display}
+			{displayElement}
 
 			<button onClick={() => {closeTab(props.tabIndex)}}>close</button>
 		</div>

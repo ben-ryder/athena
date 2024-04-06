@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ContentManagerScreens } from "../../../common/content-manager/content-manager";
+import { GenericManagerScreens } from "../../../common/generic-manager/generic-manager";
 import { CreateTagScreen } from "./screens/create-tag-screen";
 import { EditTagScreen } from "./screens/edit-tag-screen";
 import { ListTagsScreen } from "./screens/list-tags-screen/list-tags-screen";
 
 export function TagsManager() {
-  const [currentScreen, navigate] = useState<ContentManagerScreens>({screen: "list"})
+  const [currentScreen, navigate] = useState<GenericManagerScreens>({screen: "list"})
 
   if (currentScreen.screen === 'new') {
     return (

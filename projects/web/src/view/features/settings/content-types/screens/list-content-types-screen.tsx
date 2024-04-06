@@ -1,4 +1,4 @@
-import { ContentManagerScreenProps } from "../../../../common/content-manager/content-manager";
+import { GenericManagerScreenProps } from "../../../../common/generic-manager/generic-manager";
 import { AdminList, AdminListItemProps } from "../../../../patterns/layout/admin-list/admin-list";
 import React, { useState } from "react";
 import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
@@ -6,7 +6,7 @@ import { ErrorCallout } from "../../../../patterns/components/error-callout/erro
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../../state/athena-localful";
 
-export function ListContentTypesScreen(props: ContentManagerScreenProps) {
+export function ListContentTypesScreen(props: GenericManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
   const contentTypes = useObservableQuery(localful.db.observableQuery('content_types'))
