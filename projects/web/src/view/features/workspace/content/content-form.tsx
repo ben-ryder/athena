@@ -3,9 +3,12 @@ import {
   JInput,
   JErrorText,
   JButtonGroup, JButton,
-  JForm, JFormContent, JFormRow
+  JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect
 } from "@ben-ryder/jigsaw-react";
 import {ContentData} from "../../../../state/schemas/content/content";
+import { useObservableQuery } from "@localful-athena/react/use-observable-query";
+import { localful } from "../../../../state/athena-localful";
+import { QueryStatus } from "@localful-athena/control-flow";
 
 export interface ContentFormProps<Data> {
   data: Data;
@@ -18,6 +21,17 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState<string>(props.data.name);
+  const [description, setDescription] = useState<string>(props.data.description || '');
+
+  const [tags, setTags] = useState<JMultiSelectOptionData[]>([]);
+  const allTags = useObservableQuery(localful.db.observableQuery('tags'))
+  const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
+    ? allTags.data.map(tag => ({
+      text: tag.data.name,
+      value: tag.id,
+      variant: tag.data.colourVariant
+    }))
+    : []
 
   function onSave(e: FormEvent) {
     e.preventDefault()
@@ -52,7 +66,30 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
             onChange={(e) => {
               setName(e.target.value);
             }}
-            placeholder="a note title..."
+            placeholder="your content name..."
+          />
+        </JFormRow>
+        <JFormRow>
+          <JTextArea
+            label="Description"
+            id="description"
+            value={description}
+            rows={3}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
+            placeholder="a short descripction of your content..."
+          />
+        </JFormRow>
+        <JFormRow>
+          <JMultiSelect
+            id="tags"
+            label="Tags"
+            options={tagOptions}
+            selectedOptions={tags}
+            setSelectedOptions={setTags}
+            searchText="search and select tags..."
+            noOptionsText="No Tags Found"
           />
         </JFormRow>
       </JFormContent>
