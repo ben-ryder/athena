@@ -92,7 +92,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		return openDB(this.currentDatabaseId, LOCALFUL_INDEXDB_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {
-				for (const [tableKey, schemaDefinition] of Object.entries(this.dataSchema)) {
+				for (const [tableKey, schemaDefinition] of Object.entries(this.dataSchema.tables)) {
 					// Create entity store
 					const entityStore = db.createObjectStore(tableKey, {
 						keyPath: 'id',
