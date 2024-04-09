@@ -20,8 +20,8 @@ export type WorkspaceTabTypes = {
 }
 
 export interface TabMetadata {
-	name: string,
-	contentUnsaved: boolean
+	name?: string,
+	contentUnsaved?: boolean
 }
 
 export type WorkspaceTab = WorkspaceTabTypes & TabMetadata
@@ -57,15 +57,15 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 			...tabs,
 			tab
 		])
-	}, [])
+	}, [tabs])
 
 	const closeTab = useCallback((index: number) => {
 		setTabs(tabs.toSpliced(index, 1))
-	}, [])
+	}, [tabs])
 
 	const isValidTabIndex = useCallback((tabIndex: number) => {
 		return tabIndex === 0 || (tabIndex >= 0 && tabIndex < tabs.length)
-	}, [])
+	}, [tabs])
 
 	const requestSetActiveTab = useCallback((tabIndex: number) => {
 		if (isValidTabIndex(tabIndex)) {
@@ -75,26 +75,35 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 			console.error('Attempted to set active tab outside current range of tabs')
 			// todo: throw some sort of UI error too?
 		}
-	}, [])
+	}, [tabs])
 
-	const updateTabMetadata = useCallback((tabIndex: number, metadata: Partial<TabMetadata>) => {
-		if (!isValidTabIndex(tabIndex)) return
+	function updateTabMetadata(tabIndex: number, metadata: Partial<TabMetadata>) {
+		if (!isValidTabIndex(tabIndex)) {
+			console.error(`Out of range tabIndex ${tabIndex} requested`)
+			return;
+		}
 
-		if (metadata.name) {
-			setTabs((tabs) => {
-				// @ts-expect-error - undefined check is done above
-				tabs[tabIndex].name = metadata.name
-				return tabs
+		if (typeof metadata.name === 'string' || metadata.contentUnsaved) {
+			const newTabs = tabs.map((tab, index) => {
+
+				let name: string|undefined = tab.name
+				if (typeof metadata.name === 'string') {
+					if (metadata.name.length == 0) name = undefined
+					else name = metadata.name
+				}
+
+				if (index === tabIndex) {
+					return {
+						...tab,
+						name: name,
+						contentUnsaved: typeof metadata.contentUnsaved === "boolean" ? metadata.contentUnsaved : tab.contentUnsaved
+					}
+				}
+				return tab
 			})
+			setTabs(newTabs)
 		}
-		if (metadata.contentUnsaved) {
-			setTabs((tabs) => {
-				// @ts-expect-error - undefined check is done above
-				tabs[tabIndex].contentUnsaved = metadata.contentUnsaved
-				return tabs
-			})
-		}
-	}, [])
+	}
 
 	return <WorkspaceContext.Provider value={{
 		tabs: tabs,

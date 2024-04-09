@@ -9,8 +9,10 @@ import {ContentData} from "../../../../state/schemas/content/content";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../state/athena-localful";
 import { QueryStatus } from "@localful-athena/control-flow";
+import { WithTabData } from "../workspace";
+import { useWorkspaceContext } from "../workspace-context";
 
-export interface ContentFormProps<Data> {
+export interface ContentFormProps<Data> extends WithTabData {
   data: Data;
   onSave: (content: Data) => void;
   onDelete?: () => void;
@@ -18,6 +20,8 @@ export interface ContentFormProps<Data> {
 
 
 export function ContentForm(props: ContentFormProps<ContentData>) {
+  const { updateTabMetadata } = useWorkspaceContext()
+
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState<string>(props.data.name);
@@ -65,6 +69,7 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
             value={name}
             onChange={(e) => {
               setName(e.target.value);
+              updateTabMetadata(props.tabIndex, { name: e.target.value, contentUnsaved: true })
             }}
             placeholder="your content name..."
           />
@@ -77,6 +82,7 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
             rows={3}
             onChange={(e) => {
               setDescription(e.target.value);
+              updateTabMetadata(props.tabIndex, { contentUnsaved: true })
             }}
             placeholder="a short descripction of your content..."
           />
@@ -87,7 +93,10 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
             label="Tags"
             options={tagOptions}
             selectedOptions={tags}
-            setSelectedOptions={setTags}
+            setSelectedOptions={(tags) => {
+              setTags(tags)
+              updateTabMetadata(props.tabIndex, { contentUnsaved: true })
+            }}
             searchText="search and select tags..."
             noOptionsText="No Tags Found"
           />

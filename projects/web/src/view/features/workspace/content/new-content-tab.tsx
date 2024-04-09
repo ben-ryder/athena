@@ -1,7 +1,8 @@
 import {ContentForm} from "./content-form";
 import {ContentData} from "../../../../state/schemas/content/content";
+import { WithTabData } from "../workspace";
 
-export interface NewContentTabProps {
+export interface NewContentTabProps extends WithTabData {
 	contentTypeId: string
 }
 
@@ -27,6 +28,7 @@ export function NewContentTab(props: NewContentTabProps) {
 			<ContentForm
 				data={data}
 				onSave={onSave}
+				tabIndex={props.tabIndex}
 			/>
 		</div>
 	)

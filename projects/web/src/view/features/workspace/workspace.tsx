@@ -3,16 +3,20 @@ import {Tab, TabProps} from "./workspace-tab";
 import {ReactNode} from "react";
 import {NewContentTab} from "./content/new-content-tab";
 
+export interface WithTabData {
+	tabIndex: number
+}
+
 export function Workspace() {
-	const {tabs, closeTab, setActiveTab, activeTab, updateTabMetadata} = useWorkspaceContext()
+	const {tabs, closeTab, setActiveTab, activeTab} = useWorkspaceContext()
 
 	const workspaceTabs: TabProps[] = []
 	const workspaceContent: ReactNode[] = []
 
 	for (const [tabIndex, tab] of tabs.entries()) {
 		workspaceTabs.push({
-			name: 'Loading...',
-			contentUnsaved: false,
+			name: tab.name || 'Loading...',
+			contentUnsaved: !!tab.contentUnsaved,
 			onClose: () => {closeTab(tabIndex)},
 			onSelect: () => {setActiveTab(tabIndex)}
 		})
@@ -24,7 +28,7 @@ export function Workspace() {
 				break;
 			}
 			case "content_new": {
-				tabContent = <NewContentTab contentTypeId={tab.contentTypeId} tabIndex={tabIndex} updateTabMetadata={updateTabMetadata} />
+				tabContent = <NewContentTab contentTypeId={tab.contentTypeId} tabIndex={tabIndex} />
 				break;
 			}
 			case "content_list": {
@@ -51,15 +55,15 @@ export function Workspace() {
 		<div>
 			<div>
 				<ul>
-					{workspaceTabs.map((tab) => (
-						<li><Tab name={tab.name} onClose={tab.onClose} onSelect={tab.onSelect} contentUnsaved={tab.contentUnsaved} /></li>
+					{workspaceTabs.map((tab, tabIndex) => (
+						<li key={tabIndex}><Tab name={tab.name} onClose={tab.onClose} onSelect={tab.onSelect} contentUnsaved={tab.contentUnsaved} /></li>
 					))}
 				</ul>
 			</div>
 			<div>
 				<div>
-					{workspaceContent.map((tabContent, index) => (
-						<div style={{display: activeTab === index ? 'block' : 'none'}}>
+					{workspaceContent.map((tabContent, tabIndex) => (
+						<div key={tabIndex} style={{display: activeTab === tabIndex ? 'block' : 'none'}}>
 							{tabContent}
 						</div>
 					))}
