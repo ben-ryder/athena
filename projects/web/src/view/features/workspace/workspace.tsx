@@ -15,7 +15,7 @@ export function Workspace() {
 
 	for (const [tabIndex, tab] of tabs.entries()) {
 		workspaceTabs.push({
-			name: tab.name || 'Loading...',
+			name: tab.name || tab.type,
 			contentUnsaved: !!tab.contentUnsaved,
 			onClose: () => {closeTab(tabIndex)},
 			onSelect: () => {setActiveTab(tabIndex)}

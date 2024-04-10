@@ -26,10 +26,15 @@ export interface TabMetadata {
 
 export type WorkspaceTab = WorkspaceTabTypes & TabMetadata
 
+export interface OpenTabOptions {
+	switch: boolean
+}
+
 export interface WorkspaceContext {
 	tabs: WorkspaceTab[]
-	openTab: (tab: WorkspaceTab) => void
+	openTab: (tab: WorkspaceTab, options?: OpenTabOptions) => void
 	closeTab: (tabIndex: number) => void
+	replaceTab: (tabIndex: number, tab: WorkspaceTab) => void
 	activeTab: number
 	setActiveTab: (tabIndex: number) => void
 	updateTabMetadata: (tabIndex: number, metadata: Partial<TabMetadata>) => void
@@ -39,6 +44,7 @@ const DefaultWorkspaceContext: WorkspaceContext = {
 	tabs: [],
 	openTab: () => {},
 	closeTab: () => {},
+	replaceTab: () => {},
 	activeTab: 0,
 	setActiveTab: () => {},
 	updateTabMetadata: () => {}
@@ -52,14 +58,20 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 	const [tabs, setTabs] = useState<WorkspaceTab[]>([])
 	const [activeTab, setActiveTab] = useState<number>(0)
 
-	const openTab = useCallback((tab: WorkspaceTab) => {
+	const openTab = useCallback((tab: WorkspaceTab, options?: OpenTabOptions) => {
 		setTabs([
 			...tabs,
 			tab
 		])
+
+		if (options?.switch) {
+			// Don't need to -1 for zero index as length has increased in setTabs, it just won't reflect in state at this point.
+			setActiveTab(tabs.length)
+		}
 	}, [tabs])
 
 	const closeTab = useCallback((index: number) => {
+		// todo: handle updating active tab when length changes
 		setTabs(tabs.toSpliced(index, 1))
 	}, [tabs])
 
@@ -77,7 +89,7 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 		}
 	}, [tabs])
 
-	function updateTabMetadata(tabIndex: number, metadata: Partial<TabMetadata>) {
+	const updateTabMetadata = useCallback((tabIndex: number, metadata: Partial<TabMetadata>) => {
 		if (!isValidTabIndex(tabIndex)) {
 			console.error(`Out of range tabIndex ${tabIndex} requested`)
 			return;
@@ -103,12 +115,25 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 			})
 			setTabs(newTabs)
 		}
-	}
+	}, [tabs, isValidTabIndex])
+
+	const replaceTab = useCallback((tabIndex: number, newTab: WorkspaceTab) => {
+		if (!isValidTabIndex(tabIndex)) {
+			console.error(`Out of range tabIndex ${tabIndex} requested`)
+			return;
+		}
+
+		const updatedTabs = tabs.map((tab, index) => {
+			return index === tabIndex ? newTab : tab
+		})
+		setTabs(updatedTabs)
+	}, [tabs])
 
 	return <WorkspaceContext.Provider value={{
 		tabs: tabs,
 		openTab: openTab,
 		closeTab: closeTab,
+		replaceTab: replaceTab,
 		activeTab: activeTab,
 		setActiveTab: requestSetActiveTab,
 		updateTabMetadata: updateTabMetadata

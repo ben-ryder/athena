@@ -17,7 +17,7 @@ export function NewContentMenu() {
 						{contentTypesQuery.data.map(type =>
 							<li key={type.id}>
 								<JButton
-									onClick={() => {openTab({type: 'content_new', contentTypeId: type.id})}}
+									onClick={() => {openTab({type: 'content_new', contentTypeId: type.id}, {switch: true})}}
 								>{type.data.name}</JButton></li>
 						)}
 					</ul>
