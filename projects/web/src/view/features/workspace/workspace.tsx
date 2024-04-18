@@ -1,7 +1,10 @@
 import {useWorkspaceContext} from "./workspace-context";
 import {Tab, TabProps} from "./workspace-tab";
 import {ReactNode} from "react";
-import {NewContentTab} from "./content/new-content-tab";
+import {ContentTab} from "./content/content-tab";
+
+// todo: split styling by component for better encapsulation
+import "./workspace.scss"
 
 export interface WithTabData {
 	tabIndex: number
@@ -16,7 +19,8 @@ export function Workspace() {
 	for (const [tabIndex, tab] of tabs.entries()) {
 		workspaceTabs.push({
 			name: tab.name || tab.type,
-			contentUnsaved: !!tab.contentUnsaved,
+			isUnsaved: !!tab.isUnsaved,
+			isActive: activeTab === tabIndex,
 			onClose: () => {closeTab(tabIndex)},
 			onSelect: () => {setActiveTab(tabIndex)}
 		})
@@ -24,23 +28,19 @@ export function Workspace() {
 		let tabContent: ReactNode = <p>{tab.type}</p>
 		switch (tab.type) {
 			case "content": {
-				tabContent = <p>content {tab.contentId}</p>
+				tabContent = <ContentTab contentId={tab.contentId} tabIndex={tabIndex} />
 				break;
 			}
 			case "content_new": {
-				tabContent = <NewContentTab contentTypeId={tab.contentTypeId} tabIndex={tabIndex} />
-				break;
-			}
-			case "content_list": {
-				tabContent = <p>content list</p>
+				tabContent = <ContentTab contentTypeId={tab.contentTypeId} tabIndex={tabIndex} />
 				break;
 			}
 			case "view": {
 				tabContent = <p>view {tab.viewId}</p>
 				break;
 			}
-			case "view_list": {
-				tabContent = <p>view list</p>
+			case "view_new": {
+				tabContent = <p>view new</p>
 				break;
 			}
 			case "search": {
@@ -53,10 +53,12 @@ export function Workspace() {
 
 	return (
 		<div>
-			<div>
-				<ul>
+			<div className='workspace-tabs'>
+				<ul className='workspace-tabs__list'>
 					{workspaceTabs.map((tab, tabIndex) => (
-						<li key={tabIndex}><Tab name={tab.name} onClose={tab.onClose} onSelect={tab.onSelect} contentUnsaved={tab.contentUnsaved} /></li>
+						<li className='workspace-tabs__list-item' key={tabIndex}>
+							<Tab {...tab} />
+						</li>
 					))}
 				</ul>
 			</div>

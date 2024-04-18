@@ -1,33 +1,24 @@
-import { FormEvent, useState } from "react";
+import {FormEvent, useState} from "react";
 import {
   JInput,
   JErrorText,
   JButtonGroup, JButton,
   JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect
 } from "@ben-ryder/jigsaw-react";
-import {ContentData} from "../../../../state/schemas/content/content";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../../state/athena-localful";
 import { QueryStatus } from "@localful-athena/control-flow";
 import { WithTabData } from "../workspace";
-import { useWorkspaceContext } from "../workspace-context";
+import {ContentFormData, ContentFormDataHandlers} from "./useContentFormData";
 
-export interface ContentFormProps<Data> extends WithTabData {
-  data: Data;
-  onSave: (content: Data) => void;
-  onDelete?: () => void;
+export interface ContentFormProps extends WithTabData, ContentFormData, ContentFormDataHandlers {
+    onSave: () => void;
+    onDelete?: () => void;
 }
 
-
-export function ContentForm(props: ContentFormProps<ContentData>) {
-  const { updateTabMetadata } = useWorkspaceContext()
-
+export function ContentForm(props: ContentFormProps) {
   const [error, setError] = useState<string | null>(null);
 
-  const [name, setName] = useState<string>(props.data.name);
-  const [description, setDescription] = useState<string>(props.data.description || '');
-
-  const [tags, setTags] = useState<JMultiSelectOptionData[]>([]);
   const allTags = useObservableQuery(localful.db.observableQuery('tags'))
   const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
     ? allTags.data.map(tag => ({
@@ -40,18 +31,12 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
   function onSave(e: FormEvent) {
     e.preventDefault()
 
-    if (name.length === 0) {
+    if (props.name.length === 0) {
       setError("Your content must have a name");
     }
     else {
       setError(null);
-      props.onSave({
-        type: props.data.type,
-        name: name,
-        description: undefined,
-        tags: [],
-        fields: {}
-      });
+      props.onSave();
     }
   }
 
@@ -66,10 +51,9 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
             label="Name"
             id="name"
             type="text"
-            value={name}
+            value={props.name}
             onChange={(e) => {
-              setName(e.target.value);
-              updateTabMetadata(props.tabIndex, { name: e.target.value, contentUnsaved: true })
+              props.onNameChange(e.target.value);
             }}
             placeholder="your content name..."
           />
@@ -78,11 +62,10 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
           <JTextArea
             label="Description"
             id="description"
-            value={description}
+            value={props.description || ''}
             rows={3}
             onChange={(e) => {
-              setDescription(e.target.value);
-              updateTabMetadata(props.tabIndex, { contentUnsaved: true })
+                props.onDescriptionChange(e.target.value);
             }}
             placeholder="a short descripction of your content..."
           />
@@ -92,10 +75,13 @@ export function ContentForm(props: ContentFormProps<ContentData>) {
             id="tags"
             label="Tags"
             options={tagOptions}
-            selectedOptions={tags}
+            selectedOptions={
+              props.tags
+                  ? tagOptions.filter(option => props.tags.includes(option.value))
+                  : []
+            }
             setSelectedOptions={(tags) => {
-              setTags(tags)
-              updateTabMetadata(props.tabIndex, { contentUnsaved: true })
+              props.onTagsChange(tags.map(option => option.value))
             }}
             searchText="search and select tags..."
             noOptionsText="No Tags Found"

@@ -7,21 +7,17 @@ export type WorkspaceTabTypes = {
 	type: 'content',
 	contentId: string
 } | {
-	type: 'content_list'
-} | {
 	type: 'view_new'
 } | {
 	type: 'view',
 	viewId: string
-} | {
-	type: 'view_list'
 } | {
 	type: 'search'
 }
 
 export interface TabMetadata {
 	name?: string,
-	contentUnsaved?: boolean
+	isUnsaved?: boolean
 }
 
 export type WorkspaceTab = WorkspaceTabTypes & TabMetadata
@@ -37,7 +33,8 @@ export interface WorkspaceContext {
 	replaceTab: (tabIndex: number, tab: WorkspaceTab) => void
 	activeTab: number
 	setActiveTab: (tabIndex: number) => void
-	updateTabMetadata: (tabIndex: number, metadata: Partial<TabMetadata>) => void
+	setTabIsUnsaved: (tabIndex: number, hasUnsaved: boolean) => void
+	setTabName: (tabIndex: number, name: string) => void
 }
 
 const DefaultWorkspaceContext: WorkspaceContext = {
@@ -47,7 +44,8 @@ const DefaultWorkspaceContext: WorkspaceContext = {
 	replaceTab: () => {},
 	activeTab: 0,
 	setActiveTab: () => {},
-	updateTabMetadata: () => {}
+	setTabIsUnsaved: () => {},
+	setTabName: () => {}
 }
 
 const WorkspaceContext = createContext<WorkspaceContext>(DefaultWorkspaceContext)
@@ -64,7 +62,8 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 			tab
 		])
 
-		if (options?.switch) {
+		// Check against current length, after this new tab length will be one
+		if (options?.switch || tabs.length === 0) {
 			// Don't need to -1 for zero index as length has increased in setTabs, it just won't reflect in state at this point.
 			setActiveTab(tabs.length)
 		}
@@ -89,32 +88,40 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 		}
 	}, [tabs])
 
-	const updateTabMetadata = useCallback((tabIndex: number, metadata: Partial<TabMetadata>) => {
+	const setTabIsUnsaved = useCallback((tabIndex: number, isUnsaved: boolean) => {
 		if (!isValidTabIndex(tabIndex)) {
 			console.error(`Out of range tabIndex ${tabIndex} requested`)
 			return;
 		}
-
-		if (typeof metadata.name === 'string' || metadata.contentUnsaved) {
-			const newTabs = tabs.map((tab, index) => {
-
-				let name: string|undefined = tab.name
-				if (typeof metadata.name === 'string') {
-					if (metadata.name.length == 0) name = undefined
-					else name = metadata.name
-				}
-
+		setTabs((oldTabs) => {
+			return oldTabs.map((tab, index) => {
 				if (index === tabIndex) {
 					return {
 						...tab,
-						name: name,
-						contentUnsaved: typeof metadata.contentUnsaved === "boolean" ? metadata.contentUnsaved : tab.contentUnsaved
+						isUnsaved
 					}
 				}
 				return tab
 			})
-			setTabs(newTabs)
+		})
+	}, [tabs, isValidTabIndex])
+
+	const setTabName = useCallback((tabIndex: number, name: string) => {
+		if (!isValidTabIndex(tabIndex)) {
+			console.error(`Out of range tabIndex ${tabIndex} requested`)
+			return;
 		}
+		setTabs((oldTabs) => {
+			return oldTabs.map((tab, index) => {
+				if (index === tabIndex) {
+					return {
+						...tab,
+						name: name !== '' ? name : undefined,
+					}
+				}
+				return tab
+			})
+		})
 	}, [tabs, isValidTabIndex])
 
 	const replaceTab = useCallback((tabIndex: number, newTab: WorkspaceTab) => {
@@ -136,6 +143,7 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 		replaceTab: replaceTab,
 		activeTab: activeTab,
 		setActiveTab: requestSetActiveTab,
-		updateTabMetadata: updateTabMetadata
+		setTabIsUnsaved: setTabIsUnsaved,
+		setTabName: setTabName
 	}}>{props.children}</WorkspaceContext.Provider>
 }
