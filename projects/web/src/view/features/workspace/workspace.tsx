@@ -1,5 +1,5 @@
 import {useWorkspaceContext} from "./workspace-context";
-import {Tab, TabProps} from "./workspace-tab";
+import {Tab, TabProps} from "./tab";
 import {ReactNode} from "react";
 import {ContentTab} from "./content/content-tab";
 

@@ -21,20 +21,27 @@ export function Search(props: SearchProps) {
 
     return (
         <div>
-            <ul>
-                {contentQuery.data.map(content => (
-                    <li key={content.id}>
-                        <h3>{content.data.name}</h3>
-                        <p>Type: {content.data.type}</p>
-                        <button onClick={() => {
-                            openTab({type: "content", contentId: content.id})
-                            if (props.onOpen) {
-                                props.onOpen()
-                            }}
-                        }>Open</button>
-                    </li>
-                ))}
-            </ul>
+            {contentQuery.data.length > 0
+              ? (
+                <ul>
+                    {contentQuery.data.map(content => (
+                      <li key={content.id}>
+                          <h3>{content.data.name}</h3>
+                          <p>Type: {content.data.type}</p>
+                          <button onClick={() => {
+                              openTab({type: "content", contentId: content.id})
+                              if (props.onOpen) {
+                                  props.onOpen()
+                              }}
+                          }>Open</button>
+                      </li>
+                    ))}
+                </ul>
+              )
+              : (
+                <p>Not Content Found</p>
+              )
+            }
         </div>
     )
 }
