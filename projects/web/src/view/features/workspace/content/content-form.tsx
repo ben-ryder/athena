@@ -18,6 +18,8 @@ export interface ContentFormProps extends WithTabData, ContentFormData, ContentF
     onDelete?: () => void;
 }
 
+// todo: handle situation where content form is open and content gets deleted?
+
 export function ContentForm(props: ContentFormProps) {
   const [error, setError] = useState<string | null>(null);
 

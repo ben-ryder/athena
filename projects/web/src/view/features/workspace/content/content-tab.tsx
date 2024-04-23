@@ -9,7 +9,7 @@ import {ContentFormOptions, useContentFormData} from "./useContentFormData";
 export interface ContentTabProps extends WithTabData, ContentFormOptions {}
 
 export function ContentTab(props: ContentTabProps) {
-	const { replaceTab, setTabName, setTabIsUnsaved } = useWorkspaceContext()
+	const { replaceTab, setTabName, setTabIsUnsaved, closeTab } = useWorkspaceContext()
 
 	const {
 		contentTypeId,
@@ -66,8 +66,20 @@ export function ContentTab(props: ContentTabProps) {
 		setTabName(props.tabIndex, name)
 	}, [name, props.contentId, props.contentTypeId]);
 
-	const onDelete = useCallback(() => {
-		console.debug('DELETE')
+	const onDelete = useCallback(async () => {
+		if (!props.contentId) {
+			// this should never really happen, but protect against it just in case.
+			console.error('Attempted to delete content with no contentId')
+			return
+		}
+
+		const result = await localful.db.delete('content', props.contentId)
+		if (result.success) {
+			closeTab(props.tabIndex)
+		}
+		else {
+			console.error(result.errors)
+		}
 	}, [props.contentId])
 
 	const onNameChange = useCallback((name: string) => {
