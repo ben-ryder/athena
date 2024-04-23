@@ -7,6 +7,7 @@ import {DataChangeEvent, EventTypes} from "../events/events";
 import {IDBPDatabase, openDB} from "idb";
 import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/storage/entity-types";
 import {EventManager} from "@localful-athena/events/event-manager";
+import { Logger } from "../../src/utils/logger";
 
 const LOCALFUL_INDEXDB_VERSION = 1
 const LOCALFUL_VERSION = '1.0'
@@ -660,6 +661,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
 				// Discard if tableKey or ID doesn't match, as the data won't have changed.
 				if (e.detail.data.tableKey === tableKey && e.detail.data.id === id) {
+					Logger.debug(`[observableGet] Received event that requires re-query`)
 					runQuery()
 				}
 			}

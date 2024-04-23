@@ -1,5 +1,6 @@
 import { DatabaseSwitchEvent, EventContext, EventMap, EventTypes, LocalfulEvent } from "./events";
 import { LocalfulEncryption } from "../encryption/localful-encryption";
+import {Logger} from "../../src/utils/logger";
 
 /**
  * Handles events throughout Localful, including communicating with
@@ -28,6 +29,8 @@ export class EventManager {
 			data: data,
 		}
 
+		Logger.debug(`[EventManager] Dispatching event:`, type, eventDetail)
+
 		const event = new CustomEvent(type, { detail: eventDetail })
 		this.eventTarget.dispatchEvent(event)
 
@@ -55,6 +58,7 @@ export class EventManager {
 
 		this.crossContextChannel = new BroadcastChannel(`localful_${databaseId}`)
 		this.crossContextChannel.onmessage = (message: MessageEvent<LocalfulEvent>) => {
+			Logger.debug('[EventManager] Received broadcast channel message', message.data)
 			this.dispatch(message.data.type, message.data.detail.data, message.data.detail.context)
 		}
 	}
