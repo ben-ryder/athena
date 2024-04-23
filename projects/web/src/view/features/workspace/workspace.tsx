@@ -5,6 +5,7 @@ import {ContentTab} from "./content/content-tab";
 
 // todo: split styling by component for better encapsulation
 import "./workspace.scss"
+import {SearchTab} from "./search/search-tab";
 
 export interface WithTabData {
 	tabIndex: number
@@ -44,7 +45,7 @@ export function Workspace() {
 				break;
 			}
 			case "search": {
-				tabContent = <p>search</p>
+				tabContent = <SearchTab />
 				break;
 			}
 		}

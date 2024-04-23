@@ -48,6 +48,7 @@
   display: flex;
   gap: var(--j-space-5);
   overflow-x: scroll;
+  min-height: 49px;
 
   background-color: var(--j-c-background-f1);
   padding-top: var(--j-space-5);

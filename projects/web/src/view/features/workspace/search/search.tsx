@@ -2,6 +2,7 @@ import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {localful} from "../../../../state/athena-localful";
 import {ErrorCallout} from "../../../patterns/components/error-callout/error-callout";
 import {useWorkspaceContext} from "../workspace-context";
+import {ContentCard} from "../../../patterns/components/content-card/content-card";
 
 export interface SearchProps {
     onOpen?: () => void
@@ -25,16 +26,18 @@ export function Search(props: SearchProps) {
               ? (
                 <ul>
                     {contentQuery.data.map(content => (
-                      <li key={content.id}>
-                          <h3>{content.data.name}</h3>
-                          <p>Type: {content.data.type}</p>
-                          <button onClick={() => {
-                              openTab({type: "content", contentId: content.id})
-                              if (props.onOpen) {
-                                  props.onOpen()
-                              }}
-                          }>Open</button>
-                      </li>
+                      <ContentCard
+                        key={content.id}
+                        id={content.id}
+                        name={content.data.name}
+                        description={content.data.description}
+                        onSelect={() => {
+                            openTab({type: "content", contentId: content.id})
+                            if (props.onOpen) {
+                                props.onOpen()
+                            }
+                        }}
+                      />
                     ))}
                 </ul>
               )

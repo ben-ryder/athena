@@ -60,9 +60,11 @@ export function ContentTab(props: ContentTabProps) {
 		}
 	}, [contentTypeId, replaceTab, setTabIsUnsaved])
 
+	// contentId and contentTypeId are dependencies to ensure the tab name updates
+	// when a "new content" tab is replaced with a "content" tab.
 	useEffect(() => {
 		setTabName(props.tabIndex, name)
-	}, [name]);
+	}, [name, props.contentId, props.contentTypeId]);
 
 	const onDelete = useCallback(() => {
 		console.debug('DELETE')

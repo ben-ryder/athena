@@ -9,6 +9,8 @@ import { PageNotFound } from "./view/pages/page-not-found";
 import { WelcomePage } from "./view/pages/welcome";
 import { UnderDevelopmentPage } from "./view/pages/under-development/under-development";
 
+import "./app.scss"
+
 export function App() {
   const [showDevPage, setShowDevPage] = useState<boolean>(true)
 

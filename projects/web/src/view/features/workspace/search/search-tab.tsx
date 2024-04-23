@@ -1,10 +1,14 @@
 import {WithTabData} from "../workspace";
 import {Search} from "./search";
 
+import "./search-tab.scss"
+
 export interface SearchTabProps extends WithTabData {}
 
 export function SearchTab() {
     return (
-        <Search />
+      <div className='search-tab'>
+          <Search />
+      </div>
     )
 }

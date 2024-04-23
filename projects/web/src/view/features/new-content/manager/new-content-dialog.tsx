@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { JDialog, JIcon } from "@ben-ryder/jigsaw-react";
-import { LayoutTemplate as PagesIcon } from "lucide-react";
+import { SquarePlus as NewContentIcon } from "lucide-react";
+import {NewContentMenu} from "./new-content-menu";
 
-export function PagesDialog() {
+export function NewContentDialog() {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
@@ -11,14 +12,14 @@ export function PagesDialog() {
       setOpen={setOpen}
       triggerContent={
         <button className="sidebar-button">
-          <JIcon size="lg"><PagesIcon /></JIcon>
+          <JIcon size="lg"><NewContentIcon /></JIcon>
         </button>
       }
       disableOutsideClose={true}
-      heading="Pages"
-      description="Open and manage pages"
+      heading="New Content"
+      description="New content"
       content={
-        <p>Open and manage pages</p>
+        <NewContentMenu onOpen={() => {setOpen(false)}} />
       }
     />
   )

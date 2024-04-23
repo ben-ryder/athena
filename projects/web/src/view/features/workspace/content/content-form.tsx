@@ -11,6 +11,8 @@ import { QueryStatus } from "@localful-athena/control-flow";
 import { WithTabData } from "../workspace";
 import {ContentFormData, ContentFormDataHandlers} from "./useContentFormData";
 
+import "./content-form.scss"
+
 export interface ContentFormProps extends WithTabData, ContentFormData, ContentFormDataHandlers {
     onSave: () => void;
     onDelete?: () => void;
