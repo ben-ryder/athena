@@ -1,0 +1,97 @@
+@import "@ben-ryder/jigsaw/sass/00-foundations/breakpoints/breakpoints.toolkit";
+
+:root {
+  --menu-panel-width: 275px;
+}
+
+@mixin menu-panel-button {
+  display: block;
+  padding: var(--j-space-3);
+  border-radius: var(--j-border-radius-sm);
+  line-height: 0;
+  color: inherit;
+
+  &:hover {
+    background-color: var(--j-c-atom-50);
+    color: var(--j-c-primary);
+    cursor: pointer;
+  }
+}
+
+@mixin section-border {
+  &::after {
+    content: '';
+    display: block;
+    height: var(--j-border-width-md);
+    width: calc(100% - var(--j-space-5)*2);
+    background-color: var(--j-c-blueGrey-800);
+    margin: auto;
+  }
+}
+
+.menu-panel {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+
+  background: var(--j-c-atom-200);
+  color: var(--j-c-text);
+
+  @include breakpoint(md) {
+    position: relative;
+    width: var(--menu-panel-width);
+    min-width: var(--menu-panel-width);
+  }
+
+  &__database {
+    @include section-border();
+
+    &-content {
+      padding: var(--j-space-3) var(--j-space-5);
+      display: flex;
+      align-items: center;
+    }
+
+    &-edit {
+      @include menu-panel-button();
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: var(--j-text-size-sm);
+
+      margin-right: auto;
+
+      .j-icon {
+        margin-left: var(--j-space-2);
+        height: 18px;
+        width: 18px;
+      }
+    }
+
+    &-status {
+      @include menu-panel-button();
+    }
+
+    &-switch {
+      @include menu-panel-button();
+    }
+  }
+
+  &__actions {
+    margin-top: var(--j-space-12);
+    padding: var(--j-space-3) var(--j-space-6);
+  }
+
+  &__favorites {
+    margin-top: var(--j-space-12);
+    padding: var(--j-space-3);
+  }
+}
+
+.main-panel-action {
+  &__button {
+    width: 100%;
+  }
+}

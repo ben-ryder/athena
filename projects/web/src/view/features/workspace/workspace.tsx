@@ -53,7 +53,7 @@ export function Workspace() {
 	}
 
 	return (
-		<div>
+		<div className='workspace'>
 			<div className='workspace-tabs'>
 				<ul className='workspace-tabs__list'>
 					{workspaceTabs.map((tab, tabIndex) => (
