@@ -7,6 +7,10 @@ import {
     Search as SearchIcon,
     List as AllContentIcon,
     Filter as AllViewsIcon,
+    Shapes as DataStructureIcon,
+  UserCircle as AccountIcon,
+  Settings as SettingsIcon,
+  HelpCircle as HelpIcon,
 } from "lucide-react"
 import {MainPanelAction} from "./main-panel-action";
 
@@ -25,7 +29,7 @@ export function MenuPanel() {
             <div className="menu-panel__database">
                 <div className="menu-panel__database-content">
                     <button className="menu-panel__database-edit">
-                        <span className="menu-panel__database-name">Example Database rega rao afowhr eowhaf waeof</span>
+                        <span className="menu-panel__database-name" tabIndex={-1}>Example Database</span>
                         <JIcon size='sm'><EditIcon/></JIcon>
                     </button>
                     <button className="menu-panel__database-status"><JIcon><StatusDownloadIcon/></JIcon></button>
@@ -34,28 +38,49 @@ export function MenuPanel() {
             </div>
 
             <div className="menu-panel__actions">
-                <MainPanelAction text='New Content' icon={<JIcon variant='blueGrey'><NewContentIcon/></JIcon>}
-                                 onSelect={() => {
-                                 }}/>
-                <MainPanelAction text='Search' icon={<SearchIcon/>} onSelect={() => {
-                }}/>
-                <MainPanelAction text='All Content' icon={<AllContentIcon/>} onSelect={() => {
-                }}/>
-                <MainPanelAction text='All Views' icon={<AllViewsIcon/>} onSelect={() => {
-                }}/>
-                <MainPanelAction text='Data Structure' icon={<NewContentIcon/>} onSelect={() => {
-                }}/>
+                <MainPanelAction
+                  text='New Content'
+                  icon={<NewContentIcon />}
+                  onSelect={() => {}}
+                />
+                <MainPanelAction
+                  text='Search'
+                  icon={<SearchIcon />}
+                  onSelect={() => {}}
+                />
+                <MainPanelAction
+                  text='All Content'
+                  icon={<AllContentIcon />}
+                  onSelect={() => {}}
+                />
+                <MainPanelAction
+                  text='All Views'
+                  icon={<AllViewsIcon />}
+                  onSelect={() => {}}
+                />
+                <MainPanelAction
+                  text='Data Structure'
+                  icon={<DataStructureIcon />}
+                  onSelect={() => {}}
+                />
             </div>
 
             <div className="menu-panel__favorites">
-
+              <div className="menu-panel__favorites-header">
+                <h3>Favorites</h3>
+              </div>
+              <div>
+                No Favorites Found
+              </div>
             </div>
 
-            <div className="menu-panel__user">
+          <div className="menu-panel__user">
+            <button><AccountIcon/></button>
+            <button><SettingsIcon/></button>
+            <button><HelpIcon/></button>
+          </div>
 
-            </div>
-
-            {/*<div className="athena__ribbon-menu">*/}
+          {/*<div className="athena__ribbon-menu">*/}
             {/*    <DatabaseDialog/>*/}
             {/*    <div className="sidebar-divider"/>*/}
             {/*    <NewContentDialog/>*/}
