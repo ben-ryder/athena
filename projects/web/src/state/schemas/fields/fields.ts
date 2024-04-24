@@ -1,7 +1,7 @@
 import {z} from "zod";
 import isISO8601Date from 'validator/lib/isISO8601';
 import { FIELD_TYPES } from "./field-types";
-import { IdField } from "@localful-athena/storage/entity-types";
+import {EntityDto, IdField} from "@localful-athena/storage/entity-types";
 
 /**
  * Validate if a string is a slug
@@ -133,3 +133,5 @@ export const FieldStorage = z.record(
   FieldData
 )
 export type FieldStorage = z.infer<typeof FieldStorage>
+
+export type FieldDto = EntityDto<FieldData>

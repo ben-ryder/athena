@@ -13,8 +13,8 @@ export const DescriptionField = z.string()
   .optional()
 export type DescriptionField = z.infer<typeof DescriptionField>
 
-export const TagsField = z.array(IdField)
-export type TagsField = z.infer<typeof TagsField>
+export const EntityReferenceListField = z.array(IdField)
+export type EntityReferenceListField = z.infer<typeof EntityReferenceListField>
 
 // These are directly mapped from Jigsaw colour variants right now.
 export const ColourVariants = z.enum(JColourVariantsList);

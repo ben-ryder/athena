@@ -1,6 +1,6 @@
 import {z} from "zod"
 import {ColourVariants, DescriptionField, NameField} from "../common/fields";
-import { IdField } from "@localful-athena/storage/entity-types";
+import {EntityDto, IdField} from "@localful-athena/storage/entity-types";
 
 export const ContentTypeData = z.object({
   name: NameField,
@@ -13,3 +13,5 @@ export const ContentTypeData = z.object({
   fields: z.array(IdField)
 }).strict()
 export type ContentTypeData = z.infer<typeof ContentTypeData>
+
+export type ContentTypeDto = EntityDto<ContentTypeData>
