@@ -4,10 +4,10 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 
 import { routes } from "./routes";
 
-import { MainPage } from "./view/pages/main/main";
-import { PageNotFound } from "./view/pages/page-not-found";
-import { WelcomePage } from "./view/pages/welcome";
-import { UnderDevelopmentPage } from "./view/pages/under-development/under-development";
+import { MainPage } from "./pages/main/main";
+import { PageNotFound } from "./pages/page-not-found";
+import { WelcomePage } from "./pages/welcome";
+import { UnderDevelopmentPage } from "./pages/under-development/under-development";
 
 import "./app.scss"
 

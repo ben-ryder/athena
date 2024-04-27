@@ -2,10 +2,9 @@ import {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
   useState,
 } from "react";
-import { LoadingScreen } from "../view/patterns/components/loading-screen/loading-screen";
+import { LoadingScreen } from "../patterns/components/loading-screen/loading-screen";
 
 export interface LFBContext {
   loading: boolean

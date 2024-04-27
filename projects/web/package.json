@@ -22,11 +22,12 @@
     "code:format": "npx prettier . --write"
   },
   "dependencies": {
-    "@ben-ryder/jigsaw": "^0.19.1",
-    "@ben-ryder/jigsaw-react": "^0.20.1",
+    "@ben-ryder/jigsaw": "^0.21.0",
+    "@ben-ryder/jigsaw-react": "^0.22.0",
     "@codemirror/lang-markdown": "^6.2.4",
     "@codemirror/language-data": "^6.4.0",
     "@codemirror/view": "^6.23.1",
+    "@headlessui/react": "^1.7.19",
     "@hookform/resolvers": "^3.3.4",
     "@localful/common": "^0.2.0",
     "@uiw/codemirror-extensions-basic-setup": "^4.21.21",

@@ -8,7 +8,6 @@ export const NameField = z.string()
 export type NameField = z.infer<typeof NameField>
 
 export const DescriptionField = z.string()
-  .min(1, "description length must be between 1 and 200 chars")
   .max(200, "description length must be between 1 and 200 chars")
   .optional()
 export type DescriptionField = z.infer<typeof DescriptionField>
