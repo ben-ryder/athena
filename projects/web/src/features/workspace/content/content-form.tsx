@@ -23,7 +23,7 @@ export interface ContentFormProps extends WithTabData, ContentFormData, ContentF
 export function ContentForm(props: ContentFormProps) {
   const [error, setError] = useState<string | null>(null);
 
-  const allTags = useObservableQuery(localful.db.observableQuery('tags'))
+  const allTags = useObservableQuery(localful.db.observableQuery({table: 'tags'}))
   const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
     ? allTags.data.map(tag => ({
       text: tag.data.name,

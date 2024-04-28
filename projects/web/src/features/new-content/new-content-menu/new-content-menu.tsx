@@ -11,7 +11,7 @@ export interface NewContentMenuProps {
 }
 
 export function NewContentMenu(props: NewContentMenuProps) {
-	const contentTypesQuery = useObservableQuery(localful.db.observableQuery('content_types'))
+	const contentTypesQuery = useObservableQuery(localful.db.observableQuery({table: 'content_types'}))
 	const { openTab } = useWorkspaceContext()
 
 	return (

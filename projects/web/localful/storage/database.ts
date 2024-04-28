@@ -8,6 +8,7 @@ import {IDBPDatabase, openDB} from "idb";
 import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/storage/entity-types";
 import {EventManager} from "@localful-athena/events/event-manager";
 import { Logger } from "../../src/utils/logger";
+import {QueryDefinition} from "@localful-athena/storage/queries";
 
 const LOCALFUL_INDEXDB_VERSION = 1
 const LOCALFUL_VERSION = '1.0'
@@ -23,6 +24,9 @@ export type SchemaVersion<DataSchema extends DataSchemaDefinition, TableKey exte
 
 // Type helper to access the current schema version for a given table
 export type CurrentSchemaData<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = SchemaVersion<DataSchema, TableKey, DataSchema['tables'][TableKey]['currentSchema']>['data']
+
+// Type helper to access the current schema version for a given table
+export type CurrentSchemaExposedFields<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = keyof SchemaVersion<DataSchema, TableKey, DataSchema['tables'][TableKey]['currentSchema']>['exposedFields']
 
 
 export type DataMigration<
@@ -443,7 +447,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	/**
 	 * Query for content.
 	 */
-	async query<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey): Promise<ActionResult<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[]>> {
+	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[]>> {
 		// todo: add query memory cache
 		// if (this.dataSchema[tableKey].useMemoryCache) {
 		// 	const cachedResponse = await memoryCache.get<EntityDto<z.infer<CurrentSchema<DataSchema, TableKey>>>[]>(`${tableKey}-getAll`)
@@ -452,9 +456,15 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		// 	}
 		// }
 
+		// work out index (or indexes) to use if filtering by more than one value
+		// for each index, use cursor to iterate over items and filter by any exposed fields
+		// decrypt each result and filter by none exposed fields
+		// sort results based on sorting & group by options
+		// will paging be implemented? if so, at this point extract current page of results and query status like total results etc
+
 		const db = await this.getDb()
-		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readonly')
-		const entityIndex = tx.objectStore(tableKey).index('isDeleted')
+		const tx = db.transaction([query.table, this._getVersionTableName(query.table)], 'readonly')
+		const entityIndex = tx.objectStore(query.table).index('isDeleted')
 
 		const rawResults: {entity: LocalEntity, version: EntityVersion}[] = []
 		const errors: ErrorObject[] = []
@@ -463,7 +473,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			const entity = entityCursor.value as LocalEntity
 			let version: EntityVersion|undefined = undefined
 			if (entity.currentVersionId) {
-				version = await tx.objectStore(this._getVersionTableName(tableKey)).get(entity.currentVersionId) as EntityVersion|undefined
+				version = await tx.objectStore(this._getVersionTableName(query.table)).get(entity.currentVersionId) as EntityVersion|undefined
 
 				// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
 				if (!version) {
@@ -472,7 +482,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 				}
 			}
 			else {
-				const allVersions = await tx.objectStore(this._getVersionTableName(tableKey)).getAll() as EntityVersion[]
+				const allVersions = await tx.objectStore(this._getVersionTableName(query.table)).getAll() as EntityVersion[]
 				const sortedVersions = allVersions.sort((a, b) => {
 					return a.createdAt < b.createdAt ? 1 : 0
 				})
@@ -491,7 +501,12 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 
 		const results: EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[] = []
 		for (const result of rawResults) {
-			const dto = await this._createEntityVersionDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>(tableKey, result.entity, result.version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
+			const dto = await this._createEntityVersionDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>(
+				query.table,
+				result.entity,
+				result.version,
+				this.dataSchema['tables'][query.table].schemas[this.dataSchema['tables'][query.table].currentSchema]['data']
+			)
 			if (dto.success) {
 				results.push(dto.data)
 			}
@@ -714,14 +729,14 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		})
 	}
 	
-	observableQuery<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey) {
+	observableQuery<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>) {
 		return new Observable<Query<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[]>>((subscriber) => {
 			subscriber.next(QUERY_LOADING)
 
 			const runQuery = async () => {
 				subscriber.next(QUERY_LOADING)
 
-				const result = await this.query(tableKey)
+				const result = await this.query(query)
 				if (result.success) {
 					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
 				}
@@ -731,7 +746,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 
 			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
-				if (e.detail.data.tableKey === tableKey) {
+				if (e.detail.data.tableKey === query.table) {
 					runQuery()
 				}
 			}

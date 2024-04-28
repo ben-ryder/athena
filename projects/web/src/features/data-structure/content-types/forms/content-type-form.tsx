@@ -31,7 +31,7 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
   const [icon, setIcon] = useState<string>(props.data.icon || '');
 
   const [contentTemplateTags, setContentTemplateTags] = useState<JMultiSelectOptionData[]>([]);
-  const allTags = useObservableQuery(localful.db.observableQuery('tags'))
+  const allTags = useObservableQuery(localful.db.observableQuery({table: 'tags'}))
   const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
     ? allTags.data.map(tag => ({
       text: tag.data.name,
@@ -80,7 +80,7 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
   const [contentTemplateDescription, setContentTemplateDescription] = useState<string>(props.data.contentTemplateDescription || '');
 
   const [fieldOptions, setFieldOptions] = useState<JMultiSelectOptionData[]>([]);
-  const allFields = useObservableQuery(localful.db.observableQuery('fields'))
+  const allFields = useObservableQuery(localful.db.observableQuery({table: 'fields'}))
   useEffect(() => {
     if (allFields.status === QueryStatus.SUCCESS) {
       const fieldOptionMappings: JMultiSelectOptionData[] = allFields.status === QueryStatus.SUCCESS

@@ -1,29 +1,59 @@
-import { CurrentSchema, DataSchemaDefinition, EntityKeys } from "./database";
+import {CurrentSchemaData, CurrentSchemaExposedFields, DataSchemaDefinition, TableKeys} from "./database";
 
-export interface WhereOption<
-	DataSchema extends DataSchemaDefinition,
-	EntityKey extends EntityKeys<DataSchema>
-> {
-	field: keyof CurrentSchema<DataSchema, EntityKey>,
-	operation: 'equal' | 'like' | 'greater' | 'less',
-	value: never
+export type EqualFilter = {
+	operation: 'equal',
+	value: string | number
 }
 
-export type WhereOptions<
-	DataSchema extends DataSchemaDefinition,
-	EntityKey extends EntityKeys<DataSchema>
-> = WhereOption<DataSchema, EntityKey>[] | WhereOption<DataSchema, EntityKey>[][]
+export type RangeFilter = {
+	operation: 'range',
+	lowerValue?: string | number,
+	upperValue?: string | number,
+	includeLowerValue?: boolean
+	includeUpperValue?: boolean
+}
 
-export interface Query<
+export type LikeFilter = {
+	operation: 'like',
+	value: string
+}
+
+export type IncludesFilter = {
+	operation: 'includes',
+	value: (string | number)[]
+}
+
+export type IndexFilters = EqualFilter | RangeFilter | IncludesFilter
+
+export type DataFilters = EqualFilter | RangeFilter | IncludesFilter | LikeFilter
+
+export type DataWhereOption<
 	DataSchema extends DataSchemaDefinition,
-	EntityKey extends EntityKeys<DataSchema>
+	EntityKey extends TableKeys<DataSchema>
+> = {
+	field: keyof CurrentSchemaData<DataSchema, EntityKey>,
+} & DataFilters
+
+export type DataWhereOptions<
+	DataSchema extends DataSchemaDefinition,
+	EntityKey extends TableKeys<DataSchema>
+> = DataWhereOption<DataSchema, EntityKey>[] | DataWhereOption<DataSchema, EntityKey>[][]
+
+export type IndexWhereOption<
+	DataSchema extends DataSchemaDefinition,
+	EntityKey extends TableKeys<DataSchema>
+> = {
+	field: CurrentSchemaExposedFields<DataSchema, EntityKey>
+} & IndexFilters
+
+export interface QueryDefinition<
+	DataSchema extends DataSchemaDefinition,
+	EntityKey extends TableKeys<DataSchema>
 > {
-	from: EntityKey
-	where: WhereOptions<DataSchema, EntityKey>
-	groupBy?: keyof CurrentSchema<DataSchema, EntityKey>
-	orderBy: keyof CurrentSchema<DataSchema, EntityKey>
+	table: EntityKey
+	index?: IndexWhereOption<DataSchema, EntityKey>
+	where?: DataWhereOptions<DataSchema, EntityKey>
+	groupBy?: keyof CurrentSchemaData<DataSchema, EntityKey>
+	orderBy?: keyof CurrentSchemaData<DataSchema, EntityKey>
 	orderDirection?: 'asc' | 'desc'
 }
-
-
-
