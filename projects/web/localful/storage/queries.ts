@@ -1,4 +1,5 @@
 import {CurrentSchemaData, CurrentSchemaExposedFields, DataSchemaDefinition, TableKeys} from "./database";
+import {z} from "zod";
 
 export type EqualFilter = {
 	operation: 'equal',
@@ -7,10 +8,10 @@ export type EqualFilter = {
 
 export type RangeFilter = {
 	operation: 'range',
-	lowerValue?: string | number,
-	upperValue?: string | number,
-	includeLowerValue?: boolean
-	includeUpperValue?: boolean
+	greaterThan?: string | number,
+	lessThan?: string | number,
+	greaterThanEqualTo?: string | number,
+	lessThanEqualTo?: string | number,
 }
 
 export type LikeFilter = {
@@ -27,12 +28,16 @@ export type IndexFilters = EqualFilter | RangeFilter | IncludesFilter
 
 export type DataFilters = EqualFilter | RangeFilter | IncludesFilter | LikeFilter
 
+export type BuiltInFilterableFields = 'createdAt' | 'updatedAt'
+
 export type DataWhereOption<
 	DataSchema extends DataSchemaDefinition,
 	EntityKey extends TableKeys<DataSchema>
-> = {
-	field: keyof CurrentSchemaData<DataSchema, EntityKey>,
-} & DataFilters
+> = ({
+	field: (keyof z.infer<CurrentSchemaData<DataSchema, EntityKey>>) | BuiltInFilterableFields,
+} | {
+	fieldPath: string
+}) & DataFilters
 
 export type DataWhereOptions<
 	DataSchema extends DataSchemaDefinition,

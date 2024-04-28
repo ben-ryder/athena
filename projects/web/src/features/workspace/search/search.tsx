@@ -11,7 +11,19 @@ export interface SearchProps {
 export function Search(props: SearchProps) {
     const { openTab } = useWorkspaceContext()
 
-    const contentQuery = useObservableQuery(localful.db.observableQuery({table: 'content'}))
+    const contentQuery = useObservableQuery(localful.db.observableQuery({
+        table: 'content',
+        index: {
+            field: 'type',
+            operation: 'includes',
+            value: ['task-type-id', 'note-type-id']
+        },
+        where: [
+            {field: 'name', operation: 'like', value: 'example'},
+            {fieldPath: 'fields.status-field-id', operation: 'equal', value: 'archived'},
+            {field: 'createdAt', operation: 'range', greaterThan: '2024-01'}
+        ]
+    }))
 
     if (contentQuery.status === 'loading') {
         return <p>Loading...</p>
