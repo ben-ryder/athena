@@ -18,11 +18,12 @@ export function Search(props: SearchProps) {
             operation: 'includes',
             value: ['task-type-id', 'note-type-id']
         },
-        where: [
-            {field: 'name', operation: 'like', value: 'example'},
-            {fieldPath: 'fields.status-field-id', operation: 'equal', value: 'archived'},
-            {field: 'createdAt', operation: 'range', greaterThan: '2024-01'}
-        ]
+        whereCursor: (entity) => {
+            return true
+        },
+        whereData: (entityDto) => {
+            return true
+        }
     }))
 
     if (contentQuery.status === 'loading') {
