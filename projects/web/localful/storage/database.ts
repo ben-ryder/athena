@@ -19,11 +19,11 @@ export type TableKeys<DataSchema extends DataSchemaDefinition> = keyof DataSchem
 // Type helper to access the schema keys of a given table
 export type SchemaKeys<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = keyof DataSchema['tables'][TableKey]['schemas']
 
-// Type helper to access a specific schema for hte given table and schema version
+// Type helper to access a specific schema for the given table and schema version
 export type SchemaVersion<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>, SchemaVersion extends keyof DataSchema['tables'][TableKey]['schemas']> = DataSchema['tables'][TableKey]['schemas'][SchemaVersion]
 
 // Type helper to access the current schema version for a given table
-export type CurrentSchemaData<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = SchemaVersion<DataSchema, TableKey, DataSchema['tables'][TableKey]['currentSchema']>['data']
+export type CurrentSchemaData<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = z.infer<SchemaVersion<DataSchema, TableKey, DataSchema['tables'][TableKey]['currentSchema']>['data']>
 
 // Type helper to access the current schema version for a given table
 export type CurrentSchemaExposedFields<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = keyof SchemaVersion<DataSchema, TableKey, DataSchema['tables'][TableKey]['currentSchema']>['exposedFields']
@@ -162,11 +162,11 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param version
 	 * @param dataSchema
 	 */
-	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<ActionResult<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>>> {
+	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
 		if (!this.currentDatabaseId) throw new Error("Attempted to use database features but there is not active database")
 		const encryptionKey = await this.getEncryptionKey(this.currentDatabaseId)
 
-		const decryptedData = await LocalfulEncryption.decryptAndValidateData<z.infer<CurrentSchemaData<DataSchema, TableKey>>>(
+		const decryptedData = await LocalfulEncryption.decryptAndValidateData<CurrentSchemaData<DataSchema, TableKey>>(
 			encryptionKey,
 			dataSchema,
 			version.data
@@ -204,9 +204,9 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param id
 	 */
-	async get<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string): Promise<ActionResult<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>>> {
+	async get<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
-			const cachedResponse = await memoryCache.get<z.infer<CurrentSchemaData<DataSchema, TableKey>>>(`${tableKey}-get-${id}`)
+			const cachedResponse = await memoryCache.get<CurrentSchemaData<DataSchema, TableKey>>(`${tableKey}-get-${id}`)
 			if (cachedResponse) {
 				return {success: true, data: cachedResponse}
 			}
@@ -243,7 +243,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		const dto = await this._createEntityVersionDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>(tableKey, entity, version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
+		const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(tableKey, entity, version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
 		if (!dto.success) return dto
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
@@ -259,8 +259,8 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param ids
 	 */
-	async getMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]): Promise<ActionResult<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[]>> {
-		const dtos: EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[] = []
+	async getMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
+		const dtos: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
 		const errors: ErrorObject[] = []
 
 		for (const id of ids) {
@@ -282,7 +282,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param data
 	 */
-	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: z.infer<CurrentSchemaData<DataSchema, TableKey>>): Promise<ActionResult<string>> {
+	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<ActionResult<string>> {
 		const db = await this.getDb()
 
 		const entityId = LocalfulEncryption.generateUUID();
@@ -342,7 +342,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param dataUpdate
 	 * @param preventEventDispatch - UUseful in situations like data migrations, where an update is done while fetching data so an event shouldn't be triggered.
 	 */
-	async update<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string, dataUpdate: EntityUpdate<z.infer<CurrentSchemaData<DataSchema, TableKey>>>, preventEventDispatch?: boolean): Promise<ActionResult<string>> {
+	async update<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string, dataUpdate: EntityUpdate<CurrentSchemaData<DataSchema, TableKey>>, preventEventDispatch?: boolean): Promise<ActionResult<string>> {
 		const oldEntity = await this.get(tableKey, entityId)
 		if (!oldEntity.success) return oldEntity
 
@@ -447,10 +447,10 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	/**
 	 * Query for content.
 	 */
-	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[]>> {
+	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
 		// todo: add query memory cache
 		// if (this.dataSchema[tableKey].useMemoryCache) {
-		// 	const cachedResponse = await memoryCache.get<EntityDto<z.infer<CurrentSchema<DataSchema, TableKey>>>[]>(`${tableKey}-getAll`)
+		// 	const cachedResponse = await memoryCache.get<EntityDto<CurrentSchema<DataSchema, TableKey>>[]>(`${tableKey}-getAll`)
 		// 	if (cachedResponse) {
 		// 		return {success: true, data: cachedResponse}
 		// 	}
@@ -499,9 +499,9 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		const results: EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[] = []
+		const results: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
 		for (const result of rawResults) {
-			const dto = await this._createEntityVersionDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>(
+			const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(
 				query.table,
 				result.entity,
 				result.version,
@@ -658,7 +658,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	}
 
 	observableGet<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string) {
-		return new Observable<Query<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>>>((subscriber) => {
+		return new Observable<Query<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>>((subscriber) => {
 			subscriber.next(QUERY_LOADING)
 
 			const runQuery = async () => {
@@ -695,7 +695,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	}
 	
 	observableGetMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]) {
-		return new Observable<Query<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[]>>((subscriber) => {
+		return new Observable<Query<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
 			subscriber.next(QUERY_LOADING)
 
 			const runQuery = async () => {
@@ -730,7 +730,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	}
 	
 	observableQuery<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>) {
-		return new Observable<Query<EntityDto<z.infer<CurrentSchemaData<DataSchema, TableKey>>>[]>>((subscriber) => {
+		return new Observable<Query<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
 			subscriber.next(QUERY_LOADING)
 
 			const runQuery = async () => {

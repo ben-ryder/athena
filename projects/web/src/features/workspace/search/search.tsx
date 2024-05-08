@@ -18,7 +18,7 @@ export function Search(props: SearchProps) {
             operation: 'includes',
             value: ['task-type-id', 'note-type-id']
         },
-        whereCursor: (entity) => {
+        whereCursor: (entity, version, exposedFields) => {
             return true
         },
         whereData: (entityDto) => {

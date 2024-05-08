@@ -46,27 +46,31 @@ export type IndexFilters = EqualFilter | RangeFilter | IncludesFilter
 
 export type IndexWhereOption<
 	DataSchema extends DataSchemaDefinition,
-	EntityKey extends TableKeys<DataSchema>
+	TableKey extends TableKeys<DataSchema>
 > = {
-	field: CurrentSchemaExposedFields<DataSchema, EntityKey>
+	field: CurrentSchemaExposedFields<DataSchema, TableKey>
 } & IndexFilters
 
 export type WhereCursor<
 	DataSchema extends DataSchemaDefinition,
-	EntityKey extends TableKeys<DataSchema>
-> = (entity: LocalEntity, version: EntityVersion, exposedFields: {[key: string]: any}) => boolean
+	TableKey extends TableKeys<DataSchema>
+> = (
+	entity: LocalEntity,
+	version: EntityVersion,
+	exposedFields: Pick<CurrentSchemaData<DataSchema, TableKey>, CurrentSchemaExposedFields<DataSchema, TableKey>>
+) => boolean
 
 export type WhereData<
 	DataSchema extends DataSchemaDefinition,
-	EntityKey extends TableKeys<DataSchema>
-> = (entityDto: EntityDto<CurrentSchemaData<DataSchema, EntityKey>>) => boolean
+	TableKey extends TableKeys<DataSchema>
+> = (entityDto: EntityDto<CurrentSchemaData<DataSchema, TableKey>>) => boolean
 
 export interface QueryDefinition<
 	DataSchema extends DataSchemaDefinition,
-	EntityKey extends TableKeys<DataSchema>
+	TableKey extends TableKeys<DataSchema>
 > {
-	table: EntityKey
-	index?: IndexWhereOption<DataSchema, EntityKey>
-	whereCursor?: WhereCursor<DataSchema, EntityKey>
-	whereData?: WhereData<DataSchema, EntityKey>
+	table: TableKey
+	index?: IndexWhereOption<DataSchema, TableKey>
+	whereCursor?: WhereCursor<DataSchema, TableKey>
+	whereData?: WhereData<DataSchema, TableKey>
 }
