@@ -60,6 +60,7 @@ export function MenuPanel() {
           onSelect={() => {
             setNewContentDialogOpen(true)
           }}
+          isSpecial={true}
         />
         <MainPanelAction
           text='Search'
