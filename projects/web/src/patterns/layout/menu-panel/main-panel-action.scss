@@ -7,6 +7,12 @@
 
     display: flex;
     align-items: center;
+
+  &:focus {
+      .main-panel-action__icon {
+        color: var(--j-c-teal-300);
+      }
+    }
   }
 
   &--special {
@@ -24,5 +30,6 @@
   &__text {
     margin-left: var(--j-space-4);
     font-size: var(--j-text-size-sm);
+    font-weight: var(--j-text-weight-medium);
   }
 }
