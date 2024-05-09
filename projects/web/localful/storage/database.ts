@@ -1,4 +1,4 @@
-import {z, ZodTypeAny} from "zod";
+import {ZodTypeAny} from "zod";
 import {ActionResult, ErrorObject, ErrorTypes, Query, QUERY_LOADING, QueryStatus} from "../control-flow";
 import {LocalfulEncryption} from "../encryption/localful-encryption";
 import {memoryCache} from "./memory-cache";
@@ -8,65 +8,22 @@ import {IDBPDatabase, openDB} from "idb";
 import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/storage/entity-types";
 import {EventManager} from "@localful-athena/events/event-manager";
 import { Logger } from "../../src/utils/logger";
-import {QueryDefinition} from "@localful-athena/storage/queries";
-
-const LOCALFUL_INDEXDB_VERSION = 1
-const LOCALFUL_VERSION = '1.0'
-
-// Type helper to access entity keys
-export type TableKeys<DataSchema extends DataSchemaDefinition> = keyof DataSchema['tables'] & string
-
-// Type helper to access the schema keys of a given table
-export type SchemaKeys<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = keyof DataSchema['tables'][TableKey]['schemas']
-
-// Type helper to access a specific schema for the given table and schema version
-export type SchemaVersion<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>, SchemaVersion extends keyof DataSchema['tables'][TableKey]['schemas']> = DataSchema['tables'][TableKey]['schemas'][SchemaVersion]
-
-// Type helper to access the current schema version for a given table
-export type CurrentSchemaData<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = z.infer<SchemaVersion<DataSchema, TableKey, DataSchema['tables'][TableKey]['currentSchema']>['data']>
-
-// Type helper to access the current schema version for a given table
-export type CurrentSchemaExposedFields<DataSchema extends DataSchemaDefinition, TableKey extends TableKeys<DataSchema>> = keyof SchemaVersion<DataSchema, TableKey, DataSchema['tables'][TableKey]['currentSchema']>['exposedFields']
-
-
-export type DataMigration<
-	DataSchema extends DataSchemaDefinition,
-	TableKey extends TableKeys<DataSchema>, 
-	CurrentSchemaKey extends SchemaKeys<DataSchema, TableKey>,
-	TargetSchemaKey extends SchemaKeys<DataSchema, TableKey>,
-> = (
-	db: LocalfulDatabase<DataSchema>,
-	currentSchema: CurrentSchemaKey, targetSchema: TargetSchemaKey,
-	data: SchemaVersion<DataSchema, TableKey, CurrentSchemaKey>
-) => Promise<SchemaVersion<DataSchema, TableKey, TargetSchemaKey>>
-
-export interface DataSchemaDefinition {
-	// The IndexDB database version. 
-	version: number,
-	tables: {
-		[key: string]: {
-			currentSchema: string
-			schemas: {
-				[key: string]: {
-					data: ZodTypeAny
-					exposedFields?: ExposedFieldsDefinition
-				}
-			}
-			migrateSchema?: DataMigration<never, never, never, never>
-			useMemoryCache?: boolean
-		}	
-	}
-}
-
-export interface ExposedFieldsDefinition {
-	[key: string]: 'indexed' | 'plain'
-}
+import {
+	CurrentSchemaData,
+	DataSchemaDefinition, LocalEntityWithExposedFields,
+	QueryDefinition,
+	QueryIndex,
+	TableKeys
+} from "@localful-athena/storage/types";
 
 export interface LocalfulDatabaseConfig {
 	dataSchema: DataSchemaDefinition,
 	getEncryptionKey: (databaseId: string) => Promise<CryptoKey>
 	eventManager: EventManager
 }
+
+const LOCALFUL_INDEXDB_VERSION = 1
+const LOCALFUL_VERSION = '1.0'
 
 export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	dataSchema: DataSchemaDefinition
@@ -448,59 +405,136 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * Query for content.
 	 */
 	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
-		// todo: add query memory cache
-		// if (this.dataSchema[tableKey].useMemoryCache) {
-		// 	const cachedResponse = await memoryCache.get<EntityDto<CurrentSchema<DataSchema, TableKey>>[]>(`${tableKey}-getAll`)
-		// 	if (cachedResponse) {
-		// 		return {success: true, data: cachedResponse}
-		// 	}
-		// }
-
-		// work out index (or indexes) to use if filtering by more than one value
-		// for each index, use cursor to iterate over items and filter by any exposed fields
-		// decrypt each result and filter by none exposed fields
-		// sort results based on sorting & group by options
-		// will paging be implemented? if so, at this point extract current page of results and query status like total results etc
+		// todo: add query memory cache?
 
 		const db = await this.getDb()
 		const tx = db.transaction([query.table, this._getVersionTableName(query.table)], 'readonly')
-		const entityIndex = tx.objectStore(query.table).index('isDeleted')
 
-		const rawResults: {entity: LocalEntity, version: EntityVersion}[] = []
-		const errors: ErrorObject[] = []
+		// Pick what index and cursor query to use for the initial data selection
+		// In the case of an "includes" operation on the index, there will be one index for each value.
+		const indexes: QueryIndex[] = []
+		if (query.index) {
+			const exposedFields = this.dataSchema['tables'][query.table].schemas[this.dataSchema['tables'][query.table].currentSchema].exposedFields
+			// @ts-expect-error - query.index.field will be a key of an exposed field
+			if (!exposedFields || !exposedFields[query.index.field]) {
+				throw new Error("Attempted to use an exposed field that does not exist.")
+			}
+			// @ts-expect-error - query.index.field will be a key of an exposed field
+			else if (exposedFields[query.index.field] !== 'indexed') {
+				throw new Error("Attempted to use an exposed fields that isn't of type 'indexed'.")
+			}
 
-		for await (const entityCursor of entityIndex.iterate(0)) {
-			const entity = entityCursor.value as LocalEntity
-			let version: EntityVersion|undefined = undefined
-			if (entity.currentVersionId) {
-				version = await tx.objectStore(this._getVersionTableName(query.table)).get(entity.currentVersionId) as EntityVersion|undefined
 
-				// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
-				if (!version) {
-					errors.push({type: ErrorTypes.VERSION_NOT_FOUND, context: entity.id})
-					break
+			if (query.index.operation === 'equal') {
+				indexes.push({
+					// @ts-expect-error - query.index.field will be the name of the index
+					index: tx.objectStore(query.table).index(query.index.field),
+					query: query.index.value
+				})
+			}
+			else if (query.index.operation === 'includes') {
+				for (const value of query.index.value) {
+					indexes.push({
+						// @ts-expect-error - query.index.field will be the name of the index
+						index: tx.objectStore(query.table).index(query.index.field),
+						query: value
+					})
 				}
 			}
 			else {
-				const allVersions = await tx.objectStore(this._getVersionTableName(query.table)).getAll() as EntityVersion[]
-				const sortedVersions = allVersions.sort((a, b) => {
-					return a.createdAt < b.createdAt ? 1 : 0
+				if (
+					(typeof query.index.greaterThan !== "undefined" && typeof query.index.greaterThanEqualTo !== "undefined") ||
+					(typeof query.index.lessThan !== "undefined" && typeof query.index.lessThanEqualTo !== "undefined")
+				) {
+					throw new Error("Attempted to use invalid combination of bounded and unbounded comparisons in query.")
+				}
+
+				let indexQuery
+				if (typeof query.index.greaterThan !== "undefined" && typeof query.index.lessThan !== "undefined") {
+					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, true, true)
+				}
+				else if (typeof query.index.greaterThanEqualTo !== "undefined" && typeof query.index.lessThanEqualTo !== "undefined") {
+					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, false, false)
+				}
+				if (typeof query.index.greaterThan !== "undefined" && typeof query.index.lessThanEqualTo !== "undefined") {
+					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, true, false)
+				}
+				if (typeof query.index.greaterThanEqualTo !== "undefined" && typeof query.index.lessThanEqualTo !== "undefined") {
+					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, false, true)
+				}
+				if (typeof query.index.greaterThanEqualTo !== "undefined") {
+					indexQuery = IDBKeyRange.lowerBound(query.index.greaterThanEqualTo, false)
+				}
+				if (typeof query.index.greaterThan !== "undefined") {
+					indexQuery = IDBKeyRange.lowerBound(query.index.greaterThanEqualTo, true)
+				}
+				if (typeof query.index.lessThanEqualTo !== "undefined") {
+					indexQuery = IDBKeyRange.upperBound(query.index.greaterThanEqualTo, false)
+				}
+				if (typeof query.index.lessThan !== "undefined") {
+					indexQuery = IDBKeyRange.upperBound(query.index.greaterThanEqualTo, true)
+				}
+
+				indexes.push({
+					// @ts-expect-error - query.index.field will be the name of the index
+					index: tx.objectStore(query.table).index(query.index.field),
+					query: indexQuery
 				})
-				if (sortedVersions[0]) {
-					version = sortedVersions[0]
+			}
+		}
+		else {
+			indexes.push({
+				// @ts-expect-error - this is a valid index. todo: a generics issue with QueryIndex?
+				index: tx.objectStore(query.table).index('isDeleted'),
+				query: 0
+			})
+		}
+
+		const cursorResults: {entity: LocalEntity, version: EntityVersion}[] = []
+		const errors: ErrorObject[] = []
+
+		// Iterate over all indexes and all items in the index cursor, also running the user-supplied whereCursor function.
+		for (const queryIndex of indexes) {
+			for await (const entityCursor of queryIndex.index.iterate(queryIndex.query, queryIndex.direction)) {
+				const entity = entityCursor.value as LocalEntityWithExposedFields<DataSchema, TableKey>
+				let version: EntityVersion|undefined = undefined
+				if (entity.currentVersionId) {
+					version = await tx.objectStore(this._getVersionTableName(query.table)).get(entity.currentVersionId) as EntityVersion|undefined
+
+					// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
+					if (!version) {
+						errors.push({type: ErrorTypes.VERSION_NOT_FOUND, context: entity.id})
+						break
+					}
 				}
 				else {
-					errors.push({type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: entity.id})
-					break
+					const allVersions = await tx.objectStore(this._getVersionTableName(query.table)).getAll() as EntityVersion[]
+					const sortedVersions = allVersions.sort((a, b) => {
+						return a.createdAt < b.createdAt ? 1 : 0
+					})
+					if (sortedVersions[0]) {
+						version = sortedVersions[0]
+					}
+					else {
+						errors.push({type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: entity.id})
+						break
+					}
+				}
+
+				let include = true
+				if (query.whereCursor) {
+					include = query.whereCursor(entity, version)
+				}
+				if (include) {
+					cursorResults.push({entity: entity, version: version})
 				}
 			}
-			rawResults.push({entity: entity, version: version})
 		}
 
 		await tx.done
 
-		const results: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
-		for (const result of rawResults) {
+		const dataFilterResults: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
+		for (const result of cursorResults) {
 			const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(
 				query.table,
 				result.entity,
@@ -508,7 +542,13 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 				this.dataSchema['tables'][query.table].schemas[this.dataSchema['tables'][query.table].currentSchema]['data']
 			)
 			if (dto.success) {
-				results.push(dto.data)
+				let include = true
+				if (query.whereData) {
+					include = query.whereData(dto.data)
+				}
+				if (include) {
+					dataFilterResults.push(dto.data)
+				}
 			}
 
 			if (dto.errors) {
@@ -516,14 +556,21 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 		}
 
-		// todo: add query memory cache
-		// if (this.dataSchema[tableKey].useMemoryCache) {
-		// 	await memoryCache.add(`${tableKey}-getAll`, dtos)
-		// }
+		let sortedResults
+		if (query.sort) {
+			sortedResults = query.sort(dataFilterResults)
+		}
+		else {
+			sortedResults = dataFilterResults.sort((a, b) => {
+				return a.updatedAt > b.updatedAt ? 1 : -1
+			})
+		}
+
+		// todo: add query memory cache?
 
 		return {
 			success: true,
-			data: results,
+			data: sortedResults,
 			errors: errors
 		}
 	}

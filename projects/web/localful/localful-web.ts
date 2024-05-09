@@ -1,6 +1,7 @@
 import * as WebCrypto from "easy-web-crypto";
-import { DataSchemaDefinition, LocalfulDatabase } from "./storage/database";
+import { LocalfulDatabase } from "./storage/database";
 import { EventManager } from "./events/event-manager";
+import {DataSchemaDefinition} from "@localful-athena/storage/types";
 
 export interface LocalfulWebConfig {
 	initialDatabaseId?: string

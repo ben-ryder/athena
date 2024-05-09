@@ -18,11 +18,14 @@ export function Search(props: SearchProps) {
             operation: 'includes',
             value: ['task-type-id', 'note-type-id']
         },
-        whereCursor: (entity, version, exposedFields) => {
+        whereCursor: (localEntity, version) => {
             return true
         },
         whereData: (entityDto) => {
             return true
+        },
+        sort: (dtos) => {
+            return dtos
         }
     }))
 
