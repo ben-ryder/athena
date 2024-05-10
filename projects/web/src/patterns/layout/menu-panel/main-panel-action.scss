@@ -5,6 +5,7 @@
   &__button {
     @include menu-panel-button();
 
+    padding: var(--j-space-3) var(--j-space-6);
     display: flex;
     align-items: center;
 

@@ -13,11 +13,11 @@ export function Search(props: SearchProps) {
 
     const contentQuery = useObservableQuery(localful.db.observableQuery({
         table: 'content',
-        index: {
-            field: 'type',
-            operation: 'includes',
-            value: ['task-type-id', 'note-type-id']
-        },
+        // index: {
+        //     field: 'type',
+        //     operation: 'includes',
+        //     value: ['task-type-id', 'note-type-id']
+        // },
         whereCursor: (localEntity, version) => {
             return true
         },

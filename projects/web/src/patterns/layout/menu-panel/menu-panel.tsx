@@ -70,12 +70,12 @@ export function MenuPanel() {
 					}}
         />
         <MainPanelAction
-          text='All Content'
+          text='Content'
           icon={<AllContentIcon />}
           onSelect={() => {}}
         />
         <MainPanelAction
-          text='All Views'
+          text='Views'
           icon={<AllViewsIcon />}
           onSelect={() => {}}
         />

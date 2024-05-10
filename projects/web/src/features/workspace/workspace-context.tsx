@@ -69,10 +69,18 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 		}
 	}, [tabs])
 
-	const closeTab = useCallback((index: number) => {
-		// todo: handle updating active tab when length changes
-		setTabs(tabs.toSpliced(index, 1))
-	}, [tabs])
+	const closeTab = useCallback((tabIndexToClose: number) => {
+		setTabs(tabs.toSpliced(tabIndexToClose, 1))
+
+		if (tabIndexToClose <= activeTab) {
+			if (activeTab - 1 >= 0) {
+				setActiveTab(activeTab - 1)
+			}
+			else {
+				setActiveTab(0)
+			}
+		}
+	}, [tabs, activeTab])
 
 	const isValidTabIndex = useCallback((tabIndex: number) => {
 		return tabIndex === 0 || (tabIndex >= 0 && tabIndex < tabs.length)

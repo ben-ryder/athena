@@ -37,10 +37,15 @@
   &__select {
     padding: var(--j-space-5);
     padding-right: 0;
+    font-weight: var(--j-text-weight-medium);
   }
 
   &__close {
     padding: var(--j-space-5);
+
+    &:hover {
+      color: var(--j-c-red-300);
+    }
   }
 
   &--active {
