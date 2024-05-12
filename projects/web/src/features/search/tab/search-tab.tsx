@@ -1,5 +1,5 @@
-import {WithTabData} from "../workspace";
-import {Search} from "./search";
+import {WithTabData} from "../../workspace/workspace";
+import {Search} from "../search";
 
 import "./search-tab.scss"
 

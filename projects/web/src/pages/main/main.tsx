@@ -9,7 +9,7 @@ import {DatabaseDialogProvider} from "../../features/databases/database-dialog";
 import {DatabaseDialog} from "../../features/databases/database-dialog";
 import {NewContentDialog, NewContentDialogProvider} from "../../features/new-content/new-content-dialog";
 import {StatusDialog, StatusDialogProvider} from "../../features/status/status-dialog";
-import {SearchDialog, SearchDialogProvider} from "../../features/search/search-dialog";
+import {SearchDialog, SearchDialogProvider} from "../../features/search/dialog/search-dialog";
 import {DataStructureDialog, DataStructureDialogProvider} from "../../features/data-structure/data-structure-dialog";
 
 export function MainPage() {

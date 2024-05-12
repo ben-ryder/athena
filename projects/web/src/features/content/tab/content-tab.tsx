@@ -1,10 +1,10 @@
-import {ContentForm} from "./content-form";
+import {ContentForm} from "../form/content-form";
 
-import { WithTabData } from "../workspace";
+import { WithTabData } from "../../workspace/workspace";
 import {localful} from "../../../state/athena-localful";
-import {useWorkspaceContext} from "../workspace-context";
+import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useCallback, useEffect} from "react";
-import {ContentFormOptions, useContentFormData} from "./useContentFormData";
+import {ContentFormOptions, useContentFormData} from "../form/useContentFormData";
 
 export interface ContentTabProps extends WithTabData, ContentFormOptions {}
 

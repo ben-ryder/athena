@@ -1,10 +1,10 @@
 import React from "react";
 import { JDialog } from "@ben-ryder/jigsaw-react";
-import {Search} from "../workspace/search/search";
-import {createModalContext} from "../../common/dialog/generic-dialog";
+import {Search} from "../search";
+import {createModalContext} from "../../../common/dialog/generic-dialog";
 
 import "./search-dialog.scss"
-import {useWorkspaceContext} from "../workspace/workspace-context";
+import {useWorkspaceContext} from "../../workspace/workspace-context";
 
 export const {
   context: SearchDialogContext,

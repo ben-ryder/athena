@@ -19,7 +19,7 @@ import {JIcon} from "@ben-ryder/jigsaw-react";
 import {useDatabaseDialog} from "../../../features/databases/database-dialog";
 import {useNewContentDialog} from "../../../features/new-content/new-content-dialog";
 import {useStatusDialog} from "../../../features/status/status-dialog";
-import {useSearchDialog} from "../../../features/search/search-dialog";
+import {useSearchDialog} from "../../../features/search/dialog/search-dialog";
 import {useDataStructureDialog} from "../../../features/data-structure/data-structure-dialog";
 
 export interface WithMenuPanelControl {

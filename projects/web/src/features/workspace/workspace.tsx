@@ -1,11 +1,11 @@
 import {useWorkspaceContext} from "./workspace-context";
 import {Tab, TabProps} from "./tab";
 import {ReactNode} from "react";
-import {ContentTab} from "./content/content-tab";
+import {ContentTab} from "../content/tab/content-tab";
 
 // todo: split styling by component for better encapsulation
 import "./workspace.scss"
-import {SearchTab} from "./search/search-tab";
+import {SearchTab} from "../search/tab/search-tab";
 
 export interface WithTabData {
 	tabIndex: number

@@ -8,7 +8,7 @@ import {
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../state/athena-localful";
 import { QueryStatus } from "@localful-athena/control-flow";
-import { WithTabData } from "../workspace";
+import { WithTabData } from "../../workspace/workspace";
 import {ContentFormData, ContentFormDataHandlers} from "./useContentFormData";
 
 import "./content-form.scss"

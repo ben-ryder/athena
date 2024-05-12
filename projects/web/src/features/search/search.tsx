@@ -1,8 +1,8 @@
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {localful} from "../../../state/athena-localful";
-import {ErrorCallout} from "../../../patterns/components/error-callout/error-callout";
-import {useWorkspaceContext} from "../workspace-context";
-import {ContentCard} from "../../../patterns/components/content-card/content-card";
+import {localful} from "../../state/athena-localful";
+import {ErrorCallout} from "../../patterns/components/error-callout/error-callout";
+import {useWorkspaceContext} from "../workspace/workspace-context";
+import {ContentCard} from "../../patterns/components/content-card/content-card";
 
 export interface SearchProps {
     onOpen?: () => void
