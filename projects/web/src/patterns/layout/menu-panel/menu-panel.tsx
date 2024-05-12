@@ -21,6 +21,7 @@ import {useNewContentDialog} from "../../../features/new-content/new-content-dia
 import {useStatusDialog} from "../../../features/status/status-dialog";
 import {useSearchDialog} from "../../../features/search/dialog/search-dialog";
 import {useDataStructureDialog} from "../../../features/data-structure/data-structure-dialog";
+import { useViewsDialog } from "../../../features/views/dialog/views-dialog";
 
 export interface WithMenuPanelControl {
   menuPanelIsOpen: boolean
@@ -33,6 +34,7 @@ export function MenuPanel() {
   const {setIsOpen: setStatusDialogOpen } = useStatusDialog()
 	const {setIsOpen: setSearchDialogOpen } = useSearchDialog()
   const {setIsOpen: setDataStructureDialogOpen } = useDataStructureDialog()
+  const {setIsOpen: setViewsDialogOpen } = useViewsDialog()
 
   return (
     <div className="menu-panel">
@@ -77,7 +79,9 @@ export function MenuPanel() {
         <MainPanelAction
           text='Views'
           icon={<AllViewsIcon />}
-          onSelect={() => {}}
+          onSelect={() => {
+            setViewsDialogOpen(true)
+          }}
         />
         <MainPanelAction
           text='Data Structure'
