@@ -3,7 +3,7 @@ import {
   JInput,
   JErrorText,
   JButtonGroup, JButton,
-  JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect
+  JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect
 } from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { localful } from "../../../state/athena-localful";
@@ -60,6 +60,26 @@ export function ContentForm(props: ContentFormProps) {
               props.onNameChange(e.target.value);
             }}
             placeholder="your content name..."
+          />
+        </JFormRow>
+        <JFormRow>
+          <JSelect
+            label="Favourite?"
+            id="favourite"
+            value={props.isFavourite ? 'yes' : 'no'}
+            onChange={(e) => {
+              props.onIsFavouriteChange(e.target.value === 'yes');
+            }}
+            options={[
+              {
+                text: 'No',
+                value: 'no'
+              },
+              {
+                text: 'Yes',
+                value: 'yes'
+              }
+            ]}
           />
         </JFormRow>
         <JFormRow>

@@ -5,7 +5,7 @@ import {ContentTypeData} from "./schemas/content-types/content-types";
 import {ContentData} from "./schemas/content/content";
 
 export const DATA_SCHEMA = {
-	version: 1.0,
+	version: 1.1,
 	tables: {
 		tags: {
 			currentSchema: 'v1',
@@ -36,8 +36,8 @@ export const DATA_SCHEMA = {
 			schemas: {
 				v1: {
 					data: ContentData,
-					exposedFields: {type: 'indexed', tags: 'plain'}
-				}
+					exposedFields: {type: 'indexed', tags: 'plain', isFavourite: 'plain'}
+				},
 			},
 			useMemoryCache: false,
 		},

@@ -14,12 +14,14 @@ export interface ContentFormData {
     name: string,
     description?: string
     tags: string[]
+    isFavourite?: boolean
 }
 
 export interface ContentFormDataHandlers {
     onNameChange: (name: string) => void;
     onDescriptionChange: (description: string) => void;
     onTagsChange: (tags: string[]) => void;
+    onIsFavouriteChange: (isFavourite: boolean) => void
 }
 
 /**
@@ -42,6 +44,9 @@ export function useContentFormData(options: ContentFormOptions) {
 
     const latestTags = useRef<string[]>([])
     const [tags, setTags] = useState<string[]>([])
+
+    const latestIsFavourite = useRef<boolean>(false)
+    const [isFavourite, setIsFavourite] = useState<boolean>(false)
 
     // Load content type
     useEffect(() => {
@@ -84,6 +89,9 @@ export function useContentFormData(options: ContentFormOptions) {
                     if (latestTags.current.length === 0 || latestTags.current === latestContent.current?.data.tags) {
                         setTags(data.data.data.tags)
                     }
+                    if (!latestIsFavourite.current || latestIsFavourite.current === latestContent.current?.data.isFavourite) {
+                        setIsFavourite(data.data.data.isFavourite ?? false)
+                    }
 
                     setContentTypeId(data.data.data.type)
                     setContent(data.data)
@@ -116,6 +124,10 @@ export function useContentFormData(options: ContentFormOptions) {
         latestContent.current = content
     }, [content])
 
+    useEffect(() => {
+        latestIsFavourite.current = isFavourite
+    }, [isFavourite])
+
     return {
         contentTypeId,
         name,
@@ -123,6 +135,8 @@ export function useContentFormData(options: ContentFormOptions) {
         description,
         setDescription,
         tags,
-        setTags
+        setTags,
+        isFavourite,
+        setIsFavourite,
     }
 }

@@ -18,3 +18,7 @@ export type EntityReferenceListField = z.infer<typeof EntityReferenceListField>
 // These are directly mapped from Jigsaw colour variants right now.
 export const ColourVariants = z.enum(JColourVariantsList);
 export type ColourVariants = z.infer<typeof ColourVariants>;
+
+export const IsFavouriteField = z.boolean()
+	.optional()
+export type IsFavouriteField = z.infer<typeof IsFavouriteField>

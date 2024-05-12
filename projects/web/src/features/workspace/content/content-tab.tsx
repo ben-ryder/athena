@@ -19,6 +19,8 @@ export function ContentTab(props: ContentTabProps) {
 		setDescription,
 		tags,
 		setTags,
+		isFavourite,
+		setIsFavourite,
 	} = useContentFormData({contentId: props.contentId, contentTypeId: props.contentTypeId})
 
 	const onSave = useCallback(async () => {
@@ -35,6 +37,7 @@ export function ContentTab(props: ContentTabProps) {
 				description: description !== '' ? description : undefined,
 				tags:  tags,
 				fields: {},
+				isFavourite: isFavourite
 			})
 			if (result.success) {
 				setTabIsUnsaved(props.tabIndex, false)
@@ -50,6 +53,7 @@ export function ContentTab(props: ContentTabProps) {
 				description: description !== '' ? description : undefined,
 				tags:  tags,
 				fields: {},
+				isFavourite: isFavourite
 			})
 			if (result.success) {
 				replaceTab(props.tabIndex, {type: 'content', contentId: result.data})
@@ -97,6 +101,11 @@ export function ContentTab(props: ContentTabProps) {
 		setTags(tags)
 	}, [props.tabIndex])
 
+	const onIsFavouriteChange = useCallback((isFavourite: boolean) => {
+		setTabIsUnsaved(props.tabIndex, true)
+		setIsFavourite(isFavourite)
+	}, [props.tabIndex])
+
 	return (
 		<div>
 			<ContentForm
@@ -106,6 +115,8 @@ export function ContentTab(props: ContentTabProps) {
 				onNameChange={onNameChange}
 				onDescriptionChange={onDescriptionChange}
 				onTagsChange={onTagsChange}
+				isFavourite={isFavourite}
+				onIsFavouriteChange={onIsFavouriteChange}
 				onSave={onSave}
 				tabIndex={props.tabIndex}
 				onDelete={props.contentId ? onDelete : undefined}
