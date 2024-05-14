@@ -8,7 +8,7 @@ export interface SearchProps {
     onOpen?: () => void
 }
 
-export function Search(props: SearchProps) {
+export function ContentList(props: SearchProps) {
     const { openTab } = useWorkspaceContext()
 
     const contentQuery = useObservableQuery(localful.db.observableQuery({

@@ -112,6 +112,18 @@
     &::before {
       @include section-border()
     }
+
+    &-content {
+      display: flex;
+      padding: var(--j-space-3) var(--j-space-5);
+    }
+
+    &-account,
+    &-settings,
+    &-help {
+      @include menu-panel-button();
+      line-height: 0;
+    }
   }
 }
 

@@ -7,12 +7,14 @@ export type WorkspaceTabTypes = {
 	type: 'content',
 	contentId: string
 } | {
+	type: 'content_list'
+} | {
 	type: 'view_new'
 } | {
 	type: 'view',
 	viewId: string
 } | {
-	type: 'search'
+	type: 'view_list'
 }
 
 export interface TabMetadata {

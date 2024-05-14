@@ -12,6 +12,7 @@ import {StatusDialog, StatusDialogProvider} from "../../features/status/status-d
 import {SearchDialog, SearchDialogProvider} from "../../features/search/dialog/search-dialog";
 import {DataStructureDialog, DataStructureDialogProvider} from "../../features/data-structure/data-structure-dialog";
 import { ViewsDialog, ViewsDialogProvider } from "../../features/views/dialog/views-dialog";
+import {ContentListDialog, ContentListDialogProvider} from "../../features/content-list/dialog/content-list-dialog";
 
 export function MainPage() {
   const [isMenuPanelOpen, setIsOpenPanelOpen] = useState<boolean>(false)
@@ -25,17 +26,20 @@ export function MainPage() {
               <SearchDialogProvider>
                 <DataStructureDialogProvider>
                   <ViewsDialogProvider>
-                    <main className="athena">
-                      <MenuPanel />
-                      <Workspace />
+                    <ContentListDialogProvider>
+                      <main className="athena">
+                        <MenuPanel/>
+                        <Workspace/>
 
-                      <DatabaseDialog />
-                      <NewContentDialog />
-                      <StatusDialog />
-                      <SearchDialog />
-                      <DataStructureDialog />
-                      <ViewsDialog />
-                    </main>
+                        <DatabaseDialog/>
+                        <NewContentDialog/>
+                        <StatusDialog/>
+                        <SearchDialog/>
+                        <DataStructureDialog/>
+                        <ViewsDialog/>
+                        <ContentListDialog />
+                      </main>
+                    </ContentListDialogProvider>
                   </ViewsDialogProvider>
                 </DataStructureDialogProvider>
               </SearchDialogProvider>

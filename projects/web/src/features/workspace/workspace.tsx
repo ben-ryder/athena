@@ -5,7 +5,8 @@ import {ContentTab} from "../content/tab/content-tab";
 
 // todo: split styling by component for better encapsulation
 import "./workspace.scss"
-import {SearchTab} from "../search/tab/search-tab";
+import {ContentList} from "../content-list/content-list";
+import {ContentListTab} from "../content-list/tab/content-list-tab";
 
 export interface WithTabData {
 	tabIndex: number
@@ -28,24 +29,28 @@ export function Workspace() {
 
 		let tabContent: ReactNode = <p>{tab.type}</p>
 		switch (tab.type) {
-			case "content": {
-				tabContent = <ContentTab contentId={tab.contentId} tabIndex={tabIndex} />
-				break;
-			}
 			case "content_new": {
 				tabContent = <ContentTab contentTypeId={tab.contentTypeId} tabIndex={tabIndex} />
 				break;
 			}
-			case "view": {
-				tabContent = <p>view {tab.viewId}</p>
+			case "content": {
+				tabContent = <ContentTab contentId={tab.contentId} tabIndex={tabIndex} />
+				break;
+			}
+			case "content_list": {
+				tabContent = <ContentListTab />
 				break;
 			}
 			case "view_new": {
 				tabContent = <p>view new</p>
 				break;
 			}
-			case "search": {
-				tabContent = <SearchTab />
+			case "view": {
+				tabContent = <p>view {tab.viewId}</p>
+				break;
+			}
+			case "view_list": {
+				tabContent = <p>view list</p>
 				break;
 			}
 		}
