@@ -1,7 +1,7 @@
 import {LocalfulEncryption} from "@localful-athena/encryption/localful-encryption";
 import {ReportFunction} from "./performance-manager";
 import {LocalfulWeb} from "@localful-athena/localful-web";
-import { DATA_SCHEMA, localful } from "../../../state/athena-localful";
+import { DATA_SCHEMA, localful } from "../../state/athena-localful";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
 const TAG_NUMBER = 3000

@@ -23,6 +23,7 @@ import {useSearchDialog} from "../../../features/search/dialog/search-dialog";
 import {useDataStructureDialog} from "../../../features/data-structure/data-structure-dialog";
 import { useViewsDialog } from "../../../features/views/dialog/views-dialog";
 import {useContentListDialog} from "../../../features/content-list/dialog/content-list-dialog";
+import {useSettingsDialog} from "../../../features/settings/settings-dialog";
 
 export interface WithMenuPanelControl {
   menuPanelIsOpen: boolean
@@ -37,6 +38,7 @@ export function MenuPanel() {
   const {setIsOpen: setDataStructureDialogOpen } = useDataStructureDialog()
   const {setIsOpen: setViewsDialogOpen } = useViewsDialog()
   const {setIsOpen: setContentListDialogOpen } = useContentListDialog()
+    const {setIsOpen: setSettingsDialogOpen } = useSettingsDialog()
 
   return (
       <div className="menu-panel">
@@ -120,11 +122,14 @@ export function MenuPanel() {
 
         <div className="menu-panel__user">
           <div className="menu-panel__user-content">
-            <button
-                className="menu-panel__user-account"
-            ><AccountIcon/></button>
+            {/*<button*/}
+            {/*    className="menu-panel__user-account"*/}
+            {/*><AccountIcon/></button>*/}
             <button
                 className="menu-panel__user-settings"
+                onClick={() => {
+                    setSettingsDialogOpen(true)
+                }}
             ><SettingsIcon/></button>
             <button
                 className="menu-panel__user-help"
