@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {DescriptionField, NameField, EntityReferenceListField} from "../common/fields";
+import {DescriptionField, NameField, EntityReferenceListField, IsFavouriteField} from "../common/fields";
 import {EntityDto} from "@localful-athena/storage/entity-types";
 
 export const ORDER_BY_FIELDS = ["createdAt", "updatedAt", "name"] as const
@@ -13,11 +13,12 @@ export const ViewData = z.object({
   name: NameField,
   description: DescriptionField,
   tags: EntityReferenceListField,
+  isFavourite: IsFavouriteField,
   // Query Fields
-  queryContentTypes: z.array(z.string().uuid()),
+  queryContentTypes: EntityReferenceListField,
   queryTags: EntityReferenceListField,
-  queryOrderBy: OrderByFields,
-  queryOrderDirection: OrderDirection
+  queryOrderBy: OrderByFields.optional(),
+  queryOrderDirection: OrderDirection.optional()
 }).strict()
 export type ViewData = z.infer<typeof ViewData>
 

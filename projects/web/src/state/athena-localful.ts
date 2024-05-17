@@ -3,6 +3,7 @@ import {TagData} from "./schemas/tags/tags";
 import {FieldDefinition} from "./schemas/fields/fields";
 import {ContentTypeData} from "./schemas/content-types/content-types";
 import {ContentData} from "./schemas/content/content";
+import {ViewData} from "./schemas/views/views";
 
 export const DATA_SCHEMA = {
 	version: 1.1,
@@ -12,14 +13,14 @@ export const DATA_SCHEMA = {
 			schemas: {
 				v1: {data: TagData}
 			},
-			useMemoryCache: false,
+			useMemoryCache: true,
 		},
 		fields: {
 			currentSchema: 'v1',
 			schemas: {
 				v1: {data: FieldDefinition}
 			},
-			useMemoryCache: false,
+			useMemoryCache: true,
 		},
 		content_types: {
 			currentSchema: 'v1',
@@ -29,7 +30,7 @@ export const DATA_SCHEMA = {
 					exposedFields: {fields: 'plain', contentTemplateTags: 'plain'}
 				}
 			},
-			useMemoryCache: false,
+			useMemoryCache: true,
 		},
 		content: {
 			currentSchema: 'v1',
@@ -41,6 +42,16 @@ export const DATA_SCHEMA = {
 			},
 			useMemoryCache: false,
 		},
+		views: {
+			currentSchema: 'v1',
+			schemas: {
+				v1: {
+					data: ViewData,
+					exposedFields: {isFavourite: 'plain', tags: 'plain', queryTags: 'plain', queryContentTypes: 'plain'}
+				},
+			},
+			useMemoryCache: false,
+		}
 	},
 } as const
 

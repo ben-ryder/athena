@@ -4,6 +4,7 @@ import {createModalContext} from "../../../common/dialog/generic-dialog";
 
 import "./views-dialog.scss"
 import {useWorkspaceContext} from "../../workspace/workspace-context";
+import {ViewList} from "../../views-list/view-list";
 
 export const {
   context: ViewsDialogContext,
@@ -19,11 +20,20 @@ export function ViewsDialog() {
     <JDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      title="Views"
+      title="All Views"
       description="View and manage your views"
       content={
         <div className='views-dialog'>
           <div className='views-dialog__header'>
+              <JButton
+                  className='views-dialog__open-list'
+                  onClick={() => {
+                      openTab({ type: 'view_list' }, { switch: true })
+                      setIsOpen(false)
+                  }}
+                  variant='tertiary'
+              >Open view list tab
+              </JButton>
             <JButton
               className='views-dialog__create'
               onClick={() => {
@@ -34,6 +44,9 @@ export function ViewsDialog() {
             </JButton>
           </div>
           <div className='views-dialog__content'>
+              <ViewList onOpen={() => {
+                  setIsOpen(false)
+              }}/>
           </div>
         </div>
       }

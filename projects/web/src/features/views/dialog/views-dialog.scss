@@ -1,4 +1,12 @@
 
 .views-dialog {
+  background: var(--j-c-background);
+  padding: var(--j-space-2);
 
+  &__header {
+    margin-bottom: var(--j-space-4);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
 }

@@ -1,24 +1,12 @@
 
 .content-list-dialog {
   background: var(--j-c-background);
-  padding: var(--j-space-4);
+  padding: var(--j-space-2);
 
   &__header {
-    margin: var(--j-space-4);
+    margin-bottom: var(--j-space-4);
     display: flex;
     justify-content: flex-end;
     align-items: center;
-  }
-
-  &__tab-open {
-    font-weight: bold;
-    color: var(--j-c-text-emphasis);
-    text-decoration: underline;
-
-    &:hover,
-    &:focus {
-      cursor: pointer;
-      color: var(--j-c-primary);
-    }
   }
 }
