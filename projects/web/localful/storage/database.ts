@@ -429,7 +429,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 				indexes.push({
 					// @ts-expect-error - query.index.field will be the name of the index
 					index: tx.objectStore(query.table).index(query.index.field),
-					query: query.index.value
+					query: IDBKeyRange.only([query.index.value, 0]) // [value, isDeleted]
 				})
 			}
 			else if (query.index.operation === 'includes') {
@@ -437,7 +437,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 					indexes.push({
 						// @ts-expect-error - query.index.field will be the name of the index
 						index: tx.objectStore(query.table).index(query.index.field),
-						query: value
+						query: IDBKeyRange.only([value, 0]) // [value, isDeleted]
 					})
 				}
 			}
@@ -451,28 +451,28 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 
 				let indexQuery
 				if (typeof query.index.greaterThan !== "undefined" && typeof query.index.lessThan !== "undefined") {
-					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, true, true)
+					indexQuery = IDBKeyRange.bound([query.index.greaterThan, 0], [query.index.lessThan, 0], true, true)
 				}
 				else if (typeof query.index.greaterThanEqualTo !== "undefined" && typeof query.index.lessThanEqualTo !== "undefined") {
-					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, false, false)
+					indexQuery = IDBKeyRange.bound([query.index.greaterThan, 0], [query.index.lessThan, 0], false, false)
 				}
 				if (typeof query.index.greaterThan !== "undefined" && typeof query.index.lessThanEqualTo !== "undefined") {
-					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, true, false)
+					indexQuery = IDBKeyRange.bound([query.index.greaterThan, 0], [query.index.lessThan, 0], true, false)
 				}
 				if (typeof query.index.greaterThanEqualTo !== "undefined" && typeof query.index.lessThanEqualTo !== "undefined") {
-					indexQuery = IDBKeyRange.bound(query.index.greaterThan, query.index.lessThan, false, true)
+					indexQuery = IDBKeyRange.bound([query.index.greaterThan, 0], [query.index.lessThan, 0], false, true)
 				}
 				if (typeof query.index.greaterThanEqualTo !== "undefined") {
-					indexQuery = IDBKeyRange.lowerBound(query.index.greaterThanEqualTo, false)
+					indexQuery = IDBKeyRange.lowerBound([query.index.greaterThanEqualTo, 0], false)
 				}
 				if (typeof query.index.greaterThan !== "undefined") {
-					indexQuery = IDBKeyRange.lowerBound(query.index.greaterThanEqualTo, true)
+					indexQuery = IDBKeyRange.lowerBound([query.index.greaterThanEqualTo, 0], true)
 				}
 				if (typeof query.index.lessThanEqualTo !== "undefined") {
-					indexQuery = IDBKeyRange.upperBound(query.index.greaterThanEqualTo, false)
+					indexQuery = IDBKeyRange.upperBound([query.index.greaterThanEqualTo, 0], false)
 				}
 				if (typeof query.index.lessThan !== "undefined") {
-					indexQuery = IDBKeyRange.upperBound(query.index.greaterThanEqualTo, true)
+					indexQuery = IDBKeyRange.upperBound([query.index.greaterThanEqualTo, 0], true)
 				}
 
 				indexes.push({

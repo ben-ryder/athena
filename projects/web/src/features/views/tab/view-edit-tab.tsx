@@ -64,7 +64,7 @@ export function ViewEditTab(props: ViewEditTabProps) {
 	// viewId is a dependency to ensure the tab name updates
 	// when a "new view" tab is replaced with a "view" tab.
 	useEffect(() => {
-		setTabName(props.tabIndex, name)
+		setTabName(props.tabIndex, `[edit] ${name}`)
 	}, [name, props.viewId]);
 
 	const onDelete = useCallback(async () => {

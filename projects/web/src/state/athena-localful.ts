@@ -54,6 +54,7 @@ export const DATA_SCHEMA = {
 		}
 	},
 } as const
+export type DATA_SCHEMA = typeof DATA_SCHEMA
 
 export const localful = new LocalfulWeb<typeof DATA_SCHEMA>({
 	initialDatabaseId: 'vault_d7ef8db9-e401-4971-93e2-156d94a0a8d2',
