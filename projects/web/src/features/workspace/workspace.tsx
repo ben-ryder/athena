@@ -21,45 +21,54 @@ export function Workspace() {
 	const workspaceContent: ReactNode[] = []
 
 	for (const [tabIndex, tab] of tabs.entries()) {
+		let tabName;
+		let tabContent: ReactNode = <p>{tab.type}</p>
+		switch (tab.type) {
+			case "content_new": {
+				tabName = tab.name ?? 'Untitled'
+				tabContent = <ContentTab contentTypeId={tab.contentTypeId} tabIndex={tabIndex} />
+				break;
+			}
+			case "content": {
+				tabName = tab.name ?? 'Untitled'
+				tabContent = <ContentTab contentId={tab.contentId} tabIndex={tabIndex} />
+				break;
+			}
+			case "content_list": {
+				tabName = tab.name ?? 'All Content'
+				tabContent = <ContentListTab />
+				break;
+			}
+			case "view_new": {
+				tabName = tab.name ?? 'Untitled'
+				tabContent = <ViewEditTab tabIndex={tabIndex} />
+				break;
+			}
+			case "view_edit": {
+				tabName = tab.name ? `[edit] ${tab.name}` : 'Untitled'
+				tabContent = <ViewEditTab viewId={tab.viewId} tabIndex={tabIndex} />
+				break;
+			}
+			case "view": {
+				tabName = tab.name ?? 'Untitled'
+				tabContent = <ViewTab viewId={tab.viewId} tabIndex={tabIndex} />
+				break;
+			}
+			case "view_list": {
+				tabName = tab.name ?? 'All Views'
+				tabContent = <ViewListTab />
+				break;
+			}
+		}
+
 		workspaceTabs.push({
-			name: tab.name || tab.type,
+			name: tabName,
 			isUnsaved: !!tab.isUnsaved,
 			isActive: activeTab === tabIndex,
 			onClose: () => {closeTab(tabIndex)},
 			onSelect: () => {setActiveTab(tabIndex)}
 		})
 
-		let tabContent: ReactNode = <p>{tab.type}</p>
-		switch (tab.type) {
-			case "content_new": {
-				tabContent = <ContentTab contentTypeId={tab.contentTypeId} tabIndex={tabIndex} />
-				break;
-			}
-			case "content": {
-				tabContent = <ContentTab contentId={tab.contentId} tabIndex={tabIndex} />
-				break;
-			}
-			case "content_list": {
-				tabContent = <ContentListTab />
-				break;
-			}
-			case "view_new": {
-				tabContent = <ViewEditTab tabIndex={tabIndex} />
-				break;
-			}
-			case "view_edit": {
-				tabContent = <ViewEditTab viewId={tab.viewId} tabIndex={tabIndex} />
-				break;
-			}
-			case "view": {
-				tabContent = <ViewTab viewId={tab.viewId} tabIndex={tabIndex} />
-				break;
-			}
-			case "view_list": {
-				tabContent = <ViewListTab />
-				break;
-			}
-		}
 		workspaceContent.push(tabContent)
 	}
 
