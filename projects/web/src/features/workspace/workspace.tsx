@@ -6,8 +6,9 @@ import {ContentTab} from "../content/tab/content-tab";
 // todo: split styling by component for better encapsulation
 import "./workspace.scss"
 import {ContentListTab} from "../content-list/tab/content-list-tab";
-import {ViewTab} from "../views/tab/view-tab";
+import {ViewEditTab} from "../views/tab/view-edit-tab";
 import {ViewListTab} from "../views-list/tab/view-list-tab";
+import {ViewTab} from "../views/tab/view-tab";
 
 export interface WithTabData {
 	tabIndex: number
@@ -43,7 +44,11 @@ export function Workspace() {
 				break;
 			}
 			case "view_new": {
-				tabContent = <ViewTab tabIndex={tabIndex} />
+				tabContent = <ViewEditTab tabIndex={tabIndex} />
+				break;
+			}
+			case "view_edit": {
+				tabContent = <ViewEditTab viewId={tab.viewId} tabIndex={tabIndex} />
 				break;
 			}
 			case "view": {

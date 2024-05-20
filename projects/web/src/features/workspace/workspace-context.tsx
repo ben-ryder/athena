@@ -14,6 +14,9 @@ export type WorkspaceTabTypes = {
 	type: 'view',
 	viewId: string
 } | {
+	type: 'view_edit',
+	viewId: string
+} | {
 	type: 'view_list'
 }
 

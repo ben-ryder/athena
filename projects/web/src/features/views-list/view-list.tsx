@@ -53,7 +53,7 @@ export function ViewList(props: ViewListProps) {
                 </ul>
               )
               : (
-                <p>Not Views Found</p>
+                <p>No Views Found</p>
               )
             }
         </div>
