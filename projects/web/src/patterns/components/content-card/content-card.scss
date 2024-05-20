@@ -34,3 +34,9 @@
     gap: var(--j-space-2);
   }
 }
+
+.j-dialog {
+  .content-card {
+    background: var(--j-c-background-f2);
+  }
+}

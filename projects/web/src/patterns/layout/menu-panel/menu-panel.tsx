@@ -15,7 +15,7 @@ import {
 import {MainPanelAction} from "./main-panel-action";
 
 import './menu-panel.scss'
-import {JIcon} from "@ben-ryder/jigsaw-react";
+import { JIcon, JTooltip } from "@ben-ryder/jigsaw-react";
 import {useDatabaseDialog} from "../../../features/databases/database-dialog";
 import {useNewContentDialog} from "../../../features/new-content/new-content-dialog";
 import {useStatusDialog} from "../../../features/status/status-dialog";
@@ -44,28 +44,34 @@ export function MenuPanel() {
       <div className="menu-panel">
         <div className="menu-panel__database">
           <div className="menu-panel__database-content">
-            <button
-                className="menu-panel__database-edit"
-                onClick={() => {
-                  setDatabaseDialogOpen(true)
-                }}
-            >
-              <span className="menu-panel__database-name" tabIndex={-1}>Example Database</span>
-              <JIcon size='sm'><EditIcon/></JIcon>
-            </button>
-            <button
+            <JTooltip content='Edit Database' renderAsChild={true} variant='dark'>
+              <button
+                  className="menu-panel__database-edit"
+                  onClick={() => {
+                    setDatabaseDialogOpen(true)
+                  }}
+              >
+                <span className="menu-panel__database-name" tabIndex={-1}>Example Database</span>
+                <JIcon size='sm'><EditIcon/></JIcon>
+              </button>
+            </JTooltip>
+            <JTooltip content='Status & Logs' renderAsChild={true} variant='dark'>
+              <button
                 className="menu-panel__database-status"
                 onClick={() => {
-                  setStatusDialogOpen(true)
+                  setStatusDialogOpen(true);
                 }}
-            ><JIcon><StatusDownloadIcon/></JIcon></button>
-            <button className="menu-panel__database-switch"><JIcon><DatabaseSwitchIcon/></JIcon></button>
+              ><JIcon><StatusDownloadIcon /></JIcon></button>
+            </JTooltip>
+            <JTooltip content="Switch Database" renderAsChild={true} variant='dark'>
+              <button className="menu-panel__database-switch"><JIcon><DatabaseSwitchIcon /></JIcon></button>
+            </JTooltip>
           </div>
         </div>
 
         <div className="menu-panel__actions">
           <MainPanelAction
-              text='New Content'
+            text='New Content'
               icon={<NewContentIcon/>}
               onSelect={() => {
                 setNewContentDialogOpen(true)
@@ -122,18 +128,19 @@ export function MenuPanel() {
 
         <div className="menu-panel__user">
           <div className="menu-panel__user-content">
-            {/*<button*/}
-            {/*    className="menu-panel__user-account"*/}
-            {/*><AccountIcon/></button>*/}
-            <button
-                className="menu-panel__user-settings"
-                onClick={() => {
-                    setSettingsDialogOpen(true)
-                }}
-            ><SettingsIcon/></button>
-            <button
-                className="menu-panel__user-help"
-            ><HelpIcon/></button>
+            <JTooltip content="Account & Settings" renderAsChild={true} variant='dark'>
+              <button
+                  className="menu-panel__user-settings"
+                  onClick={() => {
+                      setSettingsDialogOpen(true)
+                  }}
+              ><SettingsIcon/></button>
+            </JTooltip>
+            <JTooltip content="About & Help" renderAsChild={true} variant='dark'>
+              <button
+                  className="menu-panel__user-help"
+              ><HelpIcon/></button>
+            </JTooltip>
           </div>
         </div>
       </div>
