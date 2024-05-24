@@ -4,7 +4,7 @@ import { ErrorObject } from "@localful-athena/control-flow";
 import {
   GenericManagerScreenProps
 } from "../../../../common/generic-manager/generic-manager";
-import { FieldDefinition} from "../../../../state/schemas/fields/fields";
+import { FieldDefinition } from "../../../../state/schemas/fields/fields";
 import {FieldForm} from "../forms/field-form";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
 import { localful } from "../../../../state/athena-localful";
@@ -27,7 +27,7 @@ export function CreateFieldScreen(props: GenericManagerScreenProps) {
       {errors.length > 0 && <ErrorCallout errors={errors} />}
       <FieldForm
         title="Create Field"
-        data={{ label: "", type: FIELD_TYPES.textShort.identifier, required: true }}
+        data={{ label: "", type: FIELD_TYPES.markdown.identifier, required: true }}
         onSave={onSave}
         navigate={props.navigate}
         disableTypeEdit={false}

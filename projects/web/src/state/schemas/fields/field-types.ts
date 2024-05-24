@@ -1,11 +1,15 @@
 export const FIELD_TYPES =  {
-  textShort: {
-    label: "Short Text",
-    identifier: "textShort"
+  plainTextShort: {
+    label: "Text Short",
+    identifier: "plainTextShort"
   },
-  textLong: {
-    label: "Long Text",
-    identifier: "textLong"
+  plainTextLong: {
+    label: "Text Long",
+    identifier: "plainTextLong"
+  },
+  markdown: {
+    label: "Markdown",
+    identifier: "markdown"
   },
   options: {
     label: "Options",
@@ -38,8 +42,9 @@ export const FIELD_TYPES =  {
 } as const
 
 export const FieldTypesList = [
-	FIELD_TYPES.textShort.identifier,
-	FIELD_TYPES.textLong.identifier,
+	FIELD_TYPES.plainTextShort.identifier,
+	FIELD_TYPES.plainTextLong.identifier,
+    FIELD_TYPES.markdown.identifier,
 	FIELD_TYPES.options.identifier,
 	FIELD_TYPES.url.identifier,
 	FIELD_TYPES.number.identifier,

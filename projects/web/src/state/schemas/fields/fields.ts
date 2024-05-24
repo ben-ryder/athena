@@ -1,7 +1,7 @@
 import {z} from "zod";
 import isISO8601Date from 'validator/lib/isISO8601';
 import { FIELD_TYPES } from "./field-types";
-import {EntityDto, IdField} from "@localful-athena/storage/entity-types";
+import {EntityDto} from "@localful-athena/storage/entity-types";
 
 /**
  * Validate if a string is a slug
@@ -21,22 +21,25 @@ export const FieldDataBase = z.object({
 }).strict()
 export type FieldDataBase = z.infer<typeof FieldDataBase>
 
-export const FieldTextShortData = FieldDataBase.extend({
-  type: z.literal(FIELD_TYPES.textShort.identifier),
+export const FieldPlainTextShortData = FieldDataBase.extend({
+  type: z.literal(FIELD_TYPES.plainTextShort.identifier),
   value: z.string()
-    .min(1, "value length must be between 1 and 100")
     .max(100, "value length must be between 1 and 100")
     .nullable()
 }).strict()
-export type FieldTextShortData = z.infer<typeof FieldTextShortData>
+export type FieldPlainTextShortData = z.infer<typeof FieldPlainTextShortData>
 
-export const FieldTextLongData = FieldDataBase.extend({
-  type: z.literal(FIELD_TYPES.textLong.identifier),
-  value: z.string()
-    .min(1, "value length must be at least 1 character")
-    .nullable()
+export const FieldPlainTextLongData = FieldDataBase.extend({
+  type: z.literal(FIELD_TYPES.plainTextLong.identifier),
+  value: z.string().nullable()
 }).strict()
-export type FieldTextLongData = z.infer<typeof FieldTextLongData>
+export type FieldPlainTextLongData = z.infer<typeof FieldPlainTextLongData>
+
+export const FieldMarkdownData = FieldDataBase.extend({
+  type: z.literal(FIELD_TYPES.markdown.identifier),
+  value: z.string().nullable()
+}).strict()
+export type FieldMarkdownData = z.infer<typeof FieldMarkdownData>
 
 export const FieldOptionsData = FieldDataBase.extend({
   type: z.literal(FIELD_TYPES.options.identifier),
@@ -103,8 +106,9 @@ export const FieldDateData= FieldDataBase.extend({
 export type FieldDateData = z.infer<typeof FieldDateData>
 
 export const FieldDefinition = z.union([
-  FieldTextShortData.omit({value: true}),
-  FieldTextLongData.omit({value: true}),
+  FieldPlainTextShortData.omit({value: true}),
+  FieldPlainTextLongData.omit({value: true}),
+  FieldMarkdownData.omit({value: true}),
   FieldOptionsData.omit({value: true}),
   FieldURLData.omit({value: true}),
   FieldNumberData.omit({value: true}),
@@ -116,8 +120,9 @@ export const FieldDefinition = z.union([
 export type FieldDefinition = z.infer<typeof FieldDefinition>
 
 export const FieldData = z.union([
-  FieldTextShortData.pick({type: true, value: true}),
-  FieldTextLongData.pick({type: true, value: true}),
+  FieldPlainTextShortData.pick({type: true, value: true}),
+  FieldPlainTextLongData.pick({type: true, value: true}),
+  FieldMarkdownData.pick({type: true, value: true}),
   FieldOptionsData.pick({type: true, value: true}),
   FieldURLData.pick({type: true, value: true}),
   FieldNumberData.pick({type: true, value: true}),

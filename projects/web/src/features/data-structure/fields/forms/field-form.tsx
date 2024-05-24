@@ -33,13 +33,14 @@ export function FieldForm(props: FieldFormProps) {
 
     let data
     switch (type) {
-      case FIELD_TYPES.textShort.identifier:
+      case FIELD_TYPES.plainTextShort.identifier:
+      case FIELD_TYPES.plainTextLong.identifier:
+      case FIELD_TYPES.markdown.identifier:
       case FIELD_TYPES.url.identifier:
       case FIELD_TYPES.number.identifier:
       case FIELD_TYPES.boolean.identifier:
       case FIELD_TYPES.timestamp.identifier:
-      case FIELD_TYPES.date.identifier:
-      case FIELD_TYPES.textLong.identifier: {
+      case FIELD_TYPES.date.identifier: {
         data = {
           label,
           type,
