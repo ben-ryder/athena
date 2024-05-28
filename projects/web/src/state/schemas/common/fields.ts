@@ -1,6 +1,6 @@
 import {z} from "zod";
 import { JColourVariantsList } from "@ben-ryder/jigsaw-react";
-import { IdField } from "@localful-athena/storage/entity-types";
+import {IdField} from "@localful-athena/types/fields";
 
 export const NameField = z.string()
   .min(1, "name length must be between 1 and 50 chars")

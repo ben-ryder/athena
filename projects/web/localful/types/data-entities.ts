@@ -1,14 +1,5 @@
 import {z} from "zod"
-
-export const IdField = z.string().uuid()
-export type IdField = z.infer<typeof IdField>
-
-// IndexDB can't index boolean types, so 0 and 1 must be used instead.
-export const IsDeletedField = z.union([z.literal(0), z.literal(1)])
-export type IsDeletedField = z.infer<typeof IsDeletedField>
-
-export const TimestampField = z.string().datetime()
-export type TimestampField = z.infer<typeof TimestampField>
+import {IdField, BooleanField, TimestampField} from "@localful-athena/types/fields";
 
 /**
  * An entity is the base of all storable data.
@@ -17,7 +8,7 @@ export type TimestampField = z.infer<typeof TimestampField>
  */
 export const Entity = z.object({
   id: IdField,
-  isDeleted: IsDeletedField,
+  isDeleted: BooleanField,
   createdAt: TimestampField,
   localfulVersion: z.string(),
 }).strict()

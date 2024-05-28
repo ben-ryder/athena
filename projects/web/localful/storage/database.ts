@@ -5,7 +5,7 @@ import {memoryCache} from "./memory-cache";
 import {Observable} from "rxjs";
 import {DataChangeEvent, EventTypes} from "../events/events";
 import {IDBPDatabase, openDB} from "idb";
-import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/storage/entity-types";
+import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/types/data-entities";
 import {EventManager} from "@localful-athena/events/event-manager";
 import { Logger } from "../../src/utils/logger";
 import {

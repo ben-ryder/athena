@@ -1,5 +1,5 @@
 import { LocalfulDatabase } from "./database";
-import {EntityDto, EntityVersion, LocalEntity} from "./entity-types";
+import {EntityDto, EntityVersion, LocalEntity} from "../types/data-entities";
 import {z, ZodTypeAny} from "zod";
 import {IDBPIndex} from "idb";
 

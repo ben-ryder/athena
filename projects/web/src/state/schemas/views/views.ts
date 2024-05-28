@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {DescriptionField, NameField, EntityReferenceListField, IsFavouriteField} from "../common/fields";
-import {EntityDto} from "@localful-athena/storage/entity-types";
+import {EntityDto} from "@localful-athena/types/data-entities";
 
 export const ORDER_BY_FIELDS = ["createdAt", "updatedAt", "name"] as const
 export const OrderByFields = z.enum(ORDER_BY_FIELDS);

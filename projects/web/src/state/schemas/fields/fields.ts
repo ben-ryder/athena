@@ -1,7 +1,8 @@
 import {z} from "zod";
 import isISO8601Date from 'validator/lib/isISO8601';
 import { FIELD_TYPES } from "./field-types";
-import {EntityDto} from "@localful-athena/storage/entity-types";
+import {EntityDto} from "@localful-athena/types/data-entities";
+import {IdField} from "@localful-athena/types/fields";
 
 /**
  * Validate if a string is a slug
@@ -11,7 +12,7 @@ import {EntityDto} from "@localful-athena/storage/entity-types";
  * For example 'example1' and 'example-test-one1'
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const isValidSlug = /^[a-z0-9](-?[a-z0-9])*$/.test
+export const isValidSlug = /^[a-z0-9](-?[a-z0-9])*$/.test
 
 export const FieldDataBase = z.object({
   label: z.string()
@@ -134,7 +135,7 @@ export const FieldData = z.union([
 export type FieldData = z.infer<typeof FieldData>
 
 export const FieldStorage = z.record(
-  z.string().uuid(),
+  IdField,
   FieldData
 )
 export type FieldStorage = z.infer<typeof FieldStorage>

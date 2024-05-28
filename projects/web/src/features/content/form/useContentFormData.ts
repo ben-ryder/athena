@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {localful} from "../../../state/athena-localful";
 import {ContentTypeData} from "../../../state/schemas/content-types/content-types";
-import {EntityDto} from "@localful-athena/storage/entity-types";
+import {EntityDto} from "@localful-athena/types/data-entities";
 import {ContentData} from "../../../state/schemas/content/content";
 
 // todo: make type require at least one of these?
