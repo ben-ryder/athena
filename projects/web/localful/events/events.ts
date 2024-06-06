@@ -1,8 +1,8 @@
 
 export const EventTypes = {
 	DATA_CHANGE: 'data-change',
-	DATABASE_SWITCH: 'database-switch',
-	DATABASE_CLOSE: 'database-close',
+	VAULT_SWITCH: 'vault-switch',
+	VAULT_CLOSE: 'vault-close',
 } as const
 
 
@@ -22,8 +22,8 @@ export interface DataChangeEvent {
 	}
 }
 
-export interface DatabaseSwitchEvent {
-	type: typeof EventTypes.DATABASE_SWITCH,
+export interface VaultSwitchEvent {
+	type: typeof EventTypes.VAULT_SWITCH,
 	detail: {
 		context: EventContext,
 		data: {
@@ -32,8 +32,8 @@ export interface DatabaseSwitchEvent {
 	}
 }
 
-export interface DatabaseCloseEvent {
-	type: typeof EventTypes.DATABASE_CLOSE,
+export interface VaultCloseEvent {
+	type: typeof EventTypes.VAULT_CLOSE,
 	detail: {
 		context: EventContext,
 		data: {
@@ -42,12 +42,12 @@ export interface DatabaseCloseEvent {
 	}
 }
 
-export type LocalfulEvent = DataChangeEvent | DatabaseSwitchEvent | DatabaseCloseEvent
+export type LocalfulEvent = DataChangeEvent | VaultSwitchEvent | VaultCloseEvent
 
 export interface EventMap {
 	[EventTypes.DATA_CHANGE]: DataChangeEvent
-	[EventTypes.DATABASE_SWITCH]: DatabaseSwitchEvent,
-	[EventTypes.DATABASE_CLOSE]: DatabaseCloseEvent,
+	[EventTypes.VAULT_SWITCH]: VaultSwitchEvent,
+	[EventTypes.VAULT_CLOSE]: VaultCloseEvent,
 }
 
 export type EventTypes = keyof EventMap

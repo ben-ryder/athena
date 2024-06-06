@@ -15,6 +15,7 @@ import {
 	QueryIndex,
 	TableKeys
 } from "@localful-athena/storage/types";
+import {VaultFields} from "@localful-athena/types/vaults";
 
 export interface LocalfulDatabaseConfig {
 	dataSchema: DataSchemaDefinition,
@@ -27,8 +28,8 @@ const LOCALFUL_VERSION = '1.0'
 
 export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	dataSchema: DataSchemaDefinition
-	_db?: IDBPDatabase
-	currentDatabaseId?: string
+	_currentVaultDatabase?: IDBPDatabase
+	currentVaultId?: string
 	eventManager: EventManager
 	getEncryptionKey: LocalfulDatabaseConfig['getEncryptionKey']
 
@@ -40,18 +41,18 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		this.getEncryptionKey = config.getEncryptionKey
 	}
 
-	async getDb() {
-		if (this._db && this._db.name === this.currentDatabaseId) {
-			return this._db
+	async getCurrentVaultDatabase() {
+		if (this._currentVaultDatabase && this._currentVaultDatabase.name === this.currentVaultId) {
+			return this._currentVaultDatabase
 		}
-		if (this._db && this._db.name !== this.currentDatabaseId) {
+		if (this._currentVaultDatabase && this._currentVaultDatabase.name !== this.currentVaultId) {
 			// todo: need to await this somehow?
-			this._db.close()
+			this._currentVaultDatabase.close()
 		}
 
-		if (!this.currentDatabaseId) throw new Error("Attempted to use database features but there is not active database")
+		if (!this.currentVaultId) throw new Error("Attempted to use database features but there is no active vault")
 
-		return openDB(this.currentDatabaseId, LOCALFUL_INDEXDB_VERSION, {
+		return openDB(this.currentVaultId, LOCALFUL_INDEXDB_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {
 				for (const [tableKey, schemaDefinition] of Object.entries(this.dataSchema.tables)) {
@@ -86,25 +87,20 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		})
 	}
 	
-	setCurrentDatabase(databaseId: string) {
-		this.currentDatabaseId = databaseId
-		this.eventManager.dispatch(EventTypes.DATABASE_SWITCH, {id: this.currentDatabaseId})
+	setCurrentVault(databaseId: string) {
+		this.currentVaultId = databaseId
+		this.eventManager.dispatch(EventTypes.VAULT_SWITCH, {id: this.currentVaultId})
 	}
 
-	closeCurrentDatabase() {
-		if (this._db) {
-			this._db.close()
+	closeCurrentVault() {
+		if (this._currentVaultDatabase) {
+			this._currentVaultDatabase.close()
 		}
 
-		if (this.currentDatabaseId) {
-			this.eventManager.dispatch(EventTypes.DATABASE_CLOSE, {id: this.currentDatabaseId})
+		if (this.currentVaultId) {
+			this.eventManager.dispatch(EventTypes.VAULT_CLOSE, {id: this.currentVaultId})
 		}
-		this.currentDatabaseId = undefined
-	}
-
-	deleteDatabase(databaseId: string) {
-		// todo: handle if database doesn't exist?
-		indexedDB.deleteDatabase(databaseId)
+		this.currentVaultId = undefined
 	}
 	
 	private _getVersionTableName(tableKey: string): string {
@@ -120,8 +116,8 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param dataSchema
 	 */
 	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
-		if (!this.currentDatabaseId) throw new Error("Attempted to use database features but there is not active database")
-		const encryptionKey = await this.getEncryptionKey(this.currentDatabaseId)
+		if (!this.currentVaultId) throw new Error("Attempted to use database features but there is not active database")
+		const encryptionKey = await this.getEncryptionKey(this.currentVaultId)
 
 		const decryptedData = await LocalfulEncryption.decryptAndValidateData<CurrentSchemaData<DataSchema, TableKey>>(
 			encryptionKey,
@@ -169,7 +165,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 		}
 
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readonly')
 		const entity = await tx.objectStore(tableKey).get(id) as LocalEntity|undefined
 		if (!entity) {
@@ -240,14 +236,14 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param data
 	 */
 	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<ActionResult<string>> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		const entityId = LocalfulEncryption.generateUUID();
 		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
-		if (!this.currentDatabaseId) throw new Error("Attempted to use database features but there is not active database")
-		const encryptionKey = await this.getEncryptionKey(this.currentDatabaseId)
+		if (!this.currentVaultId) throw new Error("Attempted to use database features but there is not active database")
+		const encryptionKey = await this.getEncryptionKey(this.currentVaultId)
 		const encResult = await LocalfulEncryption.encryptData(encryptionKey, data)
 		if (!encResult.success) return encResult
 
@@ -314,15 +310,15 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			...dataUpdate
 		}
 
-		if (!this.currentDatabaseId) throw new Error("Attempted to use database features but there is not active database")
-		const encryptionKey = await this.getEncryptionKey(this.currentDatabaseId)
+		if (!this.currentVaultId) throw new Error("Attempted to use database features but there is not active database")
+		const encryptionKey = await this.getEncryptionKey(this.currentVaultId)
 		const encResult = await LocalfulEncryption.encryptData(encryptionKey, updatedData)
 		if (!encResult.success) return encResult
 
 		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
 
 		const newVersion: EntityVersion = {
@@ -368,7 +364,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * deleting all versions.
 	 */
 	async delete<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.delete(`${tableKey}-get-${entityId}`)
@@ -407,7 +403,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
 		// todo: add query memory cache?
 
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 		const tx = db.transaction([query.table, this._getVersionTableName(query.table)], 'readonly')
 
 		// Pick what index and cursor query to use for the initial data selection
@@ -583,7 +579,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param entityId
 	 */
 	async getAllVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult<EntityVersion[]>> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		const versions = await db.getAllFromIndex(this._getVersionTableName(tableKey), 'entityId', entityId)
 		return {success: true, data: versions}
@@ -598,7 +594,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param entityId
 	 */
 	async purge<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.delete(`${tableKey}-get-${entityId}`)
@@ -629,7 +625,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * Delete all versions except the most recent.
 	 */
 	async deleteOldVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		const versions = await this.getAllVersions(tableKey, entityId)
 		if (!versions.success) return versions
@@ -663,7 +659,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param versionId
 	 */
 	async deleteVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		await db.delete(this._getVersionTableName(tableKey), versionId)
 
@@ -678,7 +674,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param versionId
 	 */
 	async getVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult<EntityVersion>> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		const version = await db.get(this._getVersionTableName(tableKey), versionId)
 		if (!version) return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: versionId}]}
@@ -693,7 +689,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param entityId
 	 */
 	async _getEntity<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult<LocalEntity>> {
-		const db = await this.getDb()
+		const db = await this.getCurrentVaultDatabase()
 
 		const entity = await db.get(tableKey, entityId)
 
@@ -729,14 +725,14 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 
 			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
-			this.eventManager.subscribe(EventTypes.DATABASE_SWITCH, runQuery)
+			this.eventManager.subscribe(EventTypes.VAULT_SWITCH, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
 				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
-				this.eventManager.unsubscribe(EventTypes.DATABASE_SWITCH, runQuery)
+				this.eventManager.unsubscribe(EventTypes.VAULT_SWITCH, runQuery)
 			}
 		})
 	}
@@ -764,14 +760,14 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 
 			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
-			this.eventManager.subscribe(EventTypes.DATABASE_SWITCH, runQuery)
+			this.eventManager.subscribe(EventTypes.VAULT_SWITCH, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
 				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
-				this.eventManager.unsubscribe(EventTypes.DATABASE_SWITCH, runQuery)
+				this.eventManager.unsubscribe(EventTypes.VAULT_SWITCH, runQuery)
 			}
 		})
 	}
@@ -799,15 +795,44 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 
 			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
-			this.eventManager.subscribe(EventTypes.DATABASE_SWITCH, runQuery)
+			this.eventManager.subscribe(EventTypes.VAULT_SWITCH, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
 				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
-				this.eventManager.unsubscribe(EventTypes.DATABASE_SWITCH, runQuery)
+				this.eventManager.unsubscribe(EventTypes.VAULT_SWITCH, runQuery)
 			}
 		})
+	}
+
+	createVault() {
+		
+	}
+
+	getVault(id: string) {
+
+	}
+
+	updateVault(id: string, updatedVault: Partial<VaultFields>) {
+		
+	}
+	
+	deleteVault(id: string) {
+		// todo: handle if database doesn't exist?
+		indexedDB.deleteDatabase(id)
+	}
+
+	queryVaults() {
+
+	}
+	
+	observableGetVault(id: string) {
+		
+	}
+	
+	observableQueryVaults() {
+		
 	}
 }

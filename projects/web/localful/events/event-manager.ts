@@ -1,4 +1,4 @@
-import { DatabaseSwitchEvent, EventContext, EventMap, EventTypes, LocalfulEvent } from "./events";
+import { VaultSwitchEvent, EventContext, EventMap, EventTypes, LocalfulEvent } from "./events";
 import { LocalfulEncryption } from "../encryption/localful-encryption";
 import {Logger} from "../../src/utils/logger";
 
@@ -18,7 +18,7 @@ export class EventManager {
 
 		// Automatically handle the setup of cross context communication when the database is switched
 		// @ts-expect-error - As events are typed, a database switch event will be a custom event with the given details.
-		this.eventTarget.addEventListener(EventTypes.DATABASE_SWITCH, (e: CustomEvent<DatabaseSwitchEvent['detail']>) => {
+		this.eventTarget.addEventListener(EventTypes.VAULT_SWITCH, (e: CustomEvent<VaultSwitchEvent['detail']>) => {
 			this.openCrossContextChannel(e.detail.data.id)
 		})
 	}
@@ -36,8 +36,8 @@ export class EventManager {
 
 		// Only broadcast events that originate in the current context, otherwise hello infinite event ping pong!
 		if (this.crossContextChannel && eventDetail.context.contextId === this.contextId) {
-			// Each context can use a different database, so that event should never be broadcast otherwise all contexts would update!
-			if (type !== 'database-switch') {
+			// Each context can use a different database, so events like vault-switch & vault-close should never be broadcast otherwise all contexts would update!
+			if (type === 'data-change' ) {
 				this.crossContextChannel.postMessage({ type, detail: eventDetail })
 			}
 		}

@@ -13,7 +13,7 @@ export async function runTest(report: ReportFunction) {
 	report({level: "section", text: "Setup"})
 	const id = await LocalfulEncryption.generateUUID()
 	const databaseId = `perf_${id}`
-	localful.db.setCurrentDatabase(databaseId)
+	localful.db.setCurrentVault(databaseId)
 
 	report({level: "message", text: `Created test database ${databaseId}`})
 
@@ -21,7 +21,7 @@ export async function runTest(report: ReportFunction) {
 	await queryTestData(localful, report)
 
 	report({level: "section", text: "Teardown"})
-	await localful.db.deleteDatabase(databaseId)
+	await localful.db.deleteVault(databaseId)
 	report({level: "message", text: "deleted database vault"})
 
 	const benchmarkEndTime = performance.now()

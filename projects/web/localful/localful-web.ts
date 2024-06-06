@@ -22,7 +22,7 @@ export class LocalfulWeb<DataSchema extends DataSchemaDefinition> {
 		})
 
 		if (config.initialDatabaseId) {
-			this.db.setCurrentDatabase(config.initialDatabaseId)
+			this.db.setCurrentVault(config.initialDatabaseId)
 		}
 	}
 
