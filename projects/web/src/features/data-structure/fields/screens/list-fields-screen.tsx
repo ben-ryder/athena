@@ -5,12 +5,15 @@ import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import { localful } from "../../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ListFieldsScreen(props: GenericManagerScreenProps) {
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const fields = useObservableQuery(localful.db.observableQuery({table: 'fields'}))
+  const { currentDatabase } = useLocalful<DATA_SCHEMA>()
+
+  const fields = useObservableQuery(currentDatabase?.liveQuery({table: 'fields'}))
 
   const listItems: AdminListItemProps[] = fields.status === QueryStatus.SUCCESS
     ? fields.data.map(field => ({

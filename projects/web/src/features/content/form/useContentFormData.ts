@@ -1,8 +1,9 @@
 import {useEffect, useRef, useState} from "react";
-import {localful} from "../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../state/athena-localful";
 import {ContentTypeData} from "../../../state/schemas/content-types/content-types";
 import {EntityDto} from "@localful-athena/types/data-entities";
 import {ContentData} from "../../../state/schemas/content/content";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 // todo: make type require at least one of these?
 export interface ContentFormOptions {
@@ -29,6 +30,8 @@ export interface ContentFormDataHandlers {
  * @param options
  */
 export function useContentFormData(options: ContentFormOptions) {
+    const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+
     const [contentTypeId, setContentTypeId] = useState<string | undefined>(options.contentTypeId)
 
     const [contentType, setContentType] = useState<EntityDto<ContentTypeData> | undefined>()
@@ -50,8 +53,10 @@ export function useContentFormData(options: ContentFormOptions) {
 
     // Load content type
     useEffect(() => {
+        if (!currentDatabase) return
+
         if (options.contentTypeId) {
-            const contentTypeQuery = localful.db.observableGet('content_types', options.contentTypeId)
+            const contentTypeQuery = currentDatabase?.liveGet('content_types', options.contentTypeId)
             const subscription = contentTypeQuery.subscribe((data) => {
                 if (data.status === 'success') {
                     setContentType(data.data)
@@ -66,12 +71,14 @@ export function useContentFormData(options: ContentFormOptions) {
                 subscription.unsubscribe()
             }
         }
-    }, [options.contentTypeId])
+    }, [options.contentTypeId, currentDatabase])
 
     // Load content
     useEffect(() => {
+        if (!currentDatabase) return
+
         if (options.contentId) {
-            const contentQuery = localful.db.observableGet('content', options.contentId)
+            const contentQuery = currentDatabase?.liveGet('content', options.contentId)
             const subscription = contentQuery.subscribe((data) => {
                 if (data.status === 'success') {
 
@@ -106,7 +113,7 @@ export function useContentFormData(options: ContentFormOptions) {
                 subscription.unsubscribe()
             }
         }
-    }, [options.contentId])
+    }, [options.contentId, currentDatabase])
 
     useEffect(() => {
         latestName.current = name

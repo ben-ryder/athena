@@ -1,5 +1,5 @@
 import {WithTabData} from "../../workspace/workspace";
-import {DATA_SCHEMA, localful} from "../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../state/athena-localful";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {QueryStatus} from "@localful-athena/control-flow";
 import {ErrorCallout} from "../../../patterns/components/error-callout/error-callout";
@@ -11,14 +11,16 @@ import {IndexWhereOption} from "@localful-athena/storage/types";
 import {ContentCard} from "../../../patterns/components/content-card/content-card";
 
 import "./view-tab.scss"
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export interface ViewTabProps extends WithTabData {
 	viewId: string
 }
 
 export function ViewTab(props: ViewTabProps) {
+	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
 	const { openTab, setTabName } = useWorkspaceContext()
-	const viewQuery = useObservableQuery(localful.db.observableGet('views', props.viewId))
+	const viewQuery = useObservableQuery(currentDatabase?.liveGet('views', props.viewId))
 
 	useEffect(() => {
 		if (viewQuery.status === 'success') {
@@ -28,11 +30,14 @@ export function ViewTab(props: ViewTabProps) {
 
 	const [results, setResults] = useState<ContentDto[]>([])
 
+	/**
+	 * A hook to set and load the content based on the viewQuery result
+	 */
 	useEffect(() => {
 		if (viewQuery.status === 'loading' || viewQuery.status === 'error') {
 			setResults([])
 		}
-		else {
+		else if (currentDatabase) {
 			const queryIndex: IndexWhereOption<DATA_SCHEMA, 'content'>|undefined = viewQuery.data.data.queryContentTypes.length > 0 ?
 				{
 					field: 'type',
@@ -40,7 +45,7 @@ export function ViewTab(props: ViewTabProps) {
 					value: viewQuery.data.data.queryContentTypes
 				} : undefined
 
-			const resultsQuery = localful.db.observableQuery({
+			const resultsQuery = currentDatabase?.liveQuery({
 				table: 'content',
 				index: queryIndex,
 				whereCursor: (entity, version) => {
@@ -57,6 +62,7 @@ export function ViewTab(props: ViewTabProps) {
 					return true
 				}
 			})
+
 			const resultQuerySubscription = resultsQuery.subscribe((result) => {
 				if (result.status === 'success') {
 					setResults(result.data)
@@ -71,7 +77,7 @@ export function ViewTab(props: ViewTabProps) {
 				resultQuerySubscription.unsubscribe()
 			}
 		}
-	}, [viewQuery.status])
+	}, [viewQuery.status, currentDatabase])
 
 	if (viewQuery.status === QueryStatus.LOADING) {
 		return (

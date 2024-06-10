@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import { localful } from "../../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ListContentTypesScreen(props: GenericManagerScreenProps) {
+  const {currentDatabase} = useLocalful<DATA_SCHEMA>()
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const contentTypes = useObservableQuery(localful.db.observableQuery({table: 'content_types'}))
+  const contentTypes = useObservableQuery(currentDatabase?.liveQuery({table: 'content_types'}))
 
   const listItems: AdminListItemProps[] = contentTypes.status === QueryStatus.SUCCESS
     ? contentTypes.data.map(contentType => ({

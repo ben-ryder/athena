@@ -1,14 +1,16 @@
 import { WithTabData } from "../../workspace/workspace";
-import {localful} from "../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../state/athena-localful";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useCallback, useEffect} from "react";
 import {useViewFormData, ViewFormOptions} from "../form/useViewFormData";
 import {ViewForm} from "../form/view-form";
 import {JButton} from "@ben-ryder/jigsaw-react";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export interface ViewEditTabProps extends WithTabData, ViewFormOptions {}
 
 export function ViewEditTab(props: ViewEditTabProps) {
+	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
 	const { replaceTab, setTabName, setTabIsUnsaved, closeTab, openTab } = useWorkspaceContext()
 
 	const {
@@ -27,8 +29,11 @@ export function ViewEditTab(props: ViewEditTabProps) {
 	} = useViewFormData({viewId: props.viewId})
 
 	const onSave = useCallback(async () => {
+		// todo: does this need feedback of some kind?
+		if (!currentDatabase) return
+
 		if (props.viewId) {
-			const result = await localful.db.update('views', props.viewId, {
+			const result = await currentDatabase.update('views', props.viewId, {
 				name: name,
 				description: description !== '' ? description : undefined,
 				tags:  tags,
@@ -44,7 +49,7 @@ export function ViewEditTab(props: ViewEditTabProps) {
 			}
 		}
 		else {
-			const result = await localful.db.create('views', {
+			const result = await currentDatabase.create('views', {
 				name: name,
 				description: description !== '' ? description : undefined,
 				tags:  tags,
@@ -68,13 +73,16 @@ export function ViewEditTab(props: ViewEditTabProps) {
 	}, [name, props.viewId]);
 
 	const onDelete = useCallback(async () => {
+		// todo: does this need feedback of some kind?
+		if (!currentDatabase) return
+
 		if (!props.viewId) {
 			// this should never really happen, but protect against it just in case.
 			console.error('Attempted to delete view with no viewId')
 			return
 		}
 
-		const result = await localful.db.delete('views', props.viewId)
+		const result = await currentDatabase.delete('views', props.viewId)
 		if (result.success) {
 			closeTab(props.tabIndex)
 		}

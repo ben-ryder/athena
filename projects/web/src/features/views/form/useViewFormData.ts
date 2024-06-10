@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from "react";
-import {localful} from "../../../state/athena-localful";
 import {ViewDto} from "../../../state/schemas/views/views";
+import {useLocalful} from "@localful-athena/react/use-localful";
+import {DATA_SCHEMA} from "../../../state/athena-localful";
 
 export interface ViewFormOptions {
     viewId?: string
@@ -31,6 +32,8 @@ export interface ViewFormDataHandlers {
  * @param options
  */
 export function useViewFormData(options: ViewFormOptions) {
+    const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+
     const latestView = useRef<ViewDto | undefined>()
     const [view, setView] = useState<ViewDto | undefined>()
 
@@ -54,8 +57,10 @@ export function useViewFormData(options: ViewFormOptions) {
 
     // Load content
     useEffect(() => {
+        if (!currentDatabase) return
+
         if (options.viewId) {
-            const viewQuery = localful.db.observableGet('views', options.viewId)
+            const viewQuery = currentDatabase?.liveGet('views', options.viewId)
             const subscription = viewQuery.subscribe((data) => {
                 if (data.status === 'success') {
 
@@ -97,7 +102,7 @@ export function useViewFormData(options: ViewFormOptions) {
                 subscription.unsubscribe()
             }
         }
-    }, [options.viewId])
+    }, [options.viewId, currentDatabase])
 
     useEffect(() => {
         latestName.current = name

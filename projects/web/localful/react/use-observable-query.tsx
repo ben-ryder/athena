@@ -9,10 +9,14 @@ import {Logger} from "../../src/utils/logger";
  *
  * @param observable
  */
-export function useObservableQuery<Data>(observable: Observable<Query<Data>>) {
+export function useObservableQuery<Data>(observable: Observable<Query<Data>>|undefined) {
 	const [state, setState] = useState<Query<Data>>(QUERY_LOADING)
 
 	useEffect(() => {
+		if (!observable) {
+			return
+		}
+
 		const subscription = observable.subscribe((data) => {
 			if (data.status === QueryStatus.SUCCESS) {
 				Logger.debug(`[useObservableQuery] Received new data`, data.data)

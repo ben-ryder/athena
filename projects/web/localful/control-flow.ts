@@ -5,6 +5,7 @@ export enum ErrorTypes {
   VERSION_NOT_FOUND = 'version-not-found',
   INVALID_OR_CORRUPTED_DATA = 'invalid-or-corrupted-data',
   SYSTEM_EXCEPTION = 'system-exception',
+  NO_CURRENT_DATABASE = 'no-current-database',
 }
 
 export interface ErrorObject {

@@ -1,22 +1,22 @@
 import {z} from "zod"
 import {IdField, BooleanField, TimestampField} from "./fields";
 
-export const VaultFields = z.object({
+export const DatabaseFields = z.object({
   name: z.string(),
 }).strict()
-export type VaultFields = z.infer<typeof VaultFields>
+export type DatabaseFields = z.infer<typeof DatabaseFields>
 
-export const VaultEntity = VaultFields.extend({
+export const DatabaseEntity = DatabaseFields.extend({
   id: IdField,
   protectedEncryptionKey: z.string(),
   protectedData: z.string().optional(),
   createdAt: TimestampField,
   updatedAt: TimestampField
 }).strict()
-export type DatabaseEntity = z.infer<typeof VaultEntity>
+export type DatabaseEntity = z.infer<typeof DatabaseEntity>
 
-export const LocalVaultEntity = VaultEntity.extend({
+export const LocalDatabaseEntity = DatabaseEntity.extend({
   syncEnabled: BooleanField,
   lastSyncedAt: TimestampField,
 }).strict()
-export type LocalVaultEntity = z.infer<typeof LocalVaultEntity>
+export type LocalDatabaseEntity = z.infer<typeof LocalDatabaseEntity>

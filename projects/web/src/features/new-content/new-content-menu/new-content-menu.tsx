@@ -1,17 +1,20 @@
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {localful} from "../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../state/athena-localful";
 import {QueryStatus} from "@localful-athena/control-flow";
 import {JButton} from "@ben-ryder/jigsaw-react";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 
 import "./new-content-menu.scss"
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export interface NewContentMenuProps {
 	onOpen?: () => void
 }
 
 export function NewContentMenu(props: NewContentMenuProps) {
-	const contentTypesQuery = useObservableQuery(localful.db.observableQuery({table: 'content_types'}))
+	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+
+	const contentTypesQuery = useObservableQuery(currentDatabase?.liveQuery({table: 'content_types'}))
 	const { openTab } = useWorkspaceContext()
 
 	return (

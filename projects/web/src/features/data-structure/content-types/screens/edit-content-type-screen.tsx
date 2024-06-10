@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
+import {ErrorObject, ErrorTypes, QueryStatus} from "@localful-athena/control-flow";
 import {
   GenericManagerContentScreenProps,
 } from "../../../../common/generic-manager/generic-manager";
@@ -9,15 +9,19 @@ import {
   ContentTypeData
 } from "../../../../state/schemas/content-types/content-types";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import { localful } from "../../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function EditContentTypeScreen(props: GenericManagerContentScreenProps) {
+  const {currentDatabase} = useLocalful<DATA_SCHEMA>()
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const contentTypeQuery = useObservableQuery(localful.db.observableGet('content_types', props.id))
+  const contentTypeQuery = useObservableQuery(currentDatabase?.liveGet('content_types', props.id))
 
   async function onSave(updatedData: Partial<ContentTypeData>) {
-    const res = await localful.db.update("content_types", props.id, updatedData)
+    if (!currentDatabase) return setErrors([{type: ErrorTypes.NO_CURRENT_DATABASE}])
+
+    const res = await currentDatabase.update("content_types", props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -27,7 +31,9 @@ export function EditContentTypeScreen(props: GenericManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await localful.db.delete('content_types', props.id)
+    if (!currentDatabase) return setErrors([{type: ErrorTypes.NO_CURRENT_DATABASE}])
+
+    const res = await currentDatabase.delete('content_types', props.id)
     if (!res.success) {
       setErrors(res.errors)
     }

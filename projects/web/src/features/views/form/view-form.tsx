@@ -6,12 +6,13 @@ import {
   JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect
 } from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import { localful } from "../../../state/athena-localful";
 import { QueryStatus } from "@localful-athena/control-flow";
 import { WithTabData } from "../../workspace/workspace";
 import { ViewFormData, ViewFormDataHandlers } from "./useViewFormData";
 
 import "./view-form.scss"
+import {useLocalful} from "@localful-athena/react/use-localful";
+import {DATA_SCHEMA} from "../../../state/athena-localful";
 
 export interface ViewFormProps extends WithTabData, ViewFormData, ViewFormDataHandlers {
     onSave: () => void;
@@ -21,9 +22,10 @@ export interface ViewFormProps extends WithTabData, ViewFormData, ViewFormDataHa
 // todo: handle situation where content form is open and content gets deleted?
 
 export function ViewForm(props: ViewFormProps) {
+  const {currentDatabase} = useLocalful<DATA_SCHEMA>()
     const [error, setError] = useState<string | null>(null);
 
-    const allTags = useObservableQuery(localful.db.observableQuery({table: 'tags'}))
+    const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
     const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
         ? allTags.data.map(tag => ({
           text: tag.data.name,
@@ -32,7 +34,7 @@ export function ViewForm(props: ViewFormProps) {
         }))
     : []
 
-    const allContentTypes = useObservableQuery(localful.db.observableQuery({table: 'content_types'}))
+    const allContentTypes = useObservableQuery(currentDatabase?.liveQuery({table: 'content_types'}))
     const contentTypeOptions: JMultiSelectOptionData[] = allContentTypes.status === QueryStatus.SUCCESS
         ? allContentTypes.data.map(contentType => ({
             text: contentType.data.name,

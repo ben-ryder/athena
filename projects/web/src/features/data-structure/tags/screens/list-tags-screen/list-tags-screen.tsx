@@ -6,10 +6,12 @@ import {
   GenericManagerScreenProps
 } from "../../../../../common/generic-manager/generic-manager";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {localful} from "../../../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../../../state/athena-localful";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ListTagsScreen(props: GenericManagerScreenProps) {
-  const tags = useObservableQuery(localful.db.observableQuery({table: 'tags'}))
+  const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+  const tags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
 
   return (
     <>

@@ -1,14 +1,16 @@
 import {ContentForm} from "../form/content-form";
 
 import { WithTabData } from "../../workspace/workspace";
-import {localful} from "../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../state/athena-localful";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useCallback, useEffect} from "react";
 import {ContentFormOptions, useContentFormData} from "../form/useContentFormData";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export interface ContentTabProps extends WithTabData, ContentFormOptions {}
 
 export function ContentTab(props: ContentTabProps) {
+	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
 	const { replaceTab, setTabName, setTabIsUnsaved, closeTab } = useWorkspaceContext()
 
 	const {
@@ -24,6 +26,9 @@ export function ContentTab(props: ContentTabProps) {
 	} = useContentFormData({contentId: props.contentId, contentTypeId: props.contentTypeId})
 
 	const onSave = useCallback(async () => {
+		// todo: does this need feedback of some kind?
+		if (!currentDatabase) return
+
 		if (!contentTypeId) {
 			// this should never really happen, but protect against it just in case.
 			console.error('Attempted to save with no content type')
@@ -31,7 +36,7 @@ export function ContentTab(props: ContentTabProps) {
 		}
 
 		if (props.contentId) {
-			const result = await localful.db.update('content', props.contentId, {
+			const result = await currentDatabase.update('content', props.contentId, {
 				type: contentTypeId,
 				name: name,
 				description: description !== '' ? description : undefined,
@@ -47,7 +52,7 @@ export function ContentTab(props: ContentTabProps) {
 			}
 		}
 		else {
-			const result = await localful.db.create('content', {
+			const result = await currentDatabase.create('content', {
 				type: contentTypeId,
 				name: name,
 				description: description !== '' ? description : undefined,
@@ -71,13 +76,16 @@ export function ContentTab(props: ContentTabProps) {
 	}, [name, props.contentId, props.contentTypeId]);
 
 	const onDelete = useCallback(async () => {
+		// todo: does this need feedback of some kind?
+		if (!currentDatabase) return
+
 		if (!props.contentId) {
 			// this should never really happen, but protect against it just in case.
 			console.error('Attempted to delete content with no contentId')
 			return
 		}
 
-		const result = await localful.db.delete('content', props.contentId)
+		const result = await currentDatabase.delete('content', props.contentId)
 		if (result.success) {
 			closeTab(props.tabIndex)
 		}

@@ -21,9 +21,11 @@ import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import { localful } from "../../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
+  const {currentDatabase} = useLocalful<DATA_SCHEMA>()
   const [errors, setErrors] = useState<ErrorObject[]>([]);
 
   const [name, setName] = useState<string>(props.data.name);
@@ -31,7 +33,7 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
   const [icon, setIcon] = useState<string>(props.data.icon || '');
 
   const [contentTemplateTags, setContentTemplateTags] = useState<JMultiSelectOptionData[]>([]);
-  const allTags = useObservableQuery(localful.db.observableQuery({table: 'tags'}))
+  const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
   const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
     ? allTags.data.map(tag => ({
       text: tag.data.name,
@@ -42,8 +44,10 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 
   useEffect(() => {
     async function loadSelectedTags() {
+      if (!currentDatabase) return
+
       if (props.data.contentTemplateTags && props.data.contentTemplateTags.length > 0) {
-        const selectedTags = await localful.db.getMany('tags', props.data.contentTemplateTags)
+        const selectedTags = await currentDatabase.getMany('tags', props.data.contentTemplateTags)
         if (!selectedTags.success) {
           setErrors((e) => {return [...e, ...selectedTags.errors]})
         }
@@ -62,7 +66,7 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
       }
     }
     loadSelectedTags()
-  }, [])
+  }, [currentDatabase])
 
   const [colour, setColour] = useState<ColourVariants | ''>(props.data.colourVariant || '');
   const colourVariantOptions: JOptionData[] = useMemo(() => {
@@ -80,7 +84,7 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
   const [contentTemplateDescription, setContentTemplateDescription] = useState<string>(props.data.contentTemplateDescription || '');
 
   const [fieldOptions, setFieldOptions] = useState<JMultiSelectOptionData[]>([]);
-  const allFields = useObservableQuery(localful.db.observableQuery({table: 'fields'}))
+  const allFields = useObservableQuery(currentDatabase?.liveQuery({table: 'fields'}))
   useEffect(() => {
     if (allFields.status === QueryStatus.SUCCESS) {
       const fieldOptionMappings: JMultiSelectOptionData[] = allFields.status === QueryStatus.SUCCESS
@@ -96,8 +100,10 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
   const [selectedFields, setSelectedFields] = useState<JMultiSelectOptionData[]>([]);
   useEffect(() => {
     async function loadSelectedFields() {
+      if (!currentDatabase) return
+
       if (props.data.fields && props.data.fields.length > 0) {
-        const selectedFields = await localful.db.getMany('fields', props.data.fields)
+        const selectedFields = await currentDatabase.getMany('fields', props.data.fields)
         if (!selectedFields.success) {
           setErrors((e) => {return [...e, ...selectedFields.errors]})
         }
@@ -115,7 +121,7 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
       }
     }
     loadSelectedFields()
-  }, [])
+  }, [currentDatabase])
 
 
   function onSave(e: FormEvent) {

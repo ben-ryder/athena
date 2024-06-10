@@ -2,21 +2,25 @@ import React, { useState } from "react";
 import { TagForm } from "../forms/tag-form";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { TagData } from "../../../../state/schemas/tags/tags";
-import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
+import {ErrorObject, ErrorTypes, QueryStatus} from "@localful-athena/control-flow";
 import {
   GenericManagerContentScreenProps,
 } from "../../../../common/generic-manager/generic-manager";
-import {localful} from "../../../../state/athena-localful";
+import {DATA_SCHEMA} from "../../../../state/athena-localful";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 
 export function EditTagScreen(props: GenericManagerContentScreenProps) {
+  const {currentDatabase} = useLocalful<DATA_SCHEMA>()
   const [errors, setErrors] = useState<ErrorObject[]>([])
 
-  const tagResult = useObservableQuery(localful.db.observableGet('tags', props.id))
+  const tagResult = useObservableQuery(currentDatabase?.liveGet('tags', props.id))
 
   async function onSave(updatedData: Partial<TagData>) {
-    const res = await localful.db.update('tags', props.id, updatedData)
+    if (!currentDatabase) return setErrors([{type: ErrorTypes.NO_CURRENT_DATABASE}])
+
+    const res = await currentDatabase.update('tags', props.id, updatedData)
     if (!res.success) {
       setErrors(res.errors)
     }
@@ -26,7 +30,9 @@ export function EditTagScreen(props: GenericManagerContentScreenProps) {
   }
 
   async function onDelete() {
-    const res = await localful.db.delete('tags', props.id)
+    if (!currentDatabase) return setErrors([{type: ErrorTypes.NO_CURRENT_DATABASE}])
+
+    const res = await currentDatabase.delete('tags', props.id)
     if (!res.success) {
       setErrors(res.errors)
     }

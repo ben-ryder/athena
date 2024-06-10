@@ -1,6 +1,6 @@
 import {useWorkspaceContext} from "./workspace-context";
 import {Tab, TabProps} from "./tab";
-import {ReactNode} from "react";
+import {ReactNode, useEffect} from "react";
 import {ContentTab} from "../content/tab/content-tab";
 
 // todo: split styling by component for better encapsulation
@@ -9,6 +9,7 @@ import {ContentListTab} from "../content-list/tab/content-list-tab";
 import {ViewEditTab} from "../views/tab/view-edit-tab";
 import {ViewListTab} from "../views-list/tab/view-list-tab";
 import {ViewTab} from "../views/tab/view-tab";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export interface WithTabData {
 	tabIndex: number
@@ -16,6 +17,12 @@ export interface WithTabData {
 
 export function Workspace() {
 	const {tabs, closeTab, setActiveTab, activeTab} = useWorkspaceContext()
+
+	// todo: move somewhere else
+	const { openDatabase } = useLocalful()
+	useEffect(() => {
+		openDatabase('vault_d7ef8db9-e401-4971-93e2-156d94a0a8d2')
+	}, [])
 
 	const workspaceTabs: TabProps[] = []
 	const workspaceContent: ReactNode[] = []

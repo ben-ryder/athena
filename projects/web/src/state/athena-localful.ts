@@ -1,4 +1,3 @@
-import {LocalfulWeb} from "../../localful/localful-web";
 import {TagData} from "./schemas/tags/tags";
 import {FieldDefinition} from "./schemas/fields/fields";
 import {ContentTypeData} from "./schemas/content-types/content-types";
@@ -55,13 +54,3 @@ export const DATA_SCHEMA = {
 	},
 } as const
 export type DATA_SCHEMA = typeof DATA_SCHEMA
-
-export const localful = new LocalfulWeb<typeof DATA_SCHEMA>({
-	initialDatabaseId: 'vault_d7ef8db9-e401-4971-93e2-156d94a0a8d2',
-	dataSchema: DATA_SCHEMA
-})
-
-// Added for dev debugging purposes
-// todo: remove this
-// @ts-expect-error - custom
-window.localful = localful
