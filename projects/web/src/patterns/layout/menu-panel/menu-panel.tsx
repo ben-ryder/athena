@@ -8,7 +8,6 @@ import {
   List as AllContentIcon,
   Filter as AllViewsIcon,
   Shapes as DataStructureIcon,
-  UserCircle as AccountIcon,
   Settings as SettingsIcon,
   HelpCircle as HelpIcon,
 } from "lucide-react"
@@ -16,7 +15,7 @@ import {MainPanelAction} from "./main-panel-action";
 
 import './menu-panel.scss'
 import { JIcon, JTooltip } from "@ben-ryder/jigsaw-react";
-import {useDatabaseDialog} from "../../../features/databases/database-dialog";
+import {useDatabaseManagerDialogContext} from "../../../features/databases/database-manager";
 import {useNewContentDialog} from "../../../features/new-content/new-content-dialog";
 import {useStatusDialog} from "../../../features/status/status-dialog";
 import {useSearchDialog} from "../../../features/search/dialog/search-dialog";
@@ -31,7 +30,7 @@ export interface WithMenuPanelControl {
 }
 
 export function MenuPanel() {
-  const {setIsOpen: setDatabaseDialogOpen } = useDatabaseDialog()
+  const {setOpenTab: setDatabaseManagerDialogTab } = useDatabaseManagerDialogContext()
   const {setIsOpen: setNewContentDialogOpen } = useNewContentDialog()
   const {setIsOpen: setStatusDialogOpen } = useStatusDialog()
   const {setIsOpen: setSearchDialogOpen } = useSearchDialog()
@@ -48,7 +47,7 @@ export function MenuPanel() {
               <button
                   className="menu-panel__database-edit"
                   onClick={() => {
-                    setDatabaseDialogOpen(true)
+                      setDatabaseManagerDialogTab({type: 'edit', databaseId: 'example'})
                   }}
               >
                 <span className="menu-panel__database-name" tabIndex={-1}>Example Database</span>
@@ -64,7 +63,12 @@ export function MenuPanel() {
               ><JIcon><StatusDownloadIcon /></JIcon></button>
             </JTooltip>
             <JTooltip content="Switch Database" renderAsChild={true} variant='dark'>
-              <button className="menu-panel__database-switch"><JIcon><DatabaseSwitchIcon /></JIcon></button>
+              <button
+                  className="menu-panel__database-switch"
+                  onClick={() => {
+                      setDatabaseManagerDialogTab({type: 'list'})
+                  }}
+              ><JIcon><DatabaseSwitchIcon /></JIcon></button>
             </JTooltip>
           </div>
         </div>
