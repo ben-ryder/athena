@@ -16,20 +16,20 @@ import {
 	TableKeys
 } from "@localful-athena/storage/types";
 
-export interface LocalfulDatabaseConfig {
+export interface EntityDatabaseConfig {
 	databaseId: string,
 	encryptionKey: CryptoKey,
 	dataSchema: DataSchemaDefinition,
 }
 
-export interface LocalfulDatabaseDependencies {
+export interface EntityDatabaseDependencies {
 	eventManager: EventManager
 }
 
 const LOCALFUL_INDEXDB_VERSION = 1
 const LOCALFUL_VERSION = '1.0'
 
-export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
+export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	databaseId: string
 	private readonly encryptionKey: CryptoKey
 	private readonly dataSchema: DataSchemaDefinition
@@ -37,8 +37,8 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	private readonly eventManager: EventManager
 
 	constructor(
-		config: LocalfulDatabaseConfig,
-		deps: LocalfulDatabaseDependencies
+		config: EntityDatabaseConfig,
+		deps: EntityDatabaseDependencies
 	) {
 		this.databaseId = config.databaseId
 		this.dataSchema = config.dataSchema
@@ -46,7 +46,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		this.encryptionKey = config.encryptionKey
 	}
 
-	async getCurrentVaultDatabase() {
+	private async getIndexDbDatabase() {
 		if (this._database) {
 			return this._database
 		}
@@ -152,7 +152,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 		}
 
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readonly')
 		const entity = await tx.objectStore(tableKey).get(id) as LocalEntity|undefined
 		if (!entity) {
@@ -223,7 +223,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param data
 	 */
 	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<ActionResult<string>> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		const entityId = LocalfulEncryption.generateUUID();
 		const versionId = LocalfulEncryption.generateUUID();
@@ -300,7 +300,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
 
 		const newVersion: EntityVersion = {
@@ -346,7 +346,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * deleting all versions.
 	 */
 	async delete<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.delete(`${tableKey}-get-${entityId}`)
@@ -385,7 +385,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
 		// todo: add query memory cache?
 
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction([query.table, this._getVersionTableName(query.table)], 'readonly')
 
 		// Pick what index and cursor query to use for the initial data selection
@@ -561,7 +561,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param entityId
 	 */
 	async getAllVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult<EntityVersion[]>> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		const versions = await db.getAllFromIndex(this._getVersionTableName(tableKey), 'entityId', entityId)
 		return {success: true, data: versions}
@@ -576,7 +576,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param entityId
 	 */
 	async purge<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.delete(`${tableKey}-get-${entityId}`)
@@ -607,7 +607,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * Delete all versions except the most recent.
 	 */
 	async deleteOldVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		const versions = await this.getAllVersions(tableKey, entityId)
 		if (!versions.success) return versions
@@ -641,7 +641,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param versionId
 	 */
 	async deleteVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		await db.delete(this._getVersionTableName(tableKey), versionId)
 
@@ -656,7 +656,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param versionId
 	 */
 	async getVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult<EntityVersion>> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		const version = await db.get(this._getVersionTableName(tableKey), versionId)
 		if (!version) return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: versionId}]}
@@ -671,7 +671,7 @@ export class LocalfulDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param entityId
 	 */
 	async _getEntity<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult<LocalEntity>> {
-		const db = await this.getCurrentVaultDatabase()
+		const db = await this.getIndexDbDatabase()
 
 		const entity = await db.get(tableKey, entityId)
 

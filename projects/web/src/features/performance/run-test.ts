@@ -2,7 +2,7 @@ import {LocalfulEncryption} from "@localful-athena/encryption/localful-encryptio
 import {ReportFunction} from "./performance-manager";
 import {LocalfulWeb} from "@localful-athena/localful-web";
 import { DATA_SCHEMA } from "../../state/athena-localful";
-import {LocalfulDatabase} from "@localful-athena/storage/database";
+import {EntityDatabase} from "@localful-athena/storage/entity-database";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
 const TAG_NUMBER = 3000
@@ -31,7 +31,7 @@ export async function runTest(report: ReportFunction) {
 	report({level: "message", text: `Full benchmark ran in ${benchmarkEndTime - benchmarkStartTime}ms`})
 }
 
-export async function createTestData(currentDatabase: LocalfulDatabase<DATA_SCHEMA>, report: ReportFunction) {
+export async function createTestData(currentDatabase: EntityDatabase<DATA_SCHEMA>, report: ReportFunction) {
 	report({level: "section", text: "Tags"})
 	report({level: "task", text: "Creating Tags"})
 	const tagCreationStart = performance.now()
@@ -47,7 +47,7 @@ export async function createTestData(currentDatabase: LocalfulDatabase<DATA_SCHE
 	report({level: "message", text: `created ${TAG_NUMBER} tags, with ${TAG_VERSIONS_NUMBER} versions each in ${tagCreationEnd - tagCreationStart}ms`})
 }
 
-export async function queryTestData(currentDatabase: LocalfulDatabase<typeof DATA_SCHEMA>, report: ReportFunction) {
+export async function queryTestData(currentDatabase: EntityDatabase<typeof DATA_SCHEMA>, report: ReportFunction) {
 	report({level: "task", text: "Fetching Tags"})
 	const getTagsStart = performance.now()
 	const tags = await currentDatabase.query({table: 'tags'})

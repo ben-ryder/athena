@@ -1,4 +1,4 @@
-import { LocalfulDatabase } from "./database";
+import { EntityDatabase } from "./entity-database";
 import {EntityDto, EntityVersion, LocalEntity} from "../types/data-entities";
 import {z, ZodTypeAny} from "zod";
 import {IDBPIndex} from "idb";
@@ -101,7 +101,7 @@ export type DataMigration<
 	CurrentSchemaKey extends SchemaKeys<DataSchema, TableKey>,
 	TargetSchemaKey extends SchemaKeys<DataSchema, TableKey>,
 > = (
-	db: LocalfulDatabase<DataSchema>,
+	db: EntityDatabase<DataSchema>,
 	currentSchema: CurrentSchemaKey, targetSchema: TargetSchemaKey,
 	data: SchemaVersion<DataSchema, TableKey, CurrentSchemaKey>
 ) => Promise<SchemaVersion<DataSchema, TableKey, TargetSchemaKey>>

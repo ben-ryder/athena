@@ -1,12 +1,12 @@
 import {LocalfulWeb} from "../localful-web";
 import {DataSchemaDefinition} from "../storage/types";
-import {LocalfulDatabase} from "../storage/database";
+import {EntityDatabase} from "../storage/entity-database";
 import {Context, createContext, PropsWithChildren, useCallback, useContext, useState} from "react";
 
 export interface LocalfulContext<DataSchema extends DataSchemaDefinition> {
 	localful: LocalfulWeb<DataSchema>
-	currentDatabase?: LocalfulDatabase<DataSchema>
-	openDatabase: (databaseId: string) => Promise<LocalfulDatabase<DataSchema>>
+	currentDatabase?: EntityDatabase<DataSchema>
+	openDatabase: (databaseId: string) => Promise<EntityDatabase<DataSchema>>
 	closeDatabase: () => Promise<void>
 }
 
@@ -32,7 +32,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	const [localful] = useState(() => new LocalfulWeb<DataSchema>({
 		dataSchema: props.dataSchema
 	}))
-	const [currentDatabase, setCurrentDatabase] = useState<undefined | LocalfulDatabase<DataSchema>>()
+	const [currentDatabase, setCurrentDatabase] = useState<undefined | EntityDatabase<DataSchema>>()
 
 
 	const closeDatabase = useCallback(async () => {
@@ -41,7 +41,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		}
 	}, [currentDatabase])
 
-	const openDatabase = useCallback(async (databaseId: string): Promise<LocalfulDatabase<DataSchema>> => {
+	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<DataSchema>> => {
 		await closeDatabase()
 
 		const newDatabase = await localful.openDatabase(databaseId)
