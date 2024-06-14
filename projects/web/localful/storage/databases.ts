@@ -15,33 +15,21 @@ import {
 	QueryIndex,
 	TableKeys
 } from "@localful-athena/storage/types";
-import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "@localful-athena/localful-web";
+import {LOCALFUL_INDEXDB_DATABASE_VERSION, LOCALFUL_VERSION} from "../localful-web";
+import {DatabaseFields, LocalDatabaseDto, LocalDatabaseEntity, LocalDatabaseFields} from "../types/database";
 
-export interface EntityDatabaseConfig {
-	databaseId: string,
-	encryptionKey: CryptoKey,
-	dataSchema: DataSchemaDefinition,
-}
-
-export interface EntityDatabaseDependencies {
+export interface DatabaseStorageDependencies {
 	eventManager: EventManager
 }
 
-export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
-	databaseId: string
-	private readonly encryptionKey: CryptoKey
-	private readonly dataSchema: DataSchemaDefinition
+export class DatabaseStorage {
 	private readonly _database?: IDBPDatabase
 	private readonly eventManager: EventManager
 
 	constructor(
-		config: EntityDatabaseConfig,
-		deps: EntityDatabaseDependencies
+		deps: DatabaseStorageDependencies
 	) {
-		this.databaseId = config.databaseId
-		this.dataSchema = config.dataSchema
 		this.eventManager = deps.eventManager
-		this.encryptionKey = config.encryptionKey
 	}
 
 	private async getIndexDbDatabase() {
@@ -49,223 +37,84 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			return this._database
 		}
 
-		this.eventManager.dispatch(EventTypes.DATABASE_OPEN, {id: this.databaseId})
-		return openDB(this.databaseId, LOCALFUL_INDEXDB_ENTITY_VERSION, {
+		return openDB('localful', LOCALFUL_INDEXDB_DATABASE_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {
-				for (const [tableKey, schemaDefinition] of Object.entries(this.dataSchema.tables)) {
-					// Create entity store
-					const entityStore = db.createObjectStore(tableKey, {
-						keyPath: 'id',
-						autoIncrement: false
-					})
-					entityStore.createIndex('isDeleted', 'isDeleted')
-					entityStore.createIndex('createdAt', ['createdAt', 'isDeleted'])
-
-					// Add exposed field indexes
-					const exposedFields = schemaDefinition.schemas[schemaDefinition.currentSchema].exposedFields
-					if (exposedFields) {
-						for (const [exposedField, fieldType] of Object.entries(exposedFields)) {
-							if (fieldType === 'indexed') {
-								// todo: add createdAt to index, which might help with sorting?
-								entityStore.createIndex(exposedField, [exposedField, 'isDeleted'])
-							}
-						}
-					}
-
-					// Create entity version store
-					const entityVersionStore = db.createObjectStore(this._getVersionTableName(tableKey), {
-						keyPath: 'id',
-						autoIncrement: false
-					})
-					entityVersionStore.createIndex('entityId', 'entityId')
-					entityVersionStore.createIndex('createdAt', 'createdAt')
-				}
+				// Create database store
+				const entityStore = db.createObjectStore('databases', {
+					keyPath: 'id',
+					autoIncrement: false
+				})
+				entityStore.createIndex('isDeleted', 'isDeleted')
+				entityStore.createIndex('createdAt', ['createdAt', 'isDeleted'])
+				entityStore.createIndex('syncEnabled', ['syncEnabled', 'isDeleted'])
 			},
 		})
 	}
 
-	async close() {
-		if (this._database) {
-			this._database.close()
-		}
-		this.eventManager.dispatch(EventTypes.DATABASE_CLOSE, {id: this.databaseId})
-	}
-	
-	private _getVersionTableName(tableKey: string): string {
-		return `${tableKey}_versions`
+	async unlockDatabase(databaseId: string, password: string): Promise<boolean> {
+		return false;
 	}
 
 	/**
-	 * Create a DTO object from the given entity and version.
+	 * Get a single database
 	 *
-	 * @param tableKey
-	 * @param entity
-	 * @param version
-	 * @param dataSchema
-	 */
-	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
-		const decryptedData = await LocalfulEncryption.decryptAndValidateData<CurrentSchemaData<DataSchema, TableKey>>(
-			this.encryptionKey,
-			dataSchema,
-			version.data
-		)
-		if (!decryptedData.success) return decryptedData
-
-		let data = decryptedData.data
-		if (version.schemaVersion !== this.dataSchema['tables'][tableKey].currentSchema) {
-			if (!this.dataSchema['tables'][tableKey].migrateSchema) {
-				throw new Error(`Schema migration required from ${version.schemaVersion} to ${this.dataSchema['tables'][tableKey].currentSchema} but no migrateSchema method supplied`)
-			}
-
-			// @ts-expect-error - the existence of migrateSchema is checked above, and passing this is fine.
-			data = await this.dataSchema[tableKey].migrateSchema(this, version.schemaVersion, this.dataSchema[tableKey].currentSchema, decryptedData.data)
-			await this.update(tableKey, entity.id, data)
-		}
-
-		return {
-			success: true,
-			data: {
-				id: entity.id,
-				versionId: version.id,
-				createdAt: entity.createdAt,
-				updatedAt: version.createdAt,
-				data: data,
-				localfulVersion: entity.localfulVersion,
-				isDeleted: entity.isDeleted,
-			}
-		}
-	}
-
-	/**
-	 * Get a single entity, loading the current version.
-	 *
-	 * @param tableKey
 	 * @param id
 	 */
-	async get<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
-			const cachedResponse = await memoryCache.get<CurrentSchemaData<DataSchema, TableKey>>(`${tableKey}-get-${id}`)
-			if (cachedResponse) {
-				return {success: true, data: cachedResponse}
-			}
-		}
-
+	async get(id: string): Promise<ActionResult<LocalDatabaseDto>> {
 		const db = await this.getIndexDbDatabase()
-		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readonly')
-		const entity = await tx.objectStore(tableKey).get(id) as LocalEntity|undefined
+		const tx = db.transaction(['databases'], 'readonly')
+		const entity = await tx.objectStore('databases').get(id) as LocalDatabaseEntity|undefined
 		if (!entity) {
-			return {success: false, errors: [{type: ErrorTypes.ENTITY_NOT_FOUND, context: id}]}
+			return {success: false, errors: [{type: ErrorTypes.DATABASE_NOT_FOUND, context: id}]}
 		}
-
-		let version: EntityVersion|undefined = undefined
-		if (entity.currentVersionId) {
-			version = await tx.objectStore(this._getVersionTableName(tableKey)).get(entity.currentVersionId) as EntityVersion|undefined
-
-			// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
-			if (!version) {
-				return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: id}]}
-			}
-		}
-		else {
-			const allVersions = await tx.objectStore(this._getVersionTableName(tableKey)).getAll() as EntityVersion[]
-			const sortedVersions = allVersions.sort((a, b) => {
-				return a.createdAt < b.createdAt ? 1 : 0
-			})
-			if (sortedVersions[0]) {
-				version = sortedVersions[0]
-			}
-			else {
-				return {success: false, errors: [{type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: id}]}
-			}
-		}
-
 		await tx.done
 
-		const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(tableKey, entity, version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
-		if (!dto.success) return dto
+		// todo: attempt to load encryption key, and set isUnlocked based on being able to load the key
 
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
-			await memoryCache.add(`${tableKey}-get-${id}`, dto)
+		const databaseDto: LocalDatabaseDto = {
+			...entity,
+			isUnlocked: true
 		}
 
-		return {success: true, data: dto.data}
+		return {success: true, data: databaseDto}
 	}
 
 	/**
-	 * Get multiple entities, loading the current version for each.
+	 * Create a new database.
 	 *
-	 * @param tableKey
-	 * @param ids
-	 */
-	async getMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
-		const dtos: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
-		const errors: ErrorObject[] = []
-
-		for (const id of ids) {
-			const dto = await this.get(tableKey, id)
-			if (dto.success) {
-				dtos.push(dto.data)
-			} else if (dto.errors) {
-				errors.push(...dto.errors)
-			}
-		}
-
-		return {success: true, data: dtos, errors: errors}
-	}
-
-	/**
-	 * Create a new entity.
-	 * This will also create an initial version.
-	 *
-	 * @param tableKey
 	 * @param data
+	 * @param password
 	 */
-	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<ActionResult<string>> {
+	async create(data: LocalDatabaseFields, password: string): Promise<ActionResult<string>> {
 		const db = await this.getIndexDbDatabase()
 
-		const entityId = LocalfulEncryption.generateUUID();
-		const versionId = LocalfulEncryption.generateUUID();
+		const id = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
-		const encResult = await LocalfulEncryption.encryptData(this.encryptionKey, data)
-		if (!encResult.success) return encResult
 
-		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
+		// create encryptionKey
+		// derive unlock key (KEK) from password
+		// create protectedEncryptionKey, which is the encryptionKey encrypted with the unlock key
 
-		const version: EntityVersion = {
-			entityId: entityId,
-			id: versionId,
-			data: encResult.data,
+		const tx = db.transaction(['databases'], 'readwrite')
+
+		const database: LocalDatabaseEntity = {
+			id: id,
+			name: data.name,
+			protectedEncryptionKey: password,
+			protectedData: undefined,
 			createdAt: timestamp,
+			updatedAt: timestamp,
 			localfulVersion: LOCALFUL_VERSION,
-			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema
+			syncEnabled: data.syncEnabled
 		}
-		await tx.objectStore(this._getVersionTableName(tableKey)).add(version)
-
-		const entity = {
-			id: entityId,
-			isDeleted: 0,
-			createdAt: timestamp,
-			localfulVersion: LOCALFUL_VERSION,
-			currentVersionId: versionId
-		}
-
-		// Process exposed fields, and add these to the entity before saving.
-		const exposedFields = this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema].exposedFields
-		if (exposedFields) {
-			for (const field of Object.keys(exposedFields)) {
-				// @ts-expect-error - this is fine.
-				entity[field] = data[field]
-			}
-		}
-
-		await tx.objectStore(tableKey).add(entity)
+		await tx.objectStore('databases').add(database)
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'create', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'create'})
 
-		return { success: true, data: entityId }
+		return { success: true, data: id }
 	}
 
 	/**
@@ -273,71 +122,33 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * This will load the latest version, apply the given updates, and create a
 	 * new version with the updates.
 	 *
-	 * @param tableKey
-	 * @param entityId
+	 * @param databaseId
 	 * @param dataUpdate
-	 * @param preventEventDispatch - UUseful in situations like data migrations, where an update is done while fetching data so an event shouldn't be triggered.
+	 * @param preventEventDispatch - Useful in situations like data migrations, where an update is done while fetching data so an event shouldn't be triggered.
 	 */
-	async update<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string, dataUpdate: EntityUpdate<CurrentSchemaData<DataSchema, TableKey>>, preventEventDispatch?: boolean): Promise<ActionResult<string>> {
-		const oldEntity = await this.get(tableKey, entityId)
-		if (!oldEntity.success) return oldEntity
+	async update(databaseId: string, dataUpdate: Partial<DatabaseFields>, preventEventDispatch?: boolean): Promise<ActionResult<void>> {
+		const oldDatabase = await this.get(databaseId)
+		if (!oldDatabase.success) return oldDatabase
 
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
-			await memoryCache.delete(`${tableKey}-get-${entityId}`)
-			await memoryCache.delete(`${tableKey}-getAll`)
-		}
-
-		// Pick out all entity/version fields, which will leave only data fields.
-		const updatedData = {
-			...oldEntity.data.data,
-			...dataUpdate
-		}
-
-		const encResult = await LocalfulEncryption.encryptData(this.encryptionKey, updatedData)
-		if (!encResult.success) return encResult
-
-		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
 		const db = await this.getIndexDbDatabase()
-		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
+		const tx = db.transaction(['databases'], 'readwrite')
 
-		const newVersion: EntityVersion = {
-			entityId: entityId,
-			id: versionId,
-			createdAt: timestamp,
-			localfulVersion: LOCALFUL_VERSION,
-			data: encResult.data,
-			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema
+		const newDatabase: LocalDatabaseEntity = {
+			...oldDatabase,
+			...dataUpdate,
+			updatedAt: timestamp
 		}
-		await tx.objectStore(this._getVersionTableName(tableKey)).add(newVersion)
-
-		const updatedEntity = {
-			id: oldEntity.data.id,
-			createdAt: oldEntity.data.createdAt,
-			isDeleted: oldEntity.data.isDeleted,
-			localfulVersion: oldEntity.data.localfulVersion,
-			currentVersionId: versionId
-		}
-
-		// Process exposed fields, adding them to the updated entity before saving.
-		const exposedFields = this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema].exposedFields
-		if (exposedFields) {
-			for (const field of Object.keys(exposedFields)) {
-				// @ts-expect-error - this is fine.
-				updatedEntity[field] = updatedData[field]
-			}
-		}
-
-		await tx.objectStore(tableKey).put(updatedEntity)
+		await tx.objectStore('databases').put(newDatabase)
 
 		await tx.done
 
 		if (!preventEventDispatch) {
-			this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'update', id: entityId})
+			this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: databaseId, action: 'update' })
 		}
 
-		return {success: true, data: versionId}
+		return {success: true, data: undefined}
 	}
 
 	/**
@@ -373,7 +184,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'delete', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { tableKey: tableKey, action: 'delete', id: entityId})
 
 		return {success: true, data: null}
 	}
@@ -597,88 +408,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'purge', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { tableKey: tableKey, action: 'purge', id: entityId})
 
 		return {success: true, data: null}
-	}
-
-	/**
-	 * Delete all versions except the most recent.
-	 */
-	async deleteOldVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getIndexDbDatabase()
-
-		const versions = await this.getAllVersions(tableKey, entityId)
-		if (!versions.success) return versions
-
-		const sortedVersions = versions.data.sort((a, b) => {
-			return a.createdAt < b.createdAt ? 1 : 0
-		})
-		if (!sortedVersions[0]) {
-			return {success: false, errors: [{type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: entityId}]}
-		}
-
-		const tx = db.transaction(this._getVersionTableName(tableKey), 'readwrite')
-		const versionsIndex = tx.store.index('entityId')
-		let deletionCursor = await versionsIndex.openKeyCursor(entityId)
-		while (deletionCursor) {
-			if (deletionCursor.key !== sortedVersions[0].id) {
-				await deletionCursor.delete()
-			}
-			deletionCursor = await deletionCursor.continue()
-		}
-
-		await tx.done
-
-		return {success: true, data: null}
-	}
-
-	/**
-	 * Delete the given version, will fail if the given version is the latest.
-	 *
-	 * @param tableKey
-	 * @param versionId
-	 */
-	async deleteVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult> {
-		const db = await this.getIndexDbDatabase()
-
-		await db.delete(this._getVersionTableName(tableKey), versionId)
-
-		// todo: return error if the give version is not found?
-		return {success: true, data: null}
-	}
-
-	/**
-	 * Fetch a single version
-	 *
-	 * @param tableKey
-	 * @param versionId
-	 */
-	async getVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult<EntityVersion>> {
-		const db = await this.getIndexDbDatabase()
-
-		const version = await db.get(this._getVersionTableName(tableKey), versionId)
-		if (!version) return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: versionId}]}
-
-		return {success: true, data: version}
-	}
-
-	/**
-	 * Fetch the entity from the entity table.
-	 *
-	 * @param tableKey
-	 * @param entityId
-	 */
-	async _getEntity<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult<LocalEntity>> {
-		const db = await this.getIndexDbDatabase()
-
-		const entity = await db.get(tableKey, entityId)
-
-		if (!entity || entity.isDeleted === 1) {
-			return {success: false, errors: [{type: ErrorTypes.ENTITY_NOT_FOUND, context: entityId}]}
-		}
-
-		return {success: true, data: entity}
 	}
 
 	liveGet<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string) {
@@ -699,23 +431,25 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 			const handleEvent = (e: CustomEvent<DataEntityChangeEvent['detail']>) => {
 				// Discard if tableKey or ID doesn't match, as the data won't have changed.
-				if (e.detail.data.databaseId === this.databaseId && e.detail.data.tableKey === tableKey && e.detail.data.id === id) {
+				if (e.detail.data.tableKey === tableKey && e.detail.data.id === id) {
 					Logger.debug(`[observableGet] Received event that requires re-query`)
 					runQuery()
 				}
 			}
 
 			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+			this.eventManager.subscribe(EventTypes.DATABASE_CLOSE, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
 				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+				this.eventManager.unsubscribe(EventTypes.DATABASE_CLOSE, runQuery)
 			}
 		})
 	}
-	
+
 	liveGetMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]) {
 		return new Observable<Query<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
 			subscriber.next(QUERY_LOADING)
@@ -733,18 +467,20 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 
 			const handleEvent = (e: CustomEvent<DataEntityChangeEvent['detail']>) => {
-				if (e.detail.data.databaseId === this.databaseId && e.detail.data.tableKey === tableKey && ids.includes(e.detail.data.id)) {
+				if (e.detail.data.tableKey === tableKey && ids.includes(e.detail.data.id)) {
 					runQuery()
 				}
 			}
 
 			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+			this.eventManager.subscribe(EventTypes.DATABASE_CLOSE, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
 				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+				this.eventManager.unsubscribe(EventTypes.DATABASE_CLOSE, runQuery)
 			}
 		})
 	}
@@ -766,18 +502,20 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			}
 
 			const handleEvent = (e: CustomEvent<DataEntityChangeEvent['detail']>) => {
-				if (e.detail.data.databaseId === this.databaseId && e.detail.data.tableKey === query.table) {
+				if (e.detail.data.tableKey === query.table) {
 					runQuery()
 				}
 			}
 
 			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+			this.eventManager.subscribe(EventTypes.DATABASE_CLOSE, runQuery)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
 				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+				this.eventManager.unsubscribe(EventTypes.DATABASE_CLOSE, runQuery)
 			}
 		})
 	}

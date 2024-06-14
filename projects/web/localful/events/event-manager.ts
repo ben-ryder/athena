@@ -1,4 +1,4 @@
-import { VaultSwitchEvent, EventContext, EventMap, EventTypes, LocalfulEvent } from "./events";
+import { DatabaseCloseEvent, EventContext, EventMap, EventTypes, LocalfulEvent } from "./events";
 import { LocalfulEncryption } from "../encryption/localful-encryption";
 import {Logger} from "../../src/utils/logger";
 
@@ -18,7 +18,7 @@ export class EventManager {
 
 		// Automatically handle the setup of cross context communication when the database is switched
 		// @ts-expect-error - As events are typed, a database switch event will be a custom event with the given details.
-		this.eventTarget.addEventListener(EventTypes.VAULT_SWITCH, (e: CustomEvent<VaultSwitchEvent['detail']>) => {
+		this.eventTarget.addEventListener(EventTypes.DATABASE_CLOSE, (e: CustomEvent<DatabaseCloseEvent['detail']>) => {
 			this.openCrossContextChannel(e.detail.data.id)
 		})
 	}

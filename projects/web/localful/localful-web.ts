@@ -4,6 +4,11 @@ import { EventManager } from "./events/event-manager";
 import {DataSchemaDefinition} from "@localful-athena/storage/types";
 import { DatabaseFields } from './types/database'
 
+export const LOCALFUL_VERSION = '1.0'
+export const LOCALFUL_INDEXDB_ENTITY_VERSION = 1
+export const LOCALFUL_INDEXDB_DATABASE_VERSION = 1
+
+
 export interface LocalfulWebConfig {
 	dataSchema: DataSchemaDefinition
 }
