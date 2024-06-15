@@ -3,7 +3,7 @@ import {ActionResult, ErrorObject, ErrorTypes, Query, QUERY_LOADING, QueryStatus
 import {LocalfulEncryption} from "../encryption/localful-encryption";
 import {memoryCache} from "./memory-cache";
 import {Observable} from "rxjs";
-import {DataChangeEvent, EventTypes} from "../events/events";
+import {DataEntityChangeEvent, EventTypes} from "../events/events";
 import {IDBPDatabase, openDB} from "idb";
 import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/types/data-entities";
 import {EventManager} from "@localful-athena/events/event-manager";
@@ -15,6 +15,7 @@ import {
 	QueryIndex,
 	TableKeys
 } from "@localful-athena/storage/types";
+import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../localful-web";
 
 export interface EntityDatabaseConfig {
 	databaseId: string,
@@ -25,9 +26,6 @@ export interface EntityDatabaseConfig {
 export interface EntityDatabaseDependencies {
 	eventManager: EventManager
 }
-
-const LOCALFUL_INDEXDB_VERSION = 1
-const LOCALFUL_VERSION = '1.0'
 
 export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	databaseId: string
@@ -51,7 +49,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			return this._database
 		}
 
-		return openDB(this.databaseId, LOCALFUL_INDEXDB_VERSION, {
+		this.eventManager.dispatch(EventTypes.DATABASE_OPEN, {id: this.databaseId})
+		return openDB(this.databaseId, LOCALFUL_INDEXDB_ENTITY_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {
 				for (const [tableKey, schemaDefinition] of Object.entries(this.dataSchema.tables)) {
@@ -90,7 +89,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		if (this._database) {
 			this._database.close()
 		}
-		this.eventManager.dispatch(EventTypes.VAULT_CLOSE, {id: this.databaseId})
+		this.eventManager.dispatch(EventTypes.DATABASE_CLOSE, {id: this.databaseId})
 	}
 	
 	private _getVersionTableName(tableKey: string): string {
@@ -264,7 +263,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_CHANGE, { tableKey: tableKey, action: 'create', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'create', id: entityId})
 
 		return { success: true, data: entityId }
 	}
@@ -335,7 +334,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		await tx.done
 
 		if (!preventEventDispatch) {
-			this.eventManager.dispatch( EventTypes.DATA_CHANGE, { tableKey: tableKey, action: 'update', id: entityId})
+			this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'update', id: entityId})
 		}
 
 		return {success: true, data: versionId}
@@ -346,6 +345,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * deleting all versions.
 	 */
 	async delete<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
+		const currentEntity = await this.get(tableKey, entityId)
+		if (!currentEntity.success) return currentEntity
+
 		const db = await this.getIndexDbDatabase()
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
@@ -354,11 +356,13 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		}
 
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
-
 		const entityStore = tx.objectStore(tableKey)
-		const currentEntity = await entityStore.get(entityId)
-		const updatedEntity = {
-			...currentEntity,
+
+		const updatedEntity: LocalEntity = {
+			id: currentEntity.data.id,
+			createdAt: currentEntity.data.createdAt,
+			localfulVersion: currentEntity.data.localfulVersion,
+			currentVersionId: currentEntity.data.versionId,
 			isDeleted: 1
 		}
 		// The keypath 'id' is supplied, so no need to also supply this in the second arg
@@ -374,7 +378,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_CHANGE, { tableKey: tableKey, action: 'delete', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'delete', id: entityId})
 
 		return {success: true, data: null}
 	}
@@ -598,7 +602,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_CHANGE, { tableKey: tableKey, action: 'purge', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'purge', id: entityId})
 
 		return {success: true, data: null}
 	}
@@ -698,23 +702,21 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				}
 			}
 
-			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
+			const handleEvent = (e: CustomEvent<DataEntityChangeEvent['detail']>) => {
 				// Discard if tableKey or ID doesn't match, as the data won't have changed.
-				if (e.detail.data.tableKey === tableKey && e.detail.data.id === id) {
+				if (e.detail.data.databaseId === this.databaseId && e.detail.data.tableKey === tableKey && e.detail.data.id === id) {
 					Logger.debug(`[observableGet] Received event that requires re-query`)
 					runQuery()
 				}
 			}
 
-			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
-			this.eventManager.subscribe(EventTypes.VAULT_SWITCH, runQuery)
+			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
-				this.eventManager.unsubscribe(EventTypes.VAULT_SWITCH, runQuery)
+				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
 			}
 		})
 	}
@@ -735,21 +737,19 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				}
 			}
 
-			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
-				if (e.detail.data.tableKey === tableKey && ids.includes(e.detail.data.id)) {
+			const handleEvent = (e: CustomEvent<DataEntityChangeEvent['detail']>) => {
+				if (e.detail.data.databaseId === this.databaseId && e.detail.data.tableKey === tableKey && ids.includes(e.detail.data.id)) {
 					runQuery()
 				}
 			}
 
-			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
-			this.eventManager.subscribe(EventTypes.VAULT_SWITCH, runQuery)
+			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
-				this.eventManager.unsubscribe(EventTypes.VAULT_SWITCH, runQuery)
+				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
 			}
 		})
 	}
@@ -770,21 +770,19 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				}
 			}
 
-			const handleEvent = (e: CustomEvent<DataChangeEvent['detail']>) => {
-				if (e.detail.data.tableKey === query.table) {
+			const handleEvent = (e: CustomEvent<DataEntityChangeEvent['detail']>) => {
+				if (e.detail.data.databaseId === this.databaseId && e.detail.data.tableKey === query.table) {
 					runQuery()
 				}
 			}
 
-			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
-			this.eventManager.subscribe(EventTypes.VAULT_SWITCH, runQuery)
+			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
-				this.eventManager.unsubscribe(EventTypes.VAULT_SWITCH, runQuery)
+				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
 			}
 		})
 	}

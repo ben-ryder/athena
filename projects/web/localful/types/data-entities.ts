@@ -8,8 +8,8 @@ import {IdField, BooleanField, TimestampField} from "@localful-athena/types/fiel
  */
 export const Entity = z.object({
   id: IdField,
-  isDeleted: BooleanField,
   createdAt: TimestampField,
+  isDeleted: BooleanField,
   localfulVersion: z.string(),
 }).strict()
 export type Entity = z.infer<typeof Entity>
