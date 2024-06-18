@@ -19,7 +19,7 @@ export function Workspace() {
 	const {tabs, closeTab, setActiveTab, activeTab} = useWorkspaceContext()
 
 	// todo: move somewhere else
-	const { openDatabase } = useLocalful()
+	const { openDatabase, localful } = useLocalful()
 	useEffect(() => {
 		openDatabase('vault_d7ef8db9-e401-4971-93e2-156d94a0a8d2')
 	}, [])

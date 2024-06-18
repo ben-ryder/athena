@@ -26,7 +26,7 @@ export const LocalDatabaseFields = DatabaseFields.extend({
 export type LocalDatabaseFields = z.infer<typeof LocalDatabaseFields>
 
 export const LocalDatabaseEntity = DatabaseEntity.merge(LocalDatabaseFields).extend({
-  lastSyncedAt: TimestampField,
+  lastSyncedAt: TimestampField.optional(),
 }).strict()
 export type LocalDatabaseEntity = z.infer<typeof LocalDatabaseEntity>
 

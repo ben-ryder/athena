@@ -112,8 +112,10 @@ export class DatabaseStorage {
 			protectedData: undefined,
 			createdAt: timestamp,
 			updatedAt: timestamp,
+			isDeleted: 0,
 			localfulVersion: LOCALFUL_VERSION,
-			syncEnabled: data.syncEnabled
+			syncEnabled: data.syncEnabled,
+			lastSyncedAt: undefined
 		}
 		await tx.objectStore('databases').add(database)
 
@@ -151,8 +153,8 @@ export class DatabaseStorage {
 			isDeleted: currentDb.data.isDeleted,
 			localfulVersion: currentDb.data.localfulVersion,
 			lastSyncedAt: currentDb.data.lastSyncedAt,
-			name: dataUpdate.name,
-			syncEnabled: dataUpdate.syncEnabled,
+			name: dataUpdate.name || currentDb.data.name,
+			syncEnabled: dataUpdate.syncEnabled || currentDb.data.syncEnabled,
 		}
 		await tx.objectStore('databases').put(newDatabase)
 
@@ -162,7 +164,7 @@ export class DatabaseStorage {
 			this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'update' })
 		}
 
-		return {success: true, data: undefined}
+		return {success: true, data: null}
 	}
 
 	/**
