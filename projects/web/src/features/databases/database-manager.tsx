@@ -1,6 +1,8 @@
-import React, {createContext, useCallback, useContext, useState} from "react";
+import React, {createContext, ReactNode, useCallback, useContext, useState} from "react";
 import {PropsWithChildren} from "../../utils/children-prop";
 import {JDialog} from "@ben-ryder/jigsaw-react";
+import {DatabaseListScreen} from "./screens/database-list";
+import {DatabaseCreateScreen} from "./screens/database-create";
 
 export type DatabaseManagerTabs = {
 	type: 'list',
@@ -8,6 +10,9 @@ export type DatabaseManagerTabs = {
 	type: 'create'
 } | {
 	type: 'edit'
+	databaseId: string
+} |  {
+	type: 'change-password'
 	databaseId: string
 } | {
 	type: 'unlock'
@@ -59,6 +64,21 @@ export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 export function DatabaseManagerDialog() {
 	const { openTab, setOpenTab, close } = useDatabaseManagerDialogContext()
 
+	let dialogContent: ReactNode
+	switch (openTab?.type) {
+		case "list": {
+			dialogContent = <DatabaseListScreen />
+			break;
+		}
+		case "create": {
+			dialogContent = <DatabaseCreateScreen />
+			break;
+		}
+		default: (
+			dialogContent = <p>No Open Tab</p>
+		)
+	}
+
 	return (
 		<JDialog
 			isOpen={!!openTab}
@@ -70,11 +90,9 @@ export function DatabaseManagerDialog() {
 					close()
 				}
 			}}
-			title="Manage your database"
+			title="Database Manager"
 			description="Manage your current database"
-			content={
-				<p>Manage the database: {openTab?.type}</p>
-			}
+			content={dialogContent}
 		/>
 	)
 }

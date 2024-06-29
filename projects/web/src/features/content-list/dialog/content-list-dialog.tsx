@@ -22,8 +22,8 @@ export function ContentListDialog() {
 		<JDialog
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
-			title="Search your content"
-			description="Search for your content, view favorites and actions"
+			title="All Content"
+			description="View all your content"
 			content={
 				<div className='content-list-dialog'>
 					<div className='content-list-dialog__header'>

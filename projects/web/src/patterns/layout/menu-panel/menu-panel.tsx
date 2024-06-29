@@ -1,7 +1,7 @@
 
 import {
 	PenLine as EditIcon,
-	ArrowRightLeft as DatabaseSwitchIcon,
+	Database as DatabaseListIcon,
 	CloudDownload as StatusDownloadIcon,
 	PlusSquare as NewContentIcon,
 	Search as SearchIcon,
@@ -23,6 +23,7 @@ import {useDataStructureDialog} from "../../../features/data-structure/data-stru
 import { useViewsDialog } from "../../../features/views/dialog/views-dialog";
 import {useContentListDialog} from "../../../features/content-list/dialog/content-list-dialog";
 import {useSettingsDialog} from "../../../features/settings/settings-dialog";
+import {useLocalful} from "@localful-athena/react/use-localful";
 
 export interface WithMenuPanelControl {
 	menuPanelIsOpen: boolean
@@ -39,6 +40,8 @@ export function MenuPanel() {
 	const {setIsOpen: setContentListDialogOpen } = useContentListDialog()
 	const {setIsOpen: setSettingsDialogOpen } = useSettingsDialog()
 
+	const { currentDatabase } = useLocalful()
+
 	return (
 		<div className="menu-panel">
 			<div className="menu-panel__database">
@@ -47,28 +50,22 @@ export function MenuPanel() {
 						<button
 							className="menu-panel__database-edit"
 							onClick={() => {
-								setDatabaseManagerDialogTab({type: 'edit', databaseId: 'example'})
+								if (currentDatabase) {
+									setDatabaseManagerDialogTab({type: 'edit', databaseId: currentDatabase.databaseId})
+								}
 							}}
 						>
-							<span className="menu-panel__database-name" tabIndex={-1}>Example Database</span>
+							<span className="menu-panel__database-name" tabIndex={-1}>{currentDatabase ? currentDatabase.databaseId : 'No Database Open'}</span>
 							<JIcon size='sm'><EditIcon/></JIcon>
 						</button>
 					</JTooltip>
-					<JTooltip content='Status & Logs' renderAsChild={true} variant='dark'>
-						<button
-							className="menu-panel__database-status"
-							onClick={() => {
-								setStatusDialogOpen(true);
-							}}
-						><JIcon><StatusDownloadIcon /></JIcon></button>
-					</JTooltip>
-					<JTooltip content="Switch Database" renderAsChild={true} variant='dark'>
+					<JTooltip content="All Databases" renderAsChild={true} variant='dark'>
 						<button
 							className="menu-panel__database-switch"
 							onClick={() => {
 								setDatabaseManagerDialogTab({type: 'list'})
 							}}
-						><JIcon><DatabaseSwitchIcon /></JIcon></button>
+						><JIcon><DatabaseListIcon /></JIcon></button>
 					</JTooltip>
 				</div>
 			</div>
@@ -139,6 +136,14 @@ export function MenuPanel() {
 								setSettingsDialogOpen(true)
 							}}
 						><SettingsIcon/></button>
+					</JTooltip>
+					<JTooltip content='Status & Logs' renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__database-status"
+							onClick={() => {
+								setStatusDialogOpen(true);
+							}}
+						><JIcon><StatusDownloadIcon /></JIcon></button>
 					</JTooltip>
 					<JTooltip content="About & Help" renderAsChild={true} variant='dark'>
 						<button

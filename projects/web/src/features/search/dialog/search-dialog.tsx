@@ -17,7 +17,7 @@ export function SearchDialog() {
 		<JDialog
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
-			title="Search your content"
+			title="Search"
 			description="Search for your content, view favorites and actions"
 			content={
 				<ContentList onOpen={() => {
