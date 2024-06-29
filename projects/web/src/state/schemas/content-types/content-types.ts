@@ -4,14 +4,14 @@ import {EntityDto} from "@localful-athena/types/data-entities";
 import {IdField} from "@localful-athena/types/fields";
 
 export const ContentTypeData = z.object({
-  name: NameField,
-  description: DescriptionField,
-  icon: z.string().optional(),
-  colourVariant: ColourVariants.optional(),
-  contentTemplateName: NameField.optional(),
-  contentTemplateDescription: NameField.optional(),
-  contentTemplateTags: z.array(IdField).optional(),
-  fields: z.array(IdField)
+	name: NameField,
+	description: DescriptionField,
+	icon: z.string().optional(),
+	colourVariant: ColourVariants.optional(),
+	contentTemplateName: NameField.optional(),
+	contentTemplateDescription: NameField.optional(),
+	contentTemplateTags: z.array(IdField).optional(),
+	fields: z.array(IdField)
 }).strict()
 export type ContentTypeData = z.infer<typeof ContentTypeData>
 

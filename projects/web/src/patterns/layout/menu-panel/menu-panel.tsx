@@ -1,15 +1,15 @@
 
 import {
-  PenLine as EditIcon,
-  ArrowRightLeft as DatabaseSwitchIcon,
-  CloudDownload as StatusDownloadIcon,
-  PlusSquare as NewContentIcon,
-  Search as SearchIcon,
-  List as AllContentIcon,
-  Filter as AllViewsIcon,
-  Shapes as DataStructureIcon,
-  Settings as SettingsIcon,
-  HelpCircle as HelpIcon,
+	PenLine as EditIcon,
+	ArrowRightLeft as DatabaseSwitchIcon,
+	CloudDownload as StatusDownloadIcon,
+	PlusSquare as NewContentIcon,
+	Search as SearchIcon,
+	List as AllContentIcon,
+	Filter as AllViewsIcon,
+	Shapes as DataStructureIcon,
+	Settings as SettingsIcon,
+	HelpCircle as HelpIcon,
 } from "lucide-react"
 import {MainPanelAction} from "./main-panel-action";
 
@@ -25,128 +25,128 @@ import {useContentListDialog} from "../../../features/content-list/dialog/conten
 import {useSettingsDialog} from "../../../features/settings/settings-dialog";
 
 export interface WithMenuPanelControl {
-  menuPanelIsOpen: boolean
-  setMenuPanelIsOpen: (isOpen: boolean) => void
+	menuPanelIsOpen: boolean
+	setMenuPanelIsOpen: (isOpen: boolean) => void
 }
 
 export function MenuPanel() {
-  const {setOpenTab: setDatabaseManagerDialogTab } = useDatabaseManagerDialogContext()
-  const {setIsOpen: setNewContentDialogOpen } = useNewContentDialog()
-  const {setIsOpen: setStatusDialogOpen } = useStatusDialog()
-  const {setIsOpen: setSearchDialogOpen } = useSearchDialog()
-  const {setIsOpen: setDataStructureDialogOpen } = useDataStructureDialog()
-  const {setIsOpen: setViewsDialogOpen } = useViewsDialog()
-  const {setIsOpen: setContentListDialogOpen } = useContentListDialog()
-    const {setIsOpen: setSettingsDialogOpen } = useSettingsDialog()
+	const {setOpenTab: setDatabaseManagerDialogTab } = useDatabaseManagerDialogContext()
+	const {setIsOpen: setNewContentDialogOpen } = useNewContentDialog()
+	const {setIsOpen: setStatusDialogOpen } = useStatusDialog()
+	const {setIsOpen: setSearchDialogOpen } = useSearchDialog()
+	const {setIsOpen: setDataStructureDialogOpen } = useDataStructureDialog()
+	const {setIsOpen: setViewsDialogOpen } = useViewsDialog()
+	const {setIsOpen: setContentListDialogOpen } = useContentListDialog()
+	const {setIsOpen: setSettingsDialogOpen } = useSettingsDialog()
 
-  return (
-      <div className="menu-panel">
-        <div className="menu-panel__database">
-          <div className="menu-panel__database-content">
-            <JTooltip content='Edit Database' renderAsChild={true} variant='dark'>
-              <button
-                  className="menu-panel__database-edit"
-                  onClick={() => {
-                      setDatabaseManagerDialogTab({type: 'edit', databaseId: 'example'})
-                  }}
-              >
-                <span className="menu-panel__database-name" tabIndex={-1}>Example Database</span>
-                <JIcon size='sm'><EditIcon/></JIcon>
-              </button>
-            </JTooltip>
-            <JTooltip content='Status & Logs' renderAsChild={true} variant='dark'>
-              <button
-                className="menu-panel__database-status"
-                onClick={() => {
-                  setStatusDialogOpen(true);
-                }}
-              ><JIcon><StatusDownloadIcon /></JIcon></button>
-            </JTooltip>
-            <JTooltip content="Switch Database" renderAsChild={true} variant='dark'>
-              <button
-                  className="menu-panel__database-switch"
-                  onClick={() => {
-                      setDatabaseManagerDialogTab({type: 'list'})
-                  }}
-              ><JIcon><DatabaseSwitchIcon /></JIcon></button>
-            </JTooltip>
-          </div>
-        </div>
+	return (
+		<div className="menu-panel">
+			<div className="menu-panel__database">
+				<div className="menu-panel__database-content">
+					<JTooltip content='Edit Database' renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__database-edit"
+							onClick={() => {
+								setDatabaseManagerDialogTab({type: 'edit', databaseId: 'example'})
+							}}
+						>
+							<span className="menu-panel__database-name" tabIndex={-1}>Example Database</span>
+							<JIcon size='sm'><EditIcon/></JIcon>
+						</button>
+					</JTooltip>
+					<JTooltip content='Status & Logs' renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__database-status"
+							onClick={() => {
+								setStatusDialogOpen(true);
+							}}
+						><JIcon><StatusDownloadIcon /></JIcon></button>
+					</JTooltip>
+					<JTooltip content="Switch Database" renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__database-switch"
+							onClick={() => {
+								setDatabaseManagerDialogTab({type: 'list'})
+							}}
+						><JIcon><DatabaseSwitchIcon /></JIcon></button>
+					</JTooltip>
+				</div>
+			</div>
 
-        <div className="menu-panel__actions">
-          <MainPanelAction
-            text='New Content'
-              icon={<NewContentIcon/>}
-              onSelect={() => {
-                setNewContentDialogOpen(true)
-              }}
-              isSpecial={true}
-          />
-          <MainPanelAction
-              text='Search'
-              icon={<SearchIcon/>}
-              onSelect={() => {
-                setSearchDialogOpen(true)
-              }}
-          />
-          <MainPanelAction
-              text='All Content'
-              icon={<AllContentIcon/>}
-              onSelect={() => {
-                  setContentListDialogOpen(true)
-              }}
-          />
-          <MainPanelAction
-              text='All Views'
-              icon={<AllViewsIcon/>}
-              onSelect={() => {
-                setViewsDialogOpen(true)
-              }}
-          />
-          <MainPanelAction
-              text='Data Structure'
-              icon={<DataStructureIcon/>}
-              onSelect={() => {
-                setDataStructureDialogOpen(true)
-              }}
-          />
-        </div>
+			<div className="menu-panel__actions">
+				<MainPanelAction
+					text='New Content'
+					icon={<NewContentIcon/>}
+					onSelect={() => {
+						setNewContentDialogOpen(true)
+					}}
+					isSpecial={true}
+				/>
+				<MainPanelAction
+					text='Search'
+					icon={<SearchIcon/>}
+					onSelect={() => {
+						setSearchDialogOpen(true)
+					}}
+				/>
+				<MainPanelAction
+					text='All Content'
+					icon={<AllContentIcon/>}
+					onSelect={() => {
+						setContentListDialogOpen(true)
+					}}
+				/>
+				<MainPanelAction
+					text='All Views'
+					icon={<AllViewsIcon/>}
+					onSelect={() => {
+						setViewsDialogOpen(true)
+					}}
+				/>
+				<MainPanelAction
+					text='Data Structure'
+					icon={<DataStructureIcon/>}
+					onSelect={() => {
+						setDataStructureDialogOpen(true)
+					}}
+				/>
+			</div>
 
-        <div className="menu-panel__favorites">
-          <div className="menu-panel__favorites-header">
-            <h3>Favorite Views</h3>
-          </div>
-          <div>
-            No Favorites Found
-          </div>
-        </div>
+			<div className="menu-panel__favorites">
+				<div className="menu-panel__favorites-header">
+					<h3>Favorite Views</h3>
+				</div>
+				<div>
+					No Favorites Found
+				</div>
+			</div>
 
-        <div className="menu-panel__favorites">
-          <div className="menu-panel__favorites-header">
-            <h3>Favorite Content</h3>
-          </div>
-          <div>
-            No Favorites Found
-          </div>
-        </div>
+			<div className="menu-panel__favorites">
+				<div className="menu-panel__favorites-header">
+					<h3>Favorite Content</h3>
+				</div>
+				<div>
+					No Favorites Found
+				</div>
+			</div>
 
-        <div className="menu-panel__user">
-          <div className="menu-panel__user-content">
-            <JTooltip content="Account & Settings" renderAsChild={true} variant='dark'>
-              <button
-                  className="menu-panel__user-settings"
-                  onClick={() => {
-                      setSettingsDialogOpen(true)
-                  }}
-              ><SettingsIcon/></button>
-            </JTooltip>
-            <JTooltip content="About & Help" renderAsChild={true} variant='dark'>
-              <button
-                  className="menu-panel__user-help"
-              ><HelpIcon/></button>
-            </JTooltip>
-          </div>
-        </div>
-      </div>
-  )
+			<div className="menu-panel__user">
+				<div className="menu-panel__user-content">
+					<JTooltip content="Account & Settings" renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__user-settings"
+							onClick={() => {
+								setSettingsDialogOpen(true)
+							}}
+						><SettingsIcon/></button>
+					</JTooltip>
+					<JTooltip content="About & Help" renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__user-help"
+						><HelpIcon/></button>
+					</JTooltip>
+				</div>
+			</div>
+		</div>
+	)
 }

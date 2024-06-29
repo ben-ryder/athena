@@ -4,25 +4,25 @@ import {JDialog} from "@ben-ryder/jigsaw-react";
 import {NewContentMenu} from "./new-content-menu/new-content-menu";
 
 export const {
-  context: NewContentDialogContext,
-  useContext: useNewContentDialog,
-  provider: NewContentDialogProvider,
+	context: NewContentDialogContext,
+	useContext: useNewContentDialog,
+	provider: NewContentDialogProvider,
 } = createModalContext()
 
 export function NewContentDialog() {
-  const {isOpen, setIsOpen} = useNewContentDialog()
+	const {isOpen, setIsOpen} = useNewContentDialog()
 
-  return (
-    <JDialog
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      title="Create new content"
-      description="Add new content"
-      content={
-        <NewContentMenu onOpen={() => {
-          setIsOpen(false)
-        }} />
-      }
-    />
-  )
+	return (
+		<JDialog
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			title="Create new content"
+			description="Add new content"
+			content={
+				<NewContentMenu onOpen={() => {
+					setIsOpen(false)
+				}} />
+			}
+		/>
+	)
 }

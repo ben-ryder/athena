@@ -19,7 +19,7 @@ export function NewContentMenu(props: NewContentMenuProps) {
 
 	return (
 		<div className="new-content-menu">
-				{contentTypesQuery.status === QueryStatus.SUCCESS &&
+			{contentTypesQuery.status === QueryStatus.SUCCESS &&
 						<>
 							{contentTypesQuery.data.length > 0
 								? (
@@ -42,7 +42,7 @@ export function NewContentMenu(props: NewContentMenuProps) {
 								)
 							}
 						</>
-				}
+			}
 		</div>
 	)
 }

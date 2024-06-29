@@ -1,19 +1,19 @@
 
 export type GenericManagerScreens = {
-  screen: "list"
+	screen: "list"
 } | {
-  screen: "new"
+	screen: "new"
 } | {
-  screen: "edit",
-  id: string
+	screen: "edit",
+	id: string
 }
 export type GenericManagerNavigate = (screen: GenericManagerScreens) => void
 
 export interface GenericManagerScreenProps {
-  navigate: GenericManagerNavigate
+	navigate: GenericManagerNavigate
 }
 
 export interface GenericManagerContentScreenProps {
-  navigate: GenericManagerNavigate
-  id: string
+	navigate: GenericManagerNavigate
+	id: string
 }

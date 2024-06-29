@@ -6,9 +6,9 @@ import {ContentList} from "../content-list";
 export interface SearchTabProps extends WithTabData {}
 
 export function ContentListTab() {
-    return (
-      <div className='content-list-tab'>
-          <ContentList />
-      </div>
-    )
+	return (
+		<div className='content-list-tab'>
+			<ContentList />
+		</div>
+	)
 }

@@ -5,25 +5,25 @@ import {createModalContext} from "../../../common/dialog/generic-dialog";
 import {ContentList} from "../../content-list/content-list";
 
 export const {
-  context: SearchDialogContext,
-  useContext: useSearchDialog,
-  provider: SearchDialogProvider
+	context: SearchDialogContext,
+	useContext: useSearchDialog,
+	provider: SearchDialogProvider
 } = createModalContext()
 
 export function SearchDialog() {
-  const {isOpen, setIsOpen} = useSearchDialog()
+	const {isOpen, setIsOpen} = useSearchDialog()
 
-  return (
-    <JDialog
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      title="Search your content"
-      description="Search for your content, view favorites and actions"
-      content={
-        <ContentList onOpen={() => {
-          setIsOpen(false)
-        }}/>
-      }
-    />
-  )
+	return (
+		<JDialog
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			title="Search your content"
+			description="Search for your content, view favorites and actions"
+			content={
+				<ContentList onOpen={() => {
+					setIsOpen(false)
+				}}/>
+			}
+		/>
+	)
 }

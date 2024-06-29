@@ -125,12 +125,12 @@ export function ViewEditTab(props: ViewEditTabProps) {
 		<div>
 			{props.viewId &&
           <JButton
-              variant='secondary'
-              onClick={() => {
-								if (props.viewId) {
-									openTab({type: 'view', viewId: props.viewId})
-								}
-							}}
+          	variant='secondary'
+          	onClick={() => {
+          		if (props.viewId) {
+          			openTab({type: 'view', viewId: props.viewId})
+          		}
+          	}}
           >View</JButton>
 			}
 			<ViewForm

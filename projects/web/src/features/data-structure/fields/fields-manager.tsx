@@ -5,15 +5,15 @@ import {CreateFieldScreen} from "./screens/create-field-screen";
 import { EditFieldScreen } from "./screens/edit-field-screen";
 
 export function FieldsManager() {
-  const [currentScreen, navigate] = useState<GenericManagerScreens>({screen: "list"})
+	const [currentScreen, navigate] = useState<GenericManagerScreens>({screen: "list"})
 
-  if (currentScreen.screen === "new") {
-    return <CreateFieldScreen navigate={navigate} />
-  }
-  else if (currentScreen.screen === "edit") {
-    return <EditFieldScreen navigate={navigate} id={currentScreen.id} />
-  }
-  else {
-    return <ListFieldsScreen navigate={navigate} />
-  }
+	if (currentScreen.screen === "new") {
+		return <CreateFieldScreen navigate={navigate} />
+	}
+	else if (currentScreen.screen === "edit") {
+		return <EditFieldScreen navigate={navigate} id={currentScreen.id} />
+	}
+	else {
+		return <ListFieldsScreen navigate={navigate} />
+	}
 }

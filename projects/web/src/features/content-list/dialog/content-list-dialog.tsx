@@ -8,50 +8,50 @@ import {ContentList} from "../content-list";
 import {useNewContentDialog} from "../../new-content/new-content-dialog";
 
 export const {
-  context: ContentListDialogContext,
-  useContext: useContentListDialog,
-  provider: ContentListDialogProvider
+	context: ContentListDialogContext,
+	useContext: useContentListDialog,
+	provider: ContentListDialogProvider
 } = createModalContext()
 
 export function ContentListDialog() {
-  const {isOpen, setIsOpen} = useContentListDialog()
-  const { setIsOpen: setIsNewContentDialogOpen} = useNewContentDialog()
-  const { openTab } = useWorkspaceContext()
+	const {isOpen, setIsOpen} = useContentListDialog()
+	const { setIsOpen: setIsNewContentDialogOpen} = useNewContentDialog()
+	const { openTab } = useWorkspaceContext()
 
-  return (
-    <JDialog
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      title="Search your content"
-      description="Search for your content, view favorites and actions"
-      content={
-        <div className='content-list-dialog'>
-          <div className='content-list-dialog__header'>
-            <JButton
-              className='content-list-dialog__tab-open'
-              onClick={() => {
-                openTab({type: 'content_list'}, {switch: true})
-                setIsOpen(false)
-              }}
-              variant='tertiary'
-            >Open content list tab
-            </JButton>
-            <JButton
-              className='content-list-dialog__create'
-              onClick={() => {
-                  setIsOpen(false)
-                  setIsNewContentDialogOpen(true)
-              }}
-            >New Content
-            </JButton>
-          </div>
-          <div className='content-list-dialog__content'>
-            <ContentList onOpen={() => {
-              setIsOpen(false)
-            }}/>
-          </div>
-        </div>
-      }
-    />
-  )
+	return (
+		<JDialog
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			title="Search your content"
+			description="Search for your content, view favorites and actions"
+			content={
+				<div className='content-list-dialog'>
+					<div className='content-list-dialog__header'>
+						<JButton
+							className='content-list-dialog__tab-open'
+							onClick={() => {
+								openTab({type: 'content_list'}, {switch: true})
+								setIsOpen(false)
+							}}
+							variant='tertiary'
+						>Open content list tab
+						</JButton>
+						<JButton
+							className='content-list-dialog__create'
+							onClick={() => {
+								setIsOpen(false)
+								setIsNewContentDialogOpen(true)
+							}}
+						>New Content
+						</JButton>
+					</div>
+					<div className='content-list-dialog__content'>
+						<ContentList onOpen={() => {
+							setIsOpen(false)
+						}}/>
+					</div>
+				</div>
+			}
+		/>
+	)
 }

@@ -7,15 +7,15 @@ import {IdField, BooleanField, TimestampField} from "@localful-athena/types/fiel
  * which means top-level entities only need to store basic id and timestamp data.
  */
 export const Entity = z.object({
-  id: IdField,
-  createdAt: TimestampField,
-  isDeleted: BooleanField,
-  localfulVersion: z.string(),
+	id: IdField,
+	createdAt: TimestampField,
+	isDeleted: BooleanField,
+	localfulVersion: z.string(),
 }).strict()
 export type Entity = z.infer<typeof Entity>
 
 export const LocalEntity = Entity.extend({
-  currentVersionId: z.string().uuid().optional()
+	currentVersionId: z.string().uuid().optional()
 }).strict()
 export type LocalEntity = z.infer<typeof LocalEntity>
 
@@ -25,13 +25,13 @@ export type LocalEntity = z.infer<typeof LocalEntity>
  * The 'createdAt' field of a version can then be used to identify the latest version.
  */
 export const EntityVersion = z.object({
-  entityId: IdField,
-  id: IdField,
-  createdAt: TimestampField,
-  // All actual data is encrypted, so stored data will always be ciphertext string
-  data: z.string(),
-  localfulVersion: z.string(),
-  schemaVersion: z.string()
+	entityId: IdField,
+	id: IdField,
+	createdAt: TimestampField,
+	// All actual data is encrypted, so stored data will always be ciphertext string
+	data: z.string(),
+	localfulVersion: z.string(),
+	schemaVersion: z.string()
 }).strict()
 export type EntityVersion = z.infer<typeof EntityVersion>
 
@@ -41,10 +41,10 @@ export type EntityVersion = z.infer<typeof EntityVersion>
  * these return types.
  */
 export const EntityDtoBase = Entity.extend({
-  versionId: IdField,
-  // This will be the version createdAt field,
-  // which conceptually is the updated timestamp
-  updatedAt: TimestampField
+	versionId: IdField,
+	// This will be the version createdAt field,
+	// which conceptually is the updated timestamp
+	updatedAt: TimestampField
 })
 export type EntityDtoBase = z.infer<typeof EntityDtoBase>
 
@@ -52,7 +52,7 @@ export type EntityDtoBase = z.infer<typeof EntityDtoBase>
  * A dto type with the added data schema.
  */
 export interface EntityDto<DataSchema> extends EntityDtoBase {
-  data: DataSchema
+	data: DataSchema
 }
 
 export type EntityUpdate<T> = Partial<T>

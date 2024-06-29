@@ -16,41 +16,41 @@ import {DATA_SCHEMA} from "../../state/athena-localful";
 import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/database-manager";
 
 export function MainPage() {
-  const [isMenuPanelOpen, setIsOpenPanelOpen] = useState<boolean>(false)
+	const [isMenuPanelOpen, setIsOpenPanelOpen] = useState<boolean>(false)
 
-  return (
-    <LocalfulContextProvider dataSchema={DATA_SCHEMA}>
-      <WorkspaceContextProvider>
-        <DatabaseManagerDialogProvider>
-          <NewContentDialogProvider>
-            <StatusDialogProvider>
-              <SearchDialogProvider>
-                <DataStructureDialogProvider>
-                  <ViewsDialogProvider>
-                    <ContentListDialogProvider>
-                      <SettingsDialogProvider>
-                        <main className="athena">
-                          <MenuPanel/>
-                          <Workspace/>
+	return (
+		<LocalfulContextProvider dataSchema={DATA_SCHEMA}>
+			<WorkspaceContextProvider>
+				<DatabaseManagerDialogProvider>
+					<NewContentDialogProvider>
+						<StatusDialogProvider>
+							<SearchDialogProvider>
+								<DataStructureDialogProvider>
+									<ViewsDialogProvider>
+										<ContentListDialogProvider>
+											<SettingsDialogProvider>
+												<main className="athena">
+													<MenuPanel/>
+													<Workspace/>
 
-                          <DatabaseManagerDialog/>
-                          <NewContentDialog/>
-                          <StatusDialog/>
-                          <SearchDialog/>
-                          <DataStructureDialog/>
-                          <ViewsDialog/>
-                          <ContentListDialog/>
-                          <SettingsDialog/>
-                        </main>
-                      </SettingsDialogProvider>
-                    </ContentListDialogProvider>
-                  </ViewsDialogProvider>
-                </DataStructureDialogProvider>
-              </SearchDialogProvider>
-            </StatusDialogProvider>
-          </NewContentDialogProvider>
-        </DatabaseManagerDialogProvider>
-      </WorkspaceContextProvider>
-    </LocalfulContextProvider>
-  );
+													<DatabaseManagerDialog/>
+													<NewContentDialog/>
+													<StatusDialog/>
+													<SearchDialog/>
+													<DataStructureDialog/>
+													<ViewsDialog/>
+													<ContentListDialog/>
+													<SettingsDialog/>
+												</main>
+											</SettingsDialogProvider>
+										</ContentListDialogProvider>
+									</ViewsDialogProvider>
+								</DataStructureDialogProvider>
+							</SearchDialogProvider>
+						</StatusDialogProvider>
+					</NewContentDialogProvider>
+				</DatabaseManagerDialogProvider>
+			</WorkspaceContextProvider>
+		</LocalfulContextProvider>
+	);
 }
