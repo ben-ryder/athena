@@ -1,11 +1,13 @@
 import {LocalfulWeb} from "../localful-web";
 import {DataSchemaDefinition} from "../storage/types";
 import {EntityDatabase} from "../storage/entity-database";
-import {Context, createContext, PropsWithChildren, useCallback, useContext, useState} from "react";
+import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
+import { LocalDatabaseDto } from "@localful-athena/types/database";
 
 export interface LocalfulContext<DataSchema extends DataSchemaDefinition> {
 	localful: LocalfulWeb<DataSchema>
 	currentDatabase?: EntityDatabase<DataSchema>
+	currentDatabaseDto?: LocalDatabaseDto
 	openDatabase: (databaseId: string) => Promise<EntityDatabase<DataSchema>>
 	closeDatabase: () => Promise<void>
 }
@@ -34,6 +36,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	}))
 	const [currentDatabase, setCurrentDatabase] = useState<undefined | EntityDatabase<DataSchema>>()
 
+	const [currentDatabaseDto, setCurrentDatabaseDto] = useState<LocalDatabaseDto | undefined>(undefined)
 
 	const closeDatabase = useCallback(async () => {
 		if (currentDatabase) {
@@ -50,9 +53,26 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		return newDatabase
 	}, [closeDatabase])
 
+	useEffect(() => {
+		if (currentDatabase) {
+			const dtoSubscription = localful.liveGetDatabase(currentDatabase.databaseId)
+			dtoSubscription.subscribe((dto) => {
+				if (dto.status === 'success') {
+					setCurrentDatabaseDto(dto.data)
+				} else if (dto.status === 'error') {
+					console.error(dto.errors)
+					setCurrentDatabaseDto(undefined)
+				}
+			})
+		} else {
+			setCurrentDatabase(undefined)
+		}
+	}, [currentDatabase])
+
 	return <LocalfulContext.Provider value={{
 		localful: localful,
 		currentDatabase: currentDatabase,
+		currentDatabaseDto: currentDatabaseDto,
 		openDatabase: openDatabase,
 		closeDatabase: closeDatabase,
 	}}>{props.children}</LocalfulContext.Provider>

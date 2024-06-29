@@ -66,7 +66,6 @@ export function DatabaseListScreen() {
 
 	return (
 		<div>
-			<h2>list Databases</h2>
 			<JButton
 				onClick={() => {
 					setOpenTab({type: 'create'})

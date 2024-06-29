@@ -18,8 +18,8 @@
     "cy:start": "cypress open -b firefox",
     "cy:start:unit": "cypress open --component -b firefox",
     "cy:start:e2e": "cypress open --e2e -b firefox",
-    "code:lint": "npx eslint .",
-    "code:lint:fix": "npx eslint . --fix"
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "dependencies": {
     "@ben-ryder/jigsaw": "^0.25.0",

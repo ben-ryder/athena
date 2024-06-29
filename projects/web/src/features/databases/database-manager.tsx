@@ -1,8 +1,9 @@
-import React, {createContext, ReactNode, useCallback, useContext, useState} from "react";
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import {PropsWithChildren} from "../../utils/children-prop";
 import {JDialog} from "@ben-ryder/jigsaw-react";
 import {DatabaseListScreen} from "./screens/database-list";
 import {DatabaseCreateScreen} from "./screens/database-create";
+import { useLocalful } from "@localful-athena/react/use-localful";
 
 export type DatabaseManagerTabs = {
 	type: 'list',
@@ -64,6 +65,8 @@ export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 export function DatabaseManagerDialog() {
 	const { openTab, setOpenTab, close } = useDatabaseManagerDialogContext()
 
+	const { currentDatabase } = useLocalful()
+
 	let dialogContent: ReactNode
 	switch (openTab?.type) {
 		case "list": {
@@ -79,6 +82,13 @@ export function DatabaseManagerDialog() {
 		)
 	}
 
+	// Keep the database manager open if there is no current database
+	useEffect(() => {
+		if (!currentDatabase && !openTab) {
+			setOpenTab({type: 'list'})
+		}
+	}, [currentDatabase, openTab])
+
 	return (
 		<JDialog
 			isOpen={!!openTab}
@@ -90,6 +100,7 @@ export function DatabaseManagerDialog() {
 					close()
 				}
 			}}
+			disableOutsideClose={!currentDatabase}
 			title="Database Manager"
 			description="Manage your current database"
 			content={dialogContent}

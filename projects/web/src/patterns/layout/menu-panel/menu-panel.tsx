@@ -40,7 +40,7 @@ export function MenuPanel() {
 	const {setIsOpen: setContentListDialogOpen } = useContentListDialog()
 	const {setIsOpen: setSettingsDialogOpen } = useSettingsDialog()
 
-	const { currentDatabase } = useLocalful()
+	const { currentDatabase, currentDatabaseDto } = useLocalful()
 
 	return (
 		<div className="menu-panel">
@@ -55,8 +55,8 @@ export function MenuPanel() {
 								}
 							}}
 						>
-							<span className="menu-panel__database-name" tabIndex={-1}>{currentDatabase ? currentDatabase.databaseId : 'No Database Open'}</span>
-							<JIcon size='sm'><EditIcon/></JIcon>
+							<span className="menu-panel__database-name" tabIndex={-1}>{currentDatabaseDto ? currentDatabaseDto.name : 'No Database Open'}</span>
+							{currentDatabase && <JIcon size='sm'><EditIcon/></JIcon>}
 						</button>
 					</JTooltip>
 					<JTooltip content="All Databases" renderAsChild={true} variant='dark'>
