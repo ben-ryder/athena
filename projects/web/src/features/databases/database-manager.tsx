@@ -4,6 +4,7 @@ import {JDialog} from "@ben-ryder/jigsaw-react";
 import {DatabaseListScreen} from "./screens/database-list";
 import {DatabaseCreateScreen} from "./screens/database-create";
 import { useLocalful } from "@localful-athena/react/use-localful";
+import { DatabaseEditScreen } from "./screens/database-edit";
 
 export type DatabaseManagerTabs = {
 	type: 'list',
@@ -75,6 +76,18 @@ export function DatabaseManagerDialog() {
 		}
 		case "create": {
 			dialogContent = <DatabaseCreateScreen />
+			break;
+		}
+		case "edit": {
+			dialogContent = <DatabaseEditScreen databaseId={openTab.databaseId} />
+			break;
+		}
+		case "change-password": {
+			dialogContent = <p>change password {openTab.databaseId}</p>
+			break;
+		}
+		case "unlock": {
+			dialogContent = <p>Unlock db {openTab.databaseId}</p>
 			break;
 		}
 		default: (

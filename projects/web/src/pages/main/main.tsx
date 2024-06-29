@@ -30,10 +30,11 @@ export function MainPage() {
 										<ContentListDialogProvider>
 											<SettingsDialogProvider>
 												<main className="athena">
+													<DatabaseManagerDialog/>
+
 													<MenuPanel/>
 													<Workspace/>
 
-													<DatabaseManagerDialog/>
 													<NewContentDialog/>
 													<StatusDialog/>
 													<SearchDialog/>

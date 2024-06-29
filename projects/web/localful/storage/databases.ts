@@ -154,7 +154,9 @@ export class DatabaseStorage {
 			localfulVersion: currentDb.data.localfulVersion,
 			lastSyncedAt: currentDb.data.lastSyncedAt,
 			name: dataUpdate.name || currentDb.data.name,
-			syncEnabled: dataUpdate.syncEnabled || currentDb.data.syncEnabled,
+			syncEnabled: dataUpdate.syncEnabled !== undefined
+				? dataUpdate.syncEnabled
+				: currentDb.data.syncEnabled,
 		}
 		await tx.objectStore('databases').put(newDatabase)
 
