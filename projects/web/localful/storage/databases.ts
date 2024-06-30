@@ -57,7 +57,7 @@ export class DatabaseStorage {
 
 		return {
 			...entity,
-			isUnlocked: true
+			isUnlocked: false
 		}
 	}
 
@@ -75,6 +75,8 @@ export class DatabaseStorage {
 	 * @param id
 	 */
 	async get(id: string): Promise<ActionResult<LocalDatabaseDto>> {
+		//todo: dont allow deleted database to be fetched?
+
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction(['databases'], 'readonly')
 		const entity = await tx.objectStore('databases').get(id) as LocalDatabaseEntity|undefined

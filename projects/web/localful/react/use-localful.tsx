@@ -3,13 +3,17 @@ import {DataSchemaDefinition} from "../storage/types";
 import {EntityDatabase} from "../storage/entity-database";
 import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 import { LocalDatabaseDto } from "@localful-athena/types/database";
+import {DatabaseStorage} from "@localful-athena/storage/databases";
 
 export interface LocalfulContext<DataSchema extends DataSchemaDefinition> {
 	localful: LocalfulWeb<DataSchema>
 	currentDatabase?: EntityDatabase<DataSchema>
 	currentDatabaseDto?: LocalDatabaseDto
 	openDatabase: (databaseId: string) => Promise<EntityDatabase<DataSchema>>
-	closeDatabase: () => Promise<void>
+	closeCurrentDatabase: () => Promise<void>
+	lockDatabase: DatabaseStorage['lockDatabase']
+	deleteDatabase: DatabaseStorage['delete']
+	deleteLocalDatabase: DatabaseStorage['deleteLocal']
 }
 
 // eslint-disable-next-line -- can't know the generic type when declaring static variable. The useLocalful hook can then accept the generic.
@@ -38,7 +42,14 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 
 	const [currentDatabaseDto, setCurrentDatabaseDto] = useState<LocalDatabaseDto | undefined>(undefined)
 
-	const closeDatabase = useCallback(async () => {
+	const ensureDatabaseClosed = useCallback(async (databaseId: string) => {
+		if (currentDatabase?.databaseId === databaseId) {
+			await currentDatabase.close()
+			setCurrentDatabase(undefined)
+		}
+	}, [currentDatabase])
+
+	const closeCurrentDatabase = useCallback(async () => {
 		if (currentDatabase) {
 			await currentDatabase.close()
 		}
@@ -47,13 +58,30 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	}, [currentDatabase])
 
 	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<DataSchema>> => {
-		await closeDatabase()
+		await closeCurrentDatabase()
 
 		const newDatabase = await localful.openDatabase(databaseId)
 		setCurrentDatabase(newDatabase)
 
 		return newDatabase
-	}, [closeDatabase])
+	}, [closeCurrentDatabase])
+
+	const lockDatabase = useCallback(async (databaseId: string) => {
+		if (currentDatabase) {
+			await ensureDatabaseClosed(databaseId)
+			await localful.lockDatabase(databaseId)
+		}
+	}, [ensureDatabaseClosed])
+
+	const deleteDatabase = useCallback(async (databaseId: string) => {
+		await ensureDatabaseClosed(databaseId)
+		return localful.deleteDatabase(databaseId)
+	}, [ensureDatabaseClosed])
+
+	const deleteLocalDatabase = useCallback(async (databaseId: string) => {
+		await ensureDatabaseClosed(databaseId)
+		return localful.deleteLocalDatabase(databaseId)
+	}, [ensureDatabaseClosed])
 
 	useEffect(() => {
 		if (currentDatabase) {
@@ -77,10 +105,13 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	}, [currentDatabase])
 
 	return <LocalfulContext.Provider value={{
-		localful: localful,
-		currentDatabase: currentDatabase,
-		currentDatabaseDto: currentDatabaseDto,
-		openDatabase: openDatabase,
-		closeDatabase: closeDatabase,
+		localful,
+		currentDatabase,
+		currentDatabaseDto,
+		openDatabase,
+		closeCurrentDatabase,
+		lockDatabase,
+		deleteDatabase,
+		deleteLocalDatabase
 	}}>{props.children}</LocalfulContext.Provider>
 }

@@ -26,7 +26,7 @@ export class LocalfulWeb<DataSchema extends DataSchemaDefinition> {
 	}
 
 	async openDatabase(databaseId: string) {
-		// todo: check databaseIdd is valid?
+		// todo: check databaseId is valid?
 		// todo: check database is unlocked?
 		// todo: don't allow deleted database to be opened
 

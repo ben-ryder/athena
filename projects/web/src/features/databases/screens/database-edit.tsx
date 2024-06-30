@@ -14,20 +14,32 @@ export interface DatabaseEditScreenProps {
 export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 	const { setOpenTab } = useDatabaseManagerDialogContext()
 
-	const { localful, currentDatabase, closeDatabase } = useLocalful()
+	const {
+		localful,
+		currentDatabase,
+		currentDatabaseDto,
+		lockDatabase,
+		deleteLocalDatabase,
+		deleteDatabase,
+	} = useLocalful()
 
 	const onSave = useCallback(async (basicInfo: LocalDatabaseFields) => {
 		console.debug(basicInfo)
 
 		try {
-			await localful.updateDatabase(
+			const result = await localful.updateDatabase(
 				props.databaseId,
 				{
 					name: basicInfo.name,
 					syncEnabled: basicInfo.syncEnabled
 				}
 			)
-			setOpenTab()
+			if (result.success) {
+				setOpenTab()
+			}
+			else {
+				console.error(result.errors)
+			}
 		}
 		catch (e) {
 			console.error(e)
@@ -37,13 +49,13 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 
 	const onDelete = useCallback(async () => {
 		try {
-			// todo: this logic should live somewhere else?
-			if (currentDatabase?.databaseId === props.databaseId) {
-				await closeDatabase()
+			const result = await deleteDatabase(props.databaseId)
+			if (result.success) {
+				setOpenTab()
 			}
-			await localful.deleteDatabase(props.databaseId)
-
-			setOpenTab()
+			else {
+				console.error(result.errors)
+			}
 		}
 		catch (e) {
 			console.error(e)
@@ -52,13 +64,13 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 
 	const onLocalDelete = useCallback(async () => {
 		try {
-			// todo: this logic should live somewhere else?
-			if (currentDatabase?.databaseId === props.databaseId) {
-				await closeDatabase()
+			const result = await deleteLocalDatabase(props.databaseId)
+			if (result.success) {
+				setOpenTab()
 			}
-			await localful.deleteLocalDatabase(props.databaseId)
-
-			setOpenTab()
+			else {
+				console.error(result.errors)
+			}
 		}
 		catch (e) {
 			console.error(e)
@@ -88,7 +100,14 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 					setOpenTab({type: 'change-password', databaseId: props.databaseId})
 				}}
 			>Change password</JButton>
-
+			{currentDatabaseDto?.isUnlocked && (
+				<JButton
+					variant='secondary'
+					onClick={async () => {
+						await lockDatabase(props.databaseId)
+					}}
+				>Lock</JButton>
+			)}
 			<DatabaseBasicDataForm
 				saveText='Save'
 				onSave={onSave}
