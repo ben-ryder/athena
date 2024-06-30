@@ -50,6 +50,21 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 		}
 	}, [currentDatabase])
 
+	const onLocalDelete = useCallback(async () => {
+		try {
+			// todo: this logic should live somewhere else?
+			if (currentDatabase?.databaseId === props.databaseId) {
+				await closeDatabase()
+			}
+			await localful.deleteLocalDatabase(props.databaseId)
+
+			setOpenTab()
+		}
+		catch (e) {
+			console.error(e)
+		}
+	}, [currentDatabase])
+
 	const dtoQuery = useObservableQuery(localful.liveGetDatabase(props.databaseId))
 
 	if (dtoQuery.status === 'loading') {
@@ -81,7 +96,24 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 					name: dtoQuery.data.name,
 					syncEnabled: dtoQuery.data.syncEnabled
 				}}
-				onDelete={onDelete}
+				extraButtons={
+					<>
+						<JButton
+							type="button"
+							variant="secondary"
+							onClick={() => {
+								onLocalDelete()
+							}}
+						>Delete Locally</JButton>
+						<JButton
+							type="button"
+							variant="destructive"
+							onClick={() => {
+								onDelete()
+							}}
+						>Delete</JButton>
+					</>
+				}
 			/>
 		</div>
 	)

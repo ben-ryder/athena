@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import {ReactNode, useCallback} from "react";
 import {
 	JInput,
 	JErrorText,
@@ -13,7 +13,7 @@ export interface DatabaseBasicDataFormProps {
 	initialData?: LocalDatabaseFields
 	saveText?: string
 	onSave: (fields: LocalDatabaseFields) => void;
-	onDelete?: () => void;
+	extraButtons?: ReactNode;
 }
 
 export function DatabaseBasicDataForm(props: DatabaseBasicDataFormProps) {
@@ -94,17 +94,7 @@ export function DatabaseBasicDataForm(props: DatabaseBasicDataFormProps) {
 
 			<JFormRow>
 				<JButtonGroup>
-					{props.onDelete &&
-                <JButton
-                	type="button"
-                	variant="destructive"
-                	onClick={() => {
-                		if (props.onDelete) {
-                			props.onDelete()
-                		}
-                	}}
-                >Delete</JButton>
-					}
+					{props.extraButtons && props.extraButtons}
 					<JButton type="submit">{props.saveText || 'Save'}</JButton>
 				</JButtonGroup>
 			</JFormRow>

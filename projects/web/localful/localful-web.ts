@@ -59,8 +59,8 @@ export class LocalfulWeb<DataSchema extends DataSchemaDefinition> {
 		return this.databaseStorage.delete(id)
 	}
 
-	purgeDatabase(id: string) {
-		return this.databaseStorage.purge(id)
+	deleteLocalDatabase(id: string) {
+		return this.databaseStorage.deleteLocal(id)
 	}
 
 	queryDatabases() {

@@ -170,7 +170,7 @@ export class DatabaseStorage {
 	}
 
 	/**
-	 * Delete the given database, setting the 'isDeleted' flag
+	 * Delete the given database on the local device and server, setting the 'isDeleted' flag
 	 */
 	async delete(id: string): Promise<ActionResult> {
 		const currentDb = await this.get(id)
@@ -203,6 +203,24 @@ export class DatabaseStorage {
 		this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'delete' })
 
 		return {success: true, data: null}
+	}
+
+	/**
+	 * Delete the database locally but not on the server
+	 *
+	 * @param id
+	 */
+	async deleteLocal(id: string): Promise<ActionResult> {
+		const currentDb = await this.get(id)
+		if (!currentDb.success) return currentDb as ActionResult
+
+		const db = await this.getIndexDbDatabase()
+		const tx = db.transaction(['databases'], 'readwrite')
+		const entityStore = tx.objectStore('databases')
+
+		await entityStore.delete(id)
+
+		return { success: true, data: null }
 	}
 
 	/**
