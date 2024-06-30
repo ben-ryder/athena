@@ -42,6 +42,8 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		if (currentDatabase) {
 			await currentDatabase.close()
 		}
+
+		setCurrentDatabase(undefined)
 	}, [currentDatabase])
 
 	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<DataSchema>> => {
@@ -55,8 +57,8 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 
 	useEffect(() => {
 		if (currentDatabase) {
-			const dtoSubscription = localful.liveGetDatabase(currentDatabase.databaseId)
-			dtoSubscription.subscribe((dto) => {
+			const dtoLiveQuery = localful.liveGetDatabase(currentDatabase.databaseId)
+			const dtoSubscription = dtoLiveQuery.subscribe((dto) => {
 				if (dto.status === 'success') {
 					setCurrentDatabaseDto(dto.data)
 				} else if (dto.status === 'error') {
@@ -64,8 +66,13 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 					setCurrentDatabaseDto(undefined)
 				}
 			})
+
+			return () => {
+				dtoSubscription.unsubscribe()
+			}
+
 		} else {
-			setCurrentDatabase(undefined)
+			setCurrentDatabaseDto(undefined)
 		}
 	}, [currentDatabase])
 
