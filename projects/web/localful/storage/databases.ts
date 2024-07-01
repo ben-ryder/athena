@@ -62,10 +62,22 @@ export class DatabaseStorage {
 	}
 
 	async unlockDatabase(id: string, password: string): Promise<boolean> {
+		const database = await this.get(id)
+		if (!database.success) return false
+
+		try {
+			const encryptionKey = await LocalfulEncryption.decryptDatabaseEncryptionKey(database.data.protectedEncryptionKey, password)
+			// todo: add encryptionKey to KeyStorage
+		}
+		catch (e) {
+			console.debug(e)
+		}
+
 		return false;
 	}
 
 	async lockDatabase(id: string): Promise<void> {
+		// todo: delete encryptionKey stored in KeyStorage
 		return;
 	}
 
@@ -75,7 +87,7 @@ export class DatabaseStorage {
 	 * @param id
 	 */
 	async get(id: string): Promise<ActionResult<LocalDatabaseDto>> {
-		//todo: dont allow deleted database to be fetched?
+		// todo: dont allow deleted database to be fetched?
 
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction(['databases'], 'readonly')
@@ -104,13 +116,15 @@ export class DatabaseStorage {
 		// create encryptionKey
 		// derive unlock key (KEK) from password
 		// create protectedEncryptionKey, which is the encryptionKey encrypted with the unlock key
+		const {protectedEncryptionKey, encryptionKey} = await LocalfulEncryption.createDatabaseEncryptionKey(password)
+		// todo: add encryptionKey to KeyStorage
 
 		const tx = db.transaction(['databases'], 'readwrite')
 
 		const database: LocalDatabaseEntity = {
 			id: id,
 			name: data.name,
-			protectedEncryptionKey: password,
+			protectedEncryptionKey,
 			protectedData: undefined,
 			createdAt: timestamp,
 			updatedAt: timestamp,
