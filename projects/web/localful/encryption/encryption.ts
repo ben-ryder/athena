@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Buffer } from "buffer";
+import {TextDecoder, TextEncoder} from "util";
 
 export const UnlockKeyMetadata = z.object({
 	algo: z.literal("PBKDF2"),
@@ -25,13 +25,19 @@ export const EncryptionMetadata = z.object({
 })
 export type EncryptionMetadata = z.infer<typeof EncryptionMetadata>
 
+/**
+ *
+ * Thanks to the following resources which were used to refine this implementation:
+ * - https://github.com/AKASHAorg/easy-web-crypto
+ * - https://developer.mozilla.org/en-US/docs/Glossary/Base64
+ */
 export class LocalfulEncryption {
 
 	static generateUUID(): string {
 		return self.crypto.randomUUID()
 	}
 
-	static async createDatabaseEncryptionKey(password: string): Promise<CreatedEncryptionKey> {
+	static async createProtectedEncryptionKey(password: string): Promise<CreatedEncryptionKey> {
 		const encryptionKey = await LocalfulEncryption._createEncryptionKey()
 		const unlockKey = await LocalfulEncryption._deriveUnlockKey(password)
 		const protectedEncryptionKey = await LocalfulEncryption._wrapEncryptionKey(encryptionKey, unlockKey)
@@ -42,17 +48,15 @@ export class LocalfulEncryption {
 		}
 	}
 
-	static async decryptDatabaseEncryptionKey(protectedEncryptionKey: string, password: string): Promise<string> {
+	static async decryptProtectedEncryptionKey(protectedEncryptionKey: string, password: string): Promise<string> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- version may be used in future
-		const [version, encodedMetadata, encodedEncryptionKey] = protectedEncryptionKey.split(".")
+		const [version, base64Metadata, based64WrappedKey] = protectedEncryptionKey.split(":")
 
-		const decodedMetadata = Buffer.from(encodedMetadata, "base64").toString()
-		const unlockKeyMetadata = UnlockKeyMetadata.parse(JSON.parse(decodedMetadata))
-		const unlockKey = await LocalfulEncryption._deriveUnlockKey(password, unlockKeyMetadata.salt)
+		const rawMetadata = LocalfulEncryption._base64ToBytes(base64Metadata)
+		const metadata = UnlockKeyMetadata.parse(JSON.parse(new TextDecoder().decode(rawMetadata)))
+		const unlockKey = await LocalfulEncryption._deriveUnlockKey(password, metadata.salt)
 
-		const decodedEncryptionKey = Buffer.from(encodedEncryptionKey, "base64").toString()
-
-		return await LocalfulEncryption._decryptWithKey(unlockKey.key, decodedEncryptionKey)
+		return await LocalfulEncryption._decryptWithKey(unlockKey.key, based64WrappedKey)
 	}
 
 	static async encrypt<T>(encryptionKey: string, data: T): Promise<string> {
@@ -75,15 +79,15 @@ export class LocalfulEncryption {
 	}
 
 	static async _createEncryptionKey(): Promise<string> {
-		const rawKey = window.crypto.getRandomValues(new Uint8Array(32));
-		const encodedKey = Buffer.from(rawKey).toString("base64");
-		return `v1.${encodedKey}`
+		const keyMaterial = window.crypto.getRandomValues(new Uint8Array(32));
+		const base64Key = LocalfulEncryption._bytesToBase64(keyMaterial)
+		return `v1.${base64Key}`
 	}
 
 	private static _getEncryptionCryptoKey(encryptionKeyString: string): Promise<CryptoKey> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- version isn't used, but may be needed in the future.
-		const [version, encodedKeyMaterial] = encryptionKeyString.split('.')
-		const keyMaterial = Buffer.from(encodedKeyMaterial, 'base64').buffer
+		const [version, base64Key] = encryptionKeyString.split('.')
+		const keyMaterial = LocalfulEncryption._base64ToBytes(base64Key)
 
 		return window.crypto.subtle.importKey(
 			"raw",
@@ -97,16 +101,20 @@ export class LocalfulEncryption {
 	}
 
 	private static async _deriveUnlockKey(password: string, derivationSalt?: string): Promise<UnlockKey> {
+		const enc = new TextEncoder()
+
 		const baseKey = await window.crypto.subtle.importKey(
 			"raw",
-			Buffer.from(password),
+			enc.encode(password),
 			"PBKDF2",
 			false,
 			["deriveKey", "deriveBits"]
 		)
+
 		const salt = derivationSalt
-			? Buffer.from(derivationSalt, 'base64')
+			? LocalfulEncryption._base64ToBytes(derivationSalt)
 			: window.crypto.getRandomValues(new Uint8Array(16));
+		const encodedSalt = derivationSalt || LocalfulEncryption._bytesToBase64(salt)
 
 		const derivedKey = await window.crypto.subtle.deriveKey(
 			{
@@ -118,13 +126,11 @@ export class LocalfulEncryption {
 			baseKey,
 			{ 'name': 'AES-GCM', 'length': 256 },
 			true,
-			// Although this key used as a KEK, the wrapping is done
-			// manually via the _encryptWithKey and _decryptWithKey methods
-			// which means this key usage is actually encrypt/decrypt not wrapKey/unwrapKey.
+			// Although this key used to wrap the encryption key, the wrapping is done
+			// via the _encryptWithKey and _decryptWithKey methods not the SubtleCrypto wrapKey/unwrapKey methods
+			// so the key usage just needs to encrypt/decrypt.
 			["encrypt", "decrypt"]
 		)
-
-		const encodedSalt = Buffer.from(salt).toString('base64')
 
 		return {
 			key: derivedKey,
@@ -138,35 +144,37 @@ export class LocalfulEncryption {
 	}
 
 	private static async _wrapEncryptionKey(encryptionKey: string, unlockKey: UnlockKey): Promise<string> {
-		const wrappedKey = await LocalfulEncryption._encryptWithKey(unlockKey.key, encryptionKey)
+		const base64WrappedKey = await LocalfulEncryption._encryptWithKey(unlockKey.key, encryptionKey)
 
-		const encodedMetadata = Buffer.from(JSON.stringify(unlockKey.metadata)).toString('base64')
-		const encodedKey = Buffer.from(wrappedKey).toString('base64')
+		const encodedMetadata = new TextEncoder().encode(JSON.stringify(unlockKey.metadata))
+		const base64Metadata = LocalfulEncryption._bytesToBase64(encodedMetadata)
 
-		return `v1.${encodedMetadata}.${encodedKey}`
+		return `v1:${base64Metadata}:${base64WrappedKey}`
 	}
 
 	private static async _encryptWithKey<T>(key: CryptoKey, data: T): Promise<string> {
 		const iv = window.crypto.getRandomValues(new Uint8Array(12));
 
-		const encryptedData = await window.crypto.subtle.encrypt(
+		const cipherTextBuffer = await window.crypto.subtle.encrypt(
 			{
 				name: "AES-GCM",
 				iv
 			},
 			key,
-			// todo: improve generic types to narrow allowed data?
-			Buffer.from(JSON.stringify(data))
+			new TextEncoder().encode(JSON.stringify(data))
 		)
-		const encodedData = Buffer.from(encryptedData).toString('base64')
+		const base64CipherText = LocalfulEncryption._bytesToBase64(new Uint8Array(cipherTextBuffer))
+
+		const base64Iv = LocalfulEncryption._bytesToBase64(iv)
 
 		const metadata: EncryptionMetadata = {
 			algo: "AES-GCM",
-			iv: Buffer.from(iv).toString('base64'),
+			iv: base64Iv,
 		}
-		const encodedMetadata = Buffer.from(JSON.stringify(metadata)).toString('base64')
+		const encodedMetadata = new TextEncoder().encode(JSON.stringify(metadata))
+		const base64Metadata = LocalfulEncryption._bytesToBase64(encodedMetadata)
 
-		return `v1.${encodedMetadata}.${encodedData}`
+		return `v1.${base64Metadata}.${base64CipherText}`
 	}
 
 	private static async _decryptWithKey(
@@ -174,22 +182,36 @@ export class LocalfulEncryption {
 		ciphertext: string,
 	): Promise<string> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- may be used in future
-		const [version, encodedMetadata, encodedData] = ciphertext.split(".")
+		const [version, base64Metadata, base64CipherText] = ciphertext.split(".")
 
-		const decodedMetadata = Buffer.from(encodedMetadata, "base64").toString()
-		const metadata = EncryptionMetadata.parse(JSON.parse(decodedMetadata))
+		const decodedMetadata = LocalfulEncryption._base64ToBytes(base64Metadata)
+		const metadata = EncryptionMetadata.parse(JSON.parse(new TextDecoder().decode(decodedMetadata)))
 
-		const decodedCiphertext = Buffer.from(encodedData, "base64")
+		const cipherText = LocalfulEncryption._base64ToBytes(base64CipherText)
+		const iv = LocalfulEncryption._base64ToBytes(metadata.iv)
 
 		const decryptedData = await window.crypto.subtle.decrypt(
 			{
 				name: "AES-GCM",
-				iv: Buffer.from(metadata.iv, "base64"),
+				iv,
 			},
 			key,
-			decodedCiphertext
+			cipherText
 		)
 
-		return JSON.parse(Buffer.from(decryptedData).toString())
+		return JSON.parse(new TextDecoder().decode(decryptedData))
+	}
+
+	private static _bytesToBase64(byteArray: Uint8Array): string {
+		const binString = Array.from(byteArray, (byte) =>
+			String.fromCodePoint(byte),
+		).join("");
+		return btoa(binString);
+	}
+
+	private static _base64ToBytes(base64String: string): Uint8Array {
+		const binString = atob(base64String);
+		// @ts-expect-error -- this is copied from MDN (https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem) and does work.
+		return Uint8Array.from(binString, (m) => m.codePointAt(0));
 	}
 }

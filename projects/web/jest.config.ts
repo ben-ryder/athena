@@ -15,7 +15,10 @@ const jestConfig: JestConfigWithTsJest = {
 		"**/*.ts"
 	],
 	"coverageDirectory": "../coverage",
-	"testEnvironment": "node"
+	"testEnvironment": "node",
+	"setupFiles": [
+		"<rootDir>/tests/jest-shim.ts"
+	]
 }
 
 export default jestConfig

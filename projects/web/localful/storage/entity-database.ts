@@ -1,6 +1,6 @@
 import {ZodTypeAny} from "zod";
 import {ActionResult, ErrorObject, ErrorTypes, Query, QUERY_LOADING, QueryStatus} from "../control-flow";
-import {LocalfulEncryption} from "../encryption/localful-encryption";
+import {LocalfulEncryption} from "../encryption/encryption";
 import {memoryCache} from "./memory-cache";
 import {Observable} from "rxjs";
 import {DataEntityChangeEvent, EventTypes} from "../events/events";

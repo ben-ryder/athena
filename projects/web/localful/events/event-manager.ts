@@ -1,5 +1,5 @@
 import {EventContext, EventMap, EventTypes, LocalfulEvent} from "./events";
-import { LocalfulEncryption } from "../encryption/localful-encryption";
+import { LocalfulEncryption } from "../encryption/encryption";
 import {Logger} from "../../src/utils/logger";
 
 /**

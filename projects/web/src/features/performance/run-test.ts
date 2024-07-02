@@ -1,4 +1,4 @@
-import {LocalfulEncryption} from "@localful-athena/encryption/localful-encryption";
+import {LocalfulEncryption} from "@localful-athena/encryption/encryption";
 import {ReportFunction} from "./performance-manager";
 import {LocalfulWeb} from "@localful-athena/localful-web";
 import { DATA_SCHEMA } from "../../state/athena-localful";

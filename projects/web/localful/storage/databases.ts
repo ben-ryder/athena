@@ -1,5 +1,5 @@
 import {ActionResult, ErrorTypes, Query, QUERY_LOADING, QueryStatus} from "../control-flow";
-import {LocalfulEncryption} from "../encryption/localful-encryption";
+import {LocalfulEncryption} from "../encryption/encryption";
 import {Observable} from "rxjs";
 import {
 	DatabaseChangeEvent,
@@ -66,7 +66,7 @@ export class DatabaseStorage {
 		if (!database.success) return false
 
 		try {
-			const encryptionKey = await LocalfulEncryption.decryptDatabaseEncryptionKey(database.data.protectedEncryptionKey, password)
+			const encryptionKey = await LocalfulEncryption.decryptProtectedEncryptionKey(database.data.protectedEncryptionKey, password)
 			// todo: add encryptionKey to KeyStorage
 		}
 		catch (e) {
@@ -116,7 +116,7 @@ export class DatabaseStorage {
 		// create encryptionKey
 		// derive unlock key (KEK) from password
 		// create protectedEncryptionKey, which is the encryptionKey encrypted with the unlock key
-		const {protectedEncryptionKey, encryptionKey} = await LocalfulEncryption.createDatabaseEncryptionKey(password)
+		const {protectedEncryptionKey, encryptionKey} = await LocalfulEncryption.createProtectedEncryptionKey(password)
 		// todo: add encryptionKey to KeyStorage
 
 		const tx = db.transaction(['databases'], 'readwrite')
