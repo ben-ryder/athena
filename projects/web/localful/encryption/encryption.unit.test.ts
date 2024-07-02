@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import {LocalfulEncryption} from "./encryption";
 import {z} from "zod";
 
@@ -97,4 +93,30 @@ test('create a protected encryption key to encrypt data, then decrypt key and de
 	const decryptedText = await LocalfulEncryption.decrypt<string>(decryptedKey, encryptedText)
 
 	expect(decryptedText).toBe(inputText);
+})
+
+test('update protected encryption key password', async () => {
+	// Create a protected encryption key and encrypt some data
+	const password = "password1234"
+	const { encryptionKey, protectedEncryptionKey } = await LocalfulEncryption.createProtectedEncryptionKey(password)
+	const inputText = "this is some test data";
+	const encryptedText = await LocalfulEncryption.encrypt(encryptionKey, inputText);
+
+	// Update the protected encryption key with a new password
+	const newPassword = "password42"
+	const {
+		encryptionKey: newEncryptionKey,
+		protectedEncryptionKey: newProtectedEncryptionKey
+	} = await LocalfulEncryption.updateProtectedEncryptionKey(protectedEncryptionKey, password, newPassword)
+
+	// Stored encryption key should still be the same
+	expect(newEncryptionKey).toBe(encryptionKey)
+
+	// Should still be able to decrypt data encrypted before protected key was updated.
+	const decryptedText = await LocalfulEncryption.decrypt(newEncryptionKey, encryptedText)
+	expect(decryptedText).toBe(inputText);
+
+	// Updated protected key should now use new password
+	await expect(LocalfulEncryption.decryptProtectedEncryptionKey(newProtectedEncryptionKey, password)).rejects.toThrow()
+	await expect(LocalfulEncryption.decryptProtectedEncryptionKey(newProtectedEncryptionKey, newPassword)).resolves.not.toThrow()
 })

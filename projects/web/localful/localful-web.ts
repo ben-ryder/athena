@@ -82,4 +82,6 @@ export class LocalfulWeb<DataSchema extends DataSchemaDefinition> {
 	lockDatabase(id: string) {
 		return this.databaseStorage.lockDatabase(id)
 	}
+
+	// todo: add method for updating password
 }

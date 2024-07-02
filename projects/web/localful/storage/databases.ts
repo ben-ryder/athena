@@ -81,6 +81,8 @@ export class DatabaseStorage {
 		return;
 	}
 
+	// todo: add method for updating password
+
 	/**
 	 * Get a single database
 	 *

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import {TextDecoder, TextEncoder} from "util";
 
 export const UnlockKeyMetadata = z.object({
 	algo: z.literal("PBKDF2"),
@@ -57,6 +56,18 @@ export class LocalfulEncryption {
 		const unlockKey = await LocalfulEncryption._deriveUnlockKey(password, metadata.salt)
 
 		return await LocalfulEncryption._decryptWithKey(unlockKey.key, based64WrappedKey)
+	}
+
+	static async updateProtectedEncryptionKey(protectedEncryptionKey: string, currentPassword: string, newPassword: string): Promise<CreatedEncryptionKey> {
+		const encryptionKey = await LocalfulEncryption.decryptProtectedEncryptionKey(protectedEncryptionKey, currentPassword)
+		const newUnlockKey = await LocalfulEncryption._deriveUnlockKey(newPassword)
+		const newProtectedEncryptionKey = await LocalfulEncryption._wrapEncryptionKey(encryptionKey, newUnlockKey)
+
+		// The stored encryption key doesn't change, but a CreatedEncryptionKey is still returned for consistency with the createProtectedEncryptionKey method.
+		return {
+			encryptionKey,
+			protectedEncryptionKey: newProtectedEncryptionKey
+		}
 	}
 
 	static async encrypt<T>(encryptionKey: string, data: T): Promise<string> {
@@ -121,7 +132,7 @@ export class LocalfulEncryption {
 				name: "PBKDF2",
 				salt: salt,
 				iterations: 100000,
-				hash: "SHA-256"
+				hash: "SHA-256",
 			},
 			baseKey,
 			{ 'name': 'AES-GCM', 'length': 256 },

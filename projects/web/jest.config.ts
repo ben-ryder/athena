@@ -15,9 +15,9 @@ const jestConfig: JestConfigWithTsJest = {
 		"**/*.ts"
 	],
 	"coverageDirectory": "../coverage",
-	"testEnvironment": "node",
+	"testEnvironment": "jsdom",
 	"setupFiles": [
-		"<rootDir>/tests/jest-shim.ts"
+		"<rootDir>/tests/webcrypto-shim.ts"
 	]
 }
 
