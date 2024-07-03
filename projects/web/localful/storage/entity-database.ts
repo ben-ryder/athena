@@ -181,12 +181,13 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		await tx.done
 
 		const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(tableKey, entity, version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
+		if (!dto.success) return dto
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.add(`${tableKey}-get-${id}`, dto)
 		}
 
-		return {success: true, data: dto}
+		return {success: true, data: dto.data}
 	}
 
 	/**

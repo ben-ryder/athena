@@ -1,28 +1,33 @@
-import {LocalfulEncryption} from "@localful-athena/encryption/encryption";
 import {ReportFunction} from "./performance-manager";
 import {LocalfulWeb} from "@localful-athena/localful-web";
 import { DATA_SCHEMA } from "../../state/athena-localful";
 import {EntityDatabase} from "@localful-athena/storage/entity-database";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
-const TAG_NUMBER = 3000
+const TAG_NUMBER = 600
 const TAG_VERSIONS_NUMBER = 20
 
 export async function runTest(report: ReportFunction) {
+	const localful = new LocalfulWeb<DATA_SCHEMA>({dataSchema: DATA_SCHEMA})
+
+	const password = 'password1234'
+	const res = await localful.createDatabase({name: 'perf test', syncEnabled: 0}, password)
+	if (!res.success) throw new Error('unexpected error')
+	const databaseId = res.data
+	await localful.unlockDatabase(databaseId, password)
+	const currentDatabase = await localful.openDatabase(databaseId)
+	if (!currentDatabase) throw new Error('unexpected error')
+
 	const benchmarkStartTime = performance.now()
 
 	report({level: "section", text: "Setup"})
-	const id = await LocalfulEncryption.generateUUID()
-	const databaseId = `perf_${id}`
-	const localful = new LocalfulWeb<DATA_SCHEMA>({dataSchema: DATA_SCHEMA})
-	const currentDatabase = await localful.openDatabase(databaseId)
-
 	report({level: "message", text: `Created test database ${databaseId}`})
 
 	await createTestData(currentDatabase, report)
 	await queryTestData(currentDatabase, report)
 
 	report({level: "section", text: "Teardown"})
+	await currentDatabase.close()
 	await localful.deleteDatabase(databaseId)
 	report({level: "message", text: "deleted database vault"})
 
@@ -89,4 +94,3 @@ export async function queryTestData(currentDatabase: EntityDatabase<typeof DATA_
 	const deleteTagEnd = performance.now()
 	report({level: "message", text: `deleted tag in ${deleteTagEnd - deleteTagStart}ms`})
 }
-

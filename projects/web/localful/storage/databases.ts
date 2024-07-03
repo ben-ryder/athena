@@ -226,6 +226,8 @@ export class DatabaseStorage {
 
 		await tx.done
 
+		indexedDB.deleteDatabase(id)
+
 		this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'delete' })
 
 		return {success: true, data: null}
@@ -245,6 +247,8 @@ export class DatabaseStorage {
 		const entityStore = tx.objectStore('databases')
 
 		await entityStore.delete(id)
+
+		indexedDB.deleteDatabase(id)
 
 		return { success: true, data: null }
 	}
@@ -287,7 +291,7 @@ export class DatabaseStorage {
 	async purge(id: string): Promise<ActionResult> {
 		const db = await this.getIndexDbDatabase()
 
-		indexedDB.deleteDatabase(`lf_${id}`)
+		indexedDB.deleteDatabase(id)
 
 		const tx = db.transaction(['databases'], 'readwrite')
 		const entityStore = tx.objectStore('databases')
