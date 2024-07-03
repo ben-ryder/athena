@@ -36,7 +36,6 @@
     "@uiw/react-codemirror": "^4.21.21",
     "classnames": "^2.5.1",
     "codemirror": "^6.0.1",
-    "easy-web-crypto": "^1.4.0",
     "idb": "^8.0.0",
     "lucide-react": "^0.378.0",
     "react": "^18.3.1",

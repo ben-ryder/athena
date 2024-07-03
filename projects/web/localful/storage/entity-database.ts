@@ -5,8 +5,8 @@ import {memoryCache} from "./memory-cache";
 import {Observable} from "rxjs";
 import {DataEntityChangeEvent, EventTypes} from "../events/events";
 import {IDBPDatabase, openDB} from "idb";
-import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "@localful-athena/types/data-entities";
-import {EventManager} from "@localful-athena/events/event-manager";
+import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "../types/data-entities";
+import {EventManager} from "../events/event-manager";
 import { Logger } from "../../src/utils/logger";
 import {
 	CurrentSchemaData,
@@ -14,12 +14,12 @@ import {
 	QueryDefinition,
 	QueryIndex,
 	TableKeys
-} from "@localful-athena/storage/types";
+} from "../storage/types";
 import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../localful-web";
 
 export interface EntityDatabaseConfig {
 	databaseId: string,
-	encryptionKey: CryptoKey,
+	encryptionKey: string,
 	dataSchema: DataSchemaDefinition,
 }
 
@@ -29,7 +29,7 @@ export interface EntityDatabaseDependencies {
 
 export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	databaseId: string
-	private readonly encryptionKey: CryptoKey
+	private readonly encryptionKey: string
 	private readonly dataSchema: DataSchemaDefinition
 	private readonly _database?: IDBPDatabase
 	private readonly eventManager: EventManager
@@ -105,14 +105,12 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param dataSchema
 	 */
 	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
-		const decryptedData = await LocalfulEncryption.decryptAndValidateData<CurrentSchemaData<DataSchema, TableKey>>(
+		let data = await LocalfulEncryption.decrypt<CurrentSchemaData<DataSchema, TableKey>>(
 			this.encryptionKey,
-			dataSchema,
-			version.data
+			version.data,
+			dataSchema
 		)
-		if (!decryptedData.success) return decryptedData
 
-		let data = decryptedData.data
 		if (version.schemaVersion !== this.dataSchema['tables'][tableKey].currentSchema) {
 			if (!this.dataSchema['tables'][tableKey].migrateSchema) {
 				throw new Error(`Schema migration required from ${version.schemaVersion} to ${this.dataSchema['tables'][tableKey].currentSchema} but no migrateSchema method supplied`)
@@ -183,13 +181,12 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		await tx.done
 
 		const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(tableKey, entity, version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
-		if (!dto.success) return dto
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.add(`${tableKey}-get-${id}`, dto)
 		}
 
-		return {success: true, data: dto.data}
+		return {success: true, data: dto}
 	}
 
 	/**
@@ -227,15 +224,14 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		const entityId = LocalfulEncryption.generateUUID();
 		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
-		const encResult = await LocalfulEncryption.encryptData(this.encryptionKey, data)
-		if (!encResult.success) return encResult
+		const encResult = await LocalfulEncryption.encrypt(this.encryptionKey, data)
 
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
 
 		const version: EntityVersion = {
 			entityId: entityId,
 			id: versionId,
-			data: encResult.data,
+			data: encResult,
 			createdAt: timestamp,
 			localfulVersion: LOCALFUL_VERSION,
 			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema
@@ -293,8 +289,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			...dataUpdate
 		}
 
-		const encResult = await LocalfulEncryption.encryptData(this.encryptionKey, updatedData)
-		if (!encResult.success) return encResult
+		const encResult = await LocalfulEncryption.encrypt(this.encryptionKey, updatedData)
 
 		const versionId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
@@ -307,7 +302,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			id: versionId,
 			createdAt: timestamp,
 			localfulVersion: LOCALFUL_VERSION,
-			data: encResult.data,
+			data: encResult,
 			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema
 		}
 		await tx.objectStore(this._getVersionTableName(tableKey)).add(newVersion)
@@ -388,6 +383,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 */
 	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
 		// todo: add query memory cache?
+
+		console.debug(query)
+		console.debug(this.databaseId)
 
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction([query.table, this._getVersionTableName(query.table)], 'readonly')
@@ -474,6 +472,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		const cursorResults: {entity: LocalEntity, version: EntityVersion}[] = []
 		const errors: ErrorObject[] = []
+
+		console.debug(cursorResults)
+		console.debug(errors)
 
 		// Iterate over all indexes and all items in the index cursor, also running the user-supplied whereCursor function.
 		for (const queryIndex of indexes) {

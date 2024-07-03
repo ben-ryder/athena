@@ -14,6 +14,7 @@ export function useObservableQuery<Data>(observable: Observable<Query<Data>>|und
 
 	useEffect(() => {
 		if (!observable) {
+			console.warn('useObservableQuery called with no observable')
 			return
 		}
 

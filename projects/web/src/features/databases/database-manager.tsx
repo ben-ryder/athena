@@ -5,6 +5,7 @@ import {DatabaseListScreen} from "./screens/database-list";
 import {DatabaseCreateScreen} from "./screens/database-create";
 import { useLocalful } from "@localful-athena/react/use-localful";
 import { DatabaseEditScreen } from "./screens/database-edit";
+import {DatabaseUnlockScreen} from "./screens/database-unlock";
 
 export type DatabaseManagerTabs = {
 	type: 'list',
@@ -87,7 +88,7 @@ export function DatabaseManagerDialog() {
 			break;
 		}
 		case "unlock": {
-			dialogContent = <p>Unlock db {openTab.databaseId}</p>
+			dialogContent = <DatabaseUnlockScreen databaseId={openTab.databaseId} />
 			break;
 		}
 		default: (

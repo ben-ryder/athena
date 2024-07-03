@@ -13,7 +13,7 @@ export function DatabaseCreateScreen() {
 	const [currentStep, setCurrentStep] = useState<DatabaseCreateSteps>('basic-info')
 	const [basicInfo, setBasicInfo] = useState<LocalDatabaseFields | undefined>(undefined)
 
-	const { localful } = useLocalful()
+	const { createDatabase } = useLocalful()
 
 	const onBasicInfoNext = useCallback((basicInfo: LocalDatabaseFields) => {
 		setBasicInfo(basicInfo)
@@ -33,7 +33,7 @@ export function DatabaseCreateScreen() {
 		}
 
 		try {
-			await localful.createDatabase({
+			await createDatabase({
 				name: basicInfo.name,
 				syncEnabled: basicInfo.syncEnabled
 			}, password)
@@ -44,7 +44,7 @@ export function DatabaseCreateScreen() {
 			console.error(e)
 		}
 
-	}, [basicInfo])
+	}, [createDatabase, basicInfo])
 
 	return (
 		<div>

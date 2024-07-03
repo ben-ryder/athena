@@ -15,19 +15,20 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 	const { setOpenTab } = useDatabaseManagerDialogContext()
 
 	const {
-		localful,
 		currentDatabase,
 		currentDatabaseDto,
 		lockDatabase,
+		updateDatabase,
 		deleteLocalDatabase,
 		deleteDatabase,
+		liveGetDatabase,
 	} = useLocalful()
 
 	const onSave = useCallback(async (basicInfo: LocalDatabaseFields) => {
 		console.debug(basicInfo)
 
 		try {
-			const result = await localful.updateDatabase(
+			const result = await updateDatabase(
 				props.databaseId,
 				{
 					name: basicInfo.name,
@@ -45,7 +46,7 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 			console.error(e)
 		}
 
-	}, [])
+	}, [updateDatabase])
 
 	const onDelete = useCallback(async () => {
 		try {
@@ -77,7 +78,17 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 		}
 	}, [currentDatabase])
 
-	const dtoQuery = useObservableQuery(localful.liveGetDatabase(props.databaseId))
+	const onLock = useCallback(async () => {
+		try {
+			await lockDatabase(props.databaseId)
+			setOpenTab()
+		}
+		catch (e) {
+			console.error(e)
+		}
+	}, [])
+
+	const dtoQuery = useObservableQuery(liveGetDatabase(props.databaseId))
 
 	if (dtoQuery.status === 'loading') {
 		return (
@@ -104,7 +115,7 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 				<JButton
 					variant='secondary'
 					onClick={async () => {
-						await lockDatabase(props.databaseId)
+						await onLock()
 					}}
 				>Lock</JButton>
 			)}

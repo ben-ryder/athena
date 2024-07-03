@@ -9,8 +9,8 @@ import {LocalDatabaseDto} from "@localful-athena/types/database";
 
 export function DatabaseListScreen() {
 	const { setOpenTab, close } = useDatabaseManagerDialogContext()
-	const { localful, openDatabase } = useLocalful()
-	const databaseQuery = useObservableQuery(localful.liveQueryDatabase())
+	const { openDatabase, liveQueryDatabase } = useLocalful()
+	const databaseQuery = useObservableQuery(liveQueryDatabase())
 
 	const attemptOpenDatabase = useCallback(async (database: LocalDatabaseDto) => {
 		if (!database.isUnlocked) {

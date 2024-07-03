@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+// todo: handle errors better, such as re-throwing web crypto errors with extra app specific context?
+
 export const UnlockKeyMetadata = z.object({
 	algo: z.literal("PBKDF2"),
 	salt: z.string(),

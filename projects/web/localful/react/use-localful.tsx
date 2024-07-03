@@ -2,18 +2,21 @@ import {LocalfulWeb} from "../localful-web";
 import {DataSchemaDefinition} from "../storage/types";
 import {EntityDatabase} from "../storage/entity-database";
 import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
-import { LocalDatabaseDto } from "@localful-athena/types/database";
-import {DatabaseStorage} from "@localful-athena/storage/databases";
+import {LocalDatabaseDto} from "@localful-athena/types/database";
 
 export interface LocalfulContext<DataSchema extends DataSchemaDefinition> {
-	localful: LocalfulWeb<DataSchema>
-	currentDatabase?: EntityDatabase<DataSchema>
+	currentDatabase: EntityDatabase<DataSchema> | null
 	currentDatabaseDto?: LocalDatabaseDto
-	openDatabase: (databaseId: string) => Promise<EntityDatabase<DataSchema>>
 	closeCurrentDatabase: () => Promise<void>
-	lockDatabase: DatabaseStorage['lockDatabase']
-	deleteDatabase: DatabaseStorage['delete']
-	deleteLocalDatabase: DatabaseStorage['deleteLocal']
+	openDatabase: LocalfulWeb<DataSchema>['openDatabase']
+	createDatabase: LocalfulWeb<DataSchema>['createDatabase']
+	updateDatabase: LocalfulWeb<DataSchema>['updateDatabase']
+	deleteDatabase: LocalfulWeb<DataSchema>['deleteDatabase']
+	deleteLocalDatabase:  LocalfulWeb<DataSchema>['deleteLocalDatabase']
+	unlockDatabase: LocalfulWeb<DataSchema>['unlockDatabase']
+	lockDatabase: LocalfulWeb<DataSchema>['lockDatabase']
+	liveQueryDatabase:  LocalfulWeb<DataSchema>['liveQueryDatabase']
+	liveGetDatabase:  LocalfulWeb<DataSchema>['liveGetDatabase']
 }
 
 // eslint-disable-next-line -- can't know the generic type when declaring static variable. The useLocalful hook can then accept the generic.
@@ -38,14 +41,14 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	const [localful] = useState(() => new LocalfulWeb<DataSchema>({
 		dataSchema: props.dataSchema
 	}))
-	const [currentDatabase, setCurrentDatabase] = useState<undefined | EntityDatabase<DataSchema>>()
+	const [currentDatabase, setCurrentDatabase] = useState<null | EntityDatabase<DataSchema>>(null)
 
 	const [currentDatabaseDto, setCurrentDatabaseDto] = useState<LocalDatabaseDto | undefined>(undefined)
 
-	const ensureDatabaseClosed = useCallback(async (databaseId: string) => {
+	const _ensureDatabaseClosed = useCallback(async (databaseId: string) => {
 		if (currentDatabase?.databaseId === databaseId) {
 			await currentDatabase.close()
-			setCurrentDatabase(undefined)
+			setCurrentDatabase(null)
 		}
 	}, [currentDatabase])
 
@@ -54,35 +57,67 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 			await currentDatabase.close()
 		}
 
-		setCurrentDatabase(undefined)
+		setCurrentDatabase(null)
 	}, [currentDatabase])
 
-	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<DataSchema>> => {
+	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<DataSchema> | null> => {
 		await closeCurrentDatabase()
 
 		const newDatabase = await localful.openDatabase(databaseId)
 		setCurrentDatabase(newDatabase)
 
+		// todo: should be extracted away not directly using localStorage?
+		if (newDatabase) {
+			localStorage.setItem('lf_open_db', databaseId)
+		}
+
 		return newDatabase
 	}, [closeCurrentDatabase])
 
-	const lockDatabase = useCallback(async (databaseId: string) => {
-		if (currentDatabase) {
-			await ensureDatabaseClosed(databaseId)
-			await localful.lockDatabase(databaseId)
-		}
-	}, [ensureDatabaseClosed])
+	const createDatabase = useCallback(localful.createDatabase.bind(localful), [])
+
+	const updateDatabase = useCallback(localful.updateDatabase.bind(localful), [])
 
 	const deleteDatabase = useCallback(async (databaseId: string) => {
-		await ensureDatabaseClosed(databaseId)
+		await _ensureDatabaseClosed(databaseId)
 		return localful.deleteDatabase(databaseId)
-	}, [ensureDatabaseClosed])
+	}, [_ensureDatabaseClosed])
 
 	const deleteLocalDatabase = useCallback(async (databaseId: string) => {
-		await ensureDatabaseClosed(databaseId)
+		await _ensureDatabaseClosed(databaseId)
 		return localful.deleteLocalDatabase(databaseId)
-	}, [ensureDatabaseClosed])
+	}, [_ensureDatabaseClosed])
 
+	const unlockDatabase = useCallback(async (databaseId: string, password: string) => {
+		const unlockSuccess = await localful.unlockDatabase(databaseId, password)
+		if (unlockSuccess) {
+			await openDatabase(databaseId)
+		}
+
+		return unlockSuccess
+	}, [_ensureDatabaseClosed])
+
+	const lockDatabase = useCallback(async (databaseId: string) => {
+		if (currentDatabase?.databaseId === databaseId) {
+			localStorage.removeItem('lf_open_db')
+			await _ensureDatabaseClosed(databaseId)
+		}
+		return localful.lockDatabase(databaseId)
+	}, [_ensureDatabaseClosed])
+
+	const liveQueryDatabase = useCallback(localful.liveQueryDatabase.bind(localful), [])
+
+	const liveGetDatabase = useCallback(localful.liveGetDatabase.bind(localful), [])
+
+	// Automatically open the last opened database
+	useEffect(() => {
+		const alreadyOpenDatabase = localStorage.getItem('lf_open_db')
+		if (alreadyOpenDatabase) {
+			openDatabase(alreadyOpenDatabase)
+		}
+	}, []);
+
+	// Automatically update the currentDatabaseDto state when the currentDatabase changes
 	useEffect(() => {
 		if (currentDatabase) {
 			const dtoLiveQuery = localful.liveGetDatabase(currentDatabase.databaseId)
@@ -105,13 +140,17 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	}, [currentDatabase])
 
 	return <LocalfulContext.Provider value={{
-		localful,
 		currentDatabase,
 		currentDatabaseDto,
 		openDatabase,
 		closeCurrentDatabase,
-		lockDatabase,
+		createDatabase,
+		updateDatabase,
 		deleteDatabase,
-		deleteLocalDatabase
+		deleteLocalDatabase,
+		unlockDatabase,
+		lockDatabase,
+		liveQueryDatabase,
+		liveGetDatabase,
 	}}>{props.children}</LocalfulContext.Provider>
 }

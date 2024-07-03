@@ -12,6 +12,7 @@ import {Logger} from "../../src/utils/logger";
 import {LOCALFUL_INDEXDB_DATABASE_VERSION, LOCALFUL_VERSION} from "../localful-web";
 import {LocalDatabaseDto, LocalDatabaseEntity, LocalDatabaseFields} from "../types/database";
 import {EventManager} from "../events/event-manager";
+import {KeyStorage} from "../storage/key-storage";
 
 export interface DatabaseStorageDependencies {
 	eventManager: EventManager
@@ -53,11 +54,11 @@ export class DatabaseStorage {
 	}
 
 	private async _createDto(entity: LocalDatabaseEntity): Promise<LocalDatabaseDto> {
-		// todo: attempt to load encryption key, and set isUnlocked based on being able to load the key
+		const encryptionKey = await KeyStorage.get(entity.id)
 
 		return {
 			...entity,
-			isUnlocked: false
+			isUnlocked: typeof encryptionKey === 'string'
 		}
 	}
 
@@ -67,7 +68,8 @@ export class DatabaseStorage {
 
 		try {
 			const encryptionKey = await LocalfulEncryption.decryptProtectedEncryptionKey(database.data.protectedEncryptionKey, password)
-			// todo: add encryptionKey to KeyStorage
+			await KeyStorage.set(database.data.id, encryptionKey)
+			return true
 		}
 		catch (e) {
 			console.debug(e)
@@ -76,9 +78,15 @@ export class DatabaseStorage {
 		return false;
 	}
 
-	async lockDatabase(id: string): Promise<void> {
-		// todo: delete encryptionKey stored in KeyStorage
-		return;
+	async lockDatabase(id: string): Promise<boolean> {
+		try {
+			await KeyStorage.delete(id)
+			return true
+		}
+		catch (e) {
+			console.error(e)
+			return false
+		}
 	}
 
 	// todo: add method for updating password
@@ -94,7 +102,7 @@ export class DatabaseStorage {
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction(['databases'], 'readonly')
 		const entity = await tx.objectStore('databases').get(id) as LocalDatabaseEntity|undefined
-		if (!entity) {
+		if (!entity || entity.isDeleted === 1) {
 			return {success: false, errors: [{type: ErrorTypes.DATABASE_NOT_FOUND, context: id}]}
 		}
 		await tx.done
@@ -119,7 +127,7 @@ export class DatabaseStorage {
 		// derive unlock key (KEK) from password
 		// create protectedEncryptionKey, which is the encryptionKey encrypted with the unlock key
 		const {protectedEncryptionKey, encryptionKey} = await LocalfulEncryption.createProtectedEncryptionKey(password)
-		// todo: add encryptionKey to KeyStorage
+		await KeyStorage.set(id, encryptionKey)
 
 		const tx = db.transaction(['databases'], 'readwrite')
 
