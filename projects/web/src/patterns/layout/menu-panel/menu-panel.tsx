@@ -10,6 +10,7 @@ import {
 	Shapes as DataStructureIcon,
 	Settings as SettingsIcon,
 	HelpCircle as HelpIcon,
+	UserCircle as AccountIcon,
 } from "lucide-react"
 import {MainPanelAction} from "./main-panel-action";
 
@@ -129,25 +130,33 @@ export function MenuPanel() {
 
 			<div className="menu-panel__user">
 				<div className="menu-panel__user-content">
-					<JTooltip content="Account & Settings" renderAsChild={true} variant='dark'>
+					<JTooltip content="Account" renderAsChild={true} variant='dark'>
 						<button
-							className="menu-panel__user-settings"
+							className="menu-panel__account"
+							onClick={() => {
+								setSettingsDialogOpen(true)
+							}}
+						><AccountIcon/></button>
+					</JTooltip>
+					<JTooltip content="Settings" renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__settings"
 							onClick={() => {
 								setSettingsDialogOpen(true)
 							}}
 						><SettingsIcon/></button>
 					</JTooltip>
-					<JTooltip content='Status & Logs' renderAsChild={true} variant='dark'>
+					<JTooltip content='Logs' renderAsChild={true} variant='dark'>
 						<button
-							className="menu-panel__database-status"
+							className="menu-panel__logs"
 							onClick={() => {
 								setStatusDialogOpen(true);
 							}}
 						><JIcon><StatusDownloadIcon /></JIcon></button>
 					</JTooltip>
-					<JTooltip content="About & Help" renderAsChild={true} variant='dark'>
+					<JTooltip content="Help" renderAsChild={true} variant='dark'>
 						<button
-							className="menu-panel__user-help"
+							className="menu-panel__help"
 						><HelpIcon/></button>
 					</JTooltip>
 				</div>

@@ -58,7 +58,7 @@ export function DatabaseUnlockForm(props: DatabaseUnlockFormProps) {
 							<JInput
 								label="Password"
 								id="password"
-								type="text"
+								type="password"
 								placeholder="your unlock password..."
 								error={errors.password?.message}
 								required={true}
