@@ -1,6 +1,6 @@
 import {useCallback} from "react";
-import {useDatabaseManagerDialogContext} from "../database-manager";
 import {DatabaseUnlockForm} from "../forms/database-unlock-form";
+import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
 
 export interface DatabaseUnlockScreenProps {
 	databaseId: string

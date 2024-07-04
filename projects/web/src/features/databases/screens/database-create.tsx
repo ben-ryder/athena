@@ -3,7 +3,7 @@ import {useCallback, useState} from "react";
 import {LocalDatabaseFields} from "@localful-athena/types/database";
 import {DatabasePasswordForm} from "../forms/database-password-form";
 import {useLocalful} from "@localful-athena/react/use-localful";
-import {useDatabaseManagerDialogContext} from "../database-manager";
+import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
 
 export type DatabaseCreateSteps = 'basic-info' | 'encryption'
 

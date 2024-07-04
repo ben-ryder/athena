@@ -16,7 +16,6 @@ import {MainPanelAction} from "./main-panel-action";
 
 import './menu-panel.scss'
 import { JIcon, JTooltip } from "@ben-ryder/jigsaw-react";
-import {useDatabaseManagerDialogContext} from "../../../features/databases/database-manager";
 import {useNewContentDialog} from "../../../features/new-content/new-content-dialog";
 import {useStatusDialog} from "../../../features/status/status-dialog";
 import {useSearchDialog} from "../../../features/search/dialog/search-dialog";
@@ -25,6 +24,7 @@ import { useViewsDialog } from "../../../features/views/dialog/views-dialog";
 import {useContentListDialog} from "../../../features/content-list/dialog/content-list-dialog";
 import {useSettingsDialog} from "../../../features/settings/settings-dialog";
 import {useLocalful} from "@localful-athena/react/use-localful";
+import {useDatabaseManagerDialogContext} from "../../../features/databases/manager/database-manager-context";
 
 export interface WithMenuPanelControl {
 	menuPanelIsOpen: boolean

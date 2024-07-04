@@ -1,16 +1,20 @@
-import {JButton} from "@ben-ryder/jigsaw-react";
-import {useDatabaseManagerDialogContext} from "../database-manager";
+import {JButton, JCallout} from "@ben-ryder/jigsaw-react";
 import {useLocalful} from "@localful-athena/react/use-localful";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {ErrorCallout} from "../../../patterns/components/error-callout/error-callout";
 import {useCallback} from "react";
 import {LocalDatabaseDto} from "@localful-athena/types/database";
+import {useWorkspaceContext} from "../../workspace/workspace-context";
+import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
 
 
 export function DatabaseListScreen() {
 	const { setOpenTab, close } = useDatabaseManagerDialogContext()
-	const { openDatabase, liveQueryDatabase } = useLocalful()
+	const { openDatabase, liveQueryDatabase, lockDatabase } = useLocalful()
 	const databaseQuery = useObservableQuery(liveQueryDatabase())
+
+	const { tabs } = useWorkspaceContext()
+	const workspaceHasUnsavedChanges = tabs.filter(tab => tab.isUnsaved).length > 0
 
 	const attemptOpenDatabase = useCallback(async (database: LocalDatabaseDto) => {
 		if (!database.isUnlocked) {
@@ -51,6 +55,14 @@ export function DatabaseListScreen() {
 									setOpenTab({type: 'edit', databaseId: database.id})
 								}}
 							>Edit</JButton>
+							{database.isUnlocked && (
+								<JButton
+									variant='tertiary'
+									onClick={async () => {
+										await lockDatabase(database.id)
+									}}
+								>Lock</JButton>
+							)}
 							<JButton
 								variant='tertiary'
 								onClick={() => {
@@ -66,6 +78,9 @@ export function DatabaseListScreen() {
 
 	return (
 		<div>
+			{workspaceHasUnsavedChanges && (
+				<JCallout variant='warning'>You have unsaved changes that will be lost if you switch databases now.</JCallout>
+			)}
 			<JButton
 				onClick={() => {
 					setOpenTab({type: 'create'})

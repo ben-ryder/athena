@@ -66,11 +66,6 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		const newDatabase = await localful.openDatabase(databaseId)
 		setCurrentDatabase(newDatabase)
 
-		// todo: should be extracted away not directly using localStorage?
-		if (newDatabase) {
-			localStorage.setItem('lf_open_db', databaseId)
-		}
-
 		return newDatabase
 	}, [closeCurrentDatabase])
 
@@ -99,7 +94,6 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 
 	const lockDatabase = useCallback(async (databaseId: string) => {
 		if (currentDatabase?.databaseId === databaseId) {
-			localStorage.removeItem('lf_open_db')
 			await _ensureDatabaseClosed(databaseId)
 		}
 		return localful.lockDatabase(databaseId)
@@ -108,14 +102,6 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	const liveQueryDatabase = useCallback(localful.liveQueryDatabase.bind(localful), [])
 
 	const liveGetDatabase = useCallback(localful.liveGetDatabase.bind(localful), [])
-
-	// Automatically open the last opened database
-	useEffect(() => {
-		const alreadyOpenDatabase = localStorage.getItem('lf_open_db')
-		if (alreadyOpenDatabase) {
-			openDatabase(alreadyOpenDatabase)
-		}
-	}, []);
 
 	// Automatically update the currentDatabaseDto state when the currentDatabase changes
 	useEffect(() => {

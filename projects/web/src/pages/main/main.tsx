@@ -13,7 +13,7 @@ import {ContentListDialog, ContentListDialogProvider} from "../../features/conte
 import {SettingsDialog, SettingsDialogProvider} from "../../features/settings/settings-dialog";
 import {LocalfulContextProvider} from "@localful-athena/react/use-localful";
 import {DATA_SCHEMA} from "../../state/athena-localful";
-import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/database-manager";
+import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/manager/database-manager";
 
 export function MainPage() {
 	const [isMenuPanelOpen, setIsOpenPanelOpen] = useState<boolean>(false)

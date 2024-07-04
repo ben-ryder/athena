@@ -69,6 +69,7 @@ export class DatabaseStorage {
 		try {
 			const encryptionKey = await LocalfulEncryption.decryptProtectedEncryptionKey(database.data.protectedEncryptionKey, password)
 			await KeyStorage.set(database.data.id, encryptionKey)
+			this.eventManager.dispatch( EventTypes.DATABASE_UNLOCK, { id: id })
 			return true
 		}
 		catch (e) {
@@ -81,6 +82,7 @@ export class DatabaseStorage {
 	async lockDatabase(id: string): Promise<boolean> {
 		try {
 			await KeyStorage.delete(id)
+			this.eventManager.dispatch( EventTypes.DATABASE_LOCK, { id: id })
 			return true
 		}
 		catch (e) {

@@ -1,43 +1,12 @@
-import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
-import {PropsWithChildren} from "../../utils/children-prop";
+import React, {ReactNode, useCallback, useEffect, useRef, useState} from "react";
+import {PropsWithChildren} from "../../../utils/children-prop";
 import {JDialog} from "@ben-ryder/jigsaw-react";
-import {DatabaseListScreen} from "./screens/database-list";
-import {DatabaseCreateScreen} from "./screens/database-create";
+import {DatabaseListScreen} from "../screens/database-list";
+import {DatabaseCreateScreen} from "../screens/database-create";
 import { useLocalful } from "@localful-athena/react/use-localful";
-import { DatabaseEditScreen } from "./screens/database-edit";
-import {DatabaseUnlockScreen} from "./screens/database-unlock";
-
-export type DatabaseManagerTabs = {
-	type: 'list',
-} | {
-	type: 'create'
-} | {
-	type: 'edit'
-	databaseId: string
-} |  {
-	type: 'change-password'
-	databaseId: string
-} | {
-	type: 'unlock'
-	databaseId: string
-}
-
-export interface DatabaseManagerDialogContext {
-	openTab?: DatabaseManagerTabs
-	setOpenTab: (tab?: DatabaseManagerTabs) => void
-	close: () => void
-}
-
-const DatabaseDialogContext = createContext<DatabaseManagerDialogContext|undefined>(undefined)
-
-export function useDatabaseManagerDialogContext() {
-	const databaseDialogContext = useContext(DatabaseDialogContext)
-	if (!databaseDialogContext) {
-		throw new Error('Attempted to use database dialog context outside provider.')
-	}
-
-	return databaseDialogContext
-}
+import { DatabaseEditScreen } from "../screens/database-edit";
+import {DatabaseUnlockScreen} from "../screens/database-unlock";
+import {_DatabaseDialogContext, DatabaseManagerTabs, useDatabaseManagerDialogContext} from "./database-manager-context";
 
 export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 	const [openTab, _setOpenTab] = useState<DatabaseManagerTabs|undefined>(undefined)
@@ -51,7 +20,7 @@ export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 	}, [])
 
 	return (
-		<DatabaseDialogContext.Provider
+		<_DatabaseDialogContext.Provider
 			value={{
 				openTab: openTab,
 				setOpenTab,
@@ -59,7 +28,7 @@ export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 			}}
 		>
 			{props.children}
-		</DatabaseDialogContext.Provider>
+		</_DatabaseDialogContext.Provider>
 	)
 }
 
@@ -67,7 +36,7 @@ export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 export function DatabaseManagerDialog() {
 	const { openTab, setOpenTab, close } = useDatabaseManagerDialogContext()
 
-	const { currentDatabase } = useLocalful()
+	const { currentDatabase, openDatabase } = useLocalful()
 
 	let dialogContent: ReactNode
 	switch (openTab?.type) {
@@ -97,15 +66,34 @@ export function DatabaseManagerDialog() {
 	}
 
 	// Keep the database manager open if there is no current database
+	const isFirstOpen = useRef(true)
 	useEffect(() => {
-		if (!currentDatabase && !openTab) {
-			setOpenTab({type: 'list'})
-		}
-	}, [currentDatabase, openTab])
+		async function handleDatabaseOpenLogic() {
+			if (currentDatabase) {
+				localStorage.setItem('lf_lastOpenedDb', currentDatabase.databaseId)
+			}
+			else if (isFirstOpen.current) {
+				const lastOpenedDatabaseId = localStorage.getItem('lf_lastOpenedDb')
+				if (lastOpenedDatabaseId) {
+					const openDb = await openDatabase(lastOpenedDatabaseId)
+					if (openDb) {
+						console.debug('opened lastOpenedDatabaseId')
+						return
+					}
+				}
 
+				isFirstOpen.current = false
+				console.debug('open to list')
+				setOpenTab({type: 'list'})
+			}
+		}
+		handleDatabaseOpenLogic()
+	}, [currentDatabase])
+
+	const hasActiveTab = !currentDatabase || !!openTab
 	return (
 		<JDialog
-			isOpen={!!openTab}
+			isOpen={hasActiveTab}
 			setIsOpen={(isOpen) => {
 				if (isOpen) {
 					setOpenTab(isOpen ? {type: 'list'} : undefined)
@@ -114,6 +102,7 @@ export function DatabaseManagerDialog() {
 					close()
 				}
 			}}
+			role={hasActiveTab ? 'dialog' : 'alertdialog'}
 			disableOutsideClose={!currentDatabase}
 			title="Database Manager"
 			description="Manage your current database"

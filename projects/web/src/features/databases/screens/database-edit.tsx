@@ -2,10 +2,10 @@ import {DatabaseBasicDataForm} from "../forms/database-basic-data-form";
 import {useCallback} from "react";
 import {LocalDatabaseFields} from "@localful-athena/types/database";
 import {useLocalful} from "@localful-athena/react/use-localful";
-import {useDatabaseManagerDialogContext} from "../database-manager";
 import { JButton } from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { ErrorCallout } from "../../../patterns/components/error-callout/error-callout";
+import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
 
 export interface DatabaseEditScreenProps {
 	databaseId: string
