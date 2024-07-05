@@ -75,7 +75,7 @@ export function DatabaseUnlockForm(props: DatabaseUnlockFormProps) {
 			</div>
 			<JFormRow>
 				<JButtonGroup>
-					<JButton type="submit">{'Unlock'}</JButton>
+					<JButton type="submit">{'Unlock and Open'}</JButton>
 				</JButtonGroup>
 			</JFormRow>
 		</JForm>

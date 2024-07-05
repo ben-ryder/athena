@@ -56,7 +56,7 @@ export function MenuPanel() {
 								}
 							}}
 						>
-							<span className="menu-panel__database-name" tabIndex={-1}>{currentDatabaseDto ? currentDatabaseDto.name : 'No Database Open'}</span>
+							<span className="menu-panel__database-name" tabIndex={-1}>{currentDatabaseDto && currentDatabaseDto.name}</span>
 							{currentDatabase && <JIcon size='sm'><EditIcon/></JIcon>}
 						</button>
 					</JTooltip>

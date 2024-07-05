@@ -385,9 +385,6 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
 		// todo: add query memory cache?
 
-		console.debug(query)
-		console.debug(this.databaseId)
-
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction([query.table, this._getVersionTableName(query.table)], 'readonly')
 
@@ -473,9 +470,6 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		const cursorResults: {entity: LocalEntity, version: EntityVersion}[] = []
 		const errors: ErrorObject[] = []
-
-		console.debug(cursorResults)
-		console.debug(errors)
 
 		// Iterate over all indexes and all items in the index cursor, also running the user-supplied whereCursor function.
 		for (const queryIndex of indexes) {

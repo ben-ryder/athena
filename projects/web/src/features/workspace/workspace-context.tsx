@@ -35,6 +35,7 @@ export interface WorkspaceContext {
 	tabs: WorkspaceTab[]
 	openTab: (tab: WorkspaceTab, options?: OpenTabOptions) => void
 	closeTab: (tabIndex: number) => void
+	closeAllTabs: () => void
 	replaceTab: (tabIndex: number, tab: WorkspaceTab) => void
 	activeTab: number
 	setActiveTab: (tabIndex: number) => void
@@ -46,6 +47,7 @@ const DefaultWorkspaceContext: WorkspaceContext = {
 	tabs: [],
 	openTab: () => {},
 	closeTab: () => {},
+	closeAllTabs: () => {},
 	replaceTab: () => {},
 	activeTab: 0,
 	setActiveTab: () => {},
@@ -85,6 +87,11 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 				setActiveTab(0)
 			}
 		}
+	}, [tabs, activeTab])
+
+	const closeAllTabs = useCallback(() => {
+		setTabs([])
+		setActiveTab(0)
 	}, [tabs, activeTab])
 
 	const isValidTabIndex = useCallback((tabIndex: number) => {
@@ -153,6 +160,7 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 		tabs: tabs,
 		openTab: openTab,
 		closeTab: closeTab,
+		closeAllTabs: closeAllTabs,
 		replaceTab: replaceTab,
 		activeTab: activeTab,
 		setActiveTab: requestSetActiveTab,

@@ -7,6 +7,7 @@ import { useLocalful } from "@localful-athena/react/use-localful";
 import { DatabaseEditScreen } from "../screens/database-edit";
 import {DatabaseUnlockScreen} from "../screens/database-unlock";
 import {_DatabaseDialogContext, DatabaseManagerTabs, useDatabaseManagerDialogContext} from "./database-manager-context";
+import {useWorkspaceContext} from "../../workspace/workspace-context";
 
 export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 	const [openTab, _setOpenTab] = useState<DatabaseManagerTabs|undefined>(undefined)
@@ -35,6 +36,7 @@ export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 
 export function DatabaseManagerDialog() {
 	const { openTab, setOpenTab, close } = useDatabaseManagerDialogContext()
+	const { closeAllTabs } = useWorkspaceContext()
 
 	const { currentDatabase, openDatabase } = useLocalful()
 
@@ -68,11 +70,16 @@ export function DatabaseManagerDialog() {
 	// Keep the database manager open if there is no current database
 	const isFirstOpen = useRef(true)
 	useEffect(() => {
-		async function handleDatabaseOpenLogic() {
+		async function handleDatabaseChange() {
 			if (currentDatabase) {
 				localStorage.setItem('lf_lastOpenedDb', currentDatabase.databaseId)
+				// todo: should this be managed in workspace not here?
+				closeAllTabs()
+				close()
 			}
 			else if (isFirstOpen.current) {
+				isFirstOpen.current = false
+
 				const lastOpenedDatabaseId = localStorage.getItem('lf_lastOpenedDb')
 				if (lastOpenedDatabaseId) {
 					const openDb = await openDatabase(lastOpenedDatabaseId)
@@ -82,18 +89,16 @@ export function DatabaseManagerDialog() {
 					}
 				}
 
-				isFirstOpen.current = false
 				console.debug('open to list')
 				setOpenTab({type: 'list'})
 			}
 		}
-		handleDatabaseOpenLogic()
+		handleDatabaseChange()
 	}, [currentDatabase])
 
-	const hasActiveTab = !currentDatabase || !!openTab
 	return (
 		<JDialog
-			isOpen={hasActiveTab}
+			isOpen={!!openTab}
 			setIsOpen={(isOpen) => {
 				if (isOpen) {
 					setOpenTab(isOpen ? {type: 'list'} : undefined)
@@ -102,7 +107,7 @@ export function DatabaseManagerDialog() {
 					close()
 				}
 			}}
-			role={hasActiveTab ? 'dialog' : 'alertdialog'}
+			role={openTab ? 'dialog' : 'alertdialog'}
 			disableOutsideClose={!currentDatabase}
 			title="Database Manager"
 			description="Manage your current database"

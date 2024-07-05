@@ -48,7 +48,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	const _ensureDatabaseClosed = useCallback(async (databaseId: string) => {
 		if (currentDatabase?.databaseId === databaseId) {
 			await currentDatabase.close()
-			setCurrentDatabase(null)
+			setCurrentDatabase(() => {return null})
 		}
 	}, [currentDatabase])
 
@@ -56,8 +56,6 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		if (currentDatabase) {
 			await currentDatabase.close()
 		}
-
-		setCurrentDatabase(null)
 	}, [currentDatabase])
 
 	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<DataSchema> | null> => {
@@ -90,7 +88,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		}
 
 		return unlockSuccess
-	}, [_ensureDatabaseClosed])
+	}, [])
 
 	const lockDatabase = useCallback(async (databaseId: string) => {
 		if (currentDatabase?.databaseId === databaseId) {
@@ -121,6 +119,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 			}
 
 		} else {
+			console.debug('no current db, reset dto')
 			setCurrentDatabaseDto(undefined)
 		}
 	}, [currentDatabase])

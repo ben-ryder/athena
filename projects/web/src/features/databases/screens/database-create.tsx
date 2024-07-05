@@ -25,8 +25,6 @@ export function DatabaseCreateScreen() {
 	}, [])
 
 	const onSave = useCallback(async (password: string) => {
-		console.debug(basicInfo)
-		console.debug(password)
 		if (!basicInfo) {
 			console.error('No basic info set')
 			return
