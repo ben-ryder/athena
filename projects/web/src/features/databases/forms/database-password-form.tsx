@@ -16,7 +16,7 @@ export interface DatabasePasswordFormProps {
 	onCancel: () => void;
 }
 
-const DatabasePasswordSchema = z.object({
+export const DatabasePasswordSchema = z.object({
 	password: z.string().min(10, {message: 'Must be at least 10 chars'}),
 	confirmPassword: z.string()
 })
@@ -24,7 +24,7 @@ const DatabasePasswordSchema = z.object({
 		message: "Must match password",
 		path: ['confirmPassword']
 	})
-type DatabasePasswordSchema = z.infer<typeof DatabasePasswordSchema>
+export type DatabasePasswordSchema = z.infer<typeof DatabasePasswordSchema>
 
 export function DatabasePasswordForm(props: DatabasePasswordFormProps) {
 	const {

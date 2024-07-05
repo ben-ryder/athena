@@ -3,22 +3,22 @@ import { AttachmentsManagerPage } from "../attachments/manager/attachments-manag
 import { JButton, JButtonGroup } from "@ben-ryder/jigsaw-react";
 import {PerformanceManager} from "../performance/performance-manager";
 
-export type SettingsTabs = "account" | "settings" | "attachments" | "performance"
+export type SettingsTabs = "settings" | "attachments" | "performance" | "import-export"
 
 export function SettingsManager() {
-	const [currentTab, setCurrentTab] = useState<SettingsTabs>("account")
+	const [currentTab, setCurrentTab] = useState<SettingsTabs>("settings")
 
 	let content: ReactNode
-	if (currentTab === "account") {
-		content = <p>Account</p>
-	}
-	else if (currentTab === "settings") {
+	if (currentTab === "settings") {
 		content = <p>Settings</p>
 	} else if (currentTab === "attachments") {
 		content = <AttachmentsManagerPage />
 	}
 	else if (currentTab === "performance") {
 		content = <PerformanceManager />
+	}
+	else if (currentTab === "import-export") {
+		content = <p>import/export</p>
 	}
 	else {
 		content = <p>Tab Not Found: {currentTab}</p>
@@ -27,9 +27,9 @@ export function SettingsManager() {
 	return (
 		<div>
 			<JButtonGroup align="left">
-				<JButton onClick={() => setCurrentTab("account")}>Account</JButton>
 				<JButton onClick={() => setCurrentTab("settings")}>Settings</JButton>
-				<JButton onClick={() => setCurrentTab("attachments")}>Attachments</JButton>
+				<JButton onClick={() => setCurrentTab("attachments")}>Manage Attachments</JButton>
+				<JButton onClick={() => setCurrentTab("import-export")}>Import/Export</JButton>
 				<JButton onClick={() => setCurrentTab("performance")}>Device Benchmark</JButton>
 			</JButtonGroup>
 

@@ -8,6 +8,7 @@ import { DatabaseEditScreen } from "../screens/database-edit";
 import {DatabaseUnlockScreen} from "../screens/database-unlock";
 import {_DatabaseDialogContext, DatabaseManagerTabs, useDatabaseManagerDialogContext} from "./database-manager-context";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
+import {DatabaseChangePasswordScreen} from "../screens/database-change-password";
 
 export function DatabaseManagerDialogProvider(props: PropsWithChildren) {
 	const [openTab, _setOpenTab] = useState<DatabaseManagerTabs|undefined>(undefined)
@@ -55,7 +56,7 @@ export function DatabaseManagerDialog() {
 			break;
 		}
 		case "change-password": {
-			dialogContent = <p>change password {openTab.databaseId}</p>
+			dialogContent = <DatabaseChangePasswordScreen databaseId={openTab.databaseId} />
 			break;
 		}
 		case "unlock": {

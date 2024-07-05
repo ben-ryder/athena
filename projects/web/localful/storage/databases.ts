@@ -91,7 +91,34 @@ export class DatabaseStorage {
 		}
 	}
 
-	// todo: add method for updating password
+	async changeDatabasePassword(databaseId: string, currentPassword: string, newPassword: string) {
+		const currentDatabase = await this.get(databaseId)
+		if (!currentDatabase.success) return currentDatabase
+
+		const { protectedEncryptionKey } = await LocalfulEncryption.updateProtectedEncryptionKey(
+			currentDatabase.data.protectedEncryptionKey,
+			currentPassword,
+			newPassword
+		)
+
+		const timestamp = new Date().toISOString();
+
+		const db = await this.getIndexDbDatabase()
+		const tx = db.transaction(['databases'], 'readwrite')
+
+		const newDatabase: LocalDatabaseEntity = {
+			...currentDatabase.data,
+			protectedEncryptionKey: protectedEncryptionKey,
+			updatedAt: timestamp
+		}
+		await tx.objectStore('databases').put(newDatabase)
+
+		await tx.done
+
+		this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: databaseId, action: 'change-password' })
+
+		return {success: true, data: null}
+	}
 
 	/**
 	 * Get a single database

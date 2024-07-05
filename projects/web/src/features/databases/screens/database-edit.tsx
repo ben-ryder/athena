@@ -2,7 +2,7 @@ import {DatabaseBasicDataForm} from "../forms/database-basic-data-form";
 import {useCallback} from "react";
 import {LocalDatabaseFields} from "@localful-athena/types/database";
 import {useLocalful} from "@localful-athena/react/use-localful";
-import { JButton } from "@ben-ryder/jigsaw-react";
+import {JArrowButton, JArrowLink, JButton} from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { ErrorCallout } from "../../../patterns/components/error-callout/error-callout";
 import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
@@ -88,23 +88,27 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 		}
 	}, [])
 
-	const dtoQuery = useObservableQuery(liveGetDatabase(props.databaseId))
+	const databaseQuery = useObservableQuery(liveGetDatabase(props.databaseId))
 
-	if (dtoQuery.status === 'loading') {
+	if (databaseQuery.status === 'loading') {
 		return (
 			<p>Loading...</p>
 		)
 	}
 
-	if (dtoQuery.status === 'error') {
+	if (databaseQuery.status === 'error') {
 		return (
-			<ErrorCallout errors={dtoQuery.errors} />
+			<ErrorCallout errors={databaseQuery.errors} />
 		)
 	}
 
 	return (
 		<div>
-			<h2>Edit Database</h2>
+			<JArrowButton
+				direction='left'
+				onClick={() => {setOpenTab({type: 'list'})}}
+			>All databases</JArrowButton>
+			<h2>Edit Database {databaseQuery.data.name}</h2>
 			<JButton
 				variant='secondary'
 				onClick={() => {
@@ -123,8 +127,8 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 				saveText='Save'
 				onSave={onSave}
 				initialData={{
-					name: dtoQuery.data.name,
-					syncEnabled: dtoQuery.data.syncEnabled
+					name: databaseQuery.data.name,
+					syncEnabled: databaseQuery.data.syncEnabled
 				}}
 				extraButtons={
 					<>

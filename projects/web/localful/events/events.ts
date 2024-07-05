@@ -71,7 +71,7 @@ export interface DatabaseChangeEvent {
 		context: EventContext,
 		data: {
 			id: string
-			action: 'create' | 'update' | 'delete' | 'purge'
+			action: 'create' | 'update' | 'delete' | 'purge' | 'change-password'
 		}
 	}
 }

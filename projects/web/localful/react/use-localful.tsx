@@ -13,6 +13,7 @@ export interface LocalfulContext<DataSchema extends DataSchemaDefinition> {
 	updateDatabase: LocalfulWeb<DataSchema>['updateDatabase']
 	deleteDatabase: LocalfulWeb<DataSchema>['deleteDatabase']
 	deleteLocalDatabase:  LocalfulWeb<DataSchema>['deleteLocalDatabase']
+	changeDatabasePassword: LocalfulWeb<DataSchema>['changeDatabasePassword']
 	unlockDatabase: LocalfulWeb<DataSchema>['unlockDatabase']
 	lockDatabase: LocalfulWeb<DataSchema>['lockDatabase']
 	liveQueryDatabase:  LocalfulWeb<DataSchema>['liveQueryDatabase']
@@ -97,6 +98,8 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		return localful.lockDatabase(databaseId)
 	}, [_ensureDatabaseClosed])
 
+	const changeDatabasePassword = useCallback(localful.changeDatabasePassword.bind(localful), [])
+
 	const liveQueryDatabase = useCallback(localful.liveQueryDatabase.bind(localful), [])
 
 	const liveGetDatabase = useCallback(localful.liveGetDatabase.bind(localful), [])
@@ -135,6 +138,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		deleteLocalDatabase,
 		unlockDatabase,
 		lockDatabase,
+		changeDatabasePassword,
 		liveQueryDatabase,
 		liveGetDatabase,
 	}}>{props.children}</LocalfulContext.Provider>
