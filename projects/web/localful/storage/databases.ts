@@ -1,4 +1,11 @@
-import {ActionResult, ErrorTypes, Query, QUERY_LOADING, QueryStatus} from "../control-flow";
+import {
+	ErrorTypes,
+	LIVE_QUERY_LOADING_STATE,
+	LiveQueryResult,
+	LiveQueryStatus,
+	LocalfulError,
+	QueryResult
+} from "../control-flow";
 import {LocalfulEncryption} from "../encryption/encryption";
 import {Observable} from "rxjs";
 import {
@@ -24,7 +31,7 @@ type AnyDatabaseEvent =
 	CustomEvent<DatabaseLockEvent['detail']>
 
 export class DatabaseStorage {
-	private readonly _database?: IDBPDatabase
+	private _database?: IDBPDatabase
 	private readonly eventManager: EventManager
 
 	constructor(
@@ -33,12 +40,16 @@ export class DatabaseStorage {
 		this.eventManager = deps.eventManager
 	}
 
+	private _getIndexDbKey(databaseId: string) {
+		return `lf_${databaseId}`
+	}
+
 	private async getIndexDbDatabase() {
 		if (this._database) {
 			return this._database
 		}
 
-		return openDB('localful', LOCALFUL_INDEXDB_DATABASE_VERSION, {
+		this._database = await openDB('localful', LOCALFUL_INDEXDB_DATABASE_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {
 				// Create database store
@@ -51,6 +62,7 @@ export class DatabaseStorage {
 				entityStore.createIndex('syncEnabled', ['syncEnabled', 'isDeleted'])
 			},
 		})
+		return this._database
 	}
 
 	private async _createDto(entity: LocalDatabaseEntity): Promise<LocalDatabaseDto> {
@@ -62,41 +74,31 @@ export class DatabaseStorage {
 		}
 	}
 
-	async unlockDatabase(id: string, password: string): Promise<boolean> {
+	async unlockDatabase(id: string, password: string): Promise<void> {
 		const database = await this.get(id)
-		if (!database.success) return false
 
+		let encryptionKey
 		try {
-			const encryptionKey = await LocalfulEncryption.decryptProtectedEncryptionKey(database.data.protectedEncryptionKey, password)
-			await KeyStorage.set(database.data.id, encryptionKey)
-			this.eventManager.dispatch( EventTypes.DATABASE_UNLOCK, { id: id })
-			return true
+			encryptionKey = await LocalfulEncryption.decryptProtectedEncryptionKey(database.protectedEncryptionKey, password)
 		}
 		catch (e) {
-			console.debug(e)
+			throw new LocalfulError({type: ErrorTypes.INVALID_PASSWORD_OR_KEY, originalError: e})
 		}
 
-		return false;
+		await KeyStorage.set(database.id, encryptionKey)
+		this.eventManager.dispatch( EventTypes.DATABASE_UNLOCK, { id: id })
 	}
 
-	async lockDatabase(id: string): Promise<boolean> {
-		try {
-			await KeyStorage.delete(id)
-			this.eventManager.dispatch( EventTypes.DATABASE_LOCK, { id: id })
-			return true
-		}
-		catch (e) {
-			console.error(e)
-			return false
-		}
+	async lockDatabase(id: string): Promise<void> {
+		await KeyStorage.delete(id)
+		this.eventManager.dispatch( EventTypes.DATABASE_LOCK, { id: id })
 	}
 
 	async changeDatabasePassword(databaseId: string, currentPassword: string, newPassword: string) {
 		const currentDatabase = await this.get(databaseId)
-		if (!currentDatabase.success) return currentDatabase
 
 		const { protectedEncryptionKey } = await LocalfulEncryption.updateProtectedEncryptionKey(
-			currentDatabase.data.protectedEncryptionKey,
+			currentDatabase.protectedEncryptionKey,
 			currentPassword,
 			newPassword
 		)
@@ -107,7 +109,7 @@ export class DatabaseStorage {
 		const tx = db.transaction(['databases'], 'readwrite')
 
 		const newDatabase: LocalDatabaseEntity = {
-			...currentDatabase.data,
+			...currentDatabase,
 			protectedEncryptionKey: protectedEncryptionKey,
 			updatedAt: timestamp
 		}
@@ -125,19 +127,16 @@ export class DatabaseStorage {
 	 *
 	 * @param id
 	 */
-	async get(id: string): Promise<ActionResult<LocalDatabaseDto>> {
-		// todo: dont allow deleted database to be fetched?
-
+	async get(id: string): Promise<LocalDatabaseDto> {
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction(['databases'], 'readonly')
 		const entity = await tx.objectStore('databases').get(id) as LocalDatabaseEntity|undefined
 		if (!entity || entity.isDeleted === 1) {
-			return {success: false, errors: [{type: ErrorTypes.DATABASE_NOT_FOUND, context: id}]}
+			throw new LocalfulError({type: ErrorTypes.ENTITY_NOT_FOUND, devMessage: `${id} not found`})
 		}
 		await tx.done
 
-		const dto = await this._createDto(entity)
-		return {success: true, data: dto}
+		return await this._createDto(entity)
 	}
 
 	/**
@@ -146,15 +145,12 @@ export class DatabaseStorage {
 	 * @param data
 	 * @param password
 	 */
-	async create(data: LocalDatabaseFields, password: string): Promise<ActionResult<string>> {
+	async create(data: LocalDatabaseFields, password: string): Promise<string> {
 		const db = await this.getIndexDbDatabase()
 
 		const id = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
-		// create encryptionKey
-		// derive unlock key (KEK) from password
-		// create protectedEncryptionKey, which is the encryptionKey encrypted with the unlock key
 		const {protectedEncryptionKey, encryptionKey} = await LocalfulEncryption.createProtectedEncryptionKey(password)
 		await KeyStorage.set(id, encryptionKey)
 
@@ -178,7 +174,7 @@ export class DatabaseStorage {
 
 		this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'create'})
 
-		return { success: true, data: id }
+		return id
 	}
 
 	/**
@@ -190,9 +186,8 @@ export class DatabaseStorage {
 	 * @param dataUpdate
 	 * @param preventEventDispatch - Useful in situations like data migrations, where an update is done while fetching data so an event shouldn't be triggered.
 	 */
-	async update(id: string, dataUpdate: Partial<LocalDatabaseFields>, preventEventDispatch?: boolean): Promise<ActionResult> {
+	async update(id: string, dataUpdate: Partial<LocalDatabaseFields>, preventEventDispatch?: boolean): Promise<void> {
 		const currentDb = await this.get(id)
-		if (!currentDb.success) return currentDb as ActionResult
 
 		const timestamp = new Date().toISOString();
 
@@ -200,18 +195,18 @@ export class DatabaseStorage {
 		const tx = db.transaction(['databases'], 'readwrite')
 
 		const newDatabase: LocalDatabaseEntity = {
-			id: currentDb.data.id,
-			protectedEncryptionKey: currentDb.data.protectedEncryptionKey,
-			protectedData: currentDb.data.protectedData,
-			createdAt: currentDb.data.createdAt,
+			id: currentDb.id,
+			protectedEncryptionKey: currentDb.protectedEncryptionKey,
+			protectedData: currentDb.protectedData,
+			createdAt: currentDb.createdAt,
 			updatedAt: timestamp,
-			isDeleted: currentDb.data.isDeleted,
-			localfulVersion: currentDb.data.localfulVersion,
-			lastSyncedAt: currentDb.data.lastSyncedAt,
-			name: dataUpdate.name || currentDb.data.name,
+			isDeleted: currentDb.isDeleted,
+			localfulVersion: currentDb.localfulVersion,
+			lastSyncedAt: currentDb.lastSyncedAt,
+			name: dataUpdate.name || currentDb.name,
 			syncEnabled: dataUpdate.syncEnabled !== undefined
 				? dataUpdate.syncEnabled
-				: currentDb.data.syncEnabled,
+				: currentDb.syncEnabled,
 		}
 		await tx.objectStore('databases').put(newDatabase)
 
@@ -220,16 +215,13 @@ export class DatabaseStorage {
 		if (!preventEventDispatch) {
 			this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'update' })
 		}
-
-		return {success: true, data: null}
 	}
 
 	/**
 	 * Delete the given database on the local device and server, setting the 'isDeleted' flag
 	 */
-	async delete(id: string): Promise<ActionResult> {
-		const currentDb = await this.get(id)
-		if (!currentDb.success) return currentDb as ActionResult
+	async delete(id: string): Promise<void> {
+		const currentDatabase = await this.get(id)
 
 		const timestamp = new Date().toISOString();
 
@@ -238,16 +230,9 @@ export class DatabaseStorage {
 		const entityStore = tx.objectStore('databases')
 
 		const newDatabase: LocalDatabaseEntity = {
-			id: currentDb.data.id,
-			protectedEncryptionKey: currentDb.data.protectedEncryptionKey,
-			protectedData: currentDb.data.protectedData,
-			createdAt: currentDb.data.createdAt,
+			...currentDatabase,
 			updatedAt: timestamp,
 			isDeleted: 1,
-			localfulVersion: currentDb.data.localfulVersion,
-			lastSyncedAt: currentDb.data.lastSyncedAt,
-			name: currentDb.data.name,
-			syncEnabled: currentDb.data.syncEnabled,
 		}
 
 		// The keypath 'id' is supplied, so no need to also supply this in the second arg
@@ -255,11 +240,9 @@ export class DatabaseStorage {
 
 		await tx.done
 
-		indexedDB.deleteDatabase(id)
+		indexedDB.deleteDatabase(this._getIndexDbKey(id))
 
 		this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'delete' })
-
-		return {success: true, data: null}
 	}
 
 	/**
@@ -267,9 +250,9 @@ export class DatabaseStorage {
 	 *
 	 * @param id
 	 */
-	async deleteLocal(id: string): Promise<ActionResult> {
-		const currentDb = await this.get(id)
-		if (!currentDb.success) return currentDb as ActionResult
+	async deleteLocal(id: string): Promise<void> {
+		// We don't need to actually use the currentDatabase, but check it does exist.
+		await this.get(id)
 
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction(['databases'], 'readwrite')
@@ -277,15 +260,13 @@ export class DatabaseStorage {
 
 		await entityStore.delete(id)
 
-		indexedDB.deleteDatabase(id)
-
-		return { success: true, data: null }
+		indexedDB.deleteDatabase(this._getIndexDbKey(id))
 	}
 
 	/**
 	 * Query for all databases.
 	 */
-	async query(): Promise<ActionResult<LocalDatabaseDto[]>> {
+	async query(): Promise<QueryResult<LocalDatabaseDto[]>> {
 		const db = await this.getIndexDbDatabase()
 		const tx = db.transaction(['databases'], 'readonly')
 
@@ -305,47 +286,23 @@ export class DatabaseStorage {
 		}
 
 		return {
-			success: true,
-			data: dtos,
+			result: dtos,
 		}
 	}
 
-	/**
-	 * Purge the given database, permanently deleting the database item and IndexDB database.
-	 * This is different to just deletion, which will only delete the IndexDB database
-	 * and set the 'isDeleted' flag.
-	 *
-	 * @param id
-	 */
-	async purge(id: string): Promise<ActionResult> {
-		const db = await this.getIndexDbDatabase()
-
-		indexedDB.deleteDatabase(id)
-
-		const tx = db.transaction(['databases'], 'readwrite')
-		const entityStore = tx.objectStore('databases')
-		await entityStore.delete(id)
-
-		await tx.done
-
-		this.eventManager.dispatch( EventTypes.DATABASE_CHANGE, { id: id, action: 'purge' })
-
-		return {success: true, data: null}
-	}
-
 	liveGet(id: string) {
-		return new Observable<Query<LocalDatabaseDto>>((subscriber) => {
-			subscriber.next(QUERY_LOADING)
+		return new Observable<LiveQueryResult<LocalDatabaseDto>>((subscriber) => {
+			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
-				subscriber.next(QUERY_LOADING)
+				subscriber.next(LIVE_QUERY_LOADING_STATE)
 
-				const result = await this.get(id)
-				if (result.success) {
-					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
+				try {
+					const database = await this.get(id)
+					subscriber.next({status: LiveQueryStatus.SUCCESS, result: database})
 				}
-				else {
-					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				catch (e) {
+					subscriber.next({status: LiveQueryStatus.ERROR, errors: [e]})
 				}
 			}
 
@@ -373,18 +330,18 @@ export class DatabaseStorage {
 	}
 
 	liveQuery() {
-		return new Observable<Query<LocalDatabaseDto[]>>((subscriber) => {
-			subscriber.next(QUERY_LOADING)
+		return new Observable<LiveQueryResult<LocalDatabaseDto[]>>((subscriber) => {
+			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
-				subscriber.next(QUERY_LOADING)
+				subscriber.next(LIVE_QUERY_LOADING_STATE)
 
-				const result = await this.query()
-				if (result.success) {
-					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
+				try {
+					const query = await this.query()
+					subscriber.next({status: LiveQueryStatus.SUCCESS, result: query.result, errors: query.errors})
 				}
-				else {
-					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				catch (e) {
+					subscriber.next({status: LiveQueryStatus.ERROR, errors: [e]})
 				}
 			}
 

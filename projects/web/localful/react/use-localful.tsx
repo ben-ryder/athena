@@ -112,7 +112,6 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 				if (dto.status === 'success') {
 					setCurrentDatabaseDto(dto.data)
 				} else if (dto.status === 'error') {
-					console.error(dto.errors)
 					setCurrentDatabaseDto(undefined)
 				}
 			})
@@ -122,7 +121,6 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 			}
 
 		} else {
-			console.debug('no current db, reset dto')
 			setCurrentDatabaseDto(undefined)
 		}
 	}, [currentDatabase])

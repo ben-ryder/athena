@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ErrorTypes, LocalfulError } from "../control-flow";
 
 // todo: handle errors better, such as re-throwing web crypto errors with extra app specific context?
 
@@ -53,11 +54,25 @@ export class LocalfulEncryption {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- version may be used in future
 		const [version, base64Metadata, based64WrappedKey] = protectedEncryptionKey.split(":")
 
-		const rawMetadata = LocalfulEncryption._base64ToBytes(base64Metadata)
-		const metadata = UnlockKeyMetadata.parse(JSON.parse(new TextDecoder().decode(rawMetadata)))
-		const unlockKey = await LocalfulEncryption._deriveUnlockKey(password, metadata.salt)
+		let unlockKey: UnlockKey
+		try {
+			const rawMetadata = LocalfulEncryption._base64ToBytes(base64Metadata)
+			const metadata = UnlockKeyMetadata.parse(JSON.parse(new TextDecoder().decode(rawMetadata)))
+			unlockKey = await LocalfulEncryption._deriveUnlockKey(password, metadata.salt)
+		}
+		catch (e) {
+			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, originalError: e})
+		}
 
-		return await LocalfulEncryption._decryptWithKey(unlockKey.key, based64WrappedKey)
+		let encryptionKey: string
+		try {
+			encryptionKey = await LocalfulEncryption._decryptWithKey(unlockKey.key, based64WrappedKey)
+		}
+		catch (e) {
+			throw new LocalfulError({type: ErrorTypes.INVALID_PASSWORD_OR_KEY, originalError: e})
+		}
+
+		return encryptionKey
 	}
 
 	static async updateProtectedEncryptionKey(protectedEncryptionKey: string, currentPassword: string, newPassword: string): Promise<CreatedEncryptionKey> {
@@ -99,8 +114,15 @@ export class LocalfulEncryption {
 
 	private static _getEncryptionCryptoKey(encryptionKeyString: string): Promise<CryptoKey> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- version isn't used, but may be needed in the future.
-		const [version, base64Key] = encryptionKeyString.split('.')
-		const keyMaterial = LocalfulEncryption._base64ToBytes(base64Key)
+
+		let keyMaterial
+		try {
+			const [version, base64Key] = encryptionKeyString.split('.')
+			keyMaterial = LocalfulEncryption._base64ToBytes(base64Key)
+		}
+		catch (e) {
+			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, originalError: e})
+		}
 
 		return window.crypto.subtle.importKey(
 			"raw",
@@ -190,6 +212,13 @@ export class LocalfulEncryption {
 		return `v1.${base64Metadata}.${base64CipherText}`
 	}
 
+	/**
+	 * Decrypt the ciphertext with the supplied key
+	 *
+	 * @private
+	 * @param key
+	 * @param ciphertext
+	 */
 	private static async _decryptWithKey(
 		key: CryptoKey,
 		ciphertext: string,
@@ -197,24 +226,41 @@ export class LocalfulEncryption {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- may be used in future
 		const [version, base64Metadata, base64CipherText] = ciphertext.split(".")
 
-		const decodedMetadata = LocalfulEncryption._base64ToBytes(base64Metadata)
-		const metadata = EncryptionMetadata.parse(JSON.parse(new TextDecoder().decode(decodedMetadata)))
+		let cipherText: Uint8Array
+		let iv: Uint8Array
+		try {
+			const decodedMetadata = LocalfulEncryption._base64ToBytes(base64Metadata)
+			const metadata = EncryptionMetadata.parse(JSON.parse(new TextDecoder().decode(decodedMetadata)))
+			cipherText = LocalfulEncryption._base64ToBytes(base64CipherText)
+			iv = LocalfulEncryption._base64ToBytes(metadata.iv)
+		}
+		catch (e) {
+			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, originalError: e})
+		}
 
-		const cipherText = LocalfulEncryption._base64ToBytes(base64CipherText)
-		const iv = LocalfulEncryption._base64ToBytes(metadata.iv)
+		try {
+			const decryptedData = await window.crypto.subtle.decrypt(
+				{
+					name: "AES-GCM",
+					iv,
+				},
+				key,
+				cipherText
+			)
 
-		const decryptedData = await window.crypto.subtle.decrypt(
-			{
-				name: "AES-GCM",
-				iv,
-			},
-			key,
-			cipherText
-		)
-
-		return JSON.parse(new TextDecoder().decode(decryptedData))
+			return JSON.parse(new TextDecoder().decode(decryptedData))
+		}
+		catch (e) {
+			throw new LocalfulError({type: ErrorTypes.INVALID_PASSWORD_OR_KEY, originalError: e})
+		}
 	}
 
+	/**
+	 * Convert a Uint8Array into a base64 encoded string.
+	 *
+	 * @private
+	 * @param byteArray
+	 */
 	private static _bytesToBase64(byteArray: Uint8Array): string {
 		const binString = Array.from(byteArray, (byte) =>
 			String.fromCodePoint(byte),
@@ -222,6 +268,12 @@ export class LocalfulEncryption {
 		return btoa(binString);
 	}
 
+	/**
+	 * Convert a base64 encoded string into a Uint8Array.
+	 *
+	 * @param base64String
+	 * @private
+	 */
 	private static _base64ToBytes(base64String: string): Uint8Array {
 		const binString = atob(base64String);
 		// @ts-expect-error -- this is copied from MDN (https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem) and does work.

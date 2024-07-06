@@ -1,47 +1,51 @@
 
 export enum ErrorTypes {
 	ENTITY_NOT_FOUND = 'entity-not-found',
-	ENTITY_WITHOUT_VERSION = 'entity-without-version',
 	VERSION_NOT_FOUND = 'version-not-found',
-	INVALID_OR_CORRUPTED_DATA = 'invalid-or-corrupted-data',
-	SYSTEM_EXCEPTION = 'system-exception',
-	NO_CURRENT_DATABASE = 'no-current-database',
 	DATABASE_NOT_FOUND = 'database-not-found',
+	INVALID_OR_CORRUPTED_DATA = 'invalid-or-corrupted-data',
+	INVALID_PASSWORD_OR_KEY = 'invalid-password-or-key',
+	SYSTEM_ERROR = 'system-error',
+	NO_CURRENT_DATABASE = 'no-current-database',
 }
 
-export interface ErrorObject {
-	type: ErrorTypes
-	userMessage?: string
-	devMessage?: string,
-	context?: any
+export interface LocalfulErrorCause {
+	type: ErrorTypes,
+	originalError?: unknown,
+	devMessage?: string
 }
 
-export type ActionResult<Data = null> = {
-	success: true,
-	data: Data,
-	errors?: ErrorObject[]
-} | {
-	success: false,
-	errors: ErrorObject[]
+export class LocalfulError extends Error {
+	cause: LocalfulErrorCause
+
+	constructor(cause: LocalfulErrorCause) {
+		super();
+		this.cause = cause
+	}
 }
 
-export const QueryStatus = {
+export interface QueryResult<T> {
+	result: T,
+	errors?: unknown[]
+}
+
+export const LiveQueryStatus = {
 	LOADING: "loading",
 	SUCCESS: "success",
 	ERROR: "error"
 } as const
 
-export type Query<Data = null> = {
-	status: typeof QueryStatus.LOADING,
+export type LiveQueryResult<Data = null> = {
+	status: typeof LiveQueryStatus.LOADING,
 } | {
-	status: typeof QueryStatus.SUCCESS,
-	data: Data,
-	errors?: ErrorObject[]
+	status: typeof LiveQueryStatus.SUCCESS,
+	result: Data,
+	errors?: unknown[]
 } | {
-	status: typeof QueryStatus.ERROR,
-	errors: ErrorObject[]
+	status: typeof LiveQueryStatus.ERROR,
+	errors: unknown[]
 }
 
-export const QUERY_LOADING= {
-	status: QueryStatus.LOADING,
+export const LIVE_QUERY_LOADING_STATE= {
+	status: LiveQueryStatus.LOADING,
 } as const

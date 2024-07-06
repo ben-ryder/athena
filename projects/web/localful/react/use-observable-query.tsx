@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import {QUERY_LOADING, Query, QueryStatus} from "../control-flow";
+import { LIVE_QUERY_LOADING_STATE, LiveQueryResult, LiveQueryStatus } from "../control-flow";
 import { useEffect, useState } from "react";
 import {Logger} from "../../src/utils/logger";
 
@@ -9,8 +9,8 @@ import {Logger} from "../../src/utils/logger";
  *
  * @param observable
  */
-export function useObservableQuery<Data>(observable: Observable<Query<Data>>|undefined) {
-	const [state, setState] = useState<Query<Data>>(QUERY_LOADING)
+export function useObservableQuery<Data>(observable: Observable<LiveQueryResult<Data>>|undefined) {
+	const [state, setState] = useState<LiveQueryResult<Data>>(LIVE_QUERY_LOADING_STATE)
 
 	useEffect(() => {
 		if (!observable) {
@@ -18,11 +18,11 @@ export function useObservableQuery<Data>(observable: Observable<Query<Data>>|und
 			return
 		}
 
-		const subscription = observable.subscribe((data) => {
-			if (data.status === QueryStatus.SUCCESS) {
-				Logger.debug(`[useObservableQuery] Received new data`, data.data)
+		const subscription = observable.subscribe((query) => {
+			if (query.status === LiveQueryStatus.SUCCESS) {
+				Logger.debug(`[useObservableQuery] Received new data`, query.result)
 			}
-			setState(data)
+			setState(query)
 		})
 
 		return () => {

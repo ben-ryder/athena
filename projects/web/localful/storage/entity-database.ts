@@ -1,21 +1,29 @@
-import {ZodTypeAny} from "zod";
-import {ActionResult, ErrorObject, ErrorTypes, Query, QUERY_LOADING, QueryStatus} from "../control-flow";
-import {LocalfulEncryption} from "../encryption/encryption";
-import {memoryCache} from "./memory-cache";
-import {Observable} from "rxjs";
-import {DataEntityChangeEvent, EventTypes} from "../events/events";
-import {IDBPDatabase, openDB} from "idb";
-import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "../types/data-entities";
-import {EventManager} from "../events/event-manager";
+import { ZodTypeAny } from "zod";
+import {
+	ErrorTypes,
+	LIVE_QUERY_LOADING_STATE,
+	LiveQueryResult,
+	LiveQueryStatus,
+	LocalfulError,
+	QueryResult
+} from "../control-flow";
+import { LocalfulEncryption } from "../encryption/encryption";
+import { memoryCache } from "./memory-cache";
+import { Observable } from "rxjs";
+import { DataEntityChangeEvent, EventTypes } from "../events/events";
+import { IDBPDatabase, openDB } from "idb";
+import { Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity } from "../types/data-entities";
+import { EventManager } from "../events/event-manager";
 import { Logger } from "../../src/utils/logger";
 import {
 	CurrentSchemaData,
-	DataSchemaDefinition, LocalEntityWithExposedFields,
+	DataSchemaDefinition,
+	LocalEntityWithExposedFields,
 	QueryDefinition,
 	QueryIndex,
 	TableKeys
 } from "../storage/types";
-import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../localful-web";
+import { LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION } from "../localful-web";
 
 export interface EntityDatabaseConfig {
 	databaseId: string,
@@ -31,7 +39,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	databaseId: string
 	private readonly encryptionKey: string
 	private readonly dataSchema: DataSchemaDefinition
-	private readonly _database?: IDBPDatabase
+	private _database?: IDBPDatabase
 	private readonly eventManager: EventManager
 
 	constructor(
@@ -50,7 +58,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		}
 
 		this.eventManager.dispatch(EventTypes.DATABASE_OPEN, {id: this.databaseId})
-		return openDB(this.databaseId, LOCALFUL_INDEXDB_ENTITY_VERSION, {
+		this._database = await openDB(this.databaseId, LOCALFUL_INDEXDB_ENTITY_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {
 				for (const [tableKey, schemaDefinition] of Object.entries(this.dataSchema.tables)) {
@@ -83,11 +91,14 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				}
 			},
 		})
+
+		return this._database
 	}
 
 	async close() {
 		if (this._database) {
 			this._database.close()
+			delete this._database
 		}
 		this.eventManager.dispatch(EventTypes.DATABASE_CLOSE, {id: this.databaseId})
 	}
@@ -104,12 +115,18 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param version
 	 * @param dataSchema
 	 */
-	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
-		let data = await LocalfulEncryption.decrypt<CurrentSchemaData<DataSchema, TableKey>>(
-			this.encryptionKey,
-			version.data,
-			dataSchema
-		)
+	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<EntityDto<CurrentSchemaData<DataSchema, TableKey>>> {
+		let data
+		try {
+			data = await LocalfulEncryption.decrypt<CurrentSchemaData<DataSchema, TableKey>>(
+				this.encryptionKey,
+				version.data,
+				dataSchema
+			)
+		}
+		catch (e) {
+			throw new LocalfulError({type: ErrorTypes.INVALID_PASSWORD_OR_KEY, originalError: e})
+		}
 
 		if (version.schemaVersion !== this.dataSchema['tables'][tableKey].currentSchema) {
 			if (!this.dataSchema['tables'][tableKey].migrateSchema) {
@@ -122,16 +139,13 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		}
 
 		return {
-			success: true,
-			data: {
-				id: entity.id,
-				versionId: version.id,
-				createdAt: entity.createdAt,
-				updatedAt: version.createdAt,
-				data: data,
-				localfulVersion: entity.localfulVersion,
-				isDeleted: entity.isDeleted,
-			}
+			id: entity.id,
+			versionId: version.id,
+			createdAt: entity.createdAt,
+			updatedAt: version.createdAt,
+			data: data,
+			localfulVersion: entity.localfulVersion,
+			isDeleted: entity.isDeleted,
 		}
 	}
 
@@ -141,11 +155,11 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param id
 	 */
-	async get<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>> {
+	async get<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string): Promise<EntityDto<CurrentSchemaData<DataSchema, TableKey>>> {
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			const cachedResponse = await memoryCache.get<CurrentSchemaData<DataSchema, TableKey>>(`${tableKey}-get-${id}`)
 			if (cachedResponse) {
-				return {success: true, data: cachedResponse}
+				return cachedResponse
 			}
 		}
 
@@ -153,7 +167,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readonly')
 		const entity = await tx.objectStore(tableKey).get(id) as LocalEntity|undefined
 		if (!entity) {
-			return {success: false, errors: [{type: ErrorTypes.ENTITY_NOT_FOUND, context: id}]}
+			throw new LocalfulError({type: ErrorTypes.ENTITY_NOT_FOUND, devMessage: `entity ${id} could not be found.`})
 		}
 
 		let version: EntityVersion|undefined = undefined
@@ -162,7 +176,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 			// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
 			if (!version) {
-				return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: id}]}
+				throw new LocalfulError({type: ErrorTypes.VERSION_NOT_FOUND, devMessage: `entity ${id} has no currentVersionId set`})
 			}
 		}
 		else {
@@ -174,20 +188,19 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				version = sortedVersions[0]
 			}
 			else {
-				return {success: false, errors: [{type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: id}]}
+				throw new LocalfulError({type: ErrorTypes.VERSION_NOT_FOUND, devMessage: `entity ${id} has no versions`})
 			}
 		}
 
 		await tx.done
 
 		const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(tableKey, entity, version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
-		if (!dto.success) return dto
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.add(`${tableKey}-get-${id}`, dto)
 		}
 
-		return {success: true, data: dto.data}
+		return dto
 	}
 
 	/**
@@ -196,20 +209,21 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param ids
 	 */
-	async getMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
+	async getMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]): Promise<QueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
 		const dtos: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
-		const errors: ErrorObject[] = []
+		const errors: unknown[] = []
 
 		for (const id of ids) {
-			const dto = await this.get(tableKey, id)
-			if (dto.success) {
-				dtos.push(dto.data)
-			} else if (dto.errors) {
-				errors.push(...dto.errors)
+			try {
+				const dto = await this.get(tableKey, id)
+				dtos.push(dto)
+			}
+			catch (e) {
+				errors.push(e)
 			}
 		}
 
-		return {success: true, data: dtos, errors: errors}
+		return {result: dtos, errors: errors}
 	}
 
 	/**
@@ -219,7 +233,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param data
 	 */
-	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<ActionResult<string>> {
+	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<string> {
 		const db = await this.getIndexDbDatabase()
 
 		const entityId = LocalfulEncryption.generateUUID();
@@ -262,7 +276,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'create', id: entityId})
 
-		return { success: true, data: entityId }
+		return entityId
 	}
 
 	/**
@@ -275,9 +289,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param dataUpdate
 	 * @param preventEventDispatch - UUseful in situations like data migrations, where an update is done while fetching data so an event shouldn't be triggered.
 	 */
-	async update<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string, dataUpdate: EntityUpdate<CurrentSchemaData<DataSchema, TableKey>>, preventEventDispatch?: boolean): Promise<ActionResult<string>> {
+	async update<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string, dataUpdate: EntityUpdate<CurrentSchemaData<DataSchema, TableKey>>, preventEventDispatch?: boolean): Promise<string> {
 		const oldEntity = await this.get(tableKey, entityId)
-		if (!oldEntity.success) return oldEntity
 
 		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
 			await memoryCache.delete(`${tableKey}-get-${entityId}`)
@@ -286,7 +299,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		// Pick out all entity/version fields, which will leave only data fields.
 		const updatedData = {
-			...oldEntity.data.data,
+			...oldEntity.data,
 			...dataUpdate
 		}
 
@@ -333,16 +346,15 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'update', id: entityId})
 		}
 
-		return {success: true, data: versionId}
+		return versionId
 	}
 
 	/**
 	 * Delete the given entity, setting the 'isDeleted' flag ont eh entity and
 	 * deleting all versions.
 	 */
-	async delete<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
+	async delete<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<void> {
 		const currentEntity = await this.get(tableKey, entityId)
-		if (!currentEntity.success) return currentEntity
 
 		const db = await this.getIndexDbDatabase()
 
@@ -375,14 +387,12 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		await tx.done
 
 		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'delete', id: entityId})
-
-		return {success: true, data: null}
 	}
 
 	/**
 	 * Query for content.
 	 */
-	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<ActionResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
+	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<QueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
 		// todo: add query memory cache?
 
 		const db = await this.getIndexDbDatabase()
@@ -469,7 +479,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		}
 
 		const cursorResults: {entity: LocalEntity, version: EntityVersion}[] = []
-		const errors: ErrorObject[] = []
+		const errors: unknown[] = []
 
 		// Iterate over all indexes and all items in the index cursor, also running the user-supplied whereCursor function.
 		for (const queryIndex of indexes) {
@@ -481,7 +491,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 					// Don't fall back to loading latest version as this state should never be possible and shouldn't fail silently.
 					if (!version) {
-						errors.push({type: ErrorTypes.VERSION_NOT_FOUND, context: entity.id})
+						errors.push(new LocalfulError({type: ErrorTypes.VERSION_NOT_FOUND, devMessage: `entity ${entity.id} has no currentVersionId set`}))
 						break
 					}
 				}
@@ -494,7 +504,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 						version = sortedVersions[0]
 					}
 					else {
-						errors.push({type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: entity.id})
+						errors.push(new LocalfulError({type: ErrorTypes.VERSION_NOT_FOUND, devMessage: `entity ${entity.id} has no versions`}))
 						break
 					}
 				}
@@ -519,18 +529,15 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				result.version,
 				this.dataSchema['tables'][query.table].schemas[this.dataSchema['tables'][query.table].currentSchema]['data']
 			)
-			if (dto.success) {
-				let include = true
-				if (query.whereData) {
-					include = query.whereData(dto.data)
-				}
-				if (include) {
-					dataFilterResults.push(dto.data)
-				}
+
+			// Run any defined whereData queries.
+			let includeInResults = true
+			if (query.whereData) {
+				includeInResults = query.whereData(dto.data)
 			}
 
-			if (dto.errors) {
-				errors.push(...dto.errors)
+			if (includeInResults) {
+				dataFilterResults.push(dto.data)
 			}
 		}
 
@@ -547,8 +554,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		// todo: add query memory cache?
 
 		return {
-			success: true,
-			data: sortedResults,
+			result: sortedResults,
 			errors: errors
 		}
 	}
@@ -560,63 +566,25 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param entityId
 	 */
-	async getAllVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult<EntityVersion[]>> {
+	async getAllVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<EntityVersion[]> {
 		const db = await this.getIndexDbDatabase()
 
-		const versions = await db.getAllFromIndex(this._getVersionTableName(tableKey), 'entityId', entityId)
-		return {success: true, data: versions}
-	}
-
-	/**
-	 * Purge the given item, permanently deleting the entity and all versions.
-	 * This is different to deletion, which will only delete all versions and set
-	 * the 'isDeleted' flag on teh entity.
-	 *
-	 * @param tableKey
-	 * @param entityId
-	 */
-	async purge<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
-		const db = await this.getIndexDbDatabase()
-
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
-			await memoryCache.delete(`${tableKey}-get-${entityId}`)
-			await memoryCache.delete(`${tableKey}-getAll`)
-		}
-
-		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
-
-		const entityStore = tx.objectStore(tableKey)
-		await entityStore.delete(entityId)
-
-		const versionStore = tx.objectStore(this._getVersionTableName(tableKey))
-		const versionsIndex = versionStore.index('entityId')
-		let deletionCursor = await versionsIndex.openKeyCursor(entityId)
-		while (deletionCursor) {
-			deletionCursor.delete()
-			deletionCursor = await deletionCursor.continue()
-		}
-
-		await tx.done
-
-		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'purge', id: entityId})
-
-		return {success: true, data: null}
+		return await db.getAllFromIndex(this._getVersionTableName(tableKey), 'entityId', entityId)
 	}
 
 	/**
 	 * Delete all versions except the most recent.
 	 */
-	async deleteOldVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult> {
+	async deleteOldVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<void> {
 		const db = await this.getIndexDbDatabase()
 
 		const versions = await this.getAllVersions(tableKey, entityId)
-		if (!versions.success) return versions
 
-		const sortedVersions = versions.data.sort((a, b) => {
+		const sortedVersions = versions.sort((a, b) => {
 			return a.createdAt < b.createdAt ? 1 : 0
 		})
 		if (!sortedVersions[0]) {
-			return {success: false, errors: [{type: ErrorTypes.ENTITY_WITHOUT_VERSION, context: entityId}]}
+			throw new LocalfulError({type: ErrorTypes.VERSION_NOT_FOUND, devMessage: `entity ${entityId} has no versions`})
 		}
 
 		const tx = db.transaction(this._getVersionTableName(tableKey), 'readwrite')
@@ -630,8 +598,6 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		}
 
 		await tx.done
-
-		return {success: true, data: null}
 	}
 
 	/**
@@ -640,13 +606,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param versionId
 	 */
-	async deleteVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult> {
+	async deleteVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<void> {
 		const db = await this.getIndexDbDatabase()
-
 		await db.delete(this._getVersionTableName(tableKey), versionId)
-
-		// todo: return error if the give version is not found?
-		return {success: true, data: null}
 	}
 
 	/**
@@ -655,13 +617,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param versionId
 	 */
-	async getVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<ActionResult<EntityVersion>> {
+	async getVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<EntityVersion> {
 		const db = await this.getIndexDbDatabase()
-
-		const version = await db.get(this._getVersionTableName(tableKey), versionId)
-		if (!version) return {success: false, errors: [{type: ErrorTypes.VERSION_NOT_FOUND, context: versionId}]}
-
-		return {success: true, data: version}
+		return await db.get(this._getVersionTableName(tableKey), versionId)
 	}
 
 	/**
@@ -670,31 +628,31 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param entityId
 	 */
-	async _getEntity<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<ActionResult<LocalEntity>> {
+	async _getEntity<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<LocalEntity> {
 		const db = await this.getIndexDbDatabase()
 
 		const entity = await db.get(tableKey, entityId)
 
 		if (!entity || entity.isDeleted === 1) {
-			return {success: false, errors: [{type: ErrorTypes.ENTITY_NOT_FOUND, context: entityId}]}
+			throw new LocalfulError({type: ErrorTypes.ENTITY_NOT_FOUND, devMessage: `entity ${entityId} could not be found`})
 		}
 
-		return {success: true, data: entity}
+		return entity
 	}
 
 	liveGet<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string) {
-		return new Observable<Query<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>>((subscriber) => {
-			subscriber.next(QUERY_LOADING)
+		return new Observable<LiveQueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>>((subscriber) => {
+			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
-				subscriber.next(QUERY_LOADING)
+				subscriber.next(LIVE_QUERY_LOADING_STATE)
 
-				const result = await this.get(tableKey, id)
-				if (result.success) {
-					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
+				try {
+					const dto = await this.get(tableKey, id)
+					subscriber.next({status: LiveQueryStatus.SUCCESS, result: dto})
 				}
-				else {
-					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				catch (e) {
+					subscriber.next({status: LiveQueryStatus.ERROR, errors: [e]})
 				}
 			}
 
@@ -718,18 +676,18 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	}
 	
 	liveGetMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]) {
-		return new Observable<Query<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
-			subscriber.next(QUERY_LOADING)
+		return new Observable<LiveQueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
+			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
-				subscriber.next(QUERY_LOADING)
+				subscriber.next(LIVE_QUERY_LOADING_STATE)
 
-				const result = await this.getMany(tableKey, ids)
-				if (result.success) {
-					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
+				try {
+					const query = await this.getMany(tableKey, ids)
+					subscriber.next({status: LiveQueryStatus.SUCCESS, result: query.result, errors: query.errors})
 				}
-				else {
-					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				catch (e) {
+					subscriber.next({status: LiveQueryStatus.ERROR, errors: [e]})
 				}
 			}
 
@@ -751,18 +709,18 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	}
 
 	liveQuery<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>) {
-		return new Observable<Query<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
-			subscriber.next(QUERY_LOADING)
+		return new Observable<LiveQueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
+			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
-				subscriber.next(QUERY_LOADING)
+				subscriber.next(LIVE_QUERY_LOADING_STATE)
 
-				const result = await this.query(query)
-				if (result.success) {
-					subscriber.next({status: QueryStatus.SUCCESS, data: result.data, errors: result.errors})
+				try {
+					const queryResult = await this.query(query)
+					subscriber.next({status: LiveQueryStatus.SUCCESS, result: queryResult.result, errors: queryResult.errors})
 				}
-				else {
-					subscriber.next({status: QueryStatus.ERROR, errors: result.errors})
+				catch (e) {
+					subscriber.next({status: LiveQueryStatus.ERROR, errors: [e]})
 				}
 			}
 
