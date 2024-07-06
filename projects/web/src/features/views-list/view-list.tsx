@@ -4,6 +4,7 @@ import {ErrorCallout} from "../../patterns/components/error-callout/error-callou
 import {useWorkspaceContext} from "../workspace/workspace-context";
 import {ContentCard} from "../../patterns/components/content-card/content-card";
 import {useLocalful} from "@localful-athena/react/use-localful";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 
 export interface ViewListProps {
 	onOpen?: () => void
@@ -26,19 +27,19 @@ export function ViewList(props: ViewListProps) {
 		}
 	}))
 
-	if (contentQuery.status === 'loading') {
+	if (contentQuery.status === LiveQueryStatus.LOADING) {
 		return <p>Loading...</p>
 	}
-	if (contentQuery.status === 'error') {
+	if (contentQuery.status === LiveQueryStatus.ERROR) {
 		return <ErrorCallout errors={contentQuery.errors} />
 	}
 
 	return (
 		<div>
-			{contentQuery.data.length > 0
+			{contentQuery.result.length > 0
 				? (
 					<ul>
-						{contentQuery.data.map(view => (
+						{contentQuery.result.map(view => (
 							<ContentCard
 								key={view.id}
 								id={view.id}

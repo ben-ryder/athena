@@ -33,35 +33,35 @@ export function ViewEditTab(props: ViewEditTabProps) {
 		if (!currentDatabase) return
 
 		if (props.viewId) {
-			const result = await currentDatabase.update('views', props.viewId, {
-				name: name,
-				description: description !== '' ? description : undefined,
-				tags:  tags,
-				isFavourite: isFavourite,
-				queryTags: queryTags,
-				queryContentTypes: queryContentTypes,
-			})
-			if (result.success) {
+			try {
+				await currentDatabase.update('views', props.viewId, {
+					name: name,
+					description: description !== '' ? description : undefined,
+					tags:  tags,
+					isFavourite: isFavourite,
+					queryTags: queryTags,
+					queryContentTypes: queryContentTypes,
+				})
 				setTabIsUnsaved(props.tabIndex, false)
 			}
-			else {
-				console.error(result.errors)
+			catch (e) {
+				console.error(e)
 			}
 		}
 		else {
-			const result = await currentDatabase.create('views', {
-				name: name,
-				description: description !== '' ? description : undefined,
-				tags:  tags,
-				isFavourite: isFavourite,
-				queryTags: queryTags,
-				queryContentTypes: queryContentTypes,
-			})
-			if (result.success) {
-				replaceTab(props.tabIndex, {type: 'view', viewId: result.data})
+			try {
+				const newViewId = await currentDatabase.create('views', {
+					name: name,
+					description: description !== '' ? description : undefined,
+					tags:  tags,
+					isFavourite: isFavourite,
+					queryTags: queryTags,
+					queryContentTypes: queryContentTypes,
+				})
+				replaceTab(props.tabIndex, {type: 'view', viewId: newViewId})
 			}
-			else {
-				console.error(result.errors)
+			catch (e) {
+				console.error(e)
 			}
 		}
 	}, [replaceTab, setTabIsUnsaved])
@@ -82,12 +82,12 @@ export function ViewEditTab(props: ViewEditTabProps) {
 			return
 		}
 
-		const result = await currentDatabase.delete('views', props.viewId)
-		if (result.success) {
+		try {
+			await currentDatabase.delete('views', props.viewId)
 			closeTab(props.tabIndex)
 		}
-		else {
-			console.error(result.errors)
+		catch (e) {
+			console.error(e)
 		}
 	}, [props.viewId])
 

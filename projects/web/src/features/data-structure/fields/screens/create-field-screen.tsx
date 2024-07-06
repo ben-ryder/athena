@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import {ErrorObject, ErrorTypes} from "@localful-athena/control-flow";
+import {ErrorTypes} from "@localful-athena/control-flow";
 import {
 	GenericManagerScreenProps
 } from "../../../../common/generic-manager/generic-manager";
@@ -11,18 +11,18 @@ import {DATA_SCHEMA} from "../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function CreateFieldScreen(props: GenericManagerScreenProps) {
-	const [errors, setErrors] = useState<ErrorObject[]>([])
+	const [errors, setErrors] = useState<unknown[]>([])
 	const { currentDatabase } = useLocalful<DATA_SCHEMA>()
 
 	async function onSave(data: FieldDefinition) {
 		if (!currentDatabase) return setErrors([{type: ErrorTypes.NO_CURRENT_DATABASE}])
 
-		const res = await currentDatabase.create('fields', data)
-		if (!res.success) {
-			setErrors(res.errors)
-		}
-		else {
+		try {
+			await currentDatabase.create('fields', data)
 			props.navigate({screen: "list"})
+		}
+		catch (e) {
+			setErrors([e])
 		}
 	}
 

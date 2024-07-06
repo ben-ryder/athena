@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import {ViewDto} from "../../../state/schemas/views/views";
 import {useLocalful} from "@localful-athena/react/use-localful";
 import {DATA_SCHEMA} from "../../../state/athena-localful";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 
 export interface ViewFormOptions {
 	viewId?: string
@@ -61,40 +62,40 @@ export function useViewFormData(options: ViewFormOptions) {
 
 		if (options.viewId) {
 			const viewQuery = currentDatabase?.liveGet('views', options.viewId)
-			const subscription = viewQuery.subscribe((data) => {
-				if (data.status === 'success') {
+			const subscription = viewQuery.subscribe((liveQuery) => {
+				if (liveQuery.status === LiveQueryStatus.SUCCESS) {
 
 					/**
-                     * This logic "merges" the new loaded content with the existing content, and will
-                     * not overwrite anything that the user has changed so edits are not lost.
-                     */
+					 * This logic "merges" the new loaded content with the existing content, and will
+					 * not overwrite anything that the user has changed so edits are not lost.
+					 */
 					if (latestName.current === '' || latestName.current === latestView.current?.data.name) {
-						setName(data.data.data.name)
+						setName(liveQuery.result.data.name)
 					}
 					if (latestDescription.current === '' || latestDescription.current === undefined || latestDescription.current === latestView.current?.data.description) {
-						setDescription(data.data.data.description)
+						setDescription(liveQuery.result.data.description)
 					}
 					// todo: I don't think this array comparison will work, might need to "diff" it instead?
 					if (latestTags.current.length === 0 || latestTags.current === latestView.current?.data.tags) {
-						setTags(data.data.data.tags)
+						setTags(liveQuery.result.data.tags)
 					}
 					if (!latestIsFavourite.current || latestIsFavourite.current === latestView.current?.data.isFavourite) {
-						setIsFavourite(data.data.data.isFavourite ?? false)
+						setIsFavourite(liveQuery.result.data.isFavourite ?? false)
 					}
 
 					// todo: I don't think this array comparison will work, might need to "diff" it instead?
 					if (latestQueryTags.current.length === 0 || latestQueryTags.current === latestView.current?.data.queryTags) {
-						setQueryTags(data.data.data.queryTags)
+						setQueryTags(liveQuery.result.data.queryTags)
 					}
 					if (latestQueryContentTypes.current.length === 0 || latestQueryContentTypes.current === latestView.current?.data.queryContentTypes) {
-						setQueryContentTypes(data.data.data.queryContentTypes)
+						setQueryContentTypes(liveQuery.result.data.queryContentTypes)
 					}
 
-					setView(data.data)
+					setView(liveQuery.result)
 				}
-				else if (data.status === 'error') {
+				else if (liveQuery.status === 'error') {
 					console.error('Error loading content')
-					console.log(data.errors)
+					console.log(liveQuery.errors)
 				}
 			})
 

@@ -1,6 +1,6 @@
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {DATA_SCHEMA} from "../../../state/athena-localful";
-import {QueryStatus} from "@localful-athena/control-flow";
+import {LiveQueryStatus} from "@localful-athena/control-flow";
 import {JButton} from "@ben-ryder/jigsaw-react";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 
@@ -19,12 +19,12 @@ export function NewContentMenu(props: NewContentMenuProps) {
 
 	return (
 		<div className="new-content-menu">
-			{contentTypesQuery.status === QueryStatus.SUCCESS &&
+			{contentTypesQuery.status === LiveQueryStatus.SUCCESS &&
 						<>
-							{contentTypesQuery.data.length > 0
+							{contentTypesQuery.result.length > 0
 								? (
 									<ul className="new-content-menu__list">
-										{contentTypesQuery.data.map(type =>
+										{contentTypesQuery.result.map(type =>
 											<li className="new-content-menu__list-item" key={type.id}>
 												<JButton
 													onClick={() => {

@@ -1,14 +1,10 @@
-import {useCallback} from "react";
-import {
-	JInput,
-	JErrorText,
-	JButtonGroup, JButton,
-	JForm, JFormContent, JFormRow
-} from "@ben-ryder/jigsaw-react";
-import {Controller, useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {z} from "zod";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import { useCallback } from "react";
+import { JButton, JButtonGroup, JErrorText, JForm, JFormContent, JFormRow, JInput } from "@ben-ryder/jigsaw-react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useLocalful } from "@localful-athena/react/use-localful";
+import { ErrorTypes, LocalfulError } from "@localful-athena/control-flow";
 
 
 const UnlockFormSchema = z.object({
@@ -37,9 +33,15 @@ export function DatabaseUnlockForm(props: DatabaseUnlockFormProps) {
 	const { openDatabase, unlockDatabase } = useLocalful()
 
 	const onSubmit = useCallback(async (data: UnlockFormSchema) => {
-		const unlocked = await unlockDatabase(props.databaseId, data.password)
-		if (!unlocked) {
-			return setError('password', { message: 'Your entered password is incorrect.' })
+		try {
+			await unlockDatabase(props.databaseId, data.password)
+		}
+		catch (e) {
+			if (e instanceof LocalfulError && e.cause.type === ErrorTypes.INVALID_PASSWORD_OR_KEY) {
+				return setError('password', { message: 'Your entered password is incorrect.' })
+			}
+			console.error(e)
+			return setError('root', { message: 'An unexpected error occurred.' })
 		}
 
 		// todo: could unlock and open be the same operations. there is a disconnect at the moment?

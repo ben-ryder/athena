@@ -17,7 +17,7 @@ import {
 	ContentTypeData
 } from "../../../../state/schemas/content-types/content-types";
 import {ColourVariants} from "../../../../state/schemas/common/fields";
-import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
@@ -26,7 +26,7 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
-	const [errors, setErrors] = useState<ErrorObject[]>([]);
+	const [errors, setErrors] = useState<unknown[]>([]);
 
 	const [name, setName] = useState<string>(props.data.name);
 	const [description, setDescription] = useState<string>(props.data.description || '');
@@ -34,8 +34,8 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 
 	const [contentTemplateTags, setContentTemplateTags] = useState<JMultiSelectOptionData[]>([]);
 	const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
-	const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
-		? allTags.data.map(tag => ({
+	const tagOptions: JMultiSelectOptionData[] = allTags.status === LiveQueryStatus.SUCCESS
+		? allTags.result.map(tag => ({
 			text: tag.data.name,
 			value: tag.id,
 			variant: tag.data.colourVariant
@@ -47,21 +47,22 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 			if (!currentDatabase) return
 
 			if (props.data.contentTemplateTags && props.data.contentTemplateTags.length > 0) {
-				const selectedTags = await currentDatabase.getMany('tags', props.data.contentTemplateTags)
-				if (!selectedTags.success) {
-					setErrors((e) => {return [...e, ...selectedTags.errors]})
-				}
-				else {
-					setContentTemplateTags(selectedTags.data.map(tag => ({
+				try {
+					const selectedTags = await currentDatabase.getMany('tags', props.data.contentTemplateTags)
+					setContentTemplateTags(selectedTags.result.map(tag => ({
 						text: tag.data.name,
 						value: tag.id,
 						variant: tag.data.colourVariant
 					}))
 					)
-
 					if (Array.isArray(selectedTags.errors) && selectedTags.errors.length > 0) {
-						setErrors((e) => {return [...e, ...selectedTags.errors as ErrorObject[]]})
+						setErrors((e) => {
+							// @ts-expect-error -- todo: review this type issue.
+							return [...e, ...selectedTags.errors]})
 					}
+				}
+				catch (e) {
+					setErrors((e) => {return [...e, e]})
 				}
 			}
 		}
@@ -86,9 +87,9 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 	const [fieldOptions, setFieldOptions] = useState<JMultiSelectOptionData[]>([]);
 	const allFields = useObservableQuery(currentDatabase?.liveQuery({table: 'fields'}))
 	useEffect(() => {
-		if (allFields.status === QueryStatus.SUCCESS) {
-			const fieldOptionMappings: JMultiSelectOptionData[] = allFields.status === QueryStatus.SUCCESS
-				? allFields.data.map(field => ({
+		if (allFields.status === LiveQueryStatus.SUCCESS) {
+			const fieldOptionMappings: JMultiSelectOptionData[] = allFields.status === LiveQueryStatus.SUCCESS
+				? allFields.result.map(field => ({
 					text: `${field.data.label} (${FIELD_TYPES[field.data.type].label})`,
 					value: field.id,
 				}))
@@ -103,20 +104,20 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 			if (!currentDatabase) return
 
 			if (props.data.fields && props.data.fields.length > 0) {
-				const selectedFields = await currentDatabase.getMany('fields', props.data.fields)
-				if (!selectedFields.success) {
-					setErrors((e) => {return [...e, ...selectedFields.errors]})
-				}
-				else {
-					setSelectedFields(selectedFields.data.map(field => ({
+				try {
+					const selectedFields = await currentDatabase.getMany('fields', props.data.fields)
+					setSelectedFields(selectedFields.result.map(field => ({
 						text: `${field.data.label} (${FIELD_TYPES[field.data.type].label})`,
 						value: field.id,
-					}))
-					)
-
+					})))
 					if (Array.isArray(selectedFields.errors) && selectedFields.errors.length > 0) {
-						setErrors((e) => {return [...e, ...selectedFields.errors as ErrorObject[]]})
+						setErrors((e) => {
+							// @ts-expect-error -- todo: review this type issue.
+							return [...e, ...selectedTags.errors]})
 					}
+				}
+				catch (newError) {
+					setErrors((e) => {return [...e, newError]})
 				}
 			}
 		}

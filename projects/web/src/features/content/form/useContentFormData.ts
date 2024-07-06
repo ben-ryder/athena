@@ -57,13 +57,13 @@ export function useContentFormData(options: ContentFormOptions) {
 
 		if (options.contentTypeId) {
 			const contentTypeQuery = currentDatabase?.liveGet('content_types', options.contentTypeId)
-			const subscription = contentTypeQuery.subscribe((data) => {
-				if (data.status === 'success') {
-					setContentType(data.data)
+			const subscription = contentTypeQuery.subscribe((liveQuery) => {
+				if (liveQuery.status === 'success') {
+					setContentType(liveQuery.result)
 				}
-				else if (data.status === 'error') {
+				else if (liveQuery.status === 'error') {
 					console.error('Error loading content type')
-					console.log(data.errors)
+					console.log(liveQuery.errors)
 				}
 			})
 
@@ -79,33 +79,33 @@ export function useContentFormData(options: ContentFormOptions) {
 
 		if (options.contentId) {
 			const contentQuery = currentDatabase?.liveGet('content', options.contentId)
-			const subscription = contentQuery.subscribe((data) => {
-				if (data.status === 'success') {
+			const subscription = contentQuery.subscribe((liveQuery) => {
+				if (liveQuery.status === 'success') {
 
 					/**
-                     * This logic "merges" the new loaded content with the existing content, and will
-                     * not overwrite anything that the user has changed so edits are not lost.
-                     */
+					 * This logic "merges" the new loaded content with the existing content, and will
+					 * not overwrite anything that the user has changed so edits are not lost.
+					 */
 					if (latestName.current === '' || latestName.current === latestContent.current?.data.name) {
-						setName(data.data.data.name)
+						setName(liveQuery.result.data.name)
 					}
 					if (latestDescription.current === '' || latestDescription.current === undefined || latestDescription.current === latestContent.current?.data.description) {
-						setDescription(data.data.data.description)
+						setDescription(liveQuery.result.data.description)
 					}
 					// todo: I don't think this array comparison will work, might need to "diff" it instead?
 					if (latestTags.current.length === 0 || latestTags.current === latestContent.current?.data.tags) {
-						setTags(data.data.data.tags)
+						setTags(liveQuery.result.data.tags)
 					}
 					if (!latestIsFavourite.current || latestIsFavourite.current === latestContent.current?.data.isFavourite) {
-						setIsFavourite(data.data.data.isFavourite ?? false)
+						setIsFavourite(liveQuery.result.data.isFavourite ?? false)
 					}
 
-					setContentTypeId(data.data.data.type)
-					setContent(data.data)
+					setContentTypeId(liveQuery.result.data.type)
+					setContent(liveQuery.result)
 				}
-				else if (data.status === 'error') {
+				else if (liveQuery.status === 'error') {
 					console.error('Error loading content')
-					console.log(data.errors)
+					console.log(liveQuery.errors)
 				}
 			})
 

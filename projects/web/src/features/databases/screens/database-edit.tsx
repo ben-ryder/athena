@@ -2,10 +2,11 @@ import {DatabaseBasicDataForm} from "../forms/database-basic-data-form";
 import {useCallback} from "react";
 import {LocalDatabaseFields} from "@localful-athena/types/database";
 import {useLocalful} from "@localful-athena/react/use-localful";
-import {JArrowButton, JArrowLink, JButton} from "@ben-ryder/jigsaw-react";
+import {JArrowButton, JButton} from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import { ErrorCallout } from "../../../patterns/components/error-callout/error-callout";
 import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 
 export interface DatabaseEditScreenProps {
 	databaseId: string
@@ -28,19 +29,14 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 		console.debug(basicInfo)
 
 		try {
-			const result = await updateDatabase(
+			await updateDatabase(
 				props.databaseId,
 				{
 					name: basicInfo.name,
 					syncEnabled: basicInfo.syncEnabled
 				}
 			)
-			if (result.success) {
-				setOpenTab()
-			}
-			else {
-				console.error(result.errors)
-			}
+			setOpenTab()
 		}
 		catch (e) {
 			console.error(e)
@@ -50,13 +46,8 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 
 	const onDelete = useCallback(async () => {
 		try {
-			const result = await deleteDatabase(props.databaseId)
-			if (result.success) {
-				setOpenTab()
-			}
-			else {
-				console.error(result.errors)
-			}
+			await deleteDatabase(props.databaseId)
+			setOpenTab()
 		}
 		catch (e) {
 			console.error(e)
@@ -65,13 +56,8 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 
 	const onLocalDelete = useCallback(async () => {
 		try {
-			const result = await deleteLocalDatabase(props.databaseId)
-			if (result.success) {
-				setOpenTab()
-			}
-			else {
-				console.error(result.errors)
-			}
+			await deleteLocalDatabase(props.databaseId)
+			setOpenTab()
 		}
 		catch (e) {
 			console.error(e)
@@ -90,13 +76,13 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 
 	const databaseQuery = useObservableQuery(liveGetDatabase(props.databaseId))
 
-	if (databaseQuery.status === 'loading') {
+	if (databaseQuery.status === LiveQueryStatus.LOADING) {
 		return (
 			<p>Loading...</p>
 		)
 	}
 
-	if (databaseQuery.status === 'error') {
+	if (databaseQuery.status === LiveQueryStatus.ERROR) {
 		return (
 			<ErrorCallout errors={databaseQuery.errors} />
 		)
@@ -108,7 +94,7 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 				direction='left'
 				onClick={() => {setOpenTab({type: 'list'})}}
 			>All databases</JArrowButton>
-			<h2>Edit Database {databaseQuery.data.name}</h2>
+			<h2>Edit Database {databaseQuery.result.name}</h2>
 			<JButton
 				variant='secondary'
 				onClick={() => {
@@ -127,8 +113,8 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 				saveText='Save'
 				onSave={onSave}
 				initialData={{
-					name: databaseQuery.data.name,
-					syncEnabled: databaseQuery.data.syncEnabled
+					name: databaseQuery.result.name,
+					syncEnabled: databaseQuery.result.syncEnabled
 				}}
 				extraButtons={
 					<>

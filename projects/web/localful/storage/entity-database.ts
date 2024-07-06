@@ -533,11 +533,11 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			// Run any defined whereData queries.
 			let includeInResults = true
 			if (query.whereData) {
-				includeInResults = query.whereData(dto.data)
+				includeInResults = query.whereData(dto)
 			}
 
 			if (includeInResults) {
-				dataFilterResults.push(dto.data)
+				dataFilterResults.push(dto)
 			}
 		}
 

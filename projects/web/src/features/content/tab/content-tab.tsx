@@ -36,35 +36,35 @@ export function ContentTab(props: ContentTabProps) {
 		}
 
 		if (props.contentId) {
-			const result = await currentDatabase.update('content', props.contentId, {
-				type: contentTypeId,
-				name: name,
-				description: description !== '' ? description : undefined,
-				tags:  tags,
-				fields: {},
-				isFavourite: isFavourite
-			})
-			if (result.success) {
+			try {
+				await currentDatabase.update('content', props.contentId, {
+					type: contentTypeId,
+					name: name,
+					description: description !== '' ? description : undefined,
+					tags:  tags,
+					fields: {},
+					isFavourite: isFavourite
+				})
 				setTabIsUnsaved(props.tabIndex, false)
 			}
-			else {
-				console.error(result.errors)
+			catch (e) {
+				console.error(e)
 			}
 		}
 		else {
-			const result = await currentDatabase.create('content', {
-				type: contentTypeId,
-				name: name,
-				description: description !== '' ? description : undefined,
-				tags:  tags,
-				fields: {},
-				isFavourite: isFavourite
-			})
-			if (result.success) {
-				replaceTab(props.tabIndex, {type: 'content', contentId: result.data})
+			try {
+				const newContentId = await currentDatabase.create('content', {
+					type: contentTypeId,
+					name: name,
+					description: description !== '' ? description : undefined,
+					tags:  tags,
+					fields: {},
+					isFavourite: isFavourite
+				})
+				replaceTab(props.tabIndex, {type: 'content', contentId: newContentId})
 			}
-			else {
-				console.error(result.errors)
+			catch (e) {
+				console.error(e)
 			}
 		}
 	}, [contentTypeId, replaceTab, setTabIsUnsaved])
@@ -85,12 +85,12 @@ export function ContentTab(props: ContentTabProps) {
 			return
 		}
 
-		const result = await currentDatabase.delete('content', props.contentId)
-		if (result.success) {
+		try {
+			await currentDatabase.delete('content', props.contentId)
 			closeTab(props.tabIndex)
 		}
-		else {
-			console.error(result.errors)
+		catch (e) {
+			console.error(e)
 		}
 	}, [props.contentId])
 

@@ -7,7 +7,7 @@ import {
 } from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import {DATA_SCHEMA} from "../../../state/athena-localful";
-import { QueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 import { WithTabData } from "../../workspace/workspace";
 import {ContentFormData, ContentFormDataHandlers} from "./useContentFormData";
 
@@ -26,8 +26,8 @@ export function ContentForm(props: ContentFormProps) {
 	const [error, setError] = useState<string | null>(null);
 
 	const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
-	const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
-		? allTags.data.map(tag => ({
+	const tagOptions: JMultiSelectOptionData[] = allTags.status === LiveQueryStatus.SUCCESS
+		? allTags.result.map(tag => ({
 			text: tag.data.name,
 			value: tag.id,
 			variant: tag.data.colourVariant

@@ -6,6 +6,7 @@ import {useCallback} from "react";
 import {LocalDatabaseDto} from "@localful-athena/types/database";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 
 
 export function DatabaseListScreen() {
@@ -32,10 +33,10 @@ export function DatabaseListScreen() {
 	}, [])
 
 	let content;
-	if (databaseQuery.status === 'loading') {
+	if (databaseQuery.status === LiveQueryStatus.LOADING) {
 		content = <p>Loading...</p>
 	}
-	else if (databaseQuery.status === 'error') {
+	else if (databaseQuery.status === LiveQueryStatus.ERROR) {
 		content = <ErrorCallout errors={databaseQuery.errors} />
 	}
 	else {
@@ -43,10 +44,10 @@ export function DatabaseListScreen() {
 			<>
 				{databaseQuery.errors && <ErrorCallout errors={databaseQuery.errors} />}
 				<div>
-					{databaseQuery.data.length === 0 && (
+					{databaseQuery.result.length === 0 && (
 						<p>No Databases Found</p>
 					)}
-					{databaseQuery.data.map(database => (
+					{databaseQuery.result.map(database => (
 						<div key={database.id}>
 							<h2>{database.name}</h2>
 							<JButton

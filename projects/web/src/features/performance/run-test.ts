@@ -11,9 +11,7 @@ export async function runTest(report: ReportFunction) {
 	const localful = new LocalfulWeb<DATA_SCHEMA>({dataSchema: DATA_SCHEMA})
 
 	const password = 'password1234'
-	const res = await localful.createDatabase({name: 'perf test', syncEnabled: 0}, password)
-	if (!res.success) throw new Error('unexpected error')
-	const databaseId = res.data
+	const databaseId = await localful.createDatabase({name: 'perf test', syncEnabled: 0}, password)
 	await localful.unlockDatabase(databaseId, password)
 	const currentDatabase = await localful.openDatabase(databaseId)
 	if (!currentDatabase) throw new Error('unexpected error')
@@ -42,10 +40,8 @@ export async function createTestData(currentDatabase: EntityDatabase<DATA_SCHEMA
 	const tagCreationStart = performance.now()
 	for (let i = 1; i <= TAG_NUMBER; i++) {
 		const tagId = await currentDatabase.create('tags', {name: SHORT_STRING, colourVariant: "purple"})
-		if (!tagId.success) throw tagId
-
 		for (let j = 1; j <= TAG_VERSIONS_NUMBER; j++) {
-			await currentDatabase.update('tags', tagId.data, {name: SHORT_STRING, colourVariant: "purple"})
+			await currentDatabase.update('tags', tagId, {name: SHORT_STRING, colourVariant: "purple"})
 		}
 	}
 	const tagCreationEnd = performance.now()
@@ -55,8 +51,7 @@ export async function createTestData(currentDatabase: EntityDatabase<DATA_SCHEMA
 export async function queryTestData(currentDatabase: EntityDatabase<typeof DATA_SCHEMA>, report: ReportFunction) {
 	report({level: "task", text: "Fetching Tags"})
 	const getTagsStart = performance.now()
-	const tags = await currentDatabase.query({table: 'tags'})
-	if (!tags.success) throw tags
+	const tagsQuery = await currentDatabase.query({table: 'tags'})
 	const getTagsEnd = performance.now()
 	report({level: "message", text: `fetched all tags in ${getTagsEnd - getTagsStart}ms`})
 
@@ -68,7 +63,7 @@ export async function queryTestData(currentDatabase: EntityDatabase<typeof DATA_
 	// report({level: "message", text: `fetched all tag in ${getTagsRetryEnd - getTagsRetryStart}ms`})
 
 	report({level: "task", text: "Fetching Single Tag"})
-	const tagId = tags.data[10].id
+	const tagId = tagsQuery.result[10].id
 	const getTagStart = performance.now()
 	await currentDatabase.get('tags', tagId)
 	const getTagEnd = performance.now()
@@ -81,14 +76,14 @@ export async function queryTestData(currentDatabase: EntityDatabase<typeof DATA_
 	// report({level: "message", text: `fetched single tag in ${getTagRetryEnd - getTagRetryStart}ms`})
 
 	report({level: "task", text: "Updating Tag"})
-	const updateTagId = tags.data[20].id
+	const updateTagId = tagsQuery.result[20].id
 	const updateTagStart = performance.now()
 	await currentDatabase.update('tags', updateTagId, {name: SHORT_STRING})
 	const updateTagEnd = performance.now()
 	report({level: "message", text: `updated tag in ${updateTagEnd - updateTagStart}ms`})
 
 	report({level: "task", text: "Deleting Tag"})
-	const deleteTagId = tags.data[15].id
+	const deleteTagId = tagsQuery.result[15].id
 	const deleteTagStart = performance.now()
 	await currentDatabase.delete('tags', deleteTagId)
 	const deleteTagEnd = performance.now()

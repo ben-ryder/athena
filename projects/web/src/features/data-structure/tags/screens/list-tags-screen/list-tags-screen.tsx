@@ -1,6 +1,6 @@
 import { JPillButton } from "@ben-ryder/jigsaw-react";
 import "./list-tags-screen.scss";
-import { QueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../../patterns/components/error-callout/error-callout";
 import {
 	GenericManagerScreenProps
@@ -12,11 +12,12 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 export function ListTagsScreen(props: GenericManagerScreenProps) {
 	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
 	const tags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
+	console.debug(tags)
 
 	return (
 		<>
 			<div className="tags-list">
-				{tags.status === QueryStatus.ERROR && <ErrorCallout errors={tags.errors} />}
+				{tags.status === LiveQueryStatus.ERROR && <ErrorCallout errors={tags.errors} />}
 				<div className="tags-list__list">
 					<JPillButton
 						onClick={() => {
@@ -26,7 +27,7 @@ export function ListTagsScreen(props: GenericManagerScreenProps) {
 					>
 						Create New Tag
 					</JPillButton>
-					{tags.status === QueryStatus.SUCCESS && tags.data.map((tag) => (
+					{tags.status === LiveQueryStatus.SUCCESS && tags.result.map((tag) => (
 						<JPillButton
 							onClick={() => {
 								props.navigate({screen: "edit", id: tag.id})

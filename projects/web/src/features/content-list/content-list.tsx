@@ -40,10 +40,10 @@ export function ContentList(props: SearchProps) {
 
 	return (
 		<div>
-			{contentQuery.data.length > 0
+			{contentQuery.result.length > 0
 				? (
 					<ul>
-						{contentQuery.data.map(content => (
+						{contentQuery.result.map(content => (
 							<ContentCard
 								key={content.id}
 								id={content.id}

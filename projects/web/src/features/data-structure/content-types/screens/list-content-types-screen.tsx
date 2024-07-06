@@ -1,7 +1,7 @@
 import { GenericManagerScreenProps } from "../../../../common/generic-manager/generic-manager";
 import { AdminList, AdminListItemProps } from "../../../../patterns/layout/admin-list/admin-list";
 import React, { useState } from "react";
-import { ErrorObject, QueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import {DATA_SCHEMA} from "../../../../state/athena-localful";
@@ -9,12 +9,12 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ListContentTypesScreen(props: GenericManagerScreenProps) {
 	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
-	const [errors, setErrors] = useState<ErrorObject[]>([])
+	const [errors, setErrors] = useState<unknown[]>([])
 
 	const contentTypes = useObservableQuery(currentDatabase?.liveQuery({table: 'content_types'}))
 
-	const listItems: AdminListItemProps[] = contentTypes.status === QueryStatus.SUCCESS
-		? contentTypes.data.map(contentType => ({
+	const listItems: AdminListItemProps[] = contentTypes.status === LiveQueryStatus.SUCCESS
+		? contentTypes.result.map(contentType => ({
 			id: contentType.id,
 			title: contentType.data.name,
 			description: `desc: ${contentType.data.description} | entity: ${contentType.id} | version: ${contentType.versionId} | created: ${contentType.createdAt} | updated: ${contentType.updatedAt}`,
@@ -31,7 +31,7 @@ export function ListContentTypesScreen(props: GenericManagerScreenProps) {
 				addNewText="New Content Type"
 				noItemsText="No Content Types"
 				loadingText="Loading Content Types..."
-				isLoading={contentTypes.status === QueryStatus.LOADING}
+				isLoading={contentTypes.status === LiveQueryStatus.LOADING}
 				items={listItems}
 				navigate={props.navigate}
 			/>

@@ -26,10 +26,8 @@ export class LocalfulWeb<DataSchema extends DataSchemaDefinition> {
 	}
 
 	async openDatabase(databaseId: string) {
-		const database = await this.getDatabase(databaseId)
-		if (!database.success || database.data.isDeleted === 1) {
-			throw new Error("Database not found")
-		}
+		// Ensure that the database exists before opening the database.
+		await this.getDatabase(databaseId)
 
 		// todo: encryptionKey and database.isUnlocked is separate. could this cause issues as they might get out of sync?
 		const encryptionKey = await KeyStorage.get(databaseId)

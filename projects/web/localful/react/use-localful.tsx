@@ -2,7 +2,8 @@ import {LocalfulWeb} from "../localful-web";
 import {DataSchemaDefinition} from "../storage/types";
 import {EntityDatabase} from "../storage/entity-database";
 import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
-import {LocalDatabaseDto} from "@localful-athena/types/database";
+import {LocalDatabaseDto} from "../types/database";
+import { LiveQueryStatus } from "../control-flow";
 
 export interface LocalfulContext<DataSchema extends DataSchemaDefinition> {
 	currentDatabase: EntityDatabase<DataSchema> | null
@@ -83,12 +84,12 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	}, [_ensureDatabaseClosed])
 
 	const unlockDatabase = useCallback(async (databaseId: string, password: string) => {
-		const unlockSuccess = await localful.unlockDatabase(databaseId, password)
-		if (unlockSuccess) {
-			await openDatabase(databaseId)
+		try {
+			await localful.unlockDatabase(databaseId, password)
 		}
-
-		return unlockSuccess
+		catch (e) {
+			console.error(e)
+		}
 	}, [])
 
 	const lockDatabase = useCallback(async (databaseId: string) => {
@@ -108,10 +109,10 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 	useEffect(() => {
 		if (currentDatabase) {
 			const dtoLiveQuery = localful.liveGetDatabase(currentDatabase.databaseId)
-			const dtoSubscription = dtoLiveQuery.subscribe((dto) => {
-				if (dto.status === 'success') {
-					setCurrentDatabaseDto(dto.data)
-				} else if (dto.status === 'error') {
+			const dtoSubscription = dtoLiveQuery.subscribe((liveQuery) => {
+				if (liveQuery.status === LiveQueryStatus.SUCCESS) {
+					setCurrentDatabaseDto(liveQuery.result)
+				} else if (liveQuery.status === LiveQueryStatus.ERROR) {
 					setCurrentDatabaseDto(undefined)
 				}
 			})

@@ -4,6 +4,7 @@ import {DatabaseChangePasswordForm} from "../forms/database-change-password-form
 import {JArrowButton} from "@ben-ryder/jigsaw-react";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {useLocalful} from "@localful-athena/react/use-localful";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 
 export interface DatabaseChangePasswordScreenProps {
 	databaseId: string
@@ -25,8 +26,8 @@ export function DatabaseChangePasswordScreen(props: DatabaseChangePasswordScreen
 				direction='left'
 				onClick={() => {setOpenTab({type: 'list'})}}
 			>All databases</JArrowButton>
-			{databaseQuery.status === 'success' && (
-				<p>Change password for {databaseQuery.data.name} database</p>
+			{databaseQuery.status === LiveQueryStatus.SUCCESS && (
+				<p>Change password for {databaseQuery.result.name} database</p>
 			)}
 			<DatabaseChangePasswordForm
 				databaseId={props.databaseId}

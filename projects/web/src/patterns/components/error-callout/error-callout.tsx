@@ -1,17 +1,29 @@
 import { JCallout } from "@ben-ryder/jigsaw-react";
 import React from "react";
-import { ErrorObject } from "@localful-athena/control-flow";
+import { ErrorTypes, LocalfulError } from "@localful-athena/control-flow";
 
 export interface ErrorCalloutProps {
-	errors: ErrorObject[]
+	errors: unknown[]
 }
 
 export function ErrorCallout(props: ErrorCalloutProps) {
+	const processedErrors = props.errors.map(error => {
+		if (error instanceof LocalfulError) {
+			return error.cause
+		}
+
+		return {
+			type: ErrorTypes.SYSTEM_ERROR,
+			originalError: error
+		}
+	})
+
 	return (
 		<JCallout variant="critical">
-			{props.errors.map(error => (
-				<div key={error.toString()}>
-					<strong>{`${error.type}: ${error.userMessage}`}</strong>
+			{processedErrors.map(error => (
+				// eslint-disable-next-line react/jsx-key -- what key could I use here?
+				<div>
+					<strong>{error.type}</strong>
 					<p>{error.devMessage}</p>
 				</div>
 			))}

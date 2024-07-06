@@ -6,7 +6,7 @@ import {
 	JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect
 } from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import { QueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-athena/control-flow";
 import { WithTabData } from "../../workspace/workspace";
 import { ViewFormData, ViewFormDataHandlers } from "./useViewFormData";
 
@@ -26,8 +26,8 @@ export function ViewForm(props: ViewFormProps) {
 	const [error, setError] = useState<string | null>(null);
 
 	const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
-	const tagOptions: JMultiSelectOptionData[] = allTags.status === QueryStatus.SUCCESS
-		? allTags.data.map(tag => ({
+	const tagOptions: JMultiSelectOptionData[] = allTags.status === LiveQueryStatus.SUCCESS
+		? allTags.result.map(tag => ({
 			text: tag.data.name,
 			value: tag.id,
 			variant: tag.data.colourVariant
@@ -35,8 +35,8 @@ export function ViewForm(props: ViewFormProps) {
 		: []
 
 	const allContentTypes = useObservableQuery(currentDatabase?.liveQuery({table: 'content_types'}))
-	const contentTypeOptions: JMultiSelectOptionData[] = allContentTypes.status === QueryStatus.SUCCESS
-		? allContentTypes.data.map(contentType => ({
+	const contentTypeOptions: JMultiSelectOptionData[] = allContentTypes.status === LiveQueryStatus.SUCCESS
+		? allContentTypes.result.map(contentType => ({
 			text: contentType.data.name,
 			value: contentType.id,
 			variant: contentType.data.colourVariant

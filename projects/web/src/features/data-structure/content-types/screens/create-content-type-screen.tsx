@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import {ErrorObject, ErrorTypes} from "@localful-athena/control-flow";
+import {ErrorTypes} from "@localful-athena/control-flow";
 import {
 	GenericManagerScreenProps
 } from "../../../../common/generic-manager/generic-manager";
@@ -13,17 +13,17 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function CreateContentTypeScreen(props: GenericManagerScreenProps) {
 	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
-	const [errors, setErrors] = useState<ErrorObject[]>([])
+	const [errors, setErrors] = useState<unknown[]>([])
 
 	async function onSave(data: ContentTypeData) {
 		if (!currentDatabase) return setErrors([{type: ErrorTypes.NO_CURRENT_DATABASE}])
 
-		const res = await currentDatabase.create('content_types', data)
-		if (!res.success) {
-			setErrors(res.errors)
-		}
-		else {
+		try {
+			await currentDatabase.create('content_types', data)
 			props.navigate({screen: "list"})
+		}
+		catch (e) {
+			setErrors([e])
 		}
 	}
 
