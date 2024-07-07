@@ -17,7 +17,7 @@ import { EventManager } from "../events/event-manager";
 import { Logger } from "../../src/utils/logger";
 import {
 	CurrentSchemaData,
-	DataSchemaDefinition,
+	DataSchemaDefinition, ExportData,
 	LocalEntityWithExposedFields,
 	QueryDefinition,
 	QueryIndex,
@@ -739,5 +739,22 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
 			}
 		})
+	}
+
+	async export(): Promise<ExportData<DataSchema>> {
+		const entityKeys = Object.keys(this.dataSchema.tables)
+
+		const data = {}
+		for (const entityKey of entityKeys) {
+			const allDataQuery = await this.query({table: entityKey})
+
+			// @ts-expect-error -- just disable Typescript here, don't have the will power to get it to work :D
+			data[entityKey] = allDataQuery.result
+		}
+
+		return {
+			exportVersion: 'v1',
+			data: data
+		}
 	}
 }

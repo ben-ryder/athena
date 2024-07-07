@@ -133,3 +133,10 @@ export interface QueryIndex {
 	query?: IDBKeyRange | IDBValidKey | null,
 	direction?: IDBCursorDirection
 }
+
+export type ExportData<DataSchema extends DataSchemaDefinition> = {
+	exportVersion: "v1";
+	data: {
+		[key in TableKeys<DataSchema>]?: CurrentSchemaData<DataSchema, key>[];
+	}
+};

@@ -126,6 +126,11 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		}
 	}, [currentDatabase])
 
+	// todo: remove once units tests start to be written
+	useEffect(() => {
+		window.lf = localful
+	}, []);
+
 	return <LocalfulContext.Provider value={{
 		currentDatabase,
 		currentDatabaseDto,
