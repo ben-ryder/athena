@@ -134,9 +134,21 @@ export interface QueryIndex {
 	direction?: IDBCursorDirection
 }
 
+export interface ExportEntity<
+	DataSchema extends DataSchemaDefinition,
+	TableKey extends TableKeys<DataSchema>
+> {
+	id: string
+	createdAt: string
+	updatedAt: string
+	localfulVersion: string
+	schemaVersion: string
+	data: CurrentSchemaData<DataSchema, TableKey>
+}
+
 export type ExportData<DataSchema extends DataSchemaDefinition> = {
 	exportVersion: "v1";
 	data: {
-		[key in TableKeys<DataSchema>]?: CurrentSchemaData<DataSchema, key>[];
+		[key in TableKeys<DataSchema>]?: ExportEntity<DataSchema, key>[];
 	}
 };

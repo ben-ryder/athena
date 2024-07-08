@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import { AttachmentsManagerPage } from "../attachments/manager/attachments-manager";
 import { JButton, JButtonGroup } from "@ben-ryder/jigsaw-react";
 import {PerformanceManager} from "../performance/performance-manager";
+import {ImportExportManager} from "../import-export/import-export-manager";
 
 export type SettingsTabs = "settings" | "attachments" | "performance" | "import-export"
 
@@ -18,7 +19,7 @@ export function SettingsManager() {
 		content = <PerformanceManager />
 	}
 	else if (currentTab === "import-export") {
-		content = <p>import/export</p>
+		content = <ImportExportManager />
 	}
 	else {
 		content = <p>Tab Not Found: {currentTab}</p>

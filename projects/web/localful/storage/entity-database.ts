@@ -1,4 +1,4 @@
-import { ZodTypeAny } from "zod";
+import {ZodTypeAny} from "zod";
 import {
 	ErrorTypes,
 	LIVE_QUERY_LOADING_STATE,
@@ -7,23 +7,24 @@ import {
 	LocalfulError,
 	QueryResult
 } from "../control-flow";
-import { LocalfulEncryption } from "../encryption/encryption";
-import { memoryCache } from "./memory-cache";
-import { Observable } from "rxjs";
-import { DataEntityChangeEvent, EventTypes } from "../events/events";
-import { IDBPDatabase, openDB } from "idb";
-import { Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity } from "../types/data-entities";
-import { EventManager } from "../events/event-manager";
-import { Logger } from "../../src/utils/logger";
+import {LocalfulEncryption} from "../encryption/encryption";
+import {memoryCache} from "./memory-cache";
+import {Observable} from "rxjs";
+import {DataEntityChangeEvent, EventTypes} from "../events/events";
+import {IDBPDatabase, openDB} from "idb";
+import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "../types/data-entities";
+import {EventManager} from "../events/event-manager";
+import {Logger} from "../../src/utils/logger";
 import {
 	CurrentSchemaData,
-	DataSchemaDefinition, ExportData,
+	DataSchemaDefinition,
+	ExportData,
 	LocalEntityWithExposedFields,
 	QueryDefinition,
 	QueryIndex,
 	TableKeys
 } from "../storage/types";
-import { LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION } from "../localful-web";
+import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../localful-web";
 
 export interface EntityDatabaseConfig {
 	databaseId: string,
@@ -145,6 +146,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			updatedAt: version.createdAt,
 			data: data,
 			localfulVersion: entity.localfulVersion,
+			schemaVersion: version.schemaVersion,
 			isDeleted: entity.isDeleted,
 		}
 	}
@@ -744,17 +746,45 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	async export(): Promise<ExportData<DataSchema>> {
 		const entityKeys = Object.keys(this.dataSchema.tables)
 
-		const data = {}
+		const exportData: ExportData<DataSchema> = {
+			exportVersion: 'v1',
+			data: {}
+		}
+
 		for (const entityKey of entityKeys) {
 			const allDataQuery = await this.query({table: entityKey})
 
+			const exportEntities = allDataQuery.result.map(dto => {
+				return {
+					id: dto.id,
+					localfulVersion: dto.localfulVersion,
+					schemaVersion: dto.schemaVersion,
+					createdAt: dto.createdAt,
+					updatedAt: dto.updatedAt,
+					data: dto.data,
+				}
+			})
+
 			// @ts-expect-error -- just disable Typescript here, don't have the will power to get it to work :D
-			data[entityKey] = allDataQuery.result
+			exportData[entityKey] = exportEntities
 		}
 
-		return {
-			exportVersion: 'v1',
-			data: data
+		return exportData
+	}
+
+	async import(importData: ExportData<DataSchema>): Promise<void> {
+		if (importData.exportVersion !== 'v1') {
+			throw new Error('Unrecognized export version')
 		}
+
+		const validTableKeys = Object.keys(this.dataSchema.tables)
+		const importTableKeys = Object.keys(importData.data)
+		for (const importTableKey of importTableKeys) {
+			if (!validTableKeys.includes(importTableKey)) {
+				throw new Error(`Unrecognized table ${importTableKey} in import data`)
+			}
+		}
+
+		// todo: loop through tables and entities, validate entities then create/update them
 	}
 }

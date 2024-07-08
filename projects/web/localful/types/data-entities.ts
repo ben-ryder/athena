@@ -42,8 +42,9 @@ export type EntityVersion = z.infer<typeof EntityVersion>
  */
 export const EntityDtoBase = Entity.extend({
 	versionId: IdField,
-	// This will be the version createdAt field,
-	// which conceptually is the updated timestamp
+	// This will be the schema version of the version data.
+	schemaVersion: z.string(),
+	// This will be the version createdAt field, which conceptually is the updated timestamp.
 	updatedAt: TimestampField
 })
 export type EntityDtoBase = z.infer<typeof EntityDtoBase>
