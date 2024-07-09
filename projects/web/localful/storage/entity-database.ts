@@ -12,7 +12,7 @@ import {memoryCache} from "./memory-cache";
 import {Observable} from "rxjs";
 import {DataEntityChangeEvent, EventTypes} from "../events/events";
 import {IDBPDatabase, openDB} from "idb";
-import {Entity, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "../types/data-entities";
+import {Entity, EntityCreateDto, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "../types/data-entities";
 import {EventManager} from "../events/event-manager";
 import {Logger} from "../../src/utils/logger";
 import {
@@ -25,6 +25,7 @@ import {
 	TableKeys
 } from "../storage/types";
 import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../localful-web";
+import {IdField, TimestampField} from "../types/fields";
 
 export interface EntityDatabaseConfig {
 	databaseId: string,
@@ -230,36 +231,60 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 	/**
 	 * Create a new entity.
-	 * This will also create an initial version.
+	 * This will generate ids and timestamps before using ._create to actually create tne entity.
 	 *
 	 * @param tableKey
 	 * @param data
 	 */
 	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<string> {
+		const entityId = LocalfulEncryption.generateUUID();
+		const timestamp = new Date().toISOString();
+
+		await this._create(tableKey, {
+			id: entityId,
+			isDeleted: 0,
+			createdAt: timestamp,
+			updatedAt: timestamp,
+			localfulVersion: LOCALFUL_VERSION,
+			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema,
+			data,
+		})
+
+		return entityId
+	}
+
+	/**
+	 * The base method for creating new entities which is shared by both .create and .import.
+	 *
+	 * @param tableKey
+	 * @param entityCreateDto
+	 */
+	private async _create<TableKey extends TableKeys<DataSchema>>(
+		tableKey: TableKey,
+		entityCreateDto: EntityCreateDto<CurrentSchemaData<DataSchema, TableKey>>
+	): Promise<void> {
 		const db = await this.getIndexDbDatabase()
 
-		const entityId = LocalfulEncryption.generateUUID();
 		const versionId = LocalfulEncryption.generateUUID();
-		const timestamp = new Date().toISOString();
-		const encResult = await LocalfulEncryption.encrypt(this.encryptionKey, data)
+		const encResult = await LocalfulEncryption.encrypt(this.encryptionKey, entityCreateDto.data)
 
 		const tx = db.transaction([tableKey, this._getVersionTableName(tableKey)], 'readwrite')
 
 		const version: EntityVersion = {
-			entityId: entityId,
+			entityId: entityCreateDto.id,
 			id: versionId,
 			data: encResult,
-			createdAt: timestamp,
-			localfulVersion: LOCALFUL_VERSION,
-			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema
+			createdAt: entityCreateDto.createdAt,
+			localfulVersion: entityCreateDto.localfulVersion,
+			schemaVersion: entityCreateDto.schemaVersion
 		}
 		await tx.objectStore(this._getVersionTableName(tableKey)).add(version)
 
 		const entity = {
-			id: entityId,
+			id: entityCreateDto.id,
 			isDeleted: 0,
-			createdAt: timestamp,
-			localfulVersion: LOCALFUL_VERSION,
+			createdAt: entityCreateDto.updatedAt,
+			localfulVersion: entityCreateDto.localfulVersion,
 			currentVersionId: versionId
 		}
 
@@ -276,9 +301,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'create', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'create', id: entityCreateDto.id})
 
-		return entityId
 	}
 
 	/**
@@ -766,7 +790,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			})
 
 			// @ts-expect-error -- just disable Typescript here, don't have the will power to get it to work :D
-			exportData[entityKey] = exportEntities
+			exportData.data[entityKey] = exportEntities
 		}
 
 		return exportData
@@ -774,17 +798,96 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 	async import(importData: ExportData<DataSchema>): Promise<void> {
 		if (importData.exportVersion !== 'v1') {
-			throw new Error('Unrecognized export version')
+			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: "Unrecognized or missing export version"})
+		}
+
+		if (!importData.data) {
+			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: "Unrecognized or missing export data"})
 		}
 
 		const validTableKeys = Object.keys(this.dataSchema.tables)
 		const importTableKeys = Object.keys(importData.data)
 		for (const importTableKey of importTableKeys) {
 			if (!validTableKeys.includes(importTableKey)) {
-				throw new Error(`Unrecognized table ${importTableKey} in import data`)
+				throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Unrecognized table ${importTableKey} in import data`})
+			}
+
+			if (!Array.isArray(importData.data[importTableKey])) {
+				throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Invalid table ${importTableKey} in import data`})
 			}
 		}
 
-		// todo: loop through tables and entities, validate entities then create/update them
+		for (const importTableKey of importTableKeys) {
+			// @ts-expect-error -- we have checked that importData.data is not null and that the table is an array.
+			for (const entityToImport of importData.data[importTableKey]) {
+				let id
+				let createdAt
+				let updatedAt
+				try {
+					id = IdField.parse(entityToImport.id)
+					createdAt = TimestampField.parse(entityToImport.id)
+					updatedAt = TimestampField.parse(entityToImport.id)
+				}
+				catch (e) {
+					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Invalid entity data for ${importTableKey} entity ${entityToImport.id}`, originalError: e})
+				}
+
+				if (entityToImport.localfulVersion !== LOCALFUL_VERSION) {
+					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Unrecognised Localful version ${entityToImport.localfulVersion} for ${importTableKey} entity ${entityToImport.id}`})
+				}
+
+				const validSchemaKeys = Object.keys(this.dataSchema.tables[importTableKey].schemas)
+				if (!validSchemaKeys.includes(entityToImport.schemaVersion)) {
+					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Unrecognised schema version ${entityToImport.schemaVersion} for ${importTableKey} entity ${entityToImport.id}`})
+				}
+
+				let dataToImport
+				try {
+					dataToImport = this.dataSchema.tables[importTableKey].schemas[entityToImport.schemaVersion].data.parse(entityToImport.data)
+				}
+				catch (e) {
+					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Data for ${importTableKey} entity ${entityToImport.id} failed validation`, originalError: e})
+				}
+
+				if (entityToImport.schemaVersion !== this.dataSchema.tables[importTableKey].currentSchema) {
+					if (!this.dataSchema.tables[importTableKey].migrateSchema) {
+						throw new LocalfulError({
+							type: ErrorTypes.SYSTEM_ERROR,
+							devMessage: `${importTableKey} entity ${entityToImport.id} required schema migration from ${entityToImport.schemaVersion} to ${this.dataSchema.tables[importTableKey].currentSchema} but no migration method was provided`,
+						})
+					}
+					try {
+						// @ts-expect-error -- we have checked that migrateSchema exists above
+						dataToImport = this.dataSchema.tables[importTableKey].migrateSchema(this, entityToImport.schemaVersion, this.dataSchema.tables[importTableKey].currentSchema, entityToImport.data)
+					}
+					catch (e) {
+						throw new LocalfulError({
+							type: ErrorTypes.SYSTEM_ERROR,
+							devMessage: `Error occurred during schema migration for ${importTableKey} entity ${entityToImport.id}. Attempted migration was ${entityToImport.schemaVersion} to ${this.dataSchema.tables[importTableKey].currentSchema}.`,
+						})
+					}
+				}
+
+				try {
+					await this._create(importTableKey, {
+						id,
+						createdAt,
+						updatedAt,
+						isDeleted: 0,
+						localfulVersion: entityToImport.localfulVersion,
+						// Schema will have always migrated to current schema at this point,
+						schemaVersion: this.dataSchema.tables[importTableKey].currentSchema,
+						data: dataToImport
+					})
+				}
+				catch (e) {
+					throw new LocalfulError({
+						type: ErrorTypes.SYSTEM_ERROR,
+						devMessage: `Error occurred while attempting to create ${importTableKey} entity ${entityToImport.id}.`,
+						originalError: e,
+					})
+				}
+			}
+		}
 	}
 }

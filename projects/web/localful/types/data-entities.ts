@@ -57,3 +57,14 @@ export interface EntityDto<DataSchema> extends EntityDtoBase {
 }
 
 export type EntityUpdate<T> = Partial<T>
+
+/**
+ * A dto type used internally to create a new entity, which is
+ * shared by both .create and .import
+ */
+export interface EntityCreateDto<DataSchema> extends Entity {
+	schemaVersion: string
+	updatedAt: TimestampField
+	data: DataSchema
+}
+

@@ -3,6 +3,7 @@ import {useRef} from "react";
 import {JButton, JErrorText, JInput} from "@ben-ryder/jigsaw-react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
+import {LocalfulError} from "@localful-athena/control-flow";
 
 const ImportForm = z.object({
 	file: z.string(),
@@ -56,6 +57,9 @@ export function ImportDatabase() {
 		}
 		catch (e) {
 			console.error(e)
+			if (e instanceof LocalfulError) {
+				console.debug(e.cause)
+			}
 			return setError('root', { message: 'Your file could not be imported. Review the browser console for issues.' })
 		}
 	}
