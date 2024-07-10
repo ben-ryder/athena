@@ -1,4 +1,4 @@
-import { EntityDatabase } from "./entity-database";
+import { EntityDatabase } from "./entity-database/entity-database";
 import {EntityDto, EntityVersion, LocalEntity} from "../types/data-entities";
 import {z, ZodTypeAny} from "zod";
 import {IDBPIndex} from "idb";

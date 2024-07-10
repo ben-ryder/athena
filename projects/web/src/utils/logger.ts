@@ -1,7 +1,9 @@
 
 export type LoggerLevel = 'debug' | 'warn' | 'error'
 
-const LOGGER_LEVEL: LoggerLevel = import.meta.env.VITE_LOGGER_LEVEL
+// todo: allow for overwrite via import.meta.env.VITE_LOGGER_LEVEL
+// Can't use import.meta with current jest setup.
+const LOGGER_LEVEL: LoggerLevel = 'warn'
 
 export class LoggerClass {
 	debug (...args: any[]) {

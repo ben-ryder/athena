@@ -1,4 +1,4 @@
-import { EntityDatabase } from "./storage/entity-database";
+import { EntityDatabase } from "./storage/entity-database/entity-database";
 import { EventManager } from "./events/event-manager";
 import {DataSchemaDefinition} from "./storage/types";
 import {LocalDatabaseFields} from './types/database'

@@ -46,7 +46,6 @@ export function ImportDatabase() {
 		let importData
 		try {
 			importData = JSON.parse(fileText)
-			console.debug(importData)
 		}
 		catch (e) {
 			return setError('root', { message: 'Your file contains unexpected data.' })
@@ -56,11 +55,13 @@ export function ImportDatabase() {
 			await currentDatabase.import(importData)
 		}
 		catch (e) {
-			console.error(e)
 			if (e instanceof LocalfulError) {
-				console.debug(e.cause)
+				console.error(e.cause)
 			}
-			return setError('root', { message: 'Your file could not be imported. Review the browser console for issues.' })
+			else {
+				console.error(e)
+			}
+			return setError('root', { message: 'Your file was not cleanly imported. Review the browser console for issues.' })
 		}
 	}
 

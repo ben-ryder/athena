@@ -1,7 +1,7 @@
 import {ReportFunction} from "./performance-manager";
 import {LocalfulWeb} from "@localful-athena/localful-web";
 import { DATA_SCHEMA } from "../../state/athena-localful";
-import {EntityDatabase} from "@localful-athena/storage/entity-database";
+import {EntityDatabase} from "@localful-athena/storage/entity-database/entity-database";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
 const TAG_NUMBER = 600

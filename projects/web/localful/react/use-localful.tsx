@@ -1,6 +1,6 @@
 import {LocalfulWeb} from "../localful-web";
 import {DataSchemaDefinition} from "../storage/types";
-import {EntityDatabase} from "../storage/entity-database";
+import {EntityDatabase} from "../storage/entity-database/entity-database";
 import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 import {LocalDatabaseDto} from "../types/database";
 import { LiveQueryStatus } from "../control-flow";

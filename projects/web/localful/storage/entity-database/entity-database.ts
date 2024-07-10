@@ -6,15 +6,15 @@ import {
 	LiveQueryStatus,
 	LocalfulError,
 	QueryResult
-} from "../control-flow";
-import {LocalfulEncryption} from "../encryption/encryption";
-import {memoryCache} from "./memory-cache";
+} from "../../control-flow";
+import {LocalfulEncryption} from "../../encryption/encryption";
+import {memoryCache} from "../memory-cache";
 import {Observable} from "rxjs";
-import {DataEntityChangeEvent, EventTypes} from "../events/events";
+import {DataEntityChangeEvent, EventTypes} from "../../events/events";
 import {IDBPDatabase, openDB} from "idb";
-import {Entity, EntityCreateDto, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "../types/data-entities";
-import {EventManager} from "../events/event-manager";
-import {Logger} from "../../src/utils/logger";
+import {Entity, EntityCreateDto, EntityDto, EntityUpdate, EntityVersion, LocalEntity} from "../../types/data-entities";
+import {EventManager} from "../../events/event-manager";
+import {Logger} from "../../../src/utils/logger";
 import {
 	CurrentSchemaData,
 	DataSchemaDefinition,
@@ -23,9 +23,9 @@ import {
 	QueryDefinition,
 	QueryIndex,
 	TableKeys
-} from "../storage/types";
-import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../localful-web";
-import {IdField, TimestampField} from "../types/fields";
+} from "../types";
+import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../../localful-web";
+import {IdField, TimestampField} from "../../types/fields";
 
 export interface EntityDatabaseConfig {
 	databaseId: string,
@@ -825,8 +825,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 				let updatedAt
 				try {
 					id = IdField.parse(entityToImport.id)
-					createdAt = TimestampField.parse(entityToImport.id)
-					updatedAt = TimestampField.parse(entityToImport.id)
+					createdAt = TimestampField.parse(entityToImport.createdAt)
+					updatedAt = TimestampField.parse(entityToImport.updatedAt)
 				}
 				catch (e) {
 					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Invalid entity data for ${importTableKey} entity ${entityToImport.id}`, originalError: e})
@@ -868,6 +868,20 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 					}
 				}
 
+				// Ensure that the item doesn't already exist
+				let existingItem
+				try {
+					existingItem = await this.get(importTableKey, entityToImport.id)
+				}
+				catch (e) {
+					if (e instanceof LocalfulError && e.cause.type !== ErrorTypes.ENTITY_NOT_FOUND) {
+						throw new LocalfulError({type: ErrorTypes.SYSTEM_ERROR, originalError: e, devMessage: `Error occurred while attempting to check if ${importTableKey} entity ${entityToImport.id} exists. `})
+					}
+				}
+				if (existingItem) {
+					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Attempted to import ${importTableKey} entity ${entityToImport.id} which already exists`})
+				}
+
 				try {
 					await this._create(importTableKey, {
 						id,
@@ -879,6 +893,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 						schemaVersion: this.dataSchema.tables[importTableKey].currentSchema,
 						data: dataToImport
 					})
+					console.debug(`Created ${importTableKey} entity ${entityToImport.id}`)
 				}
 				catch (e) {
 					throw new LocalfulError({
