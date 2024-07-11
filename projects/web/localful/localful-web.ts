@@ -1,6 +1,6 @@
-import { EntityDatabase } from "./storage/entity-database/entity-database";
+import {EntityDatabase, EntityDatabaseConfig} from "./storage/entity-database/entity-database";
 import { EventManager } from "./events/event-manager";
-import {DataSchemaDefinition} from "./storage/types";
+import {TableSchemaDefinitions, TableTypeDefinitions} from "./storage/types/types";
 import {LocalDatabaseFields} from './types/database'
 import {DatabaseStorage} from "./storage/databases";
 import {KeyStorage} from "./storage/key-storage";
@@ -10,18 +10,23 @@ export const LOCALFUL_INDEXDB_ENTITY_VERSION = 1
 export const LOCALFUL_INDEXDB_DATABASE_VERSION = 1
 
 
-export interface LocalfulWebConfig {
-	dataSchema: DataSchemaDefinition
+export interface LocalfulWebConfig<
+	TableTypes extends TableTypeDefinitions,
+> {
+	tableSchemas: EntityDatabaseConfig<TableTypes>['tableSchemas']
 }
 
-export class LocalfulWeb<DataSchema extends DataSchemaDefinition> {
+export class LocalfulWeb<
+	TableTypes extends TableTypeDefinitions,
+	TableSchemas extends TableSchemaDefinitions<TableTypes>
+> {
 	private readonly eventManager: EventManager
-	private readonly dataSchema: DataSchemaDefinition
+	private readonly tableSchemas: TableSchemaDefinitions<TableTypes>
 	private readonly databaseStorage: DatabaseStorage
 
-	constructor(config: LocalfulWebConfig) {
+	constructor(config: LocalfulWebConfig<TableTypes>) {
 		this.eventManager = new EventManager()
-		this.dataSchema = config.dataSchema
+		this.tableSchemas = config.tableSchemas
 		this.databaseStorage = new DatabaseStorage({eventManager: this.eventManager})
 	}
 
@@ -35,10 +40,10 @@ export class LocalfulWeb<DataSchema extends DataSchemaDefinition> {
 			return null
 		}
 
-		return new EntityDatabase<DataSchema>({
+		return new EntityDatabase<TableTypes, TableSchemas>({
 			databaseId: databaseId,
 			encryptionKey,
-			dataSchema: this.dataSchema
+			tableSchemas: this.tableSchemas
 		}, {
 			eventManager: this.eventManager
 		})

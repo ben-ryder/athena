@@ -4,20 +4,24 @@ import {ContentTypeData} from "./schemas/content-types/content-types";
 import {ContentData} from "./schemas/content/content";
 import {ViewData} from "./schemas/views/views";
 
-export const DATA_SCHEMA = {
+export const AthenaTableSchemas = {
 	version: 1.1,
 	tables: {
 		tags: {
 			currentSchema: 'v1',
 			schemas: {
-				v1: {data: TagData}
+				v1: {
+					validator: async (d: unknown) => TagData.safeParse(d).success
+				}
 			},
 			useMemoryCache: true,
 		},
 		fields: {
 			currentSchema: 'v1',
 			schemas: {
-				v1: {data: FieldDefinition}
+				v1: {
+					validator: async (d: unknown) => FieldDefinition.safeParse(d).success
+				}
 			},
 			useMemoryCache: true,
 		},
@@ -25,7 +29,7 @@ export const DATA_SCHEMA = {
 			currentSchema: 'v1',
 			schemas: {
 				v1: {
-					data: ContentTypeData,
+					validator: async (d: unknown) => ContentTypeData.safeParse(d).success,
 					exposedFields: {fields: 'plain', contentTemplateTags: 'plain'}
 				}
 			},
@@ -35,7 +39,7 @@ export const DATA_SCHEMA = {
 			currentSchema: 'v1',
 			schemas: {
 				v1: {
-					data: ContentData,
+					validator: async (d: unknown) => ContentData.safeParse(d).success,
 					exposedFields: {type: 'indexed', tags: 'plain', isFavourite: 'plain'}
 				},
 			},
@@ -45,7 +49,7 @@ export const DATA_SCHEMA = {
 			currentSchema: 'v1',
 			schemas: {
 				v1: {
-					data: ViewData,
+					validator: async (d: unknown) => ViewData.safeParse(d).success,
 					exposedFields: {isFavourite: 'plain', tags: 'plain', queryTags: 'plain', queryContentTypes: 'plain'}
 				},
 			},
@@ -53,4 +57,12 @@ export const DATA_SCHEMA = {
 		}
 	},
 } as const
-export type DATA_SCHEMA = typeof DATA_SCHEMA
+export type AthenaTableSchemas = typeof AthenaTableSchemas
+
+export type AthenaTableTypes = {
+	tags: TagData
+	fields: FieldDefinition
+	content_types: ContentTypeData,
+	content: ContentTypeData,
+	views: ViewData,
+}

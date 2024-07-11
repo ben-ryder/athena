@@ -12,14 +12,14 @@ import { ViewsDialog, ViewsDialogProvider } from "../../features/views/dialog/vi
 import {ContentListDialog, ContentListDialogProvider} from "../../features/content-list/dialog/content-list-dialog";
 import {SettingsDialog, SettingsDialogProvider} from "../../features/settings/settings-dialog";
 import {LocalfulContextProvider} from "@localful-athena/react/use-localful";
-import {DATA_SCHEMA} from "../../state/athena-localful";
+import {AthenaTableSchemas} from "../../state/athena-localful";
 import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/manager/database-manager";
 
 export function MainPage() {
 	const [isMenuPanelOpen, setIsOpenPanelOpen] = useState<boolean>(false)
 
 	return (
-		<LocalfulContextProvider dataSchema={DATA_SCHEMA}>
+		<LocalfulContextProvider tableSchemas={AthenaTableSchemas}>
 			<WorkspaceContextProvider>
 				<DatabaseManagerDialogProvider>
 					<NewContentDialogProvider>

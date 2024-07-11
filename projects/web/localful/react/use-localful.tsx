@@ -1,49 +1,60 @@
 import {LocalfulWeb} from "../localful-web";
-import {DataSchemaDefinition} from "../storage/types";
-import {EntityDatabase} from "../storage/entity-database/entity-database";
+import {TableSchemaDefinitions, TableTypeDefinitions} from "../storage/types/types";
+import {EntityDatabase, EntityDatabaseConfig} from "../storage/entity-database/entity-database";
 import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 import {LocalDatabaseDto} from "../types/database";
 import { LiveQueryStatus } from "../control-flow";
 
-export interface LocalfulContext<DataSchema extends DataSchemaDefinition> {
-	currentDatabase: EntityDatabase<DataSchema> | null
+export type LocalfulContext<
+	TableTypes extends TableTypeDefinitions,
+	TableSchemas extends TableSchemaDefinitions<TableTypes>
+> = {
+	currentDatabase: EntityDatabase<TableTypes, TableSchemas> | null
 	currentDatabaseDto?: LocalDatabaseDto
 	closeCurrentDatabase: () => Promise<void>
-	openDatabase: LocalfulWeb<DataSchema>['openDatabase']
-	createDatabase: LocalfulWeb<DataSchema>['createDatabase']
-	updateDatabase: LocalfulWeb<DataSchema>['updateDatabase']
-	deleteDatabase: LocalfulWeb<DataSchema>['deleteDatabase']
-	deleteLocalDatabase:  LocalfulWeb<DataSchema>['deleteLocalDatabase']
-	changeDatabasePassword: LocalfulWeb<DataSchema>['changeDatabasePassword']
-	unlockDatabase: LocalfulWeb<DataSchema>['unlockDatabase']
-	lockDatabase: LocalfulWeb<DataSchema>['lockDatabase']
-	liveQueryDatabase:  LocalfulWeb<DataSchema>['liveQueryDatabase']
-	liveGetDatabase:  LocalfulWeb<DataSchema>['liveGetDatabase']
+	openDatabase: LocalfulWeb<TableTypes, TableSchemas>['openDatabase']
+	createDatabase: LocalfulWeb<TableTypes, TableSchemas>['createDatabase']
+	updateDatabase: LocalfulWeb<TableTypes, TableSchemas>['updateDatabase']
+	deleteDatabase: LocalfulWeb<TableTypes, TableSchemas>['deleteDatabase']
+	deleteLocalDatabase:  LocalfulWeb<TableTypes, TableSchemas>['deleteLocalDatabase']
+	changeDatabasePassword: LocalfulWeb<TableTypes, TableSchemas>['changeDatabasePassword']
+	unlockDatabase: LocalfulWeb<TableTypes, TableSchemas>['unlockDatabase']
+	lockDatabase: LocalfulWeb<TableTypes, TableSchemas>['lockDatabase']
+	liveQueryDatabase:  LocalfulWeb<TableTypes, TableSchemas>['liveQueryDatabase']
+	liveGetDatabase:  LocalfulWeb<TableTypes, TableSchemas>['liveGetDatabase']
 }
 
 // eslint-disable-next-line -- can't know the generic type when declaring static variable. The useLocalful hook can then accept the generic.
-const LocalfulContext = createContext<LocalfulContext<any> | undefined>(undefined)
+const LocalfulContext = createContext<LocalfulContext<any, any> | undefined>(undefined)
 
-export function useLocalful<DataSchema extends DataSchemaDefinition>() {
-	const localfulContext = useContext<LocalfulContext<DataSchema> | undefined>(
-		LocalfulContext as unknown as Context<LocalfulContext<DataSchema> | undefined>
+export function useLocalful<
+	TableTypes extends TableTypeDefinitions,
+	TableSchemas extends TableSchemaDefinitions<TableTypes>
+>() {
+	const localfulContext = useContext<LocalfulContext<TableTypes, TableSchemas> | undefined>(
+		LocalfulContext as unknown as Context<LocalfulContext<TableTypes, TableSchemas> | undefined>
 	)
 	if (!localfulContext) {
 		throw new Error('You attempted to use the Localful context without using a Provider.')
 	}
 
-	return localfulContext as unknown as LocalfulContext<DataSchema>
+	return localfulContext as unknown as LocalfulContext<TableTypes, TableSchemas>
 }
 
-export interface LocalfulContextProviderProps<DataSchema> extends PropsWithChildren {
-	dataSchema: DataSchema
+export interface LocalfulContextProviderProps<
+	TableTypes extends TableTypeDefinitions,
+> extends PropsWithChildren {
+	tableSchemas: EntityDatabaseConfig<TableTypes>['tableSchemas']
 }
 
-export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>(props: LocalfulContextProviderProps<DataSchema>) {
-	const [localful] = useState(() => new LocalfulWeb<DataSchema>({
-		dataSchema: props.dataSchema
+export function LocalfulContextProvider<
+	TableTypes extends TableTypeDefinitions,
+	TableSchemas extends TableSchemaDefinitions<TableTypes>
+>(props: LocalfulContextProviderProps<TableTypes>) {
+	const [localful] = useState(() => new LocalfulWeb<TableTypes, TableSchemas>({
+		tableSchemas: props.tableSchemas
 	}))
-	const [currentDatabase, setCurrentDatabase] = useState<null | EntityDatabase<DataSchema>>(null)
+	const [currentDatabase, setCurrentDatabase] = useState<null | EntityDatabase<TableTypes, TableSchemas>>(null)
 
 	const [currentDatabaseDto, setCurrentDatabaseDto] = useState<LocalDatabaseDto | undefined>(undefined)
 
@@ -60,7 +71,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 		}
 	}, [currentDatabase])
 
-	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<DataSchema> | null> => {
+	const openDatabase = useCallback(async (databaseId: string): Promise<EntityDatabase<TableTypes, TableSchemas> | null> => {
 		await closeCurrentDatabase()
 
 		const newDatabase = await localful.openDatabase(databaseId)
@@ -128,6 +139,7 @@ export function LocalfulContextProvider<DataSchema extends DataSchemaDefinition>
 
 	// todo: remove once units tests start to be written
 	useEffect(() => {
+		// @ts-expect-error -- adding custom property, so fine that it doesn't exist on window type.
 		window.lf = localful
 	}, []);
 

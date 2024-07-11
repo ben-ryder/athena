@@ -1,4 +1,3 @@
-import {ZodTypeAny} from "zod";
 import {
 	ErrorTypes,
 	LIVE_QUERY_LOADING_STATE,
@@ -16,40 +15,44 @@ import {Entity, EntityCreateDto, EntityDto, EntityUpdate, EntityVersion, LocalEn
 import {EventManager} from "../../events/event-manager";
 import {Logger} from "../../../src/utils/logger";
 import {
-	CurrentSchemaData,
-	DataSchemaDefinition,
-	ExportData,
+	TableKeys,
+	TableSchemaDefinitions,
+	TableTypeDefinitions,
 	LocalEntityWithExposedFields,
-	QueryDefinition,
-	QueryIndex,
-	TableKeys
-} from "../types";
+} from "../types/types";
 import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../../localful-web";
 import {IdField, TimestampField} from "../../types/fields";
+import {QueryDefinition, QueryIndex} from "@localful-athena/storage/types/query";
+import {ExportData} from "@localful-athena/storage/types/export";
 
-export interface EntityDatabaseConfig {
+export interface EntityDatabaseConfig<
+	TableTypes extends TableTypeDefinitions
+> {
 	databaseId: string,
 	encryptionKey: string,
-	dataSchema: DataSchemaDefinition,
+	tableSchemas: TableSchemaDefinitions<TableTypes>,
 }
 
 export interface EntityDatabaseDependencies {
 	eventManager: EventManager
 }
 
-export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
+export class EntityDatabase<
+	TableTypes extends TableTypeDefinitions,
+	TableSchemas extends TableSchemaDefinitions<TableTypes>
+> {
 	databaseId: string
 	private readonly encryptionKey: string
-	private readonly dataSchema: DataSchemaDefinition
+	private readonly tableSchemas: TableSchemaDefinitions<TableTypes>
 	private _database?: IDBPDatabase
 	private readonly eventManager: EventManager
 
 	constructor(
-		config: EntityDatabaseConfig,
+		config: EntityDatabaseConfig<TableTypes>,
 		deps: EntityDatabaseDependencies
 	) {
 		this.databaseId = config.databaseId
-		this.dataSchema = config.dataSchema
+		this.tableSchemas = config.tableSchemas
 		this.eventManager = deps.eventManager
 		this.encryptionKey = config.encryptionKey
 	}
@@ -63,7 +66,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		this._database = await openDB(this.databaseId, LOCALFUL_INDEXDB_ENTITY_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {
-				for (const [tableKey, schemaDefinition] of Object.entries(this.dataSchema.tables)) {
+				for (const [tableKey, schemaDefinition] of Object.entries(this.tableSchemas.tables)) {
 					// Create entity store
 					const entityStore = db.createObjectStore(tableKey, {
 						keyPath: 'id',
@@ -115,28 +118,32 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param entity
 	 * @param version
-	 * @param dataSchema
 	 */
-	async _createEntityVersionDto<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entity: Entity, version: EntityVersion, dataSchema: ZodTypeAny): Promise<EntityDto<CurrentSchemaData<DataSchema, TableKey>>> {
+	async _createEntityVersionDto<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, entity: Entity, version: EntityVersion): Promise<EntityDto<TableTypes[TableKey]>> {
 		let data
 		try {
-			data = await LocalfulEncryption.decrypt<CurrentSchemaData<DataSchema, TableKey>>(
+			data = await LocalfulEncryption.decrypt(
 				this.encryptionKey,
 				version.data,
-				dataSchema
 			)
 		}
 		catch (e) {
 			throw new LocalfulError({type: ErrorTypes.INVALID_PASSWORD_OR_KEY, originalError: e})
 		}
 
-		if (version.schemaVersion !== this.dataSchema['tables'][tableKey].currentSchema) {
-			if (!this.dataSchema['tables'][tableKey].migrateSchema) {
-				throw new Error(`Schema migration required from ${version.schemaVersion} to ${this.dataSchema['tables'][tableKey].currentSchema} but no migrateSchema method supplied`)
+		// todo: add validating schema and version data?
+		// this would ensure data is valid, but may cause serious performance issue if loading lots of data
+
+		if (version.schemaVersion !== this.tableSchemas['tables'][tableKey].currentSchema) {
+			if (!this.tableSchemas['tables'][tableKey].migrateSchema) {
+				throw new LocalfulError({
+					type: ErrorTypes.INVALID_OR_CORRUPTED_DATA,
+					devMessage: `Schema migration required from ${version.schemaVersion} to ${this.tableSchemas['tables'][tableKey].currentSchema} but no migrateSchema method supplied`
+				})
 			}
 
 			// @ts-expect-error - the existence of migrateSchema is checked above, and passing this is fine.
-			data = await this.dataSchema[tableKey].migrateSchema(this, version.schemaVersion, this.dataSchema[tableKey].currentSchema, decryptedData.data)
+			data = await this.tableSchemas[tableKey].migrateSchema(version.schemaVersion, this.tableSchemas[tableKey].currentSchema, decryptedData.data)
 			await this.update(tableKey, entity.id, data)
 		}
 
@@ -158,9 +165,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param id
 	 */
-	async get<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string): Promise<EntityDto<CurrentSchemaData<DataSchema, TableKey>>> {
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
-			const cachedResponse = await memoryCache.get<CurrentSchemaData<DataSchema, TableKey>>(`${tableKey}-get-${id}`)
+	async get<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, id: string): Promise<EntityDto<TableTypes[TableKey]>> {
+		if (this.tableSchemas['tables'][tableKey].useMemoryCache) {
+			const cachedResponse = await memoryCache.get<TableTypes[TableKey]>(`${tableKey}-get-${id}`)
 			if (cachedResponse) {
 				return cachedResponse
 			}
@@ -197,9 +204,9 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(tableKey, entity, version, this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema]['data'])
+		const dto = await this._createEntityVersionDto<TableKey>(tableKey, entity, version)
 
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
+		if (this.tableSchemas['tables'][tableKey].useMemoryCache) {
 			await memoryCache.add(`${tableKey}-get-${id}`, dto)
 		}
 
@@ -212,8 +219,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param ids
 	 */
-	async getMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]): Promise<QueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
-		const dtos: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
+	async getMany<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, ids: string[]): Promise<QueryResult<EntityDto<TableTypes[TableKey]>[]>> {
+		const dtos: EntityDto<TableTypes[TableKey]>[] = []
 		const errors: unknown[] = []
 
 		for (const id of ids) {
@@ -236,7 +243,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param data
 	 */
-	async create<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, data: CurrentSchemaData<DataSchema, TableKey>): Promise<string> {
+	async create<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, data: TableTypes[TableKey]): Promise<string> {
 		const entityId = LocalfulEncryption.generateUUID();
 		const timestamp = new Date().toISOString();
 
@@ -246,7 +253,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			createdAt: timestamp,
 			updatedAt: timestamp,
 			localfulVersion: LOCALFUL_VERSION,
-			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema,
+			schemaVersion: this.tableSchemas['tables'][tableKey].currentSchema,
 			data,
 		})
 
@@ -259,10 +266,12 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param entityCreateDto
 	 */
-	private async _create<TableKey extends TableKeys<DataSchema>>(
+	private async _create<TableKey extends TableKeys<TableTypes>>(
 		tableKey: TableKey,
-		entityCreateDto: EntityCreateDto<CurrentSchemaData<DataSchema, TableKey>>
+		entityCreateDto: EntityCreateDto<TableTypes[TableKey]>
 	): Promise<void> {
+		// todo: data should be validated here using schema validator before saving
+
 		const db = await this.getIndexDbDatabase()
 
 		const versionId = LocalfulEncryption.generateUUID();
@@ -289,7 +298,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		}
 
 		// Process exposed fields, and add these to the entity before saving.
-		const exposedFields = this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema].exposedFields
+		const exposedFields = this.tableSchemas['tables'][tableKey].schemas[this.tableSchemas['tables'][tableKey].currentSchema].exposedFields
 		if (exposedFields) {
 			for (const field of Object.keys(exposedFields)) {
 				// @ts-expect-error - this is fine.
@@ -315,19 +324,22 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param dataUpdate
 	 * @param preventEventDispatch - UUseful in situations like data migrations, where an update is done while fetching data so an event shouldn't be triggered.
 	 */
-	async update<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string, dataUpdate: EntityUpdate<CurrentSchemaData<DataSchema, TableKey>>, preventEventDispatch?: boolean): Promise<string> {
+	async update<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, entityId: string, dataUpdate: EntityUpdate<TableTypes[TableKey]>, preventEventDispatch?: boolean): Promise<string> {
 		const oldEntity = await this.get(tableKey, entityId)
 
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
+		if (this.tableSchemas['tables'][tableKey].useMemoryCache) {
 			await memoryCache.delete(`${tableKey}-get-${entityId}`)
 			await memoryCache.delete(`${tableKey}-getAll`)
 		}
 
 		// Pick out all entity/version fields, which will leave only data fields.
 		const updatedData = {
+			// @ts-expect-error -- trust that data should always be spreadable. todo: can this be ensured via types?
 			...oldEntity.data,
 			...dataUpdate
 		}
+
+		// todo: updated data should be validated here using schema validator before saving
 
 		const encResult = await LocalfulEncryption.encrypt(this.encryptionKey, updatedData)
 
@@ -343,20 +355,20 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			createdAt: timestamp,
 			localfulVersion: LOCALFUL_VERSION,
 			data: encResult,
-			schemaVersion: this.dataSchema['tables'][tableKey].currentSchema
+			schemaVersion: this.tableSchemas['tables'][tableKey].currentSchema
 		}
 		await tx.objectStore(this._getVersionTableName(tableKey)).add(newVersion)
 
 		const updatedEntity = {
-			id: oldEntity.data.id,
-			createdAt: oldEntity.data.createdAt,
-			isDeleted: oldEntity.data.isDeleted,
-			localfulVersion: oldEntity.data.localfulVersion,
+			id: oldEntity.id,
+			createdAt: oldEntity.createdAt,
+			isDeleted: oldEntity.isDeleted,
+			localfulVersion: oldEntity.localfulVersion,
 			currentVersionId: versionId
 		}
 
 		// Process exposed fields, adding them to the updated entity before saving.
-		const exposedFields = this.dataSchema['tables'][tableKey].schemas[this.dataSchema['tables'][tableKey].currentSchema].exposedFields
+		const exposedFields = this.tableSchemas['tables'][tableKey].schemas[this.tableSchemas['tables'][tableKey].currentSchema].exposedFields
 		if (exposedFields) {
 			for (const field of Object.keys(exposedFields)) {
 				// @ts-expect-error - this is fine.
@@ -379,12 +391,12 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * Delete the given entity, setting the 'isDeleted' flag ont eh entity and
 	 * deleting all versions.
 	 */
-	async delete<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<void> {
+	async delete<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, entityId: string): Promise<void> {
 		const currentEntity = await this.get(tableKey, entityId)
 
 		const db = await this.getIndexDbDatabase()
 
-		if (this.dataSchema['tables'][tableKey].useMemoryCache) {
+		if (this.tableSchemas['tables'][tableKey].useMemoryCache) {
 			await memoryCache.delete(`${tableKey}-get-${entityId}`)
 			await memoryCache.delete(`${tableKey}-getAll`)
 		}
@@ -393,10 +405,10 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		const entityStore = tx.objectStore(tableKey)
 
 		const updatedEntity: LocalEntity = {
-			id: currentEntity.data.id,
-			createdAt: currentEntity.data.createdAt,
-			localfulVersion: currentEntity.data.localfulVersion,
-			currentVersionId: currentEntity.data.versionId,
+			id: currentEntity.id,
+			createdAt: currentEntity.createdAt,
+			localfulVersion: currentEntity.localfulVersion,
+			currentVersionId: currentEntity.versionId,
 			isDeleted: 1
 		}
 		// The keypath 'id' is supplied, so no need to also supply this in the second arg
@@ -418,7 +430,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	/**
 	 * Query for content.
 	 */
-	async query<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>): Promise<QueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>> {
+	async query<TableKey extends TableKeys<TableTypes>>(query: QueryDefinition<TableTypes, TableSchemas, TableKey>): Promise<QueryResult<EntityDto<TableTypes[TableKey]>[]>> {
 		// todo: add query memory cache?
 
 		const db = await this.getIndexDbDatabase()
@@ -428,12 +440,10 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		// In the case of an "includes" operation on the index, there will be one index for each value.
 		const indexes: QueryIndex[] = []
 		if (query.index) {
-			const exposedFields = this.dataSchema['tables'][query.table].schemas[this.dataSchema['tables'][query.table].currentSchema].exposedFields
-			// @ts-expect-error - query.index.field will be a key of an exposed field
+			const exposedFields = this.tableSchemas['tables'][query.table].schemas[this.tableSchemas['tables'][query.table].currentSchema].exposedFields
 			if (!exposedFields || !exposedFields[query.index.field]) {
 				throw new Error("Attempted to use an exposed field that does not exist.")
 			}
-			// @ts-expect-error - query.index.field will be a key of an exposed field
 			else if (exposedFields[query.index.field] !== 'indexed') {
 				throw new Error("Attempted to use an exposed fields that isn't of type 'indexed'.")
 			}
@@ -510,7 +520,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		// Iterate over all indexes and all items in the index cursor, also running the user-supplied whereCursor function.
 		for (const queryIndex of indexes) {
 			for await (const entityCursor of queryIndex.index.iterate(queryIndex.query, queryIndex.direction)) {
-				const entity = entityCursor.value as LocalEntityWithExposedFields<DataSchema, TableKey>
+				const entity = entityCursor.value as LocalEntityWithExposedFields<TableTypes, TableSchemas, TableKey>
 				let version: EntityVersion|undefined = undefined
 				if (entity.currentVersionId) {
 					version = await tx.objectStore(this._getVersionTableName(query.table)).get(entity.currentVersionId) as EntityVersion|undefined
@@ -547,13 +557,12 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 
 		await tx.done
 
-		const dataFilterResults: EntityDto<CurrentSchemaData<DataSchema, TableKey>>[] = []
+		const dataFilterResults: EntityDto<TableTypes[TableKey]>[] = []
 		for (const result of cursorResults) {
-			const dto = await this._createEntityVersionDto<CurrentSchemaData<DataSchema, TableKey>>(
+			const dto = await this._createEntityVersionDto<TableKey>(
 				query.table,
 				result.entity,
 				result.version,
-				this.dataSchema['tables'][query.table].schemas[this.dataSchema['tables'][query.table].currentSchema]['data']
 			)
 
 			// Run any defined whereData queries.
@@ -592,7 +601,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param entityId
 	 */
-	async getAllVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<EntityVersion[]> {
+	async getAllVersions<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, entityId: string): Promise<EntityVersion[]> {
 		const db = await this.getIndexDbDatabase()
 
 		return await db.getAllFromIndex(this._getVersionTableName(tableKey), 'entityId', entityId)
@@ -601,7 +610,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	/**
 	 * Delete all versions except the most recent.
 	 */
-	async deleteOldVersions<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<void> {
+	async deleteOldVersions<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, entityId: string): Promise<void> {
 		const db = await this.getIndexDbDatabase()
 
 		const versions = await this.getAllVersions(tableKey, entityId)
@@ -632,7 +641,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param versionId
 	 */
-	async deleteVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<void> {
+	async deleteVersion<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, versionId: string): Promise<void> {
 		const db = await this.getIndexDbDatabase()
 		await db.delete(this._getVersionTableName(tableKey), versionId)
 	}
@@ -643,7 +652,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param versionId
 	 */
-	async getVersion<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, versionId: string): Promise<EntityVersion> {
+	async getVersion<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, versionId: string): Promise<EntityVersion> {
 		const db = await this.getIndexDbDatabase()
 		return await db.get(this._getVersionTableName(tableKey), versionId)
 	}
@@ -654,7 +663,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 	 * @param tableKey
 	 * @param entityId
 	 */
-	async _getEntity<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, entityId: string): Promise<LocalEntity> {
+	async _getEntity<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, entityId: string): Promise<LocalEntity> {
 		const db = await this.getIndexDbDatabase()
 
 		const entity = await db.get(tableKey, entityId)
@@ -666,8 +675,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		return entity
 	}
 
-	liveGet<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, id: string) {
-		return new Observable<LiveQueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>>>((subscriber) => {
+	liveGet<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, id: string) {
+		return new Observable<LiveQueryResult<EntityDto<TableTypes[TableKey]>>>((subscriber) => {
 			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
@@ -701,8 +710,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		})
 	}
 	
-	liveGetMany<TableKey extends TableKeys<DataSchema>>(tableKey: TableKey, ids: string[]) {
-		return new Observable<LiveQueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
+	liveGetMany<TableKey extends TableKeys<TableTypes>>(tableKey: TableKey, ids: string[]) {
+		return new Observable<LiveQueryResult<EntityDto<TableTypes[TableKey]>[]>>((subscriber) => {
 			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
@@ -734,8 +743,8 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		})
 	}
 
-	liveQuery<TableKey extends TableKeys<DataSchema>>(query: QueryDefinition<DataSchema, TableKey>) {
-		return new Observable<LiveQueryResult<EntityDto<CurrentSchemaData<DataSchema, TableKey>>[]>>((subscriber) => {
+	liveQuery<TableKey extends TableKeys<TableTypes>>(query: QueryDefinition<TableTypes, TableSchemas, TableKey>) {
+		return new Observable<LiveQueryResult<EntityDto<TableTypes[TableKey]>[]>>((subscriber) => {
 			subscriber.next(LIVE_QUERY_LOADING_STATE)
 
 			const runQuery = async () => {
@@ -767,10 +776,10 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		})
 	}
 
-	async export(): Promise<ExportData<DataSchema>> {
-		const entityKeys = Object.keys(this.dataSchema.tables)
+	async export(): Promise<ExportData<TableTypes>> {
+		const entityKeys = Object.keys(this.tableSchemas.tables)
 
-		const exportData: ExportData<DataSchema> = {
+		const exportData: ExportData<TableTypes> = {
 			exportVersion: 'v1',
 			data: {}
 		}
@@ -796,7 +805,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 		return exportData
 	}
 
-	async import(importData: ExportData<DataSchema>): Promise<void> {
+	async import(importData: ExportData<TableTypes>): Promise<void> {
 		if (importData.exportVersion !== 'v1') {
 			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: "Unrecognized or missing export version"})
 		}
@@ -805,7 +814,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: "Unrecognized or missing export data"})
 		}
 
-		const validTableKeys = Object.keys(this.dataSchema.tables)
+		const validTableKeys = Object.keys(this.tableSchemas.tables)
 		const importTableKeys = Object.keys(importData.data)
 		for (const importTableKey of importTableKeys) {
 			if (!validTableKeys.includes(importTableKey)) {
@@ -836,34 +845,38 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Unrecognised Localful version ${entityToImport.localfulVersion} for ${importTableKey} entity ${entityToImport.id}`})
 				}
 
-				const validSchemaKeys = Object.keys(this.dataSchema.tables[importTableKey].schemas)
+				const validSchemaKeys = Object.keys(this.tableSchemas.tables[importTableKey].schemas)
 				if (!validSchemaKeys.includes(entityToImport.schemaVersion)) {
 					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Unrecognised schema version ${entityToImport.schemaVersion} for ${importTableKey} entity ${entityToImport.id}`})
 				}
 
-				let dataToImport
+				let dataIsValid = false
 				try {
-					dataToImport = this.dataSchema.tables[importTableKey].schemas[entityToImport.schemaVersion].data.parse(entityToImport.data)
+					dataIsValid = await this.tableSchemas.tables[importTableKey].schemas[entityToImport.schemaVersion].validator(entityToImport.data)
 				}
 				catch (e) {
-					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Data for ${importTableKey} entity ${entityToImport.id} failed validation`, originalError: e})
+					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Validator function failed unexpectedly for ${importTableKey} entity ${entityToImport.id}`, originalError: e})
+				}
+				if (!dataIsValid) {
+					throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: `Data for ${importTableKey} entity ${entityToImport.id} failed validation`})
 				}
 
-				if (entityToImport.schemaVersion !== this.dataSchema.tables[importTableKey].currentSchema) {
-					if (!this.dataSchema.tables[importTableKey].migrateSchema) {
+				let dataToImport = entityToImport.data
+				if (entityToImport.schemaVersion !== this.tableSchemas.tables[importTableKey].currentSchema) {
+					if (!this.tableSchemas.tables[importTableKey].migrateSchema) {
 						throw new LocalfulError({
 							type: ErrorTypes.SYSTEM_ERROR,
-							devMessage: `${importTableKey} entity ${entityToImport.id} required schema migration from ${entityToImport.schemaVersion} to ${this.dataSchema.tables[importTableKey].currentSchema} but no migration method was provided`,
+							devMessage: `${importTableKey} entity ${entityToImport.id} required schema migration from ${entityToImport.schemaVersion} to ${this.tableSchemas.tables[importTableKey].currentSchema} but no migration method was provided`,
 						})
 					}
 					try {
 						// @ts-expect-error -- we have checked that migrateSchema exists above
-						dataToImport = this.dataSchema.tables[importTableKey].migrateSchema(this, entityToImport.schemaVersion, this.dataSchema.tables[importTableKey].currentSchema, entityToImport.data)
+						dataToImport = this.tableSchemas.tables[importTableKey].migrateSchema(this, entityToImport.schemaVersion, this.tableSchemas.tables[importTableKey].currentSchema, entityToImport.data)
 					}
 					catch (e) {
 						throw new LocalfulError({
 							type: ErrorTypes.SYSTEM_ERROR,
-							devMessage: `Error occurred during schema migration for ${importTableKey} entity ${entityToImport.id}. Attempted migration was ${entityToImport.schemaVersion} to ${this.dataSchema.tables[importTableKey].currentSchema}.`,
+							devMessage: `Error occurred during schema migration for ${importTableKey} entity ${entityToImport.id}. Attempted migration was ${entityToImport.schemaVersion} to ${this.tableSchemas.tables[importTableKey].currentSchema}.`,
 						})
 					}
 				}
@@ -890,7 +903,7 @@ export class EntityDatabase<DataSchema extends DataSchemaDefinition> {
 						isDeleted: 0,
 						localfulVersion: entityToImport.localfulVersion,
 						// Schema will have always migrated to current schema at this point,
-						schemaVersion: this.dataSchema.tables[importTableKey].currentSchema,
+						schemaVersion: this.tableSchemas.tables[importTableKey].currentSchema,
 						data: dataToImport
 					})
 					console.debug(`Created ${importTableKey} entity ${entityToImport.id}`)
