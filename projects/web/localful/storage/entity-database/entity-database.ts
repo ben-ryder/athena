@@ -334,7 +334,6 @@ export class EntityDatabase<
 
 		// Pick out all entity/version fields, which will leave only data fields.
 		const updatedData = {
-			// @ts-expect-error -- trust that data should always be spreadable. todo: can this be ensured via types?
 			...oldEntity.data,
 			...dataUpdate
 		}

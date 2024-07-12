@@ -5,11 +5,11 @@ import {GenericManagerContentScreenProps,} from "../../../../common/generic-mana
 import {FieldForm} from "../forms/field-form";
 import {FieldDefinition} from "../../../../state/schemas/fields/fields";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function EditFieldScreen(props: GenericManagerContentScreenProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	const fieldQuery = useObservableQuery(currentDatabase?.liveGet('fields', props.id))

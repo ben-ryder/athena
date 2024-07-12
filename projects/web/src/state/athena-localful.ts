@@ -63,6 +63,6 @@ export type AthenaTableTypes = {
 	tags: TagData
 	fields: FieldDefinition
 	content_types: ContentTypeData,
-	content: ContentTypeData,
+	content: ContentData,
 	views: ViewData,
 }

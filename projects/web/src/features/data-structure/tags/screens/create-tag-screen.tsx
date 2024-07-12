@@ -6,11 +6,11 @@ import {
 	GenericManagerScreenProps
 } from "../../../../common/generic-manager/generic-manager";
 import { TagForm } from "../forms/tag-form";
-import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function CreateTagScreen(props: GenericManagerScreenProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	async function onSave(data: TagData) {

@@ -6,6 +6,7 @@ import { LocalEntity } from "../../types/data-entities";
  * schema definition.
  */
 export type TableTypeDefinitions = {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- using never/unknown seems to cause issues when trying to actually use this type.
 	[key: string]: any
 }
 
@@ -26,7 +27,8 @@ export type TableSchemaDefinitions<TableTypes extends TableTypeDefinitions> = {
 			currentSchema: string
 			schemas: {
 				[key: string]: {
-					validator: (data: never) => Promise<boolean>
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any -- using never/unknown seems to cause issues when trying to actually use this type.
+					validator: (data: any) => Promise<boolean>
 					exposedFields?: ExposedFieldsDefinition<TableTypes, TableKey>
 				}
 			}
@@ -43,7 +45,7 @@ export type ExposedFieldsDefinition<
 	TableTypes extends TableTypeDefinitions,
 	TableKey extends TableKeys<TableTypes>
 > = {
-	[key in keyof TableTypes[TableKey]]: 'indexed' | 'plain';
+	[key in keyof TableTypes[TableKey]]?: 'indexed' | 'plain';
 };
 
 /**

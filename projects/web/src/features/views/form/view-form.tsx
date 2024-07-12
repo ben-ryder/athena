@@ -12,7 +12,7 @@ import { ViewFormData, ViewFormDataHandlers } from "./useViewFormData";
 
 import "./view-form.scss"
 import {useLocalful} from "@localful-athena/react/use-localful";
-import {DATA_SCHEMA} from "../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
 
 export interface ViewFormProps extends WithTabData, ViewFormData, ViewFormDataHandlers {
 	onSave: () => void;
@@ -22,7 +22,7 @@ export interface ViewFormProps extends WithTabData, ViewFormData, ViewFormDataHa
 // todo: handle situation where content form is open and content gets deleted?
 
 export function ViewForm(props: ViewFormProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const [error, setError] = useState<string | null>(null);
 
 	const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))

@@ -9,11 +9,11 @@ import {
 	ContentTypeData
 } from "../../../../state/schemas/content-types/content-types";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function EditContentTypeScreen(props: GenericManagerContentScreenProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	const contentTypeQuery = useObservableQuery(currentDatabase?.liveGet('content_types', props.id))

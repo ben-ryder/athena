@@ -1,7 +1,7 @@
 import {ContentForm} from "../form/content-form";
 
 import { WithTabData } from "../../workspace/workspace";
-import {DATA_SCHEMA} from "../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useCallback, useEffect} from "react";
 import {ContentFormOptions, useContentFormData} from "../form/useContentFormData";
@@ -10,7 +10,7 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 export interface ContentTabProps extends WithTabData, ContentFormOptions {}
 
 export function ContentTab(props: ContentTabProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const { replaceTab, setTabName, setTabIsUnsaved, closeTab } = useWorkspaceContext()
 
 	const {

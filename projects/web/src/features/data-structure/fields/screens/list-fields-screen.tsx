@@ -5,13 +5,13 @@ import { LiveQueryStatus } from "@localful-athena/control-flow";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ListFieldsScreen(props: GenericManagerScreenProps) {
 	const [errors, setErrors] = useState<unknown[]>([])
 
-	const { currentDatabase } = useLocalful<DATA_SCHEMA>()
+	const { currentDatabase } = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 
 	const fields = useObservableQuery(currentDatabase?.liveQuery({table: 'fields'}))
 

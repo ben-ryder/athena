@@ -1,5 +1,5 @@
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {DATA_SCHEMA} from "../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../state/athena-localful";
 import {ErrorCallout} from "../../patterns/components/error-callout/error-callout";
 import {useWorkspaceContext} from "../workspace/workspace-context";
 import {ContentCard} from "../../patterns/components/content-card/content-card";
@@ -10,7 +10,7 @@ export interface SearchProps {
 }
 
 export function ContentList(props: SearchProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const { openTab } = useWorkspaceContext()
 
 	const contentQuery = useObservableQuery(currentDatabase?.liveQuery({

@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {ViewDto} from "../../../state/schemas/views/views";
 import {useLocalful} from "@localful-athena/react/use-localful";
-import {DATA_SCHEMA} from "../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
 import { LiveQueryStatus } from "@localful-athena/control-flow";
 
 export interface ViewFormOptions {
@@ -33,7 +33,7 @@ export interface ViewFormDataHandlers {
  * @param options
  */
 export function useViewFormData(options: ViewFormOptions) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 
 	const latestView = useRef<ViewDto | undefined>()
 	const [view, setView] = useState<ViewDto | undefined>()

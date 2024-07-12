@@ -6,7 +6,7 @@ import {
 	JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect
 } from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {DATA_SCHEMA} from "../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
 import { LiveQueryStatus } from "@localful-athena/control-flow";
 import { WithTabData } from "../../workspace/workspace";
 import {ContentFormData, ContentFormDataHandlers} from "./useContentFormData";
@@ -22,7 +22,7 @@ export interface ContentFormProps extends WithTabData, ContentFormData, ContentF
 // todo: handle situation where content form is open and content gets deleted?
 
 export function ContentForm(props: ContentFormProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const [error, setError] = useState<string | null>(null);
 
 	const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))

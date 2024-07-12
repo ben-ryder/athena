@@ -8,11 +8,11 @@ import {
 	ContentTypeData
 } from "../../../../state/schemas/content-types/content-types";
 import {ContentTypeForm} from "../forms/content-type-form";
-import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function CreateContentTypeScreen(props: GenericManagerScreenProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	async function onSave(data: ContentTypeData) {

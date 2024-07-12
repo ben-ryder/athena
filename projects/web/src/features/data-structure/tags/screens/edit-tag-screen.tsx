@@ -6,13 +6,13 @@ import {ErrorTypes, LiveQueryStatus} from "@localful-athena/control-flow";
 import {
 	GenericManagerContentScreenProps,
 } from "../../../../common/generic-manager/generic-manager";
-import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 
 export function EditTagScreen(props: GenericManagerContentScreenProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	const tagResult = useObservableQuery(currentDatabase?.liveGet('tags', props.id))

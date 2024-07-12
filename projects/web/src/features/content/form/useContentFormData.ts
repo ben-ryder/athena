@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {DATA_SCHEMA} from "../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
 import {ContentTypeData} from "../../../state/schemas/content-types/content-types";
 import {EntityDto} from "@localful-athena/types/data-entities";
 import {ContentData} from "../../../state/schemas/content/content";
@@ -30,7 +30,7 @@ export interface ContentFormDataHandlers {
  * @param options
  */
 export function useContentFormData(options: ContentFormOptions) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 
 	const [contentTypeId, setContentTypeId] = useState<string | undefined>(options.contentTypeId)
 

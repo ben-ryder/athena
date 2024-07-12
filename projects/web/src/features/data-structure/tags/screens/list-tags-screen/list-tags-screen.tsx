@@ -6,11 +6,11 @@ import {
 	GenericManagerScreenProps
 } from "../../../../../common/generic-manager/generic-manager";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {DATA_SCHEMA} from "../../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function ListTagsScreen(props: GenericManagerScreenProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const tags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
 	console.debug(tags)
 

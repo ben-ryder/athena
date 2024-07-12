@@ -7,12 +7,12 @@ import {
 import { FieldDefinition } from "../../../../state/schemas/fields/fields";
 import {FieldForm} from "../forms/field-form";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
-import {DATA_SCHEMA} from "../../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
 import {useLocalful} from "@localful-athena/react/use-localful";
 
 export function CreateFieldScreen(props: GenericManagerScreenProps) {
 	const [errors, setErrors] = useState<unknown[]>([])
-	const { currentDatabase } = useLocalful<DATA_SCHEMA>()
+	const { currentDatabase } = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 
 	async function onSave(data: FieldDefinition) {
 		if (!currentDatabase) return setErrors([{type: ErrorTypes.NO_CURRENT_DATABASE}])

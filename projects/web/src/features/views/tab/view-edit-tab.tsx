@@ -1,5 +1,5 @@
 import { WithTabData } from "../../workspace/workspace";
-import {DATA_SCHEMA} from "../../../state/athena-localful";
+import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useCallback, useEffect} from "react";
 import {useViewFormData, ViewFormOptions} from "../form/useViewFormData";
@@ -10,7 +10,7 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 export interface ViewEditTabProps extends WithTabData, ViewFormOptions {}
 
 export function ViewEditTab(props: ViewEditTabProps) {
-	const {currentDatabase} = useLocalful<DATA_SCHEMA>()
+	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const { replaceTab, setTabName, setTabIsUnsaved, closeTab, openTab } = useWorkspaceContext()
 
 	const {
