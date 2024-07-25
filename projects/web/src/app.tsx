@@ -7,24 +7,10 @@ import { routes } from "./routes";
 import { MainPage } from "./pages/main/main";
 import { PageNotFound } from "./pages/page-not-found";
 import { WelcomePage } from "./pages/welcome";
-import { UnderDevelopmentPage } from "./pages/under-development/under-development";
 
 import "./app.scss"
 
 export function App() {
-	const [showDevPage, setShowDevPage] = useState<boolean>(true)
-
-	useEffect(() => {
-		const athenaFlag = localStorage.getItem("athena")
-		if (athenaFlag) {
-			setShowDevPage(false)
-		}
-	}, [])
-
-	if (showDevPage) {
-		return <UnderDevelopmentPage />
-	}
-
 	return (
 		<BrowserRouter>
 			<HelmetProvider>
