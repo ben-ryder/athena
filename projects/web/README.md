@@ -2,6 +2,10 @@
 
 A React web application for Athena, built using [Vite](https://vitejs.dev/).
 
+## Prerequisites
+- Node.js installed at version `^20.x`
+- A [Localful](https://github.com/ben-ryder/localful) server set up locally or on a hosting provider (for user and content sync/backup features)
+
 ## Quick Start
 1. Run `npm install`
 2. Copy `.env.example` to `.env` and set up variables

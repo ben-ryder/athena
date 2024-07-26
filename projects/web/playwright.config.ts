@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from "dotenv";
 import * as path from "node:path";
 
-// @ts-expect-error -- t
+// @ts-expect-error -- import.meta.dirname should be fine to use here
 dotenv.config({ path: path.resolve(import.meta.dirname, '.env') });
 
 /**
