@@ -1,3 +1,5 @@
+import { expect, test } from 'vitest'
+
 import {LocalfulEncryption} from "./encryption";
 import {z} from "zod";
 
