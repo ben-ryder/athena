@@ -37,7 +37,8 @@ dist-ssr
 
 # Notes
 /notes
-/test-results/
-/playwright-report/
-/blob-report/
+
+# PLaywright
+/tests/results
+/tests/reports
 /playwright/.cache/
