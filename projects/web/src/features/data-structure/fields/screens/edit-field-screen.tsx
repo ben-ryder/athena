@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {ErrorCallout} from "../../../../patterns/components/error-callout/error-callout";
 import {ErrorTypes, LiveQueryStatus} from "@localful-athena/control-flow";
 import {GenericManagerContentScreenProps,} from "../../../../common/generic-manager/generic-manager";
-import {FieldForm} from "../forms/field-form";
+import {BasicFieldForm} from "../forms/basic-field-form";
 import {FieldDefinition} from "../../../../state/schemas/fields/fields";
 import {useObservableQuery} from "@localful-athena/react/use-observable-query";
 import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
@@ -45,7 +45,7 @@ export function EditFieldScreen(props: GenericManagerContentScreenProps) {
 				<p>Loading...</p>
 			)}
 			{fieldQuery.status === LiveQueryStatus.SUCCESS &&
-        <FieldForm
+        <BasicFieldForm
         	title={`Edit Field '${fieldQuery.result.data.label}'`}
         	data={fieldQuery.result.data}
         	onSave={onSave}

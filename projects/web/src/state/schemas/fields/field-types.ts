@@ -41,7 +41,7 @@ export const FIELD_TYPES =  {
 	},
 } as const
 
-export const FieldTypesList = [
+export const FieldTypes = [
 	FIELD_TYPES.plainTextShort.identifier,
 	FIELD_TYPES.plainTextLong.identifier,
 	FIELD_TYPES.markdown.identifier,
@@ -53,5 +53,4 @@ export const FieldTypesList = [
 	FIELD_TYPES.timestamp.identifier,
 	FIELD_TYPES.date.identifier,
 ] as const;
-
 export type FieldTypes = keyof typeof FIELD_TYPES

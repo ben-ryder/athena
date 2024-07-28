@@ -7,82 +7,24 @@ import {
 } from "@ben-ryder/jigsaw-react";
 import {GenericFormProps} from "../../../../common/generic-form/generic-form";
 import {FieldDefinition} from "../../../../state/schemas/fields/fields";
-import { FIELD_TYPES, FieldTypes, FieldTypesList } from "../../../../state/schemas/fields/field-types";
+import { FIELD_TYPES, FieldTypes, FieldTypes } from "../../../../state/schemas/fields/field-types";
+import { useForm } from "react-hook-form";
 
-export interface FieldFormProps extends GenericFormProps<FieldDefinition> {
+export interface BasicFieldFormProps extends GenericFormProps<FieldDefinition> {
 	disableTypeEdit: boolean
 }
 
-export function FieldForm(props: FieldFormProps) {
+export function BasicFieldForm(props: FieldFormProps) {
 	const [error, setError] = useState<string | null>(null);
 
-	const [type, setType] = useState<FieldTypes>(props.data.type);
 	const [label, setLabel] = useState<string>(props.data.label);
+	const [required, setRequired] = useState<boolean>(false);
 
+	function onSave() {
 
-	const fieldOptions: JOptionData[] = useMemo(() => {
-		return FieldTypesList.map((field) => ({
-			// todo: replace with generic labels, not direct from Jigsaw
-			text: FIELD_TYPES[field].label,
-			value: FIELD_TYPES[field].identifier,
-		}))
-	}, []);
-
-	function onSave(e: FormEvent) {
-		e.preventDefault()
-
-		let data
-		switch (type) {
-			case FIELD_TYPES.plainTextShort.identifier:
-			case FIELD_TYPES.plainTextLong.identifier:
-			case FIELD_TYPES.markdown.identifier:
-			case FIELD_TYPES.url.identifier:
-			case FIELD_TYPES.number.identifier:
-			case FIELD_TYPES.boolean.identifier:
-			case FIELD_TYPES.timestamp.identifier:
-			case FIELD_TYPES.date.identifier: {
-				data = {
-					label,
-					type,
-					required: true
-				}
-				break
-			}
-			case FIELD_TYPES.options.identifier: {
-				data = {
-					label,
-					type,
-					required: true,
-					options: ["Backlog", "Todo", "In Progress", "Done", "Archived"]
-				}
-				break
-			}
-			case FIELD_TYPES.scale.identifier: {
-				data = {
-					label,
-					type,
-					required: true,
-					minLabel: "1",
-					maxLabel: "5",
-				}
-				break
-			}
-			default: {
-				setError("Attempted to save a field type that is not supported.")
-				return;
-			}
-		}
-
-		const parseResult = FieldDefinition.safeParse(data)
-		if (!parseResult.success) {
-			setError("The given data is invalid")
-			console.error(parseResult.error)
-			return
-		}
-
-		setError(null);
-		props.onSave(parseResult.data);
 	}
+
+	const {} = useForm<>()
 
 	return (
 		<JForm className="content-form" onSubmit={onSave}>
