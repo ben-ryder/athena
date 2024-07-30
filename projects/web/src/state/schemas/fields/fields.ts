@@ -22,7 +22,7 @@ export type FieldBasicStringValue = z.infer<typeof FieldBasicStringValue>
  * Short plain text field.
  */
 export const FieldShortText = FieldBase.extend({
-	type: z.literal(FIELD_TYPES.plainTextShort.identifier),
+	type: z.literal(FIELD_TYPES.textShort.identifier),
 }).strict()
 export type FieldShortText = z.infer<typeof FieldShortText>
 
@@ -35,7 +35,7 @@ export type FieldShortTextValue = z.infer<typeof FieldShortTextValue>
  * Long plain text field.
  */
 export const FieldLongText = FieldBase.extend({
-	type: z.literal(FIELD_TYPES.plainTextLong.identifier),
+	type: z.literal(FIELD_TYPES.textLong.identifier),
 }).strict()
 export type FieldLongText = z.infer<typeof FieldLongText>
 
@@ -103,6 +103,10 @@ export const FieldScale = FieldBase.extend({
 	maxLabel: z.string()
 		.min(1, "max label must be between 1 and 20 chars")
 		.max(20, "max label must be between 1 and 20 chars"),
+	scale: z.number()
+		.int()
+		.min(3, "scale must be between 3 and 10")
+		.max(10,  "scale must be between 3 and 10")
 }).strict()
 export type FieldScale = z.infer<typeof FieldScale>
 
@@ -176,17 +180,17 @@ export const FieldValues = z.union([
 	// Text Fields
 	FieldShortText.pick({type: true}).extend({value: FieldShortTextValue}),
 	FieldLongText.pick({type: true}).extend({value: FieldLongTextValue}),
-	FieldMarkdown.pick({type: true, value: true}).extend({value: FieldMarkdownValue}),
+	FieldMarkdown.pick({type: true}).extend({value: FieldMarkdownValue}),
 	// Custom Fields
-	FieldOptions.pick({type: true, value: true}).extend({value: FieldOptionsValue}),
-	FieldURL.pick({type: true, value: true}).extend({value: FieldURLValue}),
+	FieldOptions.pick({type: true}).extend({value: FieldOptionsValue}),
+	FieldURL.pick({type: true}).extend({value: FieldURLValue}),
 	// Basic Types Fields
-	FieldNumber.pick({type: true, value: true}).extend({value: FieldNumberValue}),
-	FieldScale.pick({type: true,  value: true}).extend({value: FieldScaleValue}),
-	FieldBoolean.pick({type: true, value: true}).extend({value: FieldBooleanValue}),
+	FieldNumber.pick({type: true}).extend({value: FieldNumberValue}),
+	FieldScale.pick({type: true}).extend({value: FieldScaleValue}),
+	FieldBoolean.pick({type: true}).extend({value: FieldBooleanValue}),
 	// Date Fields
-	FieldDate.pick({type: true, value: true}).extend({value: FieldDateValue}),
-	FieldTimestamp.pick({type: true, value: true}).extend({value: FieldTimestampValue}),
+	FieldDate.pick({type: true}).extend({value: FieldDateValue}),
+	FieldTimestamp.pick({type: true}).extend({value: FieldTimestampValue}),
 ])
 export type FieldValues = z.infer<typeof FieldValues>
 
@@ -195,4 +199,3 @@ export const FieldStorage = z.record(
 	FieldValues
 )
 export type FieldStorage = z.infer<typeof FieldStorage>
-

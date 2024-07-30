@@ -2,37 +2,25 @@ import {
 	JInput, JButtonGroup, JButton, JForm, JFormContent, JFormRow, JErrorText,
 } from "@ben-ryder/jigsaw-react";
 import {GenericFormProps} from "../../../../common/generic-form/generic-form";
-import {
-	FieldBoolean, FieldDate,
-	FieldLongText,
-	FieldNumber,
-	FieldShortText, FieldTimestamp,
-	FieldURL
-} from "../../../../state/schemas/fields/fields";
+import {FieldMarkdown,} from "../../../../state/schemas/fields/fields";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {z} from "zod";
 
-export const BasicFieldsDataTypes = ['textShort', 'textLong', 'url', 'number', 'boolean', 'date', 'timestamp'] as const
-export type BasicFieldsDataTypes = keyof typeof BasicFieldsDataTypes
+export interface MarkdownFieldFormProps extends Omit<GenericFormProps<FieldMarkdown>, 'title'> {}
 
-export const BasicFieldsData = z.union([FieldShortText, FieldLongText, FieldURL, FieldNumber, FieldBoolean, FieldDate, FieldTimestamp])
-export type BasicFieldsData = z.infer<typeof BasicFieldsData>
+export function MarkdownFieldForm(props: MarkdownFieldFormProps) {
 
-export interface BasicFieldFormProps extends Omit<GenericFormProps<BasicFieldsData>, 'title'> {}
-
-export function BasicFieldForm(props: BasicFieldFormProps) {
-
-	function onSave(data: BasicFieldsData) {
+	function onSave(data: FieldMarkdown) {
 		props.onSave(data)
 	}
 
-	const {handleSubmit, control, register, formState: {errors}, setValue } = useForm<BasicFieldsData>({
-		resolver: zodResolver(BasicFieldsData),
+	const {handleSubmit, control, register, formState: {errors}, setValue, setError } = useForm<FieldMarkdown>({
+		resolver: zodResolver(FieldMarkdown),
 		defaultValues: {
-			type: props.data.type,
+			type: 'markdown',
 			label: props.data.label || "",
 			required: props.data.required || false,
+			lines: props.data.lines || 3,
 		}
 	})
 
@@ -77,6 +65,36 @@ export function BasicFieldForm(props: BasicFieldFormProps) {
 								type="checkbox"
 								placeholder="You should be required to fill in this field"
 								error={errors.required?.message}
+							/>
+						)}
+					/>
+				</JFormRow>
+				<JFormRow>
+					<Controller
+						control={control}
+						name='lines'
+						render={({field}) => (
+							<JInput
+								name={field.name}
+								ref={field.ref}
+								disabled={field.disabled}
+								value={field.value}
+								onChange={(e) => {
+									try {
+										const newValue = parseInt(e.target.value)
+										field.onChange(newValue)
+									}
+									catch (e) {
+										setError('lines', {message: 'Lines must be an integer'})
+									}
+								}}
+								onBlur={field.onBlur}
+								label="Lines"
+								id="lins"
+								type="number"
+								// todo: add native min/max attributes?
+								placeholder="number of lines to display the field at..."
+								error={errors.lines?.message}
 							/>
 						)}
 					/>
