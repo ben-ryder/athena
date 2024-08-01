@@ -94,14 +94,7 @@ export function LocalfulContextProvider<
 		return localful.deleteLocalDatabase(databaseId)
 	}, [_ensureDatabaseClosed])
 
-	const unlockDatabase = useCallback(async (databaseId: string, password: string) => {
-		try {
-			await localful.unlockDatabase(databaseId, password)
-		}
-		catch (e) {
-			console.error(e)
-		}
-	}, [])
+	const unlockDatabase = useCallback(localful.unlockDatabase.bind(localful), [])
 
 	const lockDatabase = useCallback(async (databaseId: string) => {
 		if (currentDatabase?.databaseId === databaseId) {
