@@ -12,6 +12,7 @@ import { JArrowButton, JButton } from "@ben-ryder/jigsaw-react";
 import {FIELD_TYPES, FieldTypes} from "../../../../state/schemas/fields/field-types";
 import {MarkdownFieldForm} from "../forms/markdown-field-form";
 import { ScaleFieldForm } from "../forms/scale-field-form";
+import { OptionsFieldForm } from "../forms/options-field-form";
 
 export function CreateFieldScreen(props: GenericManagerScreenProps) {
 	const [errors, setErrors] = useState<unknown[]>([])
@@ -75,7 +76,19 @@ export function CreateFieldScreen(props: GenericManagerScreenProps) {
 		)
 	}
 	else if (fieldType === 'options') {
-		createForm = <p>options</p>
+		createForm = (
+			<OptionsFieldForm
+				data={{
+					type: "options",
+					label: "",
+					required: false,
+					description: "",
+					options: []
+				}}
+				onSave={onSave}
+				navigate={props.navigate}
+			/>
+		)
 	}
 	else if (fieldType === 'scale') {
 		createForm = (

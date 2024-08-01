@@ -63,7 +63,8 @@ export type FieldMarkdownValue = FieldBasicStringValue
  */
 export const FieldOptions = FieldBase.extend({
 	type: z.literal(FIELD_TYPES.options.identifier),
-	options: z.array(z.string()),
+	options: z.array(z.string())
+		.min(2, "you must have at least two options"),
 }).strict()
 export type FieldOptions = z.infer<typeof FieldOptions>
 

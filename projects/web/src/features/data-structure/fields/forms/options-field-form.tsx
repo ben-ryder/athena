@@ -1,27 +1,29 @@
 import {
-	JInput, JButtonGroup, JButton, JForm, JFormContent, JFormRow, JErrorText, JTextArea
+	JInput, JButtonGroup, JButton, JForm, JFormContent, JFormRow, JErrorText, JTextArea, JProse
 } from "@ben-ryder/jigsaw-react";
 import {GenericFormProps} from "../../../../common/generic-form/generic-form";
-import {FieldMarkdown,} from "../../../../state/schemas/fields/fields";
+import {
+	FieldOptions,
+} from "../../../../state/schemas/fields/fields";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 
-export interface MarkdownFieldFormProps extends Omit<GenericFormProps<FieldMarkdown>, 'title'> {}
+export interface OptionsFieldFormProps extends Omit<GenericFormProps<FieldOptions>, 'title'> {}
 
-export function MarkdownFieldForm(props: MarkdownFieldFormProps) {
+export function OptionsFieldForm(props: OptionsFieldFormProps) {
 
-	function onSave(data: FieldMarkdown) {
+	function onSave(data: FieldOptions) {
 		props.onSave(data)
 	}
 
-	const {handleSubmit, control, register, formState: {errors}, setValue, setError } = useForm<FieldMarkdown>({
-		resolver: zodResolver(FieldMarkdown),
+	const {handleSubmit, control, register, formState: {errors}, setValue } = useForm<FieldOptions>({
+		resolver: zodResolver(FieldOptions),
 		defaultValues: {
-			type: 'markdown',
+			type: props.data.type,
 			label: props.data.label || "",
 			description: props.data.description || "",
 			required: props.data.required || false,
-			lines: props.data.lines || 3,
+			options: props.data.options || []
 		}
 	})
 
@@ -85,32 +87,34 @@ export function MarkdownFieldForm(props: MarkdownFieldFormProps) {
 						)}
 					/>
 				</JFormRow>
+				{/** todo: make dedicated Jigsaw component to use hr tag outside of prose? **/}
+				<JProse>
+					<hr />
+				</JProse>
 				<JFormRow>
 					<Controller
 						control={control}
-						name='lines'
+						name='options'
 						render={({field}) => (
-							<JInput
-								name={field.name}
-								ref={field.ref}
-								disabled={field.disabled}
-								value={field.value}
-								onChange={(e) => {
-									try {
-										const newValue = parseInt(e.target.value)
-										field.onChange(newValue)
-									}
-									catch (e) {
-										setError('lines', {message: 'Lines must be an integer'})
-									}
+							<JTextArea
+								value={field.value.join("\n")}
+								onChange={e => {
+									const value = e.target.value.split("\n")
+									field.onChange(value)
 								}}
+								ref={field.ref}
 								onBlur={field.onBlur}
-								label="Lines"
-								id="lins"
-								type="number"
-								// todo: add native min/max attributes?
-								placeholder="number of lines to display the field at..."
-								error={errors.lines?.message}
+								name={field.name}
+								disabled={field.disabled}
+								label="Options"
+								id="options"
+								placeholder="the options you can pick from, each entered on a new line.."
+								error={errors.options?.message}
+								tooltip={{
+									content: <p>Enter each option on a new line</p>
+								}}
+								rows={8}
+								required={true}
 							/>
 						)}
 					/>

@@ -11,6 +11,7 @@ import {JArrowButton} from "@ben-ryder/jigsaw-react";
 import {FIELD_TYPES} from "../../../../state/schemas/fields/field-types";
 import {MarkdownFieldForm} from "../forms/markdown-field-form";
 import { ScaleFieldForm } from "../forms/scale-field-form";
+import { OptionsFieldForm } from "../forms/options-field-form";
 
 export function EditFieldScreen(props: GenericManagerContentScreenProps) {
 	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
@@ -60,7 +61,13 @@ export function EditFieldScreen(props: GenericManagerContentScreenProps) {
 		)
 	}
 	else if (fieldQuery.result.data.type === 'options') {
-		content = <p>options</p>
+		content = (
+			<OptionsFieldForm
+				data={fieldQuery.result.data}
+				onSave={onSave}
+				navigate={props.navigate}
+			/>
+		)
 	}
 	else if (fieldQuery.result.data.type === 'scale') {
 		content = (

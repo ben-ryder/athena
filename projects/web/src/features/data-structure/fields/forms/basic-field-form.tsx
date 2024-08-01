@@ -38,7 +38,7 @@ export function BasicFieldForm(props: BasicFieldFormProps) {
 	})
 
 	return (
-		<JForm className="content-form" onSubmit={handleSubmit(onSave)}>
+		<JForm className="content-form" onSubmit={handleSubmit(onSave)} noValidate>
 			<input {...register('type')} readOnly={true} style={{display: 'none'}} />
 
 			<JFormContent>
