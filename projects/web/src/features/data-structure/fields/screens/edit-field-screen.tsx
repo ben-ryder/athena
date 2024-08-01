@@ -10,6 +10,7 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 import {JArrowButton} from "@ben-ryder/jigsaw-react";
 import {FIELD_TYPES} from "../../../../state/schemas/fields/field-types";
 import {MarkdownFieldForm} from "../forms/markdown-field-form";
+import { ScaleFieldForm } from "../forms/scale-field-form";
 
 export function EditFieldScreen(props: GenericManagerContentScreenProps) {
 	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
@@ -62,7 +63,13 @@ export function EditFieldScreen(props: GenericManagerContentScreenProps) {
 		content = <p>options</p>
 	}
 	else if (fieldQuery.result.data.type === 'scale') {
-		content = <p>scale</p>
+		content = (
+			<ScaleFieldForm
+				data={fieldQuery.result.data}
+				onSave={onSave}
+				navigate={props.navigate}
+			/>
+		)
 	}
 	else {
 		content = (

@@ -11,6 +11,7 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 import { JArrowButton, JButton } from "@ben-ryder/jigsaw-react";
 import {FIELD_TYPES, FieldTypes} from "../../../../state/schemas/fields/field-types";
 import {MarkdownFieldForm} from "../forms/markdown-field-form";
+import { ScaleFieldForm } from "../forms/scale-field-form";
 
 export function CreateFieldScreen(props: GenericManagerScreenProps) {
 	const [errors, setErrors] = useState<unknown[]>([])
@@ -67,7 +68,6 @@ export function CreateFieldScreen(props: GenericManagerScreenProps) {
 	if (fieldType === 'markdown') {
 		createForm = (
 			<MarkdownFieldForm
-				title={`Create Markdown Field`}
 				data={{type: "markdown", label: "", lines: 3, required: false}}
 				onSave={onSave}
 				navigate={props.navigate}
@@ -78,12 +78,24 @@ export function CreateFieldScreen(props: GenericManagerScreenProps) {
 		createForm = <p>options</p>
 	}
 	else if (fieldType === 'scale') {
-		createForm = <p>scale</p>
+		createForm = (
+			<ScaleFieldForm
+				data={{
+					type: "scale",
+					label: "",
+					required: false,
+					minLabel: "",
+					maxLabel: "",
+					scale: 5,
+				}}
+				onSave={onSave}
+				navigate={props.navigate}
+			/>
+		)
 	}
 	else {
 		createForm = (
 			<BasicFieldForm
-				title={`Create ${FIELD_TYPES[fieldType].label} Field`}
 				data={{ label: "", type: fieldType, required: false }}
 				onSave={onSave}
 				navigate={props.navigate}

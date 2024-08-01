@@ -11,6 +11,9 @@ export const FieldBase = z.object({
 	label: z.string()
 		.min(1, "label must be between 1 and 30 chars")
 		.max(30, "label must be between 1 and 30 chars"),
+	description: z.string()
+		.max(200, "description can't be more than 200 chars")
+		.optional(),
 	required: z.boolean()
 }).strict()
 export type FieldBase = z.infer<typeof FieldBase>

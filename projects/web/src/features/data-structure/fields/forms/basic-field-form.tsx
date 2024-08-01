@@ -1,5 +1,5 @@
 import {
-	JInput, JButtonGroup, JButton, JForm, JFormContent, JFormRow, JErrorText,
+	JInput, JButtonGroup, JButton, JForm, JFormContent, JFormRow, JErrorText, JTextArea
 } from "@ben-ryder/jigsaw-react";
 import {GenericFormProps} from "../../../../common/generic-form/generic-form";
 import {
@@ -32,6 +32,7 @@ export function BasicFieldForm(props: BasicFieldFormProps) {
 		defaultValues: {
 			type: props.data.type,
 			label: props.data.label || "",
+			description: props.data.description || "",
 			required: props.data.required || false,
 		}
 	})
@@ -61,6 +62,21 @@ export function BasicFieldForm(props: BasicFieldFormProps) {
 				<JFormRow>
 					<Controller
 						control={control}
+						name='description'
+						render={({field}) => (
+							<JTextArea
+								{...field}
+								label="Description"
+								id="description"
+								placeholder="a breif description of your field..."
+								error={errors.description?.message}
+							/>
+						)}
+					/>
+				</JFormRow>
+				<JFormRow>
+					<Controller
+						control={control}
 						name='required'
 						render={({field}) => (
 							<JInput
@@ -72,7 +88,7 @@ export function BasicFieldForm(props: BasicFieldFormProps) {
 								}}
 								onBlur={field.onBlur}
 								disabled={field.disabled}
-								label="Required Field"
+								label="Is Required?"
 								id="required"
 								type="checkbox"
 								placeholder="You should be required to fill in this field"

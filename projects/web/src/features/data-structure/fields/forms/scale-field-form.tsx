@@ -1,32 +1,34 @@
 import {
-	JInput, JButtonGroup, JButton, JForm, JFormContent, JFormRow, JErrorText, JTextArea
+	JInput, JButtonGroup, JButton, JForm, JFormContent, JFormRow, JErrorText, JTextArea, JProse
 } from "@ben-ryder/jigsaw-react";
 import {GenericFormProps} from "../../../../common/generic-form/generic-form";
-import {FieldMarkdown,} from "../../../../state/schemas/fields/fields";
+import { FieldScale } from "../../../../state/schemas/fields/fields";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 
-export interface MarkdownFieldFormProps extends Omit<GenericFormProps<FieldMarkdown>, 'title'> {}
+export interface ScaleFieldFormProps extends Omit<GenericFormProps<FieldScale>, 'title'> {}
 
-export function MarkdownFieldForm(props: MarkdownFieldFormProps) {
+export function ScaleFieldForm(props: ScaleFieldFormProps) {
 
-	function onSave(data: FieldMarkdown) {
+	function onSave(data: FieldScale) {
 		props.onSave(data)
 	}
 
-	const {handleSubmit, control, register, formState: {errors}, setValue, setError } = useForm<FieldMarkdown>({
-		resolver: zodResolver(FieldMarkdown),
+	const {handleSubmit, control, register, formState: {errors}, setValue, setError } = useForm<FieldScale>({
+		resolver: zodResolver(FieldScale),
 		defaultValues: {
-			type: 'markdown',
+			type: 'scale',
 			label: props.data.label || "",
 			description: props.data.description || "",
 			required: props.data.required || false,
-			lines: props.data.lines || 3,
+			scale: props.data.scale || 5,
+			minLabel: props.data.minLabel || "",
+			maxLabel: props.data.maxLabel || "",
 		}
 	})
 
 	return (
-		<JForm className="content-form" onSubmit={handleSubmit(onSave)}>
+		<JForm className="content-form" onSubmit={handleSubmit(onSave)} noValidate>
 			<input {...register('type')} readOnly={true} style={{display: 'none'}} />
 
 			<JFormContent>
@@ -85,10 +87,14 @@ export function MarkdownFieldForm(props: MarkdownFieldFormProps) {
 						)}
 					/>
 				</JFormRow>
+				{/** todo: make dedicated Jigsaw component to use hr tag outside of prose? **/}
+				<JProse>
+					<hr />
+				</JProse>
 				<JFormRow>
 					<Controller
 						control={control}
-						name='lines'
+						name='scale'
 						render={({field}) => (
 							<JInput
 								name={field.name}
@@ -101,16 +107,50 @@ export function MarkdownFieldForm(props: MarkdownFieldFormProps) {
 										field.onChange(newValue)
 									}
 									catch (e) {
-										setError('lines', {message: 'Lines must be an integer'})
+										setError('scale', {message: 'scale must be an integer'})
 									}
 								}}
 								onBlur={field.onBlur}
-								label="Lines"
-								id="lins"
+								label="Scale"
+								id="scale"
 								type="number"
 								// todo: add native min/max attributes?
 								placeholder="number of lines to display the field at..."
-								error={errors.lines?.message}
+								error={errors.scale?.message}
+							/>
+						)}
+					/>
+				</JFormRow>
+				<JFormRow>
+					<Controller
+						control={control}
+						name='minLabel'
+						render={({field}) => (
+							<JInput
+								{...field}
+								label="Min Label"
+								id="min-label"
+								type="text"
+								placeholder="the label to display at the minimum of the scale..."
+								error={errors.minLabel?.message}
+								required={true}
+							/>
+						)}
+					/>
+				</JFormRow>
+				<JFormRow>
+					<Controller
+						control={control}
+						name='maxLabel'
+						render={({field}) => (
+							<JInput
+								{...field}
+								label="Max Label"
+								id="max-label"
+								type="text"
+								placeholder="the label to display at the maximum of the scale..."
+								error={errors.maxLabel?.message}
+								required={true}
 							/>
 						)}
 					/>
