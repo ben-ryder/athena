@@ -302,7 +302,7 @@ export class EntityDatabase<
 		if (exposedFields) {
 			for (const field of Object.keys(exposedFields)) {
 				// @ts-expect-error - this is fine.
-				entity[field] = data[field]
+				entity[field] = entityCreateDto.data[field]
 			}
 		}
 

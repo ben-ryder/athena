@@ -23,6 +23,7 @@ export function CreateContentTypeScreen(props: GenericManagerScreenProps) {
 			props.navigate({screen: "list"})
 		}
 		catch (e) {
+			console.error(e)
 			setErrors([e])
 		}
 	}
