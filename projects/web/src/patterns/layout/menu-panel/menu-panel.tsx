@@ -132,6 +132,7 @@ export function MenuPanel() {
 				<div className="menu-panel__user-content">
 					<JTooltip content="Account" renderAsChild={true} variant='dark'>
 						<button
+							aria-label='Open account settings'
 							className="menu-panel__account"
 							onClick={() => {
 								setSettingsDialogOpen(true)
@@ -140,6 +141,7 @@ export function MenuPanel() {
 					</JTooltip>
 					<JTooltip content="Settings" renderAsChild={true} variant='dark'>
 						<button
+							aria-label='Open settings'
 							className="menu-panel__settings"
 							onClick={() => {
 								setSettingsDialogOpen(true)
@@ -148,6 +150,7 @@ export function MenuPanel() {
 					</JTooltip>
 					<JTooltip content='Logs' renderAsChild={true} variant='dark'>
 						<button
+							aria-label='Open application logs'
 							className="menu-panel__logs"
 							onClick={() => {
 								setStatusDialogOpen(true);
@@ -156,6 +159,7 @@ export function MenuPanel() {
 					</JTooltip>
 					<JTooltip content="Help" renderAsChild={true} variant='dark'>
 						<button
+							aria-label='Open help'
 							className="menu-panel__help"
 						><HelpIcon/></button>
 					</JTooltip>
