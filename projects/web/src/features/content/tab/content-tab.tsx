@@ -14,6 +14,7 @@ export function ContentTab(props: ContentTabProps) {
 	const { replaceTab, setTabName, setTabIsUnsaved, closeTab } = useWorkspaceContext()
 
 	const {
+		contentType,
 		contentTypeId,
 		name,
 		setName,
@@ -23,6 +24,8 @@ export function ContentTab(props: ContentTabProps) {
 		setTags,
 		isFavourite,
 		setIsFavourite,
+		fieldStorage,
+		setField,
 	} = useContentFormData({contentId: props.contentId, contentTypeId: props.contentTypeId})
 
 	const onSave = useCallback(async () => {
@@ -42,7 +45,7 @@ export function ContentTab(props: ContentTabProps) {
 					name: name,
 					description: description !== '' ? description : undefined,
 					tags:  tags,
-					fields: {},
+					fields: fieldStorage,
 					isFavourite: isFavourite
 				})
 				setTabIsUnsaved(props.tabIndex, false)
@@ -58,7 +61,7 @@ export function ContentTab(props: ContentTabProps) {
 					name: name,
 					description: description !== '' ? description : undefined,
 					tags:  tags,
-					fields: {},
+					fields: fieldStorage,
 					isFavourite: isFavourite
 				})
 				replaceTab(props.tabIndex, {type: 'content', contentId: newContentId})
@@ -67,7 +70,7 @@ export function ContentTab(props: ContentTabProps) {
 				console.error(e)
 			}
 		}
-	}, [contentTypeId, replaceTab, setTabIsUnsaved])
+	}, [contentTypeId, replaceTab, setTabIsUnsaved, fieldStorage])
 
 	// contentId and contentTypeId are dependencies to ensure the tab name updates
 	// when a "new content" tab is replaced with a "content" tab.
@@ -128,6 +131,9 @@ export function ContentTab(props: ContentTabProps) {
 				onSave={onSave}
 				tabIndex={props.tabIndex}
 				onDelete={props.contentId ? onDelete : undefined}
+				fields={contentType?.data.fields}
+				fieldStorage={fieldStorage}
+				onFieldStorageChange={setField}
 			/>
 		</div>
 	)

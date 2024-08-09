@@ -1,9 +1,11 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
 import {ContentTypeData} from "../../../state/schemas/content-types/content-types";
 import {EntityDto} from "@localful-athena/types/data-entities";
 import {ContentData} from "../../../state/schemas/content/content";
 import {useLocalful} from "@localful-athena/react/use-localful";
+import {FieldStorage, FieldValues} from "../../../state/schemas/fields/fields";
+import {f} from "@storybook/theming/dist/create-e8afafc2";
 
 // todo: make type require at least one of these?
 export interface ContentFormOptions {
@@ -16,6 +18,7 @@ export interface ContentFormData {
 	description?: string
 	tags: string[]
 	isFavourite?: boolean
+	fieldStorage: FieldStorage
 }
 
 export interface ContentFormDataHandlers {
@@ -23,6 +26,7 @@ export interface ContentFormDataHandlers {
 	onDescriptionChange: (description: string) => void;
 	onTagsChange: (tags: string[]) => void;
 	onIsFavouriteChange: (isFavourite: boolean) => void
+	onFieldStorageChange: (key: string, value: FieldValues) => void
 }
 
 /**
@@ -33,8 +37,10 @@ export function useContentFormData(options: ContentFormOptions) {
 	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 
 	const [contentTypeId, setContentTypeId] = useState<string | undefined>(options.contentTypeId)
-
 	const [contentType, setContentType] = useState<EntityDto<ContentTypeData> | undefined>()
+
+	const latestFieldStorage = useRef<FieldStorage>({})
+	const [fieldStorage, setFieldStorage] = useState<FieldStorage>({})
 
 	const latestContent = useRef<EntityDto<ContentData> | undefined>()
 	const [content, setContent] = useState<EntityDto<ContentData> | undefined>()
@@ -55,8 +61,9 @@ export function useContentFormData(options: ContentFormOptions) {
 	useEffect(() => {
 		if (!currentDatabase) return
 
-		if (options.contentTypeId) {
-			const contentTypeQuery = currentDatabase?.liveGet('content_types', options.contentTypeId)
+		const queryContentTypeId = options.contentTypeId || contentTypeId
+		if (queryContentTypeId) {
+			const contentTypeQuery = currentDatabase?.liveGet('content_types', queryContentTypeId)
 			const subscription = contentTypeQuery.subscribe((liveQuery) => {
 				if (liveQuery.status === 'success') {
 					setContentType(liveQuery.result)
@@ -71,7 +78,7 @@ export function useContentFormData(options: ContentFormOptions) {
 				subscription.unsubscribe()
 			}
 		}
-	}, [options.contentTypeId, currentDatabase])
+	}, [options.contentTypeId, contentTypeId, currentDatabase])
 
 	// Load content
 	useEffect(() => {
@@ -81,6 +88,7 @@ export function useContentFormData(options: ContentFormOptions) {
 			const contentQuery = currentDatabase?.liveGet('content', options.contentId)
 			const subscription = contentQuery.subscribe((liveQuery) => {
 				if (liveQuery.status === 'success') {
+					console.debug(liveQuery.result)
 
 					/**
 					 * This logic "merges" the new loaded content with the existing content, and will
@@ -102,6 +110,7 @@ export function useContentFormData(options: ContentFormOptions) {
 
 					setContentTypeId(liveQuery.result.data.type)
 					setContent(liveQuery.result)
+					setFieldStorage(liveQuery.result.data.fields)
 				}
 				else if (liveQuery.status === 'error') {
 					console.error('Error loading content')
@@ -135,8 +144,21 @@ export function useContentFormData(options: ContentFormOptions) {
 		latestIsFavourite.current = isFavourite
 	}, [isFavourite])
 
+	useEffect(() => {
+		latestFieldStorage.current = fieldStorage
+	}, [fieldStorage])
+
+	const setField = useCallback((id: string, value: FieldValues) => {
+		const updatedFields = {
+			...latestFieldStorage.current,
+		}
+		updatedFields[id] = value
+		setFieldStorage(updatedFields)
+	}, [])
+
 	return {
 		contentTypeId,
+		contentType,
 		name,
 		setName,
 		description,
@@ -145,5 +167,7 @@ export function useContentFormData(options: ContentFormOptions) {
 		setTags,
 		isFavourite,
 		setIsFavourite,
+		fieldStorage,
+		setField,
 	}
 }

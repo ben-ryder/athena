@@ -1,9 +1,9 @@
-import {FormEvent, useState} from "react";
+import {FormEvent, ReactNode, useEffect, useState} from "react";
 import {
 	JInput,
 	JErrorText,
 	JButtonGroup, JButton,
-	JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect
+	JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect, JProse
 } from "@ben-ryder/jigsaw-react";
 import { useObservableQuery } from "@localful-athena/react/use-observable-query";
 import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
@@ -13,10 +13,18 @@ import {ContentFormData, ContentFormDataHandlers} from "./useContentFormData";
 
 import "./content-form.scss"
 import {useLocalful} from "@localful-athena/react/use-localful";
+import {FieldDefinition} from "../../../state/schemas/fields/fields";
+import {EntityDto} from "@localful-athena/types/data-entities";
+import {CustomField} from "./field";
 
 export interface ContentFormProps extends WithTabData, ContentFormData, ContentFormDataHandlers {
+	fields?: string[]
 	onSave: () => void;
 	onDelete?: () => void;
+}
+
+export interface ContentFormFields {
+	[key: string]: EntityDto<FieldDefinition>
 }
 
 // todo: handle situation where content form is open and content gets deleted?
@@ -34,6 +42,29 @@ export function ContentForm(props: ContentFormProps) {
 		}))
 		: []
 
+	const [contentTypeFields, setContentTypeFields] = useState<ContentFormFields>({})
+	useEffect(() => {
+		if (!props.fields || !currentDatabase) return
+
+		const contentQuery = currentDatabase.liveGetMany('fields', props.fields)
+		const subscription = contentQuery.subscribe((liveQuery) => {
+			if (liveQuery.status === 'success') {
+				const fields: ContentFormFields = {}
+				for (const field of liveQuery.result) {
+					fields[field.id] = field
+				}
+				setContentTypeFields(fields)
+			}
+			else {
+				setContentTypeFields({})
+			}
+		})
+
+		return () => {
+			subscription.unsubscribe()
+		}
+	}, [props.fields]);
+
 	function onSave(e: FormEvent) {
 		e.preventDefault()
 
@@ -43,6 +74,21 @@ export function ContentForm(props: ContentFormProps) {
 		else {
 			setError(null);
 			props.onSave();
+		}
+	}
+
+	const fields: ReactNode[] = []
+	for (const fieldId of props?.fields || []) {
+		const field = contentTypeFields[fieldId]
+		if (field) {
+			const fieldValue = props.fieldStorage[fieldId]?.value
+			fields.push(
+				<JFormRow>
+					<CustomField field={field.data} value={fieldValue} onChange={(newValue) => {
+						props.onFieldStorageChange(field.id, {type: field.data.type, value: newValue})
+					}} />
+				</JFormRow>
+			)
 		}
 	}
 
@@ -113,6 +159,15 @@ export function ContentForm(props: ContentFormProps) {
 						noOptionsText="No Tags Found"
 					/>
 				</JFormRow>
+
+				{fields.length > 0 && (
+					<>
+						<JProse>
+							<hr />
+						</JProse>
+						{fields}
+					</>
+				)}
 			</JFormContent>
 
 			<JFormRow>
