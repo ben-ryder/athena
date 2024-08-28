@@ -5,13 +5,13 @@ import { jigsawTheme } from "./jigsaw-theme";
 import { EditorView } from "@codemirror/view";
 import { hyperLink } from "@uiw/codemirror-extensions-hyper-link";
 
-export interface EditorProps {
+export interface MarkdownEditorProps {
 	id: string; // todo: add ID to CodeMirror
 	value: string;
 	onChange: (value: string) => void;
 }
 
-export function Editor(props: EditorProps) {
+export function MarkdownEditor(props: MarkdownEditorProps) {
 	return (
 		<div className="ath-editor">
 			<CodeMirror
@@ -31,7 +31,7 @@ export function Editor(props: EditorProps) {
 				basicSetup={{
 					lineNumbers: false,
 					foldGutter: false,
-					highlightActiveLine: false,
+					highlightActiveLine: true,
 					highlightSelectionMatches: false,
 				}}
 				placeholder="start typing your markdown note..."

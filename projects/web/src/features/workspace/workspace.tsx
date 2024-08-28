@@ -83,7 +83,7 @@ export function Workspace() {
 					))}
 				</ul>
 			</div>
-			<div>
+			<div className='workspace-area'>
 				<div>
 					{workspaceContent.map((tabContent, tabIndex) => (
 						<div key={tabIndex} style={{display: activeTab === tabIndex ? 'block' : 'none'}}>

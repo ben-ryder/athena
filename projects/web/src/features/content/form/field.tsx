@@ -1,6 +1,7 @@
 import {FieldDefinition} from "../../../state/schemas/fields/fields";
-import {JInput, JSelect, JTextArea} from "@ben-ryder/jigsaw-react";
+import {JInput, JLabel, JSelect, JTextArea} from "@ben-ryder/jigsaw-react";
 import {ChangeEvent, useCallback} from "react";
+import {MarkdownEditor} from "../../../patterns/components/markdown-editor/markdown-editor";
 
 export interface FieldProps {
 	field: FieldDefinition
@@ -34,14 +35,14 @@ export function CustomField(props: FieldProps) {
 	}
 	else if (props.field.type === 'markdown') {
 		return (
-			<JTextArea
-				label={props.field.label}
-				required={props.field.required}
-				placeholder={props.field.description}
-				rows={props.field.lines}
-				value={props.value || ''}
-				onChange={onChange}
-			/>
+			<>
+				<JLabel htmlFor='markdown' tooltip={props.field.description ? {content: props.field.description} : undefined}>{props.field.label}</JLabel>
+				<MarkdownEditor
+					id='markdown'
+					value={props.value || ''}
+					onChange={(value) => {props.onChange(value)}}
+				/>
+			</>
 		)
 	}
 	else if (props.field.type === 'boolean') {

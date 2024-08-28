@@ -64,3 +64,8 @@
   padding-left: var(--j-space-5);
   padding-right: var(--j-space-5);
 }
+
+.workspace-area {
+  max-height: calc(100vh - 50px);
+  overflow: scroll;
+}
