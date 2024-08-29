@@ -5,7 +5,6 @@ import {EntityDto} from "@localful-athena/types/data-entities";
 import {ContentData} from "../../../state/schemas/content/content";
 import {useLocalful} from "@localful-athena/react/use-localful";
 import {FieldStorage, FieldValues} from "../../../state/schemas/fields/fields";
-import {f} from "@storybook/theming/dist/create-e8afafc2";
 
 // todo: make type require at least one of these?
 export interface ContentFormOptions {
@@ -15,7 +14,6 @@ export interface ContentFormOptions {
 
 export interface ContentFormData {
 	name: string,
-	description?: string
 	tags: string[]
 	isFavourite?: boolean
 	fieldStorage: FieldStorage
@@ -23,7 +21,6 @@ export interface ContentFormData {
 
 export interface ContentFormDataHandlers {
 	onNameChange: (name: string) => void;
-	onDescriptionChange: (description: string) => void;
 	onTagsChange: (tags: string[]) => void;
 	onIsFavouriteChange: (isFavourite: boolean) => void
 	onFieldStorageChange: (key: string, value: FieldValues) => void
@@ -47,9 +44,6 @@ export function useContentFormData(options: ContentFormOptions) {
 
 	const latestName = useRef<string>('')
 	const [name, setName] = useState<string>('')
-
-	const latestDescription = useRef<string|undefined>(undefined)
-	const [description, setDescription] = useState<string|undefined>(undefined)
 
 	const latestTags = useRef<string[]>([])
 	const [tags, setTags] = useState<string[]>([])
@@ -97,9 +91,6 @@ export function useContentFormData(options: ContentFormOptions) {
 					if (latestName.current === '' || latestName.current === latestContent.current?.data.name) {
 						setName(liveQuery.result.data.name)
 					}
-					if (latestDescription.current === '' || latestDescription.current === undefined || latestDescription.current === latestContent.current?.data.description) {
-						setDescription(liveQuery.result.data.description)
-					}
 					// todo: I don't think this array comparison will work, might need to "diff" it instead?
 					if (latestTags.current.length === 0 || latestTags.current === latestContent.current?.data.tags) {
 						setTags(liveQuery.result.data.tags)
@@ -127,10 +118,6 @@ export function useContentFormData(options: ContentFormOptions) {
 	useEffect(() => {
 		latestName.current = name
 	}, [name]);
-
-	useEffect(() => {
-		latestDescription.current = description
-	}, [description]);
 
 	useEffect(() => {
 		latestTags.current = tags
@@ -161,8 +148,6 @@ export function useContentFormData(options: ContentFormOptions) {
 		contentType,
 		name,
 		setName,
-		description,
-		setDescription,
 		tags,
 		setTags,
 		isFavourite,

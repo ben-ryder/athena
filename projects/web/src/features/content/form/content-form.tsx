@@ -131,18 +131,6 @@ export function ContentForm(props: ContentFormProps) {
 					/>
 				</JFormRow>
 				<JFormRow>
-					<JTextArea
-						label="Description"
-						id="description"
-						value={props.description || ''}
-						rows={3}
-						onChange={(e) => {
-							props.onDescriptionChange(e.target.value);
-						}}
-						placeholder="a short descripction of your content..."
-					/>
-				</JFormRow>
-				<JFormRow>
 					<JMultiSelect
 						id="tags"
 						label="Tags"

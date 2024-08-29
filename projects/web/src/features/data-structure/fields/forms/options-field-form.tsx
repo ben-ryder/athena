@@ -56,7 +56,7 @@ export function OptionsFieldForm(props: OptionsFieldFormProps) {
 						render={({field}) => (
 							<JTextArea
 								{...field}
-								label="Description"
+								label="Tooltip"
 								id="description"
 								placeholder="a breif description of your field..."
 								error={errors.description?.message}

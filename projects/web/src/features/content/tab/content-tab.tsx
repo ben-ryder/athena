@@ -18,8 +18,6 @@ export function ContentTab(props: ContentTabProps) {
 		contentTypeId,
 		name,
 		setName,
-		description,
-		setDescription,
 		tags,
 		setTags,
 		isFavourite,
@@ -43,7 +41,6 @@ export function ContentTab(props: ContentTabProps) {
 				await currentDatabase.update('content', props.contentId, {
 					type: contentTypeId,
 					name: name,
-					description: description !== '' ? description : undefined,
 					tags:  tags,
 					fields: fieldStorage,
 					isFavourite: isFavourite
@@ -59,7 +56,6 @@ export function ContentTab(props: ContentTabProps) {
 				const newContentId = await currentDatabase.create('content', {
 					type: contentTypeId,
 					name: name,
-					description: description !== '' ? description : undefined,
 					tags:  tags,
 					fields: fieldStorage,
 					isFavourite: isFavourite
@@ -102,11 +98,6 @@ export function ContentTab(props: ContentTabProps) {
 		setName(name)
 	}, [props.tabIndex])
 
-	const onDescriptionChange = useCallback((description: string) => {
-		setTabIsUnsaved(props.tabIndex, true)
-		setDescription(description)
-	}, [props.tabIndex])
-
 	const onTagsChange = useCallback((tags: string[]) => {
 		setTabIsUnsaved(props.tabIndex, true)
 		setTags(tags)
@@ -121,10 +112,8 @@ export function ContentTab(props: ContentTabProps) {
 		<div>
 			<ContentForm
 				name={name}
-				description={description}
 				tags={tags}
 				onNameChange={onNameChange}
-				onDescriptionChange={onDescriptionChange}
 				onTagsChange={onTagsChange}
 				isFavourite={isFavourite}
 				onIsFavouriteChange={onIsFavouriteChange}

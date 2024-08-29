@@ -48,7 +48,6 @@ export function ContentList(props: SearchProps) {
 								key={content.id}
 								id={content.id}
 								name={content.data.name}
-								description={content.data.description}
 								onSelect={() => {
 									openTab({type: "content", contentId: content.id})
 									if (props.onOpen) {
