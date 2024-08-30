@@ -3,7 +3,7 @@
 
 export class KeyStorage {
 	private static getStorageKey(id: string) {
-		return `key_${id}`
+		return `enckey_${id}`
 	}
     
 	static async get(id: string) {
