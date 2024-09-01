@@ -1,6 +1,34 @@
+@import "@ben-ryder/jigsaw/sass/00-foundations/breakpoints/breakpoints.toolkit";
 
 .workspace {
   width: 100%;
+  transition: all var(--j-motion-duration-medium) var(--j-motion-ease-in-out);
+
+  @include breakpoint(md) {
+    margin-left: var(--menu-panel-width);
+  }
+
+  &--menu-hidden {
+    margin-left: 0;
+  }
+}
+
+.workspace__menu-button {
+  position: absolute;
+  bottom: 0;
+
+  background: var(--j-c-atom-200);
+  color: var(--j-c-primary-text);
+  padding: var(--j-space-4);
+  line-height: 0;
+  border-top-right-radius: var(--j-border-radius-md);
+  box-shadow: var(--j-shadow-md);
+
+  &:hover {
+    background: var(--j-c-atom-50);
+    cursor: pointer;
+    box-shadow: none;
+  }
 }
 
 .workspace-tab {

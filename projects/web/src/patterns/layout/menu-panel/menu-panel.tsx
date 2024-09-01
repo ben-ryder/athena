@@ -11,6 +11,7 @@ import {
 	Settings as SettingsIcon,
 	HelpCircle as HelpIcon,
 	UserCircle as AccountIcon,
+	ChevronFirst as CollapseMenuIcon
 } from "lucide-react"
 import {MainPanelAction} from "./main-panel-action";
 
@@ -25,13 +26,14 @@ import {useContentListDialog} from "../../../features/content-list/dialog/conten
 import {useSettingsDialog} from "../../../features/settings/settings-dialog";
 import {useLocalful} from "@localful-athena/react/use-localful";
 import {useDatabaseManagerDialogContext} from "../../../features/databases/manager/database-manager-context";
+import classNames from "classnames";
 
-export interface WithMenuPanelControl {
-	menuPanelIsOpen: boolean
-	setMenuPanelIsOpen: (isOpen: boolean) => void
+export interface WithMenuPanelProps {
+	isMenuPanelOpen: boolean
+	setIsMenuPanelOpen: (isOpen: boolean) => void
 }
 
-export function MenuPanel() {
+export function MenuPanel(props: WithMenuPanelProps) {
 	const {setOpenTab: setDatabaseManagerDialogTab } = useDatabaseManagerDialogContext()
 	const {setIsOpen: setNewContentDialogOpen } = useNewContentDialog()
 	const {setIsOpen: setStatusDialogOpen } = useStatusDialog()
@@ -44,7 +46,8 @@ export function MenuPanel() {
 	const { currentDatabase, currentDatabaseDto } = useLocalful()
 
 	return (
-		<div className="menu-panel">
+		// todo: j-hidden doesn't remove from focus order.
+		<div className={classNames('menu-panel', {'menu-panel--menu-hidden j-hidden': !props.isMenuPanelOpen})}>
 			<div className="menu-panel__database">
 				<div className="menu-panel__database-content">
 					<JTooltip content='Edit Database' renderAsChild={true} variant='dark'>
@@ -162,6 +165,15 @@ export function MenuPanel() {
 							aria-label='Open help'
 							className="menu-panel__help"
 						><HelpIcon/></button>
+					</JTooltip>
+					<JTooltip content="Collapse Menu" renderAsChild={true} variant='dark'>
+						<button
+							aria-label='Collapse Menu'
+							className="menu-panel__menu"
+							onClick={() => {
+								props.setIsMenuPanelOpen(false)
+							}}
+						><CollapseMenuIcon/></button>
 					</JTooltip>
 				</div>
 			</div>

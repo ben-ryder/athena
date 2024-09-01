@@ -36,14 +36,23 @@
   width: 100%;
   position: absolute;
   height: 100%;
+  z-index: var(--j-z-layer-1);
+  transition: all var(--j-motion-duration-medium) var(--j-motion-ease-in-out);
 
   background: var(--j-c-atom-200);
   color: var(--j-c-mono-100);
 
   @include breakpoint(md) {
-    position: relative;
     width: var(--menu-panel-width);
     min-width: var(--menu-panel-width);
+  }
+
+  &--menu-hidden {
+    transform: translateX(-100vw);
+
+    @include breakpoint(md) {
+      transform: translateX(-275px);
+    }
   }
 
   &__database {
@@ -119,9 +128,14 @@
   &__account,
   &__settings,
   &__logs,
-  &__help {
+  &__help,
+  &__menu {
     @include menu-panel-button();
     line-height: 0;
+  }
+
+  &__menu {
+    margin-left: auto;
   }
 }
 

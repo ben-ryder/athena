@@ -9,12 +9,18 @@ import {ContentListTab} from "../content-list/tab/content-list-tab";
 import {ViewEditTab} from "../views/tab/view-edit-tab";
 import {ViewListTab} from "../views-list/tab/view-list-tab";
 import {ViewTab} from "../views/tab/view-tab";
+import {WithMenuPanelProps} from "../../patterns/layout/menu-panel/menu-panel";
+import classNames from "classnames";
+import { ChevronLast as ExpandMenuIcon} from "lucide-react";
+import {JTooltip} from "@ben-ryder/jigsaw-react";
 
 export interface WithTabData {
 	tabIndex: number
 }
 
-export function Workspace() {
+interface WorkspaceProps extends WithMenuPanelProps {}
+
+export function Workspace(props: WorkspaceProps) {
 	const {tabs, closeTab, setActiveTab, activeTab} = useWorkspaceContext()
 
 	const workspaceTabs: TabProps[] = []
@@ -73,7 +79,16 @@ export function Workspace() {
 	}
 
 	return (
-		<div className='workspace'>
+		<div className={classNames('workspace', {'workspace--menu-hidden': !props.isMenuPanelOpen})}>
+			{!props.isMenuPanelOpen && (
+				<JTooltip content='Open Menu' renderAsChild={true} variant='dark'>
+					<button
+						className='workspace__menu-button'
+						onClick={() => {props.setIsMenuPanelOpen(true)}}
+						title='Open Menu'
+					><ExpandMenuIcon size={24}/></button>
+				</JTooltip>
+			)}
 			<div className='workspace-tabs'>
 				<ul className='workspace-tabs__list'>
 					{workspaceTabs.map((tab, tabIndex) => (

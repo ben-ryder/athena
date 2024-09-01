@@ -16,7 +16,7 @@ import {AthenaTableSchemas} from "../../state/athena-localful";
 import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/manager/database-manager";
 
 export function MainPage() {
-	const [isMenuPanelOpen, setIsOpenPanelOpen] = useState<boolean>(false)
+	const [isMenuPanelOpen, setIsMenuPanelOpen] = useState<boolean>(true)
 
 	return (
 		<LocalfulContextProvider tableSchemas={AthenaTableSchemas}>
@@ -32,8 +32,8 @@ export function MainPage() {
 												<main className="athena">
 													<DatabaseManagerDialog/>
 
-													<MenuPanel/>
-													<Workspace/>
+													<MenuPanel isMenuPanelOpen={isMenuPanelOpen} setIsMenuPanelOpen={setIsMenuPanelOpen}/>
+													<Workspace isMenuPanelOpen={isMenuPanelOpen} setIsMenuPanelOpen={setIsMenuPanelOpen} />
 
 													<NewContentDialog/>
 													<StatusDialog/>
