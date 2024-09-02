@@ -1,17 +1,15 @@
 import {
-	RequestError,
-	LocalfulError
-} from '../common/errors';
-import {
+	CreateUserDto,
 	ErrorIdentifiers,
+	LoginRequest,
+	LoginResponse,
+	ServerInfoDto,
+	TokenPair,
 	UpdateUserDto,
 	UserDto,
-	LoginResponse,
-	CreateUserDto,
-	LoginRequest, ServerInfoDto, TokenPair,
 } from "@localful/common";
 import {io, Socket} from "socket.io-client";
-import {DeviceStorage} from "../storage/storage";
+import {ErrorTypes, LocalfulError} from "../control-flow";
 
 export interface QueryOptions {
 	url: string,
@@ -74,13 +72,7 @@ export class ServerClient {
 				return this.refreshAuthAndRetry<ResponseType>(options)
 			}
 
-			throw new RequestError(
-				{
-					message: `There was an error with the request '${options.url} [${options.method}]'`,
-					originalError: e,
-					response: e.response?.data
-				}
-			);
+			throw new LocalfulError({type: ErrorTypes.NETWORK_ERROR, devMessage: `There was an error with the request '${options.url} [${options.method}]`, originalError: e})
 		}
 	}
 
@@ -116,7 +108,7 @@ export class ServerClient {
 		const refreshToken = await this.deviceStorage.secrets.loadRefreshToken()
 		if (!refreshToken) {
 			await this.deviceStorage.secrets.deleteAccessToken()
-			throw new LocalfulError({message: "No refreshToken found while attempting to logout"})
+			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: "No refreshToken found during logout"})
 		}
 
 		await this.query({
@@ -137,7 +129,7 @@ export class ServerClient {
 		const refreshToken = this.deviceStorage.secrets.loadRefreshToken()
 		if (!refreshToken) {
 			await this.deviceStorage.secrets.deleteAccessToken()
-			throw new LocalfulError({message: "No refreshToken found during auth refresh"})
+			throw new LocalfulError({type: ErrorTypes.INVALID_OR_CORRUPTED_DATA, devMessage: "No refreshToken found during auth refresh"})
 		}
 
 		let tokens: TokenPair;

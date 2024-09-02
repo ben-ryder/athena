@@ -9,6 +9,7 @@ export type LocalfulContext<
 	TableTypes extends TableTypeDefinitions,
 	TableSchemas extends TableSchemaDefinitions<TableTypes>
 > = {
+	// Entity Database
 	currentDatabase: EntityDatabase<TableTypes, TableSchemas> | null
 	currentDatabaseDto?: LocalDatabaseDto
 	closeCurrentDatabase: () => Promise<void>
@@ -22,6 +23,8 @@ export type LocalfulContext<
 	lockDatabase: LocalfulWeb<TableTypes, TableSchemas>['lockDatabase']
 	liveQueryDatabase:  LocalfulWeb<TableTypes, TableSchemas>['liveQueryDatabase']
 	liveGetDatabase:  LocalfulWeb<TableTypes, TableSchemas>['liveGetDatabase']
+	// Server
+	serverUrl: string | null
 }
 
 // eslint-disable-next-line -- can't know the generic type when declaring static variable. The useLocalful hook can then accept the generic.
@@ -136,7 +139,10 @@ export function LocalfulContextProvider<
 		window.lf = localful
 	}, []);
 
+	const [serverUrl, setServerUrl] = useState<string | null>(null)
+
 	return <LocalfulContext.Provider value={{
+		// Entity Database
 		currentDatabase,
 		currentDatabaseDto,
 		openDatabase,
@@ -150,5 +156,7 @@ export function LocalfulContextProvider<
 		changeDatabasePassword,
 		liveQueryDatabase,
 		liveGetDatabase,
+		// Server
+		serverUrl,
 	}}>{props.children}</LocalfulContext.Provider>
 }

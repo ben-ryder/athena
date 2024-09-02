@@ -14,6 +14,7 @@ import {SettingsDialog, SettingsDialogProvider} from "../../features/settings/se
 import {LocalfulContextProvider} from "@localful-athena/react/use-localful";
 import {AthenaTableSchemas} from "../../state/athena-localful";
 import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/manager/database-manager";
+import {AccountDialog, AccountDialogProvider} from "../../features/account/account-dialog";
 
 export function MainPage() {
 	const [isMenuPanelOpen, setIsMenuPanelOpen] = useState<boolean>(true)
@@ -29,20 +30,25 @@ export function MainPage() {
 									<ViewsDialogProvider>
 										<ContentListDialogProvider>
 											<SettingsDialogProvider>
-												<main className="athena">
-													<DatabaseManagerDialog/>
+												<AccountDialogProvider>
+													<main className="athena">
+														<DatabaseManagerDialog/>
 
-													<MenuPanel isMenuPanelOpen={isMenuPanelOpen} setIsMenuPanelOpen={setIsMenuPanelOpen}/>
-													<Workspace isMenuPanelOpen={isMenuPanelOpen} setIsMenuPanelOpen={setIsMenuPanelOpen} />
+														<MenuPanel isMenuPanelOpen={isMenuPanelOpen}
+																   setIsMenuPanelOpen={setIsMenuPanelOpen}/>
+														<Workspace isMenuPanelOpen={isMenuPanelOpen}
+																   setIsMenuPanelOpen={setIsMenuPanelOpen}/>
 
-													<NewContentDialog/>
-													<StatusDialog/>
-													<SearchDialog/>
-													<DataStructureDialog/>
-													<ViewsDialog/>
-													<ContentListDialog/>
-													<SettingsDialog/>
-												</main>
+														<NewContentDialog/>
+														<StatusDialog/>
+														<SearchDialog/>
+														<DataStructureDialog/>
+														<ViewsDialog/>
+														<ContentListDialog/>
+														<SettingsDialog/>
+														<AccountDialog/>
+													</main>
+												</AccountDialogProvider>
 											</SettingsDialogProvider>
 										</ContentListDialogProvider>
 									</ViewsDialogProvider>

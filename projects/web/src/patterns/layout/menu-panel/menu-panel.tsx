@@ -27,6 +27,7 @@ import {useSettingsDialog} from "../../../features/settings/settings-dialog";
 import {useLocalful} from "@localful-athena/react/use-localful";
 import {useDatabaseManagerDialogContext} from "../../../features/databases/manager/database-manager-context";
 import classNames from "classnames";
+import {useAccountDialog} from "../../../features/account/account-dialog";
 
 export interface WithMenuPanelProps {
 	isMenuPanelOpen: boolean
@@ -42,6 +43,7 @@ export function MenuPanel(props: WithMenuPanelProps) {
 	const {setIsOpen: setViewsDialogOpen } = useViewsDialog()
 	const {setIsOpen: setContentListDialogOpen } = useContentListDialog()
 	const {setIsOpen: setSettingsDialogOpen } = useSettingsDialog()
+	const {setIsOpen: setAccountDialogOpen } = useAccountDialog()
 
 	const { currentDatabase, currentDatabaseDto } = useLocalful()
 
@@ -138,7 +140,7 @@ export function MenuPanel(props: WithMenuPanelProps) {
 							aria-label='Open account settings'
 							className="menu-panel__account"
 							onClick={() => {
-								setSettingsDialogOpen(true)
+								setAccountDialogOpen(true)
 							}}
 						><AccountIcon/></button>
 					</JTooltip>
