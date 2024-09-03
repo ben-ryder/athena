@@ -49,6 +49,8 @@
 
   &--menu-hidden {
     transform: translateX(-100vw);
+    // todo: review accessibility of showing/hiding menu
+    visibility: hidden;
 
     @include breakpoint(md) {
       transform: translateX(-275px);

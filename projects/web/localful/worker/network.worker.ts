@@ -1,3 +1,4 @@
+import {Logger} from "../../src/utils/logger"
 
 (function (self: SharedWorkerGlobalScope) {
 
@@ -5,7 +6,7 @@
 		const port = event.ports[0];
 
 		port.onmessage = function (e) {
-			console.debug(`[worker received] ${JSON.stringify(e.data)}`)
+			Logger.debug(`[worker received] ${JSON.stringify(e.data)}`)
 		};
 	};
 

@@ -82,8 +82,6 @@ export function useContentFormData(options: ContentFormOptions) {
 			const contentQuery = currentDatabase?.liveGet('content', options.contentId)
 			const subscription = contentQuery.subscribe((liveQuery) => {
 				if (liveQuery.status === 'success') {
-					console.debug(liveQuery.result)
-
 					/**
 					 * This logic "merges" the new loaded content with the existing content, and will
 					 * not overwrite anything that the user has changed so edits are not lost.

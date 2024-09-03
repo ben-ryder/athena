@@ -85,12 +85,9 @@ export function DatabaseManagerDialog() {
 				if (lastOpenedDatabaseId) {
 					const openDb = await openDatabase(lastOpenedDatabaseId)
 					if (openDb) {
-						console.debug('opened lastOpenedDatabaseId')
 						return
 					}
 				}
-
-				console.debug('open to list')
 				setOpenTab({type: 'list'})
 			}
 		}

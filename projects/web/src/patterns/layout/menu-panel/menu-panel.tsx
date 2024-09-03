@@ -48,8 +48,8 @@ export function MenuPanel(props: WithMenuPanelProps) {
 	const { currentDatabase, currentDatabaseDto } = useLocalful()
 
 	return (
-		// todo: j-hidden doesn't remove from focus order.
-		<div className={classNames('menu-panel', {'menu-panel--menu-hidden j-hidden': !props.isMenuPanelOpen})}>
+		// todo: review accessibility of showing/hiding menu
+		<div className={classNames('menu-panel', {'menu-panel--menu-hidden': !props.isMenuPanelOpen})}>
 			<div className="menu-panel__database">
 				<div className="menu-panel__database-content">
 					<JTooltip content='Edit Database' renderAsChild={true} variant='dark'>
