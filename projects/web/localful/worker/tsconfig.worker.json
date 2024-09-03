@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "lib": ["webworker"]
+  },
+  "include": [
+    "network-worker.ts"
+  ]
+}

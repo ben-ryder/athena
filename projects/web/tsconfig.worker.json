@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "lib": ["webworker"]
+  },
+  "include": ["**/*.worker.ts"]
+}

@@ -25,5 +25,8 @@
     "tests/e2e"
   ],
   "exclude": ["dist"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.worker.json" }
+  ],
 }
