@@ -9,24 +9,23 @@ declare global {
 globalThis.LOGGER_LEVEL = 'debug'
 
 export class LoggerClass {
-	debug (...args: any[]) {
+	debug(...args: any[]) {
 		if (globalThis.LOGGER_LEVEL === 'debug') {
 			console.debug(...args)
 		}
 	}
 
-	warn (...args: any[]) {
+	warn(...args: any[]) {
 		if (globalThis.LOGGER_LEVEL === 'debug' || globalThis.LOGGER_LEVEL === 'warn') {
 			console.warn(...args)
 		}
 	}
 
-	error (...args: any[]) {
+	error(...args: any[]) {
 		if (globalThis.LOGGER_LEVEL === 'debug' || globalThis.LOGGER_LEVEL === 'warn' || globalThis.LOGGER_LEVEL === 'error') {
 			console.error(...args)
 		}
 	}
 }
-
 
 export const Logger = new LoggerClass();

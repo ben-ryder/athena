@@ -5,6 +5,8 @@ import {LocalDatabaseFields} from './types/database'
 import {DatabaseStorage} from "./storage/databases";
 import {KeyStorage} from "./storage/key-storage";
 import {EventTypes} from "./events/events";
+import {Observable} from "rxjs";
+import {LIVE_QUERY_LOADING_STATE, LiveQueryResult, LiveQueryStatus} from "./control-flow";
 
 export const LOCALFUL_VERSION = '1.0'
 export const LOCALFUL_INDEXDB_ENTITY_VERSION = 1
@@ -94,5 +96,45 @@ export class LocalfulWeb<
 
 	changeDatabasePassword(databaseId: string, currentPassword: string, newPassword: string) {
 		return this.databaseStorage.changeDatabasePassword(databaseId, currentPassword, newPassword)
+	}
+
+	getStoragePermission(): Promise<boolean> {
+		return navigator.storage.persisted()
+	}
+
+	liveGetStoragePermission(): Observable<LiveQueryResult<boolean>> {
+		return new Observable<LiveQueryResult<boolean>>((subscriber) => {
+			subscriber.next(LIVE_QUERY_LOADING_STATE)
+
+			const runQuery = async () => {
+				subscriber.next(LIVE_QUERY_LOADING_STATE)
+
+				try {
+					const isGranted = await this.getStoragePermission()
+					subscriber.next({status: LiveQueryStatus.SUCCESS, result: isGranted})
+				}
+				catch (e) {
+					subscriber.next({status: LiveQueryStatus.ERROR, errors: [e]})
+				}
+			}
+
+			const handleEvent = () => {
+				runQuery()
+			}
+
+			this.eventManager.subscribe(EventTypes.STORAGE_PERMISSION, handleEvent)
+
+			// Run initial query
+			runQuery()
+
+			return () => {
+				this.eventManager.unsubscribe(EventTypes.STORAGE_PERMISSION, handleEvent)
+			}
+		})
+	}
+
+	async requestStoragePermissions() {
+		const result = await navigator.storage.persist()
+		this.eventManager.dispatch('storage-permission', {isGranted: result})
 	}
 }

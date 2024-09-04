@@ -6,6 +6,7 @@ export const EventTypes = {
 	DATABASE_UNLOCK: 'database-unlock',
 	DATABASE_LOCK: 'database-lock',
 	DATABASE_CHANGE: 'database-change',
+	STORAGE_PERMISSION: 'storage-permission',
 } as const
 
 export interface EventContext {
@@ -76,6 +77,16 @@ export interface DatabaseChangeEvent {
 	}
 }
 
+export interface StoragePermissionEvent {
+	type: typeof EventTypes.STORAGE_PERMISSION,
+	detail: {
+		context: EventContext,
+		data: {
+			isGranted: boolean
+		}
+	}
+}
+
 export type LocalfulEvent =
 	DataEntityChangeEvent |
 	DatabaseOpenEvent | DatabaseCloseEvent | DatabaseChangeEvent |
@@ -88,6 +99,7 @@ export interface EventMap {
 	[EventTypes.DATABASE_UNLOCK]: DatabaseUnlockEvent,
 	[EventTypes.DATABASE_LOCK]: DatabaseLockEvent,
 	[EventTypes.DATABASE_CHANGE]: DatabaseChangeEvent,
+	[EventTypes.STORAGE_PERMISSION]: StoragePermissionEvent,
 }
 
 export type EventTypes = keyof EventMap
