@@ -62,7 +62,6 @@ export class EntityDatabase<
 			return this._database
 		}
 
-		this.eventManager.dispatch(EventTypes.DATABASE_OPEN, {id: this.databaseId})
 		this._database = await openDB(this.databaseId, LOCALFUL_INDEXDB_ENTITY_VERSION, {
 			// todo: handle upgrades to existing database versions
 			upgrade: (db) => {

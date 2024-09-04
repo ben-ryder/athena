@@ -4,6 +4,7 @@ import {TableSchemaDefinitions, TableTypeDefinitions} from "./storage/types/type
 import {LocalDatabaseFields} from './types/database'
 import {DatabaseStorage} from "./storage/databases";
 import {KeyStorage} from "./storage/key-storage";
+import {EventTypes} from "./events/events";
 
 export const LOCALFUL_VERSION = '1.0'
 export const LOCALFUL_INDEXDB_ENTITY_VERSION = 1
@@ -39,6 +40,8 @@ export class LocalfulWeb<
 		if (!encryptionKey) {
 			return null
 		}
+
+		this.eventManager.dispatch(EventTypes.DATABASE_OPEN, {id: databaseId})
 
 		return new EntityDatabase<TableTypes, TableSchemas>({
 			databaseId: databaseId,

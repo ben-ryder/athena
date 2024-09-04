@@ -26,8 +26,6 @@ export function DatabaseEditScreen(props: DatabaseEditScreenProps) {
 	} = useLocalful()
 
 	const onSave = useCallback(async (basicInfo: LocalDatabaseFields) => {
-		console.debug(basicInfo)
-
 		try {
 			await updateDatabase(
 				props.databaseId,
