@@ -49,7 +49,7 @@ export function ContentList(props: SearchProps) {
 								id={content.id}
 								name={content.data.name}
 								onSelect={() => {
-									openTab({type: "content", contentId: content.id})
+									openTab({type: "content", contentId: content.id}, {switch: true})
 									if (props.onOpen) {
 										props.onOpen()
 									}

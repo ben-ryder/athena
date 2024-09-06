@@ -1,11 +1,20 @@
 
 export const EventTypes = {
-	DATA_ENTITY_CHANGE: 'data-entity-change',
+	// Data Events
+	DATA_CHANGE: 'data-change',
+	// Database Events
 	DATABASE_OPEN: 'database-open',
 	DATABASE_CLOSE: 'database-close',
 	DATABASE_UNLOCK: 'database-unlock',
 	DATABASE_LOCK: 'database-lock',
 	DATABASE_CHANGE: 'database-change',
+	// Auth Events
+	AUTH_LOGIN: 'auth-login',
+	AUTH_LOGOUT: 'auth-logout',
+	// Sync Events
+	SYNC_STATUS: 'sync-status',
+	SYNC_MESSAGE: 'sync-message',
+	// Other Events
 	STORAGE_PERMISSION: 'storage-permission',
 } as const
 
@@ -14,7 +23,7 @@ export interface EventContext {
 }
 
 export interface DataEntityChangeEvent {
-	type: typeof EventTypes.DATA_ENTITY_CHANGE,
+	type: typeof EventTypes.DATA_CHANGE,
 	detail: {
 		context: EventContext,
 		data: {
@@ -93,7 +102,7 @@ export type LocalfulEvent =
 	DatabaseUnlockEvent | DatabaseLockEvent
 
 export interface EventMap {
-	[EventTypes.DATA_ENTITY_CHANGE]: DataEntityChangeEvent,
+	[EventTypes.DATA_CHANGE]: DataEntityChangeEvent,
 	[EventTypes.DATABASE_OPEN]: DatabaseOpenEvent,
 	[EventTypes.DATABASE_CLOSE]: DatabaseCloseEvent,
 	[EventTypes.DATABASE_UNLOCK]: DatabaseUnlockEvent,

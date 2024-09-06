@@ -63,18 +63,33 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 	const [tabs, setTabs] = useState<WorkspaceTab[]>([])
 	const [activeTab, setActiveTab] = useState<number>(0)
 
-	const openTab = useCallback((tab: WorkspaceTab, options?: OpenTabOptions) => {
-		setTabs([
-			...tabs,
-			tab
-		])
-
-		// Check against current length, after this new tab length will be one
-		if (options?.switch || tabs.length === 0) {
-			// Don't need to -1 for zero index as length has increased in setTabs, it just won't reflect in state at this point.
-			setActiveTab(tabs.length)
+	const openTab = useCallback((newTab: WorkspaceTab, options?: OpenTabOptions) => {
+		let existingTabIndex: number | undefined
+		for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+			if (newTab.type === 'content' && tabs[tabIndex].type === 'content' && newTab.contentId === (tabs[tabIndex] as ).contentId) {
+				existingTabIndex = tabIndex
+			}
+			else if (newTab.type === 'view' && tabs[tabIndex].type === 'view' && newTab.viewId === tabs[tabIndex].viewId) {
+				existingTabIndex = tabIndex
+			}
 		}
-	}, [tabs])
+
+		if (typeof existingTabIndex !== 'number') {
+			setTabs([
+				...tabs,
+				newTab
+			])
+
+			// Check against current length, after this new tab length will be one
+			if (options?.switch || tabs.length === 0) {
+				// Don't need to -1 for zero index as length has increased in setTabs, it just won't reflect in state at this point.
+				setActiveTab(tabs.length)
+			}
+		}
+		else {
+			setActiveTab(existingTabIndex)
+		}
+	}, [tabs, activeTab])
 
 	const closeTab = useCallback((tabIndexToClose: number) => {
 		setTabs(tabs.toSpliced(tabIndexToClose, 1))

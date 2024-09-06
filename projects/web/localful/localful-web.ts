@@ -4,9 +4,11 @@ import {TableSchemaDefinitions, TableTypeDefinitions} from "./storage/types/type
 import {LocalDatabaseFields} from './types/database'
 import {DatabaseStorage} from "./storage/databases";
 import {KeyStorage} from "./storage/key-storage";
-import {EventTypes} from "./events/events";
+import {EventTypes, LocalfulEvent} from "./events/events";
 import {Observable} from "rxjs";
 import {LIVE_QUERY_LOADING_STATE, LiveQueryResult, LiveQueryStatus} from "./control-flow";
+import SharedNetworkWorker from "./worker/network.worker?sharedworker";
+import {Logger} from "../src/utils/logger";
 
 export const LOCALFUL_VERSION = '1.0'
 export const LOCALFUL_INDEXDB_ENTITY_VERSION = 1
@@ -19,18 +21,47 @@ export interface LocalfulWebConfig<
 	tableSchemas: EntityDatabaseConfig<TableTypes>['tableSchemas']
 }
 
+export type SyncStatus = 'synced' | 'queued' | 'running' | 'error' | 'disabled'
+
 export class LocalfulWeb<
 	TableTypes extends TableTypeDefinitions,
 	TableSchemas extends TableSchemaDefinitions<TableTypes>
 > {
-	private readonly eventManager: EventManager
 	private readonly tableSchemas: TableSchemaDefinitions<TableTypes>
 	private readonly databaseStorage: DatabaseStorage
 
+	private readonly eventManager: EventManager
+	private readonly sharedNetworkWorker: SharedWorker
+
+	/**
+	 * Synchronisation is managed by the SharedNetworkWorker which then dispatches messages when the sync status
+	 * changes or a sync message occurs.
+	 */
+	private readonly lastKnownSyncStatus: SyncStatus
+	private readonly syncMessages: string[]
+
 	constructor(config: LocalfulWebConfig<TableTypes>) {
 		this.eventManager = new EventManager()
+		this.sharedNetworkWorker = new SharedNetworkWorker()
+		this.sharedNetworkWorker.port.start()
+
 		this.tableSchemas = config.tableSchemas
 		this.databaseStorage = new DatabaseStorage({eventManager: this.eventManager})
+
+		// Set up a listener to relay all messages from the shared worker to the event manager.
+		this.sharedNetworkWorker.addEventListener('message', (event) => {
+			const message  = event as MessageEvent<LocalfulEvent>
+			Logger.debug('[LocalfulWeb] Received shared worker message', message.data)
+			this.eventManager.dispatch(message.data.type, message.data.detail.data, message.data.detail.context)
+		})
+
+		// Set up a listener to relay all messages from the event manager to the shared worker.
+		this.eventManager.subscribeAll((e: CustomEvent<LocalfulEvent>) => {
+			this.sharedNetworkWorker.port.postMessage({type: e.type , data: e.detail })
+		})
+
+		this.syncMessages = []
+		this.lastKnownSyncStatus = 'disabled'
 	}
 
 	async openDatabase(databaseId: string) {

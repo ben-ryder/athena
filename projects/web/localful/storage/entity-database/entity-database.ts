@@ -309,7 +309,7 @@ export class EntityDatabase<
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'create', id: entityCreateDto.id})
+		this.eventManager.dispatch( EventTypes.DATA_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'create', id: entityCreateDto.id})
 
 	}
 
@@ -379,7 +379,7 @@ export class EntityDatabase<
 		await tx.done
 
 		if (!preventEventDispatch) {
-			this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'update', id: entityId})
+			this.eventManager.dispatch( EventTypes.DATA_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'update', id: entityId})
 		}
 
 		return versionId
@@ -422,7 +422,7 @@ export class EntityDatabase<
 
 		await tx.done
 
-		this.eventManager.dispatch( EventTypes.DATA_ENTITY_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'delete', id: entityId})
+		this.eventManager.dispatch( EventTypes.DATA_CHANGE, { databaseId: this.databaseId, tableKey: tableKey, action: 'delete', id: entityId})
 	}
 
 	/**
@@ -697,13 +697,13 @@ export class EntityDatabase<
 				}
 			}
 
-			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
 			}
 		})
 	}
@@ -730,13 +730,13 @@ export class EntityDatabase<
 				}
 			}
 
-			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
 			}
 		})
 	}
@@ -763,13 +763,13 @@ export class EntityDatabase<
 				}
 			}
 
-			this.eventManager.subscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+			this.eventManager.subscribe(EventTypes.DATA_CHANGE, handleEvent)
 
 			// Run initial query
 			runQuery()
 
 			return () => {
-				this.eventManager.unsubscribe(EventTypes.DATA_ENTITY_CHANGE, handleEvent)
+				this.eventManager.unsubscribe(EventTypes.DATA_CHANGE, handleEvent)
 			}
 		})
 	}

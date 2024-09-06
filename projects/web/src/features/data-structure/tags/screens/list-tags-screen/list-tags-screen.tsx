@@ -12,7 +12,6 @@ import {useLocalful} from "@localful-athena/react/use-localful";
 export function ListTagsScreen(props: GenericManagerScreenProps) {
 	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
 	const tags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))
-	console.debug(tags)
 
 	return (
 		<>

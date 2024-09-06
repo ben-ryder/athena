@@ -1,7 +1,7 @@
 import {EventContext, EventMap, EventTypes, LocalfulEvent} from "./events";
 import { LocalfulEncryption } from "../encryption/encryption";
 import {Logger} from "../../src/utils/logger";
-import SharedNetworkWorker from "../worker/network.worker?sharedworker";
+import {type} from "node:os";
 
 /**
  * Handles events throughout Localful, including communicating with
@@ -12,7 +12,6 @@ export class EventManager {
 	eventTarget: EventTarget
 	localBroadcastChannel: BroadcastChannel | undefined
 	contextId: string
-	private readonly sharedNetworkWorker: SharedWorker
 
 	constructor() {
 		this.eventTarget = new EventTarget()
@@ -23,14 +22,6 @@ export class EventManager {
 			Logger.debug('[EventManager] Received broadcast channel message', message.data)
 			this.dispatch(message.data.type, message.data.detail.data, message.data.detail.context)
 		}
-
-		this.sharedNetworkWorker = new SharedNetworkWorker()
-		this.sharedNetworkWorker.port.start()
-		this.sharedNetworkWorker.addEventListener('message', (event) => {
-			const message  = event as MessageEvent<LocalfulEvent>
-			Logger.debug('[EventManager] Received shared worker message', message.data)
-			this.dispatch(message.data.type, message.data.detail.data, message.data.detail.context)
-		})
 	}
 
 	dispatch<Event extends keyof EventMap>(type: Event, data: EventMap[Event]['detail']['data'], context?: EventContext) {
@@ -53,18 +44,30 @@ export class EventManager {
 					this.localBroadcastChannel.postMessage({ type, detail: eventDetail })
 				}
 			}
-
-			this.sharedNetworkWorker.port.postMessage({type, data: eventDetail })
 		}
 	}
 
-	subscribe<Event extends keyof EventMap>(type: Event, callback: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
+	subscribe<Event extends keyof EventMap>(type: Event, listener: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
 		// @ts-expect-error - We can add a callback for custom events!
-		this.eventTarget.addEventListener(type, callback)
+		this.eventTarget.addEventListener(type, listener)
 	}
 
-	unsubscribe<Event extends keyof EventMap>(type: Event, callback: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
+	unsubscribe<Event extends keyof EventMap>(type: Event, listener: (e: CustomEvent<EventMap[Event]['detail']>) => void) {
 		// @ts-expect-error - We can add a callback for custom events!
-		this.eventTarget.removeEventListener(type, callback)
+		this.eventTarget.removeEventListener(type, listener)
+	}
+
+	subscribeAll(listener: (e: CustomEvent<LocalfulEvent>) => void) {
+		for (const event of Object.values(EventTypes)) {
+			// @ts-expect-error - We can add a callback for custom events!
+			this.eventTarget.addEventListener(event, listener)
+		}
+	}
+
+	unsubscribeAll(listener: (e: CustomEvent<LocalfulEvent>) => void) {
+		for (const event of Object.values(EventTypes)) {
+			// @ts-expect-error - We can add a callback for custom events!
+			this.eventTarget.removeEventListener(event, listener)
+		}
 	}
 }
