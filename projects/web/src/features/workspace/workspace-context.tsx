@@ -66,9 +66,11 @@ export function WorkspaceContextProvider(props: {children: ReactNode}) {
 	const openTab = useCallback((newTab: WorkspaceTab, options?: OpenTabOptions) => {
 		let existingTabIndex: number | undefined
 		for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-			if (newTab.type === 'content' && tabs[tabIndex].type === 'content' && newTab.contentId === (tabs[tabIndex] as ).contentId) {
+			// @ts-expect-error -- todo: type for tabs[tabIndex] doesn't pull through.
+			if (newTab.type === 'content' && tabs[tabIndex].type === 'content' && newTab.contentId === tabs[tabIndex].contentId) {
 				existingTabIndex = tabIndex
 			}
+			// @ts-expect-error -- todo: type for tabs[tabIndex] doesn't pull through.
 			else if (newTab.type === 'view' && tabs[tabIndex].type === 'view' && newTab.viewId === tabs[tabIndex].viewId) {
 				existingTabIndex = tabIndex
 			}
