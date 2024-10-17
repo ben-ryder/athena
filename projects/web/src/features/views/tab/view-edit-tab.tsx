@@ -1,16 +1,16 @@
 import { WithTabData } from "../../workspace/workspace";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../state/headbase-localful";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useCallback, useEffect} from "react";
 import {useViewFormData, ViewFormOptions} from "../form/useViewFormData";
 import {ViewForm} from "../form/view-form";
 import {JButton} from "@ben-ryder/jigsaw-react";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 export interface ViewEditTabProps extends WithTabData, ViewFormOptions {}
 
 export function ViewEditTab(props: ViewEditTabProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const { replaceTab, setTabName, setTabIsUnsaved, closeTab, openTab } = useWorkspaceContext()
 
 	const {

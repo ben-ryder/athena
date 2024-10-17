@@ -3,7 +3,7 @@ import {PropsWithChildren} from "../../../utils/children-prop";
 import {JDialog} from "@ben-ryder/jigsaw-react";
 import {DatabaseListScreen} from "../screens/database-list";
 import {DatabaseCreateScreen} from "../screens/database-create";
-import { useLocalful } from "@localful-athena/react/use-localful";
+import { useLocalful } from "@localful-headbase/react/use-localful";
 import { DatabaseEditScreen } from "../screens/database-edit";
 import {DatabaseUnlockScreen} from "../screens/database-unlock";
 import {_DatabaseDialogContext, DatabaseManagerTabs, useDatabaseManagerDialogContext} from "./database-manager-context";

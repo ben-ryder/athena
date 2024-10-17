@@ -16,8 +16,8 @@ export default defineConfig({
 		VitePWA({
 			registerType: "autoUpdate",
 			manifest: {
-				name: "Athena",
-				short_name: "Athena",
+				name: "Headbase",
+				short_name: "Headbase",
 				description:
           "A local-first web app for notes, tasks, journaling, habit tracking and reminders.",
 				theme_color: "#0c857a",

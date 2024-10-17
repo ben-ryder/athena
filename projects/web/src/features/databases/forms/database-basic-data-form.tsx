@@ -5,7 +5,7 @@ import {
 	JButtonGroup, JButton,
 	JForm, JFormContent, JFormRow, JSelect
 } from "@ben-ryder/jigsaw-react";
-import {LocalDatabaseFields} from "@localful-athena/types/database";
+import {LocalDatabaseFields} from "@localful-headbase/types/database";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 

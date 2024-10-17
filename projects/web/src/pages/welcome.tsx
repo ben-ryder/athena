@@ -9,14 +9,14 @@ export function WelcomePage() {
 	return (
 		<>
 			<Helmet>
-				<title>Welcome | Athena</title>
+				<title>Welcome | Headbase</title>
 			</Helmet>
 			<MessagePage
-				heading="Welcome to Athena"
+				heading="Welcome to Headbase"
 				content={
 					<>
 						<p>
-							Athena is a local-first web app for creating customizable content databases, suitable for note-taking, task-management, personal knowledge bases and more.<br/>
+							Headbase is a local-first web app for creating customizable content databases, suitable for note-taking, task-management, personal knowledge bases and more.<br/>
 							For help, support and documentation <a href={routes.external.github} target="_blank" rel="noreferrer">visit the project GitHub</a>.
 						</p>
 						<p>
@@ -24,7 +24,7 @@ export function WelcomePage() {
 							and then using this web app or your own self-hosted version.
 						</p>
 						<p>
-							If this is your first time using Athena you can use the <b>"Load Example"</b> option below.{" "}
+							If this is your first time using Headbase you can use the <b>"Load Example"</b> option below.{" "}
 							This will create an example database containing some initial content types to get you started.
 						</p>
 					</>

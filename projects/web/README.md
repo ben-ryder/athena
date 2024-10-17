@@ -1,6 +1,6 @@
-# athena-web
+# headbase-web
 
-A React web application for Athena, built using [Vite](https://vitejs.dev/).
+A React web application for Headbase, built using [Vite](https://vitejs.dev/).
 
 ## Prerequisites
 - Node.js installed at version `^20.x`

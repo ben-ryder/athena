@@ -1,6 +1,6 @@
 import { JCallout } from "@ben-ryder/jigsaw-react";
 import React from "react";
-import { ErrorTypes, LocalfulError } from "@localful-athena/control-flow";
+import { ErrorTypes, LocalfulError } from "@localful-headbase/control-flow";
 
 export interface ErrorCalloutProps {
 	errors: unknown[]

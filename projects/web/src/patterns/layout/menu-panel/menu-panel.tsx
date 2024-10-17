@@ -24,7 +24,7 @@ import {useDataStructureDialog} from "../../../features/data-structure/data-stru
 import { useViewsDialog } from "../../../features/views/dialog/views-dialog";
 import {useContentListDialog} from "../../../features/content-list/dialog/content-list-dialog";
 import {useSettingsDialog} from "../../../features/settings/settings-dialog";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 import {useDatabaseManagerDialogContext} from "../../../features/databases/manager/database-manager-context";
 import classNames from "classnames";
 import {useAccountDialog} from "../../../features/account/account-dialog";

@@ -9,7 +9,7 @@ export function PageNotFound() {
 	return (
 		<>
 			<Helmet>
-				<title>Not Found | Athena</title>
+				<title>Not Found | Headbase</title>
 			</Helmet>
 			<MessagePage
 				heading="Not Found"

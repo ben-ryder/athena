@@ -1,12 +1,12 @@
 import {DatabaseBasicDataForm} from "../forms/database-basic-data-form";
 import {useCallback} from "react";
-import {LocalDatabaseFields} from "@localful-athena/types/database";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {LocalDatabaseFields} from "@localful-headbase/types/database";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 import {JArrowButton, JButton} from "@ben-ryder/jigsaw-react";
-import { useObservableQuery } from "@localful-athena/react/use-observable-query";
+import { useObservableQuery } from "@localful-headbase/react/use-observable-query";
 import { ErrorCallout } from "../../../patterns/components/error-callout/error-callout";
 import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 
 export interface DatabaseEditScreenProps {
 	databaseId: string

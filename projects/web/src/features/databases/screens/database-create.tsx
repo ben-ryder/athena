@@ -1,8 +1,8 @@
 import {DatabaseBasicDataForm} from "../forms/database-basic-data-form";
 import {useCallback, useState} from "react";
-import {LocalDatabaseFields} from "@localful-athena/types/database";
+import {LocalDatabaseFields} from "@localful-headbase/types/database";
 import {DatabasePasswordForm} from "../forms/database-password-form";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
 
 export type DatabaseCreateSteps = 'basic-info' | 'encryption'

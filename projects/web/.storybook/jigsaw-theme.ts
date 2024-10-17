@@ -2,8 +2,8 @@ import { create } from "@storybook/theming";
 
 export default create({
 	base: "dark",
-	brandTitle: "Athena",
-	brandUrl: "https://github.com/ben-ryder/athena",
+	brandTitle: "Headbase",
+	brandUrl: "https://github.com/ben-ryder/headbase",
 	brandTarget: "_self",
 
 	// Main Colours

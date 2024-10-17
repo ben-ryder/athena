@@ -2,9 +2,9 @@ import {useCallback} from "react";
 import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
 import {DatabaseChangePasswordForm} from "../forms/database-change-password-form";
 import {JArrowButton} from "@ben-ryder/jigsaw-react";
-import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {useLocalful} from "@localful-athena/react/use-localful";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import {useObservableQuery} from "@localful-headbase/react/use-observable-query";
+import {useLocalful} from "@localful-headbase/react/use-localful";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 
 export interface DatabaseChangePasswordScreenProps {
 	databaseId: string

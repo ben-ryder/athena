@@ -1,14 +1,14 @@
 import {ReportFunction} from "./performance-manager";
-import {LocalfulWeb} from "@localful-athena/localful-web";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../state/athena-localful";
-import {EntityDatabase} from "@localful-athena/storage/entity-database/entity-database";
+import {LocalfulWeb} from "@localful-headbase/localful-web";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../state/headbase-localful";
+import {EntityDatabase} from "@localful-headbase/storage/entity-database/entity-database";
 
 const SHORT_STRING = "Chapter - Firstname lastname"
 const TAG_NUMBER = 600
 const TAG_VERSIONS_NUMBER = 20
 
 export async function runTest(report: ReportFunction) {
-	const localful = new LocalfulWeb<AthenaTableTypes, AthenaTableSchemas>({tableSchemas: AthenaTableSchemas})
+	const localful = new LocalfulWeb<HeadbaseTableTypes, HeadbaseTableSchemas>({tableSchemas: HeadbaseTableSchemas})
 
 	const password = 'password1234'
 	const databaseId = await localful.createDatabase({name: 'perf test', syncEnabled: 0}, password)
@@ -34,7 +34,7 @@ export async function runTest(report: ReportFunction) {
 	report({level: "message", text: `Full benchmark ran in ${benchmarkEndTime - benchmarkStartTime}ms`})
 }
 
-export async function createTestData(currentDatabase: EntityDatabase<AthenaTableTypes, AthenaTableSchemas>, report: ReportFunction) {
+export async function createTestData(currentDatabase: EntityDatabase<HeadbaseTableTypes, HeadbaseTableSchemas>, report: ReportFunction) {
 	report({level: "section", text: "Tags"})
 	report({level: "task", text: "Creating Tags"})
 	const tagCreationStart = performance.now()
@@ -48,7 +48,7 @@ export async function createTestData(currentDatabase: EntityDatabase<AthenaTable
 	report({level: "message", text: `created ${TAG_NUMBER} tags, with ${TAG_VERSIONS_NUMBER} versions each in ${tagCreationEnd - tagCreationStart}ms`})
 }
 
-export async function queryTestData(currentDatabase: EntityDatabase<AthenaTableTypes, AthenaTableSchemas>, report: ReportFunction) {
+export async function queryTestData(currentDatabase: EntityDatabase<HeadbaseTableTypes, HeadbaseTableSchemas>, report: ReportFunction) {
 	report({level: "task", text: "Fetching Tags"})
 	const getTagsStart = performance.now()
 	const tagsQuery = await currentDatabase.query({table: 'tags'})

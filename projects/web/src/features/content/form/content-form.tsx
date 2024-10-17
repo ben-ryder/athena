@@ -5,16 +5,16 @@ import {
 	JButtonGroup, JButton,
 	JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect, JProse
 } from "@ben-ryder/jigsaw-react";
-import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import { useObservableQuery } from "@localful-headbase/react/use-observable-query";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../state/headbase-localful";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 import { WithTabData } from "../../workspace/workspace";
 import {ContentFormData, ContentFormDataHandlers} from "./useContentFormData";
 
 import "./content-form.scss"
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 import {FieldDefinition} from "../../../state/schemas/fields/fields";
-import {EntityDto} from "@localful-athena/types/data-entities";
+import {EntityDto} from "@localful-headbase/types/data-entities";
 import {CustomField} from "./field";
 
 export interface ContentFormProps extends WithTabData, ContentFormData, ContentFormDataHandlers {
@@ -30,7 +30,7 @@ export interface ContentFormFields {
 // todo: handle situation where content form is open and content gets deleted?
 
 export function ContentForm(props: ContentFormProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const [error, setError] = useState<string | null>(null);
 
 	const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))

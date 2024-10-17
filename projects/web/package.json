@@ -1,5 +1,5 @@
 {
-  "name": "@ben-ryder/athena-web",
+  "name": "@ben-ryder/headbase-web",
   "description": "A local-first web app for notes, tasks, journaling, habit tracking and reminders.",
   "private": true,
   "version": "0.0.0",

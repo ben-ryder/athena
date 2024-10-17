@@ -1,6 +1,6 @@
 import {WithTabData} from "../../workspace/workspace";
-import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {LiveQueryStatus} from "@localful-athena/control-flow";
+import {useObservableQuery} from "@localful-headbase/react/use-observable-query";
+import {LiveQueryStatus} from "@localful-headbase/control-flow";
 import {ErrorCallout} from "../../../patterns/components/error-callout/error-callout";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {JButton} from "@ben-ryder/jigsaw-react";
@@ -9,16 +9,16 @@ import {ContentDto} from "../../../state/schemas/content/content";
 import {ContentCard} from "../../../patterns/components/content-card/content-card";
 
 import "./view-tab.scss"
-import {useLocalful} from "@localful-athena/react/use-localful";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
-import {IndexWhereOption} from "@localful-athena/storage/types/query";
+import {useLocalful} from "@localful-headbase/react/use-localful";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../state/headbase-localful";
+import {IndexWhereOption} from "@localful-headbase/storage/types/query";
 
 export interface ViewTabProps extends WithTabData {
 	viewId: string
 }
 
 export function ViewTab(props: ViewTabProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const { openTab, setTabName } = useWorkspaceContext()
 	const viewQuery = useObservableQuery(currentDatabase?.liveGet('views', props.viewId))
 
@@ -38,7 +38,7 @@ export function ViewTab(props: ViewTabProps) {
 			setResults([])
 		}
 		else if (currentDatabase) {
-			const queryIndex: IndexWhereOption<AthenaTableTypes, AthenaTableSchemas, 'content'>|undefined = viewQuery.result.data.queryContentTypes.length > 0 ?
+			const queryIndex: IndexWhereOption<HeadbaseTableTypes, HeadbaseTableSchemas, 'content'>|undefined = viewQuery.result.data.queryContentTypes.length > 0 ?
 				{
 					field: 'type',
 					operation: 'includes',

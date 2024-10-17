@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { TagData } from "../../../../state/schemas/tags/tags";
-import {ErrorTypes} from "@localful-athena/control-flow";
+import {ErrorTypes} from "@localful-headbase/control-flow";
 import {
 	GenericManagerScreenProps
 } from "../../../../common/generic-manager/generic-manager";
 import { TagForm } from "../forms/tag-form";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../../state/headbase-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 export function CreateTagScreen(props: GenericManagerScreenProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	async function onSave(data: TagData) {

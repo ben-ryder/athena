@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { TagForm } from "../forms/tag-form";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { TagData } from "../../../../state/schemas/tags/tags";
-import {ErrorTypes, LiveQueryStatus} from "@localful-athena/control-flow";
+import {ErrorTypes, LiveQueryStatus} from "@localful-headbase/control-flow";
 import {
 	GenericManagerContentScreenProps,
 } from "../../../../common/generic-manager/generic-manager";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
-import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../../state/headbase-localful";
+import { useObservableQuery } from "@localful-headbase/react/use-observable-query";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 
 export function EditTagScreen(props: GenericManagerContentScreenProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	const tagResult = useObservableQuery(currentDatabase?.liveGet('tags', props.id))

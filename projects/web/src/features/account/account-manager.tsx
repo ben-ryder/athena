@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 export function AccountManager() {
 	const { serverUrl } = useLocalful()

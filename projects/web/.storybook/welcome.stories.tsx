@@ -6,7 +6,7 @@ export function Welcome() {
 	return (
 		<div className="j-content-section">
 			<div className="j-prose">
-				<h1>Welcome to the Athena Storybook!</h1>
+				<h1>Welcome to the Headbase Storybook!</h1>
 				<p>
 					This storybook is used to develop components of the web interface in
 					isolation from the application itself.

@@ -17,15 +17,15 @@ import {
 	ContentTypeData
 } from "../../../../state/schemas/content-types/content-types";
 import {ColourVariants} from "../../../../state/schemas/common/fields";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import { useObservableQuery } from "@localful-headbase/react/use-observable-query";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../../state/headbase-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([]);
 
 	const [name, setName] = useState<string>(props.data.name);

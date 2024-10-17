@@ -5,14 +5,14 @@ import {
 	JButtonGroup, JButton,
 	JForm, JFormContent, JFormRow, JMultiSelectOptionData, JTextArea, JMultiSelect, JSelect
 } from "@ben-ryder/jigsaw-react";
-import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import { useObservableQuery } from "@localful-headbase/react/use-observable-query";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 import { WithTabData } from "../../workspace/workspace";
 import { ViewFormData, ViewFormDataHandlers } from "./useViewFormData";
 
 import "./view-form.scss"
-import {useLocalful} from "@localful-athena/react/use-localful";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../state/athena-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../state/headbase-localful";
 
 export interface ViewFormProps extends WithTabData, ViewFormData, ViewFormDataHandlers {
 	onSave: () => void;
@@ -22,7 +22,7 @@ export interface ViewFormProps extends WithTabData, ViewFormData, ViewFormDataHa
 // todo: handle situation where content form is open and content gets deleted?
 
 export function ViewForm(props: ViewFormProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const [error, setError] = useState<string | null>(null);
 
 	const allTags = useObservableQuery(currentDatabase?.liveQuery({table: 'tags'}))

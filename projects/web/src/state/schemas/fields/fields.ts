@@ -1,7 +1,7 @@
 import {z} from "zod";
 import isISO8601Date from 'validator/lib/isISO8601';
 import { FIELD_TYPES } from "./field-types";
-import {IdField} from "@localful-athena/types/fields";
+import {IdField} from "@localful-headbase/types/fields";
 
 /**
  * Base field definition inherited by all fields.

@@ -4,7 +4,7 @@ import {ContentTypeData} from "./schemas/content-types/content-types";
 import {ContentData} from "./schemas/content/content";
 import {ViewData} from "./schemas/views/views";
 
-export const AthenaTableSchemas = {
+export const HeadbaseTableSchemas = {
 	version: 1.1,
 	tables: {
 		tags: {
@@ -57,9 +57,9 @@ export const AthenaTableSchemas = {
 		}
 	},
 } as const
-export type AthenaTableSchemas = typeof AthenaTableSchemas
+export type HeadbaseTableSchemas = typeof HeadbaseTableSchemas
 
-export type AthenaTableTypes = {
+export type HeadbaseTableTypes = {
 	tags: TagData
 	fields: FieldDefinition
 	content_types: ContentTypeData,

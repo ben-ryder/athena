@@ -22,8 +22,8 @@ import {
 } from "../types/types";
 import {LOCALFUL_INDEXDB_ENTITY_VERSION, LOCALFUL_VERSION} from "../../localful-web";
 import {IdField, TimestampField} from "../../types/fields";
-import {QueryDefinition, QueryIndex} from "@localful-athena/storage/types/query";
-import {ExportData} from "@localful-athena/storage/types/export";
+import {QueryDefinition, QueryIndex} from "@localful-headbase/storage/types/query";
+import {ExportData} from "@localful-headbase/storage/types/export";
 
 export interface EntityDatabaseConfig<
 	TableTypes extends TableTypeDefinitions

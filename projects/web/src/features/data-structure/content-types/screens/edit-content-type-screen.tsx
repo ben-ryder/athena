@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import {ErrorTypes, LiveQueryStatus} from "@localful-athena/control-flow";
+import {ErrorTypes, LiveQueryStatus} from "@localful-headbase/control-flow";
 import {
 	GenericManagerContentScreenProps,
 } from "../../../../common/generic-manager/generic-manager";
@@ -8,12 +8,12 @@ import {ContentTypeForm} from "../forms/content-type-form";
 import {
 	ContentTypeData
 } from "../../../../state/schemas/content-types/content-types";
-import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import { useObservableQuery } from "@localful-headbase/react/use-observable-query";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../../state/headbase-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 export function EditContentTypeScreen(props: GenericManagerContentScreenProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	const contentTypeQuery = useObservableQuery(currentDatabase?.liveGet('content_types', props.id))

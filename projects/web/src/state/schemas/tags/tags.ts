@@ -1,6 +1,6 @@
 import {z} from "zod"
 import {ColourVariants, NameField} from "../common/fields";
-import {EntityDto} from "@localful-athena/types/data-entities";
+import {EntityDto} from "@localful-headbase/types/data-entities";
 
 export const TagData = z.object({
 	name: NameField,

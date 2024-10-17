@@ -1,7 +1,6 @@
 import {EventContext, EventMap, EventTypes, LocalfulEvent} from "./events";
 import { LocalfulEncryption } from "../encryption/encryption";
 import {Logger} from "../../src/utils/logger";
-import {type} from "node:os";
 
 /**
  * Handles events throughout Localful, including communicating with

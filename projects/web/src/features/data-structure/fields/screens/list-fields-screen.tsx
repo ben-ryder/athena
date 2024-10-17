@@ -1,17 +1,17 @@
 import { GenericManagerScreenProps } from "../../../../common/generic-manager/generic-manager";
 import { AdminList, AdminListItemProps } from "../../../../patterns/layout/admin-list/admin-list";
 import React, { useState } from "react";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
 import { FIELD_TYPES } from "../../../../state/schemas/fields/field-types";
-import { useObservableQuery } from "@localful-athena/react/use-observable-query";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import { useObservableQuery } from "@localful-headbase/react/use-observable-query";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../../state/headbase-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 export function ListFieldsScreen(props: GenericManagerScreenProps) {
 	const [errors, setErrors] = useState<unknown[]>([])
 
-	const { currentDatabase } = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const { currentDatabase } = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 
 	const fields = useObservableQuery(currentDatabase?.liveQuery({table: 'fields'}))
 

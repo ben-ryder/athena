@@ -1,5 +1,5 @@
 import {useRef} from "react";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 import {ExportDatabase} from "./export-database";
 import {ImportDatabase} from "./import-database";
 

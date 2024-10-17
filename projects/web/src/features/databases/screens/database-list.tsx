@@ -1,12 +1,12 @@
 import {JButton, JCallout} from "@ben-ryder/jigsaw-react";
-import {useLocalful} from "@localful-athena/react/use-localful";
-import {useObservableQuery} from "@localful-athena/react/use-observable-query";
+import {useLocalful} from "@localful-headbase/react/use-localful";
+import {useObservableQuery} from "@localful-headbase/react/use-observable-query";
 import {ErrorCallout} from "../../../patterns/components/error-callout/error-callout";
 import {useCallback} from "react";
-import {LocalDatabaseDto} from "@localful-athena/types/database";
+import {LocalDatabaseDto} from "@localful-headbase/types/database";
 import {useWorkspaceContext} from "../../workspace/workspace-context";
 import {useDatabaseManagerDialogContext} from "../manager/database-manager-context";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 
 
 export function DatabaseListScreen() {

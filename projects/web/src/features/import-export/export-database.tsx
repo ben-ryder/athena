@@ -1,4 +1,4 @@
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 import {JButton, JErrorText, JProse} from "@ben-ryder/jigsaw-react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";

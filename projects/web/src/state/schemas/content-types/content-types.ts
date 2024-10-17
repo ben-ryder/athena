@@ -1,7 +1,7 @@
 import {z} from "zod"
 import {ColourVariants, DescriptionField, NameField} from "../common/fields";
-import {EntityDto} from "@localful-athena/types/data-entities";
-import {IdField} from "@localful-athena/types/fields";
+import {EntityDto} from "@localful-headbase/types/data-entities";
+import {IdField} from "@localful-headbase/types/fields";
 
 export const ContentTypeData = z.object({
 	name: NameField,

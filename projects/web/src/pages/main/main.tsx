@@ -11,8 +11,8 @@ import {DataStructureDialog, DataStructureDialogProvider} from "../../features/d
 import { ViewsDialog, ViewsDialogProvider } from "../../features/views/dialog/views-dialog";
 import {ContentListDialog, ContentListDialogProvider} from "../../features/content-list/dialog/content-list-dialog";
 import {SettingsDialog, SettingsDialogProvider} from "../../features/settings/settings-dialog";
-import {LocalfulContextProvider} from "@localful-athena/react/use-localful";
-import {AthenaTableSchemas} from "../../state/athena-localful";
+import {LocalfulContextProvider} from "@localful-headbase/react/use-localful";
+import {HeadbaseTableSchemas} from "../../state/headbase-localful";
 import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/manager/database-manager";
 import {AccountDialog, AccountDialogProvider} from "../../features/account/account-dialog";
 
@@ -20,7 +20,7 @@ export function MainPage() {
 	const [isMenuPanelOpen, setIsMenuPanelOpen] = useState<boolean>(true)
 
 	return (
-		<LocalfulContextProvider tableSchemas={AthenaTableSchemas}>
+		<LocalfulContextProvider tableSchemas={HeadbaseTableSchemas}>
 			<WorkspaceContextProvider>
 				<DatabaseManagerDialogProvider>
 					<NewContentDialogProvider>
@@ -31,7 +31,7 @@ export function MainPage() {
 										<ContentListDialogProvider>
 											<SettingsDialogProvider>
 												<AccountDialogProvider>
-													<main className="athena">
+													<main className="headbase">
 														<DatabaseManagerDialog/>
 
 														<MenuPanel isMenuPanelOpen={isMenuPanelOpen}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ErrorCallout } from "../../../../patterns/components/error-callout/error-callout";
-import {ErrorTypes} from "@localful-athena/control-flow";
+import {ErrorTypes} from "@localful-headbase/control-flow";
 import {
 	GenericManagerScreenProps
 } from "../../../../common/generic-manager/generic-manager";
@@ -8,11 +8,11 @@ import {
 	ContentTypeData
 } from "../../../../state/schemas/content-types/content-types";
 import {ContentTypeForm} from "../forms/content-type-form";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../../../state/athena-localful";
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../../../state/headbase-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 
 export function CreateContentTypeScreen(props: GenericManagerScreenProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const [errors, setErrors] = useState<unknown[]>([])
 
 	async function onSave(data: ContentTypeData) {

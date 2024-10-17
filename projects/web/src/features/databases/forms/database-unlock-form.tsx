@@ -3,8 +3,8 @@ import { JButton, JButtonGroup, JErrorText, JForm, JFormContent, JFormRow, JInpu
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useLocalful } from "@localful-athena/react/use-localful";
-import { ErrorTypes, LocalfulError } from "@localful-athena/control-flow";
+import { useLocalful } from "@localful-headbase/react/use-localful";
+import { ErrorTypes, LocalfulError } from "@localful-headbase/control-flow";
 
 
 const UnlockFormSchema = z.object({

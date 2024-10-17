@@ -1,9 +1,9 @@
-import {useLocalful} from "@localful-athena/react/use-localful";
+import {useLocalful} from "@localful-headbase/react/use-localful";
 import {useRef} from "react";
 import {JButton, JErrorText, JInput} from "@ben-ryder/jigsaw-react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {LocalfulError} from "@localful-athena/control-flow";
+import {LocalfulError} from "@localful-headbase/control-flow";
 
 const ImportForm = z.object({
 	file: z.string(),

@@ -1,17 +1,17 @@
-import {useObservableQuery} from "@localful-athena/react/use-observable-query";
-import {AthenaTableSchemas, AthenaTableTypes} from "../../state/athena-localful";
+import {useObservableQuery} from "@localful-headbase/react/use-observable-query";
+import {HeadbaseTableSchemas, HeadbaseTableTypes} from "../../state/headbase-localful";
 import {ErrorCallout} from "../../patterns/components/error-callout/error-callout";
 import {useWorkspaceContext} from "../workspace/workspace-context";
 import {ContentCard} from "../../patterns/components/content-card/content-card";
-import {useLocalful} from "@localful-athena/react/use-localful";
-import { LiveQueryStatus } from "@localful-athena/control-flow";
+import {useLocalful} from "@localful-headbase/react/use-localful";
+import { LiveQueryStatus } from "@localful-headbase/control-flow";
 
 export interface ViewListProps {
 	onOpen?: () => void
 }
 
 export function ViewList(props: ViewListProps) {
-	const {currentDatabase} = useLocalful<AthenaTableTypes, AthenaTableSchemas>()
+	const {currentDatabase} = useLocalful<HeadbaseTableTypes, HeadbaseTableSchemas>()
 	const { openTab } = useWorkspaceContext()
 
 	const contentQuery = useObservableQuery(currentDatabase?.liveQuery({
