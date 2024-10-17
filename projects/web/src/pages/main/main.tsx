@@ -10,7 +10,6 @@ import {SearchDialog, SearchDialogProvider} from "../../features/search/dialog/s
 import {DataStructureDialog, DataStructureDialogProvider} from "../../features/data-structure/data-structure-dialog";
 import { ViewsDialog, ViewsDialogProvider } from "../../features/views/dialog/views-dialog";
 import {ContentListDialog, ContentListDialogProvider} from "../../features/content-list/dialog/content-list-dialog";
-import {SettingsDialog, SettingsDialogProvider} from "../../features/settings/settings-dialog";
 import {LocalfulContextProvider} from "@localful-headbase/react/use-localful";
 import {HeadbaseTableSchemas} from "../../state/headbase-localful";
 import {DatabaseManagerDialog, DatabaseManagerDialogProvider} from "../../features/databases/manager/database-manager";
@@ -29,27 +28,24 @@ export function MainPage() {
 								<DataStructureDialogProvider>
 									<ViewsDialogProvider>
 										<ContentListDialogProvider>
-											<SettingsDialogProvider>
-												<AccountDialogProvider>
-													<main className="headbase">
-														<DatabaseManagerDialog/>
+											<AccountDialogProvider>
+												<main className="headbase">
+													<DatabaseManagerDialog/>
 
-														<MenuPanel isMenuPanelOpen={isMenuPanelOpen}
+													<MenuPanel isMenuPanelOpen={isMenuPanelOpen}
 																   setIsMenuPanelOpen={setIsMenuPanelOpen}/>
-														<Workspace isMenuPanelOpen={isMenuPanelOpen}
+													<Workspace isMenuPanelOpen={isMenuPanelOpen}
 																   setIsMenuPanelOpen={setIsMenuPanelOpen}/>
 
-														<NewContentDialog/>
-														<StatusDialog/>
-														<SearchDialog/>
-														<DataStructureDialog/>
-														<ViewsDialog/>
-														<ContentListDialog/>
-														<SettingsDialog/>
-														<AccountDialog/>
-													</main>
-												</AccountDialogProvider>
-											</SettingsDialogProvider>
+													<NewContentDialog/>
+													<StatusDialog/>
+													<SearchDialog/>
+													<DataStructureDialog/>
+													<ViewsDialog/>
+													<ContentListDialog/>
+													<AccountDialog/>
+												</main>
+											</AccountDialogProvider>
 										</ContentListDialogProvider>
 									</ViewsDialogProvider>
 								</DataStructureDialogProvider>

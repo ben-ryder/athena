@@ -17,7 +17,7 @@ export function AccountDialog() {
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
 			title="Account"
-			description="Manage your server account"
+			description="Manage your account, including local settings and server account."
 			style={{
 				width: "100%",
 				maxWidth: "1000px",

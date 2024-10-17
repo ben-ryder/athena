@@ -6,7 +6,7 @@
 
 @mixin menu-panel-button {
   display: block;
-  padding: var(--j-space-3);
+  padding: var(--j-space-2);
   border-radius: var(--j-border-radius-sm);
   color: inherit;
 
@@ -77,13 +77,13 @@
 
     &-edit {
       @include menu-panel-button();
+      padding: var(--j-space-3);
 
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
       font-size: var(--j-text-size-sm);
-      margin-right: auto;
       max-width: 180px;
 
       .j-icon {
@@ -98,12 +98,13 @@
 
     &-switch {
       @include menu-panel-button();
+      padding: var(--j-space-3);
     }
   }
 
   &__actions {
     margin-top: var(--j-space-12);
-    padding: var(--j-space-3) var(--j-space-6);
+    padding: var(--j-space-3) var(--j-space-3);
   }
 
   &__favorites {
@@ -134,6 +135,7 @@
   &__menu {
     @include menu-panel-button();
     line-height: 0;
+    padding: var(--j-space-3);
   }
 
   &__menu {

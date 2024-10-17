@@ -8,7 +8,6 @@ import {
 	List as AllContentIcon,
 	Filter as AllViewsIcon,
 	Shapes as DataStructureIcon,
-	Settings as SettingsIcon,
 	HelpCircle as HelpIcon,
 	UserCircle as AccountIcon,
 	ChevronFirst as CollapseMenuIcon
@@ -23,7 +22,6 @@ import {useSearchDialog} from "../../../features/search/dialog/search-dialog";
 import {useDataStructureDialog} from "../../../features/data-structure/data-structure-dialog";
 import { useViewsDialog } from "../../../features/views/dialog/views-dialog";
 import {useContentListDialog} from "../../../features/content-list/dialog/content-list-dialog";
-import {useSettingsDialog} from "../../../features/settings/settings-dialog";
 import {useLocalful} from "@localful-headbase/react/use-localful";
 import {useDatabaseManagerDialogContext} from "../../../features/databases/manager/database-manager-context";
 import classNames from "classnames";
@@ -42,7 +40,6 @@ export function MenuPanel(props: WithMenuPanelProps) {
 	const {setIsOpen: setDataStructureDialogOpen } = useDataStructureDialog()
 	const {setIsOpen: setViewsDialogOpen } = useViewsDialog()
 	const {setIsOpen: setContentListDialogOpen } = useContentListDialog()
-	const {setIsOpen: setSettingsDialogOpen } = useSettingsDialog()
 	const {setIsOpen: setAccountDialogOpen } = useAccountDialog()
 
 	const { currentDatabase, currentDatabaseDto } = useLocalful()
@@ -52,6 +49,14 @@ export function MenuPanel(props: WithMenuPanelProps) {
 		<div className={classNames('menu-panel', {'menu-panel--menu-hidden': !props.isMenuPanelOpen})}>
 			<div className="menu-panel__database">
 				<div className="menu-panel__database-content">
+					<JTooltip content="All Databases" renderAsChild={true} variant='dark'>
+						<button
+							className="menu-panel__database-switch"
+							onClick={() => {
+								setDatabaseManagerDialogTab({type: 'list'})
+							}}
+						><JIcon><DatabaseListIcon /></JIcon></button>
+					</JTooltip>
 					<JTooltip content='Edit Database' renderAsChild={true} variant='dark'>
 						<button
 							className="menu-panel__database-edit"
@@ -64,14 +69,6 @@ export function MenuPanel(props: WithMenuPanelProps) {
 							<span className="menu-panel__database-name" tabIndex={-1}>{currentDatabaseDto && currentDatabaseDto.name}</span>
 							{currentDatabase && <JIcon size='sm'><EditIcon/></JIcon>}
 						</button>
-					</JTooltip>
-					<JTooltip content="All Databases" renderAsChild={true} variant='dark'>
-						<button
-							className="menu-panel__database-switch"
-							onClick={() => {
-								setDatabaseManagerDialogTab({type: 'list'})
-							}}
-						><JIcon><DatabaseListIcon /></JIcon></button>
 					</JTooltip>
 				</div>
 			</div>
@@ -143,15 +140,6 @@ export function MenuPanel(props: WithMenuPanelProps) {
 								setAccountDialogOpen(true)
 							}}
 						><AccountIcon/></button>
-					</JTooltip>
-					<JTooltip content="Settings" renderAsChild={true} variant='dark'>
-						<button
-							aria-label='Open settings'
-							className="menu-panel__settings"
-							onClick={() => {
-								setSettingsDialogOpen(true)
-							}}
-						><SettingsIcon/></button>
 					</JTooltip>
 					<JTooltip content='Logs' renderAsChild={true} variant='dark'>
 						<button
