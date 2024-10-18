@@ -82,7 +82,6 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 	}, []);
 
 	const [contentTemplateName, setContentTemplateName] = useState<string>(props.data.contentTemplateName || '');
-	const [contentTemplateDescription, setContentTemplateDescription] = useState<string>(props.data.contentTemplateDescription || '');
 
 	const [fieldOptions, setFieldOptions] = useState<JMultiSelectOptionData[]>([]);
 	const allFields = useObservableQuery(currentDatabase?.liveQuery({table: 'fields'}))
@@ -134,7 +133,6 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 			icon: icon || undefined,
 			colourVariant: colour || undefined,
 			contentTemplateName: contentTemplateName || undefined,
-			contentTemplateDescription: contentTemplateDescription || undefined,
 			contentTemplateTags: contentTemplateTags.map(t => t.value),
 			fields: selectedFields.map(f => f.value)
 		} as ContentTypeData)
@@ -210,6 +208,9 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 						onChange={(e) => {setColour(e.target.value as ColourVariants|"")}}
 					/>
 				</JFormRow>
+				<JProse>
+					<hr/>
+				</JProse>
 				<JFormRow>
 					<JInput
 						label="Template Name"
@@ -226,20 +227,6 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 					</JProse>
 				</JFormRow>
 				<JFormRow>
-					<JTextArea
-						label="Template Description"
-						id="templateDescription"
-						value={contentTemplateDescription}
-						onChange={(e) => {
-							setContentTemplateDescription(e.target.value);
-						}}
-						placeholder="a name template..."
-					/>
-					<JProse>
-						<p>Can be used to autogenerate the description of content when created. Use <code>$date</code> for the current date in format <code>YYYY-MM-DD</code>.</p>
-					</JProse>
-				</JFormRow>
-				<JFormRow>
 					<JMultiSelect
 						id="templateTags"
 						label="Template Tags"
@@ -250,6 +237,9 @@ export function ContentTypeForm(props: GenericFormProps<ContentTypeData>) {
 						noOptionsText="No Tags Found"
 					/>
 				</JFormRow>
+				<JProse>
+					<hr/>
+				</JProse>
 				<JFormRow>
 					<JMultiSelect
 						id="fields"
